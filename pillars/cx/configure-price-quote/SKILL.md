@@ -23,7 +23,6 @@ depends_on:
   - "shared.project-intake.scope-definition"
   - "shared.implementation-planning.offering-task-map-builder"
 uses_core:
-  - "core.fusion-dev.pillar-skill-gen"
   - "core.project-mgmt.project-state-manager"
   - "core.project-mgmt.artifact-registry-manager"
   - "core.project-mgmt.artifact-version-manager"
@@ -96,13 +95,13 @@ Use this offering-level skill after Configure Price Quote is in scope and before
 
 ## Routing Responsibility
 
-This skill routes control to functional-area skills created by developers under this folder. Developers should create functional-area skills with `core.fusion-dev.pillar-skill-gen` using the catalog-backed path pattern:
+Route control to available functional-area skills under this folder using the catalog-backed path pattern:
 
 ```text
 pillars/cx/configure-price-quote/{functional-area-slug}/
 ```
 
-When a requested functional area is not yet present under this offering, use the setup catalog below to identify the matching functional area and invoke `core.fusion-dev.pillar-skill-gen` to generate the child skill before adding functional-area-specific guidance.
+Match the requested functional area against the setup catalog below and verify that its child skill is available before handing off. If it is missing, record the coverage gap and return it to the router and responsible pillar team. Stop the affected handoff until the skill is delivered; do not create a skill or substitute an execution route during implementation.
 
 ## Inputs
 
@@ -123,7 +122,7 @@ When a requested functional area is not yet present under this offering, use the
 Source: `knowledge/setup-task-catalog/effective/offering-functional-area-task-catalog.json`
 Offering code: `ORA_CONFIGURE_PRICE_QUOTE`
 Functional area count: `5`
-Setup task count: `29`
+Setup task count: `28`
 
 - `ORA_SVC_COMPANY_PROFILE`: Company Profile
 - `ORA_ASK_USERS_AND_SECURITY`: Users and Security
@@ -135,6 +134,5 @@ Setup task count: `29`
 
 - Keep offering-level planning, scope decisions, sequencing, and cross-functional-area handoffs in this skill.
 - Put functional-area-specific implementation guidance in generated child skills under this offering folder.
-- Use `core.fusion-dev.pillar-skill-gen` for child functional-area skill creation so generated skills follow the repository contract.
-- Use `core.fusion-dev.fusionapps-resource-authoring` after child skill creation when Oracle FusionApps `ora-resource/` guidance is needed.
-- Do not create setup-task-specific skills directly under this offering folder unless the user explicitly requests nested task-level skill generation through the pillar skill generator.
+- Follow each selected child skill's declared workflow and required resources.
+- Report missing task guidance to the responsible pillar team and preserve the affected handoff as blocked.

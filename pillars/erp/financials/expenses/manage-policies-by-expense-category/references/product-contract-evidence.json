@@ -1,0 +1,232 @@
+{
+  "schema_version": "1.0",
+  "task_code": "ORA_EXM_MANAGE_POLICIES_BY_EXPENSE_CATEGORY",
+  "status": "partial_source_review",
+  "sources": {
+    "EO-MealsPolicy": {
+      "path": "fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/MealsPolicyEO.xml",
+      "sha256": "73189dcd4ba42b57d61e237e644e253f93cc058d5f78eb35a06661dff6a5d38f",
+      "series": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64",
+      "label": "261013.0000.S",
+      "claim_scope": "Declared keys and validators only; not target import qualification"
+    },
+    "EO-MealsPolLine": {
+      "path": "fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/MealsPolLineEO.xml",
+      "sha256": "2a263951051c6d0b43a2f80aaf3e1c86bd2f8e6400100d32b1e59e3c85cdf598",
+      "series": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64",
+      "label": "261013.0000.S",
+      "claim_scope": "Declared keys and validators only; not target import qualification"
+    }
+  },
+  "entities": {
+    "ORA_EXM_MEALS_POLICY": {
+      "ready": false,
+      "review_status": "source_facts_reviewed_framework_semantics_pending",
+      "declared_alternate_keys": [
+        {
+          "name": "AltKey",
+          "attributes": [
+            "PolicyName"
+          ]
+        }
+      ],
+      "declared_validators": [
+        {
+          "tag": "CompareValidationBean",
+          "attrs": {
+            "Name": "WarningTolerance_Rule_0",
+            "ResId": "FND:::FND_CMN_POSITIVE_OR_ZERO",
+            "ResBundleId": "oracle.apps.fnd.applcore.messages.FndMessagesResourceBundle",
+            "OnAttribute": "WarningTolerance",
+            "OperandType": "LITERAL",
+            "Inverse": "false",
+            "CompareType": "GREATERTHANEQUALTO",
+            "CompareValue": "0"
+          },
+          "text": ""
+        },
+        {
+          "tag": "ExpressionValidationBean",
+          "attrs": {
+            "Name": "WarningTolerance_Rule_1",
+            "OperandType": "EXPR",
+            "Inverse": "false"
+          },
+          "text": "newValue != null && ErrorTolerance != null\n      \n        \n      \n      \nnewValue < ErrorTolerance"
+        },
+        {
+          "tag": "CompareValidationBean",
+          "attrs": {
+            "Name": "ErrorTolerance_Rule_0",
+            "ResId": "FND:::FND_CMN_POSITIVE_OR_ZERO",
+            "ResBundleId": "oracle.apps.fnd.applcore.messages.FndMessagesResourceBundle",
+            "OnAttribute": "ErrorTolerance",
+            "OperandType": "LITERAL",
+            "Inverse": "false",
+            "CompareType": "GREATERTHANEQUALTO",
+            "CompareValue": "0"
+          },
+          "text": ""
+        },
+        {
+          "tag": "ExpressionValidationBean",
+          "attrs": {
+            "Name": "ErrorTolerance_Rule_1",
+            "OperandType": "EXPR",
+            "Inverse": "false"
+          },
+          "text": "newValue != null && WarningTolerance !=null\n      \n        \n      \n      \nnewValue > WarningTolerance"
+        },
+        {
+          "tag": "UniqueKeyValidationBean",
+          "attrs": {
+            "Name": "MealsPolicyEO_Rule_0",
+            "ResId": "FND:::FND_CMN_RCRD_VAL",
+            "ResBundleId": "oracle.apps.fnd.applcore.messages.FndMessagesResourceBundle",
+            "KeyName": "AltKey"
+          },
+          "text": "PolicyName"
+        }
+      ],
+      "seed_routing": {
+        "ServiceName": "oracle.apps.financials.expenses.policy.shared.expenseMealsService.ExpenseMealsService",
+        "ObsoleteFlag": "N",
+        "MigrationModeFlag": "Y",
+        "XmlFileName": "EXM_MEALS_POLICIES.xml",
+        "XmlNodePath": "/MealsVO/MealsVORow"
+      },
+      "source_ids": [
+        "EO-MealsPolicy"
+      ],
+      "unresolved": [
+        "CSV-to-XML transformation and blank/null handling",
+        "MigratorHelper key-resolution and readXML semantics",
+        "Operation-specific field acceptance and resulting-state requiredness",
+        "Target-release/reference qualification"
+      ],
+      "seed_key_attributes": [
+        {
+          "XmlAttributeName": "PolicyName",
+          "AlternateKeyFlag": "Y",
+          "UpdateEnabledFlag": "N"
+        }
+      ]
+    },
+    "ORA_EXM_MEALS_POLICY_LINE": {
+      "ready": false,
+      "review_status": "source_facts_reviewed_framework_semantics_pending",
+      "declared_alternate_keys": [
+        {
+          "name": "AltKey",
+          "attributes": [
+            "MealsPolicyId",
+            "CurrencyCode",
+            "EndDate",
+            "GeographyId",
+            "RoleId",
+            "StartDate",
+            "TypeOfRateCode",
+            "ZoneCode"
+          ]
+        },
+        {
+          "name": "AltKey_NoStart",
+          "attributes": [
+            "MealsPolicyId",
+            "CurrencyCode",
+            "EndDate",
+            "GeographyId",
+            "RoleId",
+            "TypeOfRateCode",
+            "ZoneCode"
+          ]
+        }
+      ],
+      "declared_validators": [
+        {
+          "tag": "UniqueKeyValidationBean",
+          "attrs": {
+            "Name": "MealsPolLineEO_Rule_0",
+            "ResId": "FND:::FND_CMN_REC_COMB_VALS_EXST",
+            "ResBundleId": "oracle.apps.fnd.applcore.messages.FndMessagesResourceBundle",
+            "KeyName": "AltKey"
+          },
+          "text": "MigrationFlag == true"
+        },
+        {
+          "tag": "UniqueKeyValidationBean",
+          "attrs": {
+            "Name": "PerDiemPolLineEO_Rule_1",
+            "ResId": "FND:::FND_CMN_RCRD_VAL",
+            "ResBundleId": "oracle.apps.fnd.applcore.messages.FndMessagesResourceBundle",
+            "KeyName": "AltKey_NoStart"
+          },
+          "text": "MigrationFlagType == true\n    \n    \n      \"Policy/TypeOfRateCode=\" + MealsPolicyId + \"/\" + TypeOfRateCode"
+        }
+      ],
+      "seed_routing": {
+        "ServiceName": "oracle.apps.financials.expenses.policy.shared.expenseMealsService.ExpenseMealsService",
+        "ObsoleteFlag": "N",
+        "MigrationModeFlag": "Y",
+        "XmlFileName": "EXM_MEALS_POLICIES.xml",
+        "XmlNodePath": "/MealsVO/MealsVORow/MealsLine/MealsLineVORow"
+      },
+      "source_ids": [
+        "EO-MealsPolLine"
+      ],
+      "unresolved": [
+        "CSV-to-XML transformation and blank/null handling",
+        "MigratorHelper key-resolution and readXML semantics",
+        "Operation-specific field acceptance and resulting-state requiredness",
+        "Target-release/reference qualification"
+      ],
+      "seed_key_attributes": [
+        {
+          "XmlAttributeName": "CurrencyCode",
+          "AlternateKeyFlag": "Y",
+          "UpdateEnabledFlag": "N"
+        },
+        {
+          "XmlAttributeName": "EndDate",
+          "AlternateKeyFlag": "Y",
+          "UpdateEnabledFlag": "N"
+        },
+        {
+          "XmlAttributeName": "GeoLocName",
+          "AlternateKeyFlag": "Y",
+          "UpdateEnabledFlag": "N"
+        },
+        {
+          "XmlAttributeName": "FSMPolicyName",
+          "AlternateKeyFlag": "Y",
+          "UpdateEnabledFlag": "N"
+        },
+        {
+          "XmlAttributeName": "RoleName",
+          "AlternateKeyFlag": "Y",
+          "UpdateEnabledFlag": "N"
+        },
+        {
+          "XmlAttributeName": "StartDate",
+          "AlternateKeyFlag": "Y",
+          "UpdateEnabledFlag": "N"
+        },
+        {
+          "XmlAttributeName": "TypeOfRateCode",
+          "AlternateKeyFlag": "Y",
+          "UpdateEnabledFlag": "N"
+        },
+        {
+          "XmlAttributeName": "ZoneCode",
+          "AlternateKeyFlag": "Y",
+          "UpdateEnabledFlag": "N"
+        }
+      ]
+    }
+  },
+  "global_limits": [
+    "FPH pinned source is not proof of cptcwxaqy release equivalence",
+    "XML import entrypoint is not the CSV converter",
+    "EO nullability/default assignments are not an operation-specific CSV omission contract"
+  ]
+}

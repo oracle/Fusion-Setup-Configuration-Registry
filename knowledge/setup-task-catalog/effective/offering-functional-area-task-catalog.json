@@ -17662,9 +17662,29 @@
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
               "MandatoryFlag": false
+            },
+            {
+              "taskShortName": "CUSTOM_MANUFACTURING_STD_OPERATIONS",
+              "taskListItemShortName": "CUSTOM_MANUFACTURING_STD_OPERATIONS",
+              "displaySequence": null,
+              "taskName": "Manufacturing Standard Operations",
+              "taskDescription": "",
+              "csvExportImportSupportedFlag": false,
+              "exportImportSupportedFlag": false,
+              "isCustom": true
+            },
+            {
+              "taskShortName": "CUSTOM_MANUFACTURING_WD_NAME",
+              "taskListItemShortName": "CUSTOM_MANUFACTURING_WD_NAME",
+              "displaySequence": null,
+              "taskName": "Manufacturing Work Definition Names",
+              "taskDescription": "",
+              "csvExportImportSupportedFlag": false,
+              "exportImportSupportedFlag": false,
+              "isCustom": true
             }
           ],
-          "taskCount": 26
+          "taskCount": 28
         },
         "EGO_ADVANCED_PRODUCT_STRUCT": {
           "functionalAreaShortName": "EGO_ADVANCED_PRODUCT_STRUCT",
@@ -19116,7 +19136,7 @@
         }
       },
       "functionalAreaCount": 31,
-      "taskCount": 648
+      "taskCount": 650
     },
     "PJF_PROJ_MNG": {
       "offeringShortName": "PJF_PROJ_MNG",
@@ -60100,10 +60120,10 @@
               "isCustom": true
             },
             {
-              "taskShortName": "CUSTOM_SETUP_LINKEDIN_INTEGRATION",
-              "taskListItemShortName": "CUSTOM_SETUP_LINKEDIN_INTEGRATION",
+              "taskShortName": "CUSTOM_LINKEDIN_SALES_NAVIGATOR",
+              "taskListItemShortName": "CUSTOM_LINKEDIN_SALES_NAVIGATOR",
               "displaySequence": null,
-              "taskName": "Setup LinkedIn Integration",
+              "taskName": "LinkedIn Sales Navigator",
               "taskDescription": "",
               "csvExportImportSupportedFlag": false,
               "exportImportSupportedFlag": false,
@@ -84576,7 +84596,7 @@
   "counts": {
     "offerings": 54,
     "functionalAreas": 609,
-    "tasks": 7282,
+    "tasks": 7284,
     "errors": 0
   }
 }

@@ -8,6 +8,7 @@
 | Exact parent and child attributes in the matrix below | Only the evidenced per-field value | New row in the stated branch and no explicit choice | No | |
 | Start date | Customer-supplied effective date; otherwise current target business date after confirmation | New plan type | No | |
 | Project plan type option | COST_ONLY | New PROJECT_PLAN with omitted planning amounts; supported setup initialization | No | resolve_plan_option |
+| Date Adjustment Buffer in Days | 0 | Submitted planning-options row on create or update, SyncTaskTxnPlanDates=Y and the effective SyncTxnDateBuffer is empty after merging explicit and retained values | No; explicit integers and retained nonempty buffers take precedence | |
 
 Preserve user-supplied values and validate their applicability. The class and planning-amount defaults are proven setup initialization; they are not a claim that an import silently supplies omitted columns. Materialize required values through the validated package contract. Do not infer additional child rows, conditional option defaults, reference identities, DFF values or translations.
 
@@ -77,7 +78,7 @@ generic sparse-update semantics must not be inferred from these citations.
 | PJO_PPT_PLAN_OPTION_GEN_OPT.csv | EnableCostsForProjPlan | Create-required | Child cost planning | N | E2; COST amount-set capabilities do not force this flag to Y |
 | PJO_PPT_PLAN_OPTION_GEN_OPT.csv | AllowNegEtcFlag | Create-required | Child negative ETC | N | E2 |
 | PJO_PPT_PLAN_OPTION_GEN_OPT.csv | ProgAutoApprFcstVer | Create-required | Child progress forecast approval | N | E2 |
-| PJO_PPT_PLAN_OPTION_GEN_OPT.csv | ProgAutoGenFcstVer | Create-required | Child progress forecast generation | N | E2 |
+| PJO_PPT_PLAN_OPTION_GEN_OPT.csv | ProgAutoGenFcstVer | Create-required | Child progress forecast generation | N | E2; ordinary create defaults to disabled without asking. The legacy source value Remaining plan is ETC intent, not forecast enablement; follow Legacy Forecast Input Normalization in Input Validation. Explicit Y/N overrides; updates and duplicates retain their current/source setting |
 | PJO_PPT_PLAN_OPTION_GEN_OPT.csv | ProgUpdPlanQtyWithEac | Create-required | Child EAC quantity update | N | E2 |
 | PJO_PPT_PLAN_OPTION_GEN_OPT.csv | AmountSetTypeCode | Create-required | COST child's amount-set key | COST | E3/D1/I2; derived from PlannedForCode in scoped initialization |
 | PJO_PPT_PLAN_OPTION_GEN_OPT.csv | RawCostFlag | Create-required | COST amount-set raw cost entry | Y | E3 default N is overridden by scoped D1; not a universal Boolean default |
@@ -104,7 +105,7 @@ or retained update evidence; do not invent CSV-to-XML omission semantics.
 | PJO_PPT_PLAN_OPTION_GEN_OPT.csv | Name2 | Conditional | GenBdgtDuringBaseline=Y, including when AutoBdgtBaseline=N | No default; selected applicable budget financial plan type; automatic baseline additionally requires generation enabled |
 | PJO_PPT_PLAN_OPTION_GEN_OPT.csv | Name3 | Conditional | ProgAutoGenFcstVer=Y | No default; selected applicable forecast financial plan type, independently of the budget Name2 |
 | PJO_PPT_PLAN_OPTION_GEN_OPT.csv | NtpRateDate | Conditional | NtpRateDateType=FIXED_DATE | Explicit date; no invented current date |
-| PJO_PPT_PLAN_OPTION_GEN_OPT.csv | SyncTxnDateBuffer | Optional | SyncTaskTxnPlanDates=Y | If supplied, integer; no invented zero. Preserve inactive retained value when synchronization is N |
+| PJO_PPT_PLAN_OPTION_GEN_OPT.csv | SyncTxnDateBuffer | Optional business input; materialize save default | SyncTaskTxnPlanDates=Y | Effective empty value becomes 0 on create/update; explicit integers override and retained nonempty values are preserved. With N, leave the inactive buffer unchanged |
 | PJO_PPT_PLAN_OPTION_GEN_OPT.csv | PcCostRateDate; PcRevRateDate; PfcCostRateDate; PfcRevRateDate; RateSchCostRateDate; RateSchRevRateDate | Conditional | Corresponding active currency context and same-prefix RateDateType=FIXED_DATE | Explicit date; PLAN_VERSION-only requiredness must not be imposed on PLAN_TYPE |
 | ORA_PJO_PROJ_PLAN_TYPE_SET_ASMT.csv | PJO_PLAN_TYPE_PROJECT.Name; SetCode | Required identity when row supplied | Set assignment | No default or inferred target identity |
 | PJO_PPT_PLAN_OPTION_RATE_SCH.csv | PJO_PLAN_TYPE_PROJECT.Name; ShortCode | Required identity when row supplied | Business-unit rate settings | No default; other schedule columns are optional unless the selected rate configuration requires them |
@@ -136,7 +137,9 @@ input finding, distinct from a nonblocking unsupported reference lookup.
 The 2026-10-14 unsaved create-page inspection corroborates these visible defaults
 for the ordinary PROJECT_PLAN/COST_ONLY branch. These are preparation choices
 for a new type, not newly discovered mandatory importer fields. Explicit choices
-win. Never apply them to updates or treat a blank template as their authority.
+win. Never apply new-row initialization to updates or treat a blank template as
+its authority. The buffer row also states the separate conditional save rule,
+which applies to submitted create/update options as detailed below.
 The inspection was target- and identity-specific, discarded without saving,
 and does not establish other releases' feature state or configured references.
 Historical UI and import test records are developer evidence, not runtime
@@ -154,7 +157,7 @@ validation, lookup and design resources.
 | PJO_PPT_PLAN_OPTION_GEN_OPT.csv | Name (period profile) | Accounting Period for G; Project Accounting Period for P | UI defaults on calendar change, not a universal target reference. Materialize only when the local reference policy applies; follow resolve_period_profile for target-validation status and disclose unresolved membership. Do not assign a profile for N |
 | PJO_PPT_PLAN_OPTION_RATE_SCH.csv | UsePlanningRatesFlag | N | Only a requested new BU rate row; do not create a row automatically. Each row has its own mode |
 | PJO_PPT_PLAN_OPTION_GEN_OPT.csv | Name2; Name3 | Empty, inactive until corresponding generation enabled | No budget/forecast type default; obtain the selected type name when enabling generation |
-| PJO_PPT_PLAN_OPTION_GEN_OPT.csv | SyncTxnDateBuffer | Empty | Optional even when synchronization is selected; validate a supplied active integer |
+| PJO_PPT_PLAN_OPTION_GEN_OPT.csv | SyncTxnDateBuffer | Empty before Save; 0 on Save when synchronization is Y | Optional business input. After merging the request and baseline, materialize 0 only for an empty active buffer; preserve supplied integers and retained nonempty values |
 
 Currency settings displayed Use same conversion attribute for all currency
 conversions selected, with blank Rate Type and Date Type. The checkbox is a
@@ -166,16 +169,30 @@ type, date basis, date or exchange rate from the checked display state.
 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|
-| PJO.PPT.DEFAULTS | step | 5 | apply_default | defaulted-or-preserved->PJO.PPT.VALIDATE_INPUT;unresolved->PJO.PPT.INPUT_ISSUES | none | stop | Apply only documented omitted-field defaults for a new PROJECT_PLAN; otherwise preserve supplied/current values and continue |
+| PJO.PPT.DEFAULTS | step | 5 | apply_default | defaulted-or-preserved->PJO.PPT.VALIDATE_INPUT;unresolved->PJO.PPT.INPUT_ISSUES | none | stop | Apply documented create defaults and the conditional active-buffer save default on submitted create/update options; otherwise preserve supplied/current values and continue |
 
 ## UI Behavior Boundaries
+
+The synchronization buffer has a conditional save-time rule, separate from
+new-record defaults: when the submitted options row has SyncTaskTxnPlanDates=Y
+and its effective buffer is empty, prepare SyncTxnDateBuffer=0. An explicit
+integer (positive, zero or negative) wins over any retained value; an omitted
+buffer retains a nonempty baseline value. An explicit empty active buffer
+therefore becomes 0. With synchronization N, preserve the inactive buffer.
+Do not add an omitted options row to an unrelated parent-only update. Apply the
+same rule to a submitted duplicate's effective options after source merging.
+Disclose each applied zero as conditional_save_default in defaultsApplied,
+including before/after values and reason, and include it in the Task Hook preview.
+The validator checks these prepared bytes without mutating them; a blank active
+buffer returns UNMATERIALIZED_DEFAULT, not a request for extra business input.
 
 Duplicate has a separate source-backed policy: reset StartDate to 1957/01/01,
 clear EndDate, reset DefaultFinPlanTypeFlag and initialize DefaultAwdFinPlanTypeFlag
 to N unless explicitly overridden. Preserve copied configuration, with only the
 documented source-null fallbacks listed in scripts/README.md. Do not replay
 general create defaults over a source copy. Renames and retained-row updates
-apply no create defaults; explicit child insertion defaults only a new BU mode
+apply no create defaults; the conditional active-buffer save rule still applies
+to submitted options rows. Explicit child insertion defaults only a new BU mode
 to N. Disclose every default separately from derived copy/rename/insert changes.
 
 Default materialization is separate from activating a control. Preparation checks

@@ -77,12 +77,14 @@ RUNBOOK_LIST_FIELDS = (
     "CategoryMeaning",
     "taskCounts",
 )
-DEFAULT_PAGE_SIZE = 100
+DEFAULT_PAGINATION_RECORD_LIMIT = 500
+DEFAULT_TOTAL_RECORD_FETCH_LIMIT = 2500
+DEFAULT_PAGINATION_LIMIT = 50
 
 TASK_LIST_FIELDS = (
     "ParentWorkerJourneyId,WorkerJourneyTaskId,Description,Name,RequiredFlag,"
     "Status,StatusCategory,TargetEndDate,TargetStartDate,ExpiryRelativeTo,"
-    "TargetDuration,TargetDurationUOM,CompletionDate,DependentTaskName,Type,"
+    "TargetDuration,TargetDurationUOM,CompletionDate,Type,"
     "TypeMeaning,SubType,ActionReassign,StageName,StageSequence,Sequence,"
     "SubSequence,TaskPercentageComplete,ActionEditDueDate,ActionRemove,"
     "ActionReopen,ActionEdit,AllowPrecedingTaskFlag,PerformerType,"
@@ -91,8 +93,8 @@ TASK_LIST_FIELDS = (
 TASK_DETAIL_FIELDS = (
     "WorkerJourneyTaskId,Name,Type,SubType,RequiredFlag,StatusCategory,Status,"
     "Sequence,TaskPercentageComplete,"
-    "TargetStartDate,TargetEndDate,CompletionDate,DependentTaskName,"
-    "DependentTaskId,AccessNotes,AccessGuidedJourney,AccessComments,"
+    "TargetStartDate,TargetEndDate,CompletionDate,"
+    "AccessNotes,AccessGuidedJourney,AccessComments,"
     "AccessAttachments,AccessActivity,AllowAttachmentFlag,NoteTitle,Notes,"
     "AllowNoteTitleFlag,"
     "ActionURL,QuestionnaireId,ContentProviderCode,ActionComplete,"
@@ -144,7 +146,18 @@ class RunbookClient:
         refresh_authorization: Optional[Callable[[], str]] = None,
         timeout: int = TIMEOUT_SECONDS,
         opener: Callable[..., Any] = urlopen,
+        total_record_fetch_limit: int = DEFAULT_TOTAL_RECORD_FETCH_LIMIT,
+        pagination_record_limit: int = DEFAULT_PAGINATION_RECORD_LIMIT,
+        pagination_limit: int = DEFAULT_PAGINATION_LIMIT,
     ) -> None:
+        for name, value in (("total_record_fetch_limit", total_record_fetch_limit),
+                            ("pagination_record_limit", pagination_record_limit),
+                            ("pagination_limit", pagination_limit)):
+            if isinstance(value, bool) or not isinstance(value, int) or value < 1:
+                raise ValueError(f"{name} must be a positive integer.")
+        self.total_record_fetch_limit = total_record_fetch_limit
+        self.pagination_record_limit = pagination_record_limit
+        self.pagination_limit = pagination_limit
         self._transport = JsonTransport(
             base_url=base_url,
             authorization=authorization,
@@ -170,6 +183,57 @@ class RunbookClient:
             raise ApiError(f"Expected every {resource} item to be a JSON object.")
         return items
 
+    def _collect_paginated_items(
+        self, *, resource: str,
+        fetch_page: Callable[[int, int], Any], offset: int = 0,
+    ) -> dict[str, Any]:
+        """Bound page fetches; authentication retries belong to the transport."""
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            raise ValueError("offset must be a nonnegative integer.")
+        if offset >= self.total_record_fetch_limit:
+            raise ApiError("The total_record_fetch_limit has been reached; no more records may be fetched with the current limit.")
+        items = []
+        start_offset = offset
+        settings = {"total_record_fetch_limit": self.total_record_fetch_limit,
+                    "pagination_record_limit": self.pagination_record_limit,
+                    "pagination_limit": self.pagination_limit}
+        for page in range(self.pagination_limit):
+            limit = min(self.pagination_record_limit,
+                        self.total_record_fetch_limit - offset)
+            response = self._require_object(fetch_page(offset, limit), resource)
+            page_items = self._require_items(response, resource)
+            has_more = response.get("hasMore")
+            if not isinstance(has_more, bool):
+                raise ApiError(f"Expected {resource} hasMore to be a boolean.")
+            if len(page_items) > limit:
+                raise ApiError(f"Oracle Fusion exceeded the requested record limit for {resource}.")
+            if has_more and not page_items:
+                raise ApiError(f"Oracle Fusion reported another {resource} page but returned no items.")
+            items.extend(page_items)
+            offset += len(page_items)
+            if not has_more:
+                return {"items": items, "count": len(items), "hasMore": False,
+                        "complete": True, "offset": start_offset, "nextOffset": None,
+                        "paginationSettings": settings, "fetchedSoFar": offset,
+                        "remainingRecordAllowance": self.total_record_fetch_limit - offset,
+                        "continuationAllowed": False}
+            reasons = []
+            if offset >= self.total_record_fetch_limit:
+                reasons.append("total_record_fetch_limit")
+            if page + 1 >= self.pagination_limit:
+                reasons.append("pagination_limit")
+            if reasons:
+                return {"items": items, "count": len(items), "hasMore": True,
+                        "complete": False, "offset": start_offset,
+                        "nextOffset": offset if offset < self.total_record_fetch_limit else None,
+                        "fetchedSoFar": offset,
+                        "remainingRecordAllowance": self.total_record_fetch_limit - offset,
+                        "continuationAllowed": offset < self.total_record_fetch_limit,
+                        "paginationSettings": settings,
+                        "stopReasons": reasons}
+        raise AssertionError("Pagination must return within its configured limits")
+
+
     @staticmethod
     def task_path(parent_worker_journey_id: str, worker_journey_task_id: str) -> str:
         return (
@@ -181,46 +245,26 @@ class RunbookClient:
     def list_tasks(
         self,
         journey_id: str,
-        page_size: int = DEFAULT_PAGE_SIZE,
+        *, offset: int = 0,
     ) -> dict[str, Any]:
-        if isinstance(page_size, bool) or not isinstance(page_size, int) or page_size < 1:
-            raise ValueError("page_size must be a positive integer.")
-        offset = 0
-        items: list[dict[str, Any]] = []
         path = (
             f"{ASSIGNED_RUNBOOKS_PATH}/"
             f"{_path_segment(journey_id)}/child/allStepTasks"
         )
 
-        while True:
-            response = self._require_object(
-                self._transport.request_json(
+        return self._collect_paginated_items(
+            resource='allStepTasks', offset=offset,
+            fetch_page=lambda offset, limit: self._transport.request_json(
                     "GET",
                     path,
                     params={
                         "orderBy": "Sequence",
                         "fields": TASK_LIST_FIELDS,
                         "offset": offset,
-                        "limit": page_size,
+                        "limit": limit,
                     },
                 ),
-                "allStepTasks",
-            )
-            page_items = self._require_items(response, "allStepTasks")
-            items.extend(page_items)
-
-            if "hasMore" not in response:
-                raise ApiError("Expected allStepTasks to include hasMore.")
-            has_more = response["hasMore"]
-            if not isinstance(has_more, bool):
-                raise ApiError("Expected allStepTasks hasMore to be a boolean.")
-            if not has_more:
-                return {"items": items, "count": len(items), "hasMore": False}
-            if not page_items:
-                raise ApiError(
-                    "Oracle Fusion reported another task page but returned no task items."
-                )
-            offset += len(page_items)
+        )
 
     def list_runbooks(
         self,
@@ -304,20 +348,16 @@ class RunbookClient:
     def get_task_comments(
         self,
         worker_journey_task_id: Any,
-        page_size: int = DEFAULT_PAGE_SIZE,
+        *, offset: int = 0,
     ) -> dict[str, Any]:
         """Return every Object Notes task comment in Fusion's descending order."""
 
-        if isinstance(page_size, bool) or not isinstance(page_size, int) or page_size < 1:
-            raise ValueError("page_size must be a positive integer.")
         task_id = str(positive_int64(worker_journey_task_id, "WorkerJourneyTaskId"))
-        offset = 0
-        items: list[dict[str, Any]] = []
         query = f"ObjectId={task_id} and ContextType='{TASK_COMMENT_CONTEXT_TYPE}'"
 
-        while True:
-            response = self._require_object(
-                self._transport.request_json(
+        return self._collect_paginated_items(
+            resource='task comments', offset=offset,
+            fetch_page=lambda offset, limit: self._transport.request_json(
                     "GET",
                     TASK_COMMENT_NOTES_PATH,
                     params={
@@ -327,116 +367,60 @@ class RunbookClient:
                         "orderBy": "LastUpdateDate:desc",
                         "q": query,
                         "offset": offset,
-                        "limit": page_size,
+                        "limit": limit,
                     },
                 ),
-                "task comments",
-            )
-            page_items = self._require_items(response, "task comments")
-            items.extend(page_items)
-
-            if "hasMore" not in response:
-                raise ApiError("Expected task comments to include hasMore.")
-            has_more = response["hasMore"]
-            if not isinstance(has_more, bool):
-                raise ApiError("Expected task comments hasMore to be a boolean.")
-            if not has_more:
-                return {"items": items, "count": len(items), "hasMore": False}
-            if not page_items:
-                raise ApiError(
-                    "Oracle Fusion reported another comment page but returned no items."
-                )
-            offset += len(page_items)
+        )
 
     def get_documents(
         self,
         parent_worker_journey_id: str,
         worker_journey_task_id: str,
-        page_size: int = DEFAULT_PAGE_SIZE,
+        *, offset: int = 0,
     ) -> dict[str, Any]:
-        if isinstance(page_size, bool) or not isinstance(page_size, int) or page_size < 1:
-            raise ValueError("page_size must be a positive integer.")
-        offset = 0
-        items: list[dict[str, Any]] = []
         path = (
             f"{self.task_path(parent_worker_journey_id, worker_journey_task_id)}"
             "/child/documents"
         )
 
-        while True:
-            response = self._require_object(
-                self._transport.request_json(
+        return self._collect_paginated_items(
+            resource='documents', offset=offset,
+            fetch_page=lambda offset, limit: self._transport.request_json(
                     "GET",
                     path,
                     params={
                         "fields": DOCUMENT_FIELDS,
                         "onlyData": "true",
                         "offset": offset,
-                        "limit": page_size,
+                        "limit": limit,
                     },
                 ),
-                "documents",
-            )
-            page_items = self._require_items(response, "documents")
-            items.extend(page_items)
-
-            if "hasMore" not in response:
-                raise ApiError("Expected documents to include hasMore.")
-            has_more = response["hasMore"]
-            if not isinstance(has_more, bool):
-                raise ApiError("Expected documents hasMore to be a boolean.")
-            if not has_more:
-                return {"items": items, "count": len(items), "hasMore": False}
-            if not page_items:
-                raise ApiError(
-                    "Oracle Fusion reported another document page but returned no items."
-                )
-            offset += len(page_items)
+        )
 
     def get_attachments(
         self,
         parent_worker_journey_id: str,
         worker_journey_task_id: str,
-        page_size: int = DEFAULT_PAGE_SIZE,
+        *, offset: int = 0,
     ) -> dict[str, Any]:
-        if isinstance(page_size, bool) or not isinstance(page_size, int) or page_size < 1:
-            raise ValueError("page_size must be a positive integer.")
-        offset = 0
-        items: list[dict[str, Any]] = []
         path = (
             f"{self.task_path(parent_worker_journey_id, worker_journey_task_id)}"
             "/child/attachments"
         )
 
-        while True:
-            response = self._require_object(
-                self._transport.request_json(
+        return self._collect_paginated_items(
+            resource='attachments', offset=offset,
+            fetch_page=lambda offset, limit: self._transport.request_json(
                     "GET",
                     path,
                     params={
                         "fields": ATTACHMENT_FIELDS,
                         "onlyData": "true",
                         "offset": offset,
-                        "limit": page_size,
+                        "limit": limit,
                     },
                 ),
-                "attachments",
-            )
-            page_items = self._require_items(response, "attachments")
-            items.extend(page_items)
-
-            if "hasMore" not in response:
-                raise ApiError("Expected attachments to include hasMore.")
-            has_more = response["hasMore"]
-            if not isinstance(has_more, bool):
-                raise ApiError("Expected attachments hasMore to be a boolean.")
-            if not has_more:
-                return {"items": items, "count": len(items), "hasMore": False}
-            if not page_items:
-                raise ApiError(
-                    "Oracle Fusion reported another attachment page but returned no items."
-                )
-            offset += len(page_items)
+        )
 
     def add_task_attachment(
         self,

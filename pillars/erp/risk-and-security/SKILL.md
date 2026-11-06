@@ -28,7 +28,6 @@ depends_on:
   - "core.fusion-api.fsm-rest-client"
   - "core.runbook"
 uses_core:
-  - "core.fusion-dev.pillar-skill-gen"
   - "core.fusion-api.fsm-rest-client"
   - "core.project-mgmt.project-state-manager"
   - "core.project-mgmt.artifact-registry-manager"
@@ -110,13 +109,13 @@ Use this offering-level skill after Risk and Security is in scope and before rou
 
 ## Routing Responsibility
 
-This skill routes control to functional-area skills created by developers under this folder. Developers should create functional-area skills with `core.fusion-dev.pillar-skill-gen` using the catalog-backed path pattern:
+This skill routes control to functional-area skills created by developers under this folder. Developers should create functional-area skills with the approved catalog-backed pillar-skill generator using the catalog-backed path pattern:
 
 ```text
 pillars/erp/risk-and-security/{functional-area-slug}/
 ```
 
-When a requested functional area is not yet present under this offering, use the setup catalog below to identify the matching functional area and invoke `core.fusion-dev.pillar-skill-gen` to generate the child skill before adding functional-area-specific guidance.
+When a requested functional area is not yet present under this offering, use the setup catalog below to identify the matching functional area and invoke the approved catalog-backed pillar-skill generator to generate the child skill before adding functional-area-specific guidance.
 
 ## Local Entry Path
 
@@ -311,6 +310,6 @@ Setup task count: `6`
 
 - Keep offering-level planning, scope decisions, sequencing, and cross-functional-area handoffs in this skill.
 - Put functional-area-specific implementation guidance in generated child skills under this offering folder.
-- Use `core.fusion-dev.pillar-skill-gen` for child functional-area skill creation so generated skills follow the repository contract.
-- Use `core.fusion-dev.fusionapps-resource-authoring` after child skill creation when Oracle FusionApps `ora-resource/` guidance is needed.
+- Use the approved catalog-backed pillar-skill generator for child functional-area skill creation so generated skills follow the repository contract.
+- Use the approved resource-authoring workflow after child skill creation when Oracle FusionApps `ora-resource/` guidance is needed.
 - Do not create setup-task-specific skills directly under this offering folder unless the user explicitly requests nested task-level skill generation through the pillar skill generator.

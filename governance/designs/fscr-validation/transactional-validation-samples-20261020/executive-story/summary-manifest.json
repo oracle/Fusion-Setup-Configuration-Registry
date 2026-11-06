@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "project_id": "demo-procurement-validation",
+  "summary_id": "demo-executive-summary",
+  "generated_at": "2026-10-20T14:00:00Z",
+  "environment": "DEMO-TEST",
+  "environment_url": "https://demo-test.example.invalid",
+  "redaction_reviewed": true,
+  "sources": [
+    {
+      "kind": "prevalidation",
+      "result_ref": "artifacts/shared/validation/demo-procurement-validation-prevalidation-20261020T080000Z/readiness.json",
+      "result_sha256": "05ae011487a6a7fb5368e62f7f7c885d7ac4559f9fc749a72ed2ad2bdddc12b7",
+      "report_ref": "artifacts/shared/validation/demo-procurement-validation-prevalidation-20261020T080000Z/readiness.html",
+      "report_sha256": "eda5a54c4ac3ad854685178f9d6a3c2e320ecb55038b5b799c35232a6dee17d6"
+    },
+    {
+      "kind": "validation",
+      "result_ref": "artifacts/shared/validation/demo-implementation-review-20261020/implementation-review.json",
+      "result_sha256": "771931ac1f62ed6d34ea40dbabf96d219b63f470add19dd9cc5a8d33dfb53b77",
+      "report_ref": "artifacts/shared/validation/demo-implementation-review-20261020/implementation-review.html",
+      "report_sha256": "b14beab5cca03c253f561665232cec1dd0e655e289b2260da1222cba91ccf58b"
+    },
+    {
+      "kind": "validation",
+      "result_ref": "artifacts/shared/validation/demo-transaction-20261020-120000/transactional-validation.json",
+      "result_sha256": "7e0bd60ab99d6a48cc6359dbe34024f91024ffecc522762be77bb45d5a92dc97",
+      "report_ref": "artifacts/shared/validation/demo-transaction-20261020-120000/transactional-validation.html",
+      "report_sha256": "384a62085f0957fa121d0e7b20f14fa20095dae26eddd74a0096887912eb13fe"
+    }
+  ]
+}

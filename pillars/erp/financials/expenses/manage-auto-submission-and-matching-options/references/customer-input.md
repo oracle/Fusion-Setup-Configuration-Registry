@@ -51,7 +51,7 @@ or unrelated cash-advance settings. Keep source-member provenance in memory.
 | Same logical key has different scope/value, duplicate rows within an alias, or only one alias supplies the supposedly shared row | Mark the baseline unresolved. Recheck export completeness and exact identity through the declared workflow; otherwise report the discrepancy for owning-product investigation. Do not pick the first row, a header, a filename or a migration flag. |
 | Enablement is consistently verified to already equal the user's request | Report it as already satisfied. Leave both option CSVs header-only and compose only the remaining qualified organization-setting changes. |
 | Enablement must change, or no verified current value exists | Preserve the requested change and return `FSM_ALIAS_COLLISION`. The current profile does not yet qualify populated option aliases. The user is not expected to solve the framework ambiguity. |
-| Only schedule/matching settings are requested | Use `EXM_ORG_SETTING.csv`; both option aliases stay header-only. Apply all target, scope, value and schema checks. |
+| Only schedule/matching settings are requested | Apply the [BU schedule display check](execution-contract.md#verify-the-bu-schedule-display-before-approval) first. Resolve inherited display intent without defaulting enablement. For an explicitly retained schedule-only request, use `EXM_ORG_SETTING.csv` and keep both option aliases header-only; apply all target, scope, value and schema checks. |
 
 Identical minimal requested rows in both aliases are a repository qualification
 candidate: the reviewed last-insertion behavior would then select equal values.
@@ -59,7 +59,7 @@ Neither equal baseline exports nor equal CSV headers prove that this candidate
 imports correctly. Do not enable it opportunistically on a customer environment.
 The maintained transport profile must first include an owning FSM contract or
 governed import plus resulting-value verification for that strategy. Qualification
-must cover the applicable release/schema, exact logical keys, scope/audit handling
+must cover the applicable schema, exact logical keys, scope/audit handling
 and preservation of unrequested settings. Once maintained and tested in the repo,
 customers can reuse that contract without supplying their own CSVs or evidence ZIP.
 
@@ -143,7 +143,7 @@ different targets into one import or reuse approvals between them.
    does not migrate an existing Run Book.
 4. Obtain the task template and baseline through the routed export workflow
    on the selected target. Export provenance is the actual request target,
-   not a ZIP filename or editable metadata label. Validate task, release and
+   not a ZIP filename or editable metadata label. Validate task and
    schema against the shipped profile; reuse no data from the old target.
 5. Call `validate_environment_binding(requested_url, authentication=...,
    runbook=..., loader=..., template_export=..., baseline_export=...)` using
@@ -164,12 +164,12 @@ different targets into one import or reuse approvals between them.
 
 The organization-setting profile has a successful Fusion import: four rows,
 zero failures/warnings, and empty option files skipped. It covers the source
-contracts and exact release/schema stated in `fsm-transport-profile.md`.
+contracts and exact schema stated in `fsm-transport-profile.md`.
 An accepted import/process success is not an independent read-back comparison
 of every value; perform that through the declared verification/export workflow
 when requested, with its applicable export approval.
 
-Two product qualifications remain conditional: a different release/schema, and
+Two product qualifications remain conditional: a different schema, and
 an enable/disable change requiring populated setup-option aliases. Both must
 be resolved by a maintained repository contract or verified product evidence.
 Do not ask each customer to provide an old import ZIP, remove these checks to

@@ -1,0 +1,318 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "ORA_EDR_ELECTRONIC_SIGN_PREF",
+      "task_name": "Configure Electronic Signature Preferences",
+      "start_node": "ESIGN.VALIDATE_INPUT",
+      "nodes": [
+        {
+          "id": "ESIGN.VALIDATE_INPUT",
+          "node_type": "decision",
+          "sequence": 1,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "ESIGN.RESOLVE_ORGANIZATION",
+            "invalid": "ESIGN.ISSUES"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Every request; chat request and Data Loader captured records are authoritative local inputs; registered metadata governs transport fields",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 39
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ESIGN.RESOLVE_ORGANIZATION",
+          "node_type": "decision",
+          "sequence": 2,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "ESIGN.RESOLVE_REFERENCE",
+            "not_required": "ESIGN.RESOLVE_REFERENCE",
+            "invalid_organization": "ESIGN.ISSUES",
+            "unresolved": "ESIGN.ISSUES"
+          },
+          "prerequisites": [
+            "ESIGN.VALIDATE_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "resolve_inventory_organization for ordinary create/update/delete; protected scope returns not_required",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 61
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ESIGN.RESOLVE_REFERENCE",
+          "node_type": "decision",
+          "sequence": 3,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "ESIGN.SELECT_CREATE_TRANSACTIONS",
+            "not_required": "ESIGN.SELECT_CREATE_TRANSACTIONS",
+            "unresolved": "ESIGN.ISSUES"
+          },
+          "prerequisites": [
+            "ESIGN.RESOLVE_ORGANIZATION"
+          ],
+          "on_failure": "stop",
+          "applies_when": "resolve_electronic_signature_parent_child for child update or parent delete; create returns not_required",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 62
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ESIGN.SELECT_CREATE_TRANSACTIONS",
+          "node_type": "decision",
+          "sequence": 4,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "selected": "ESIGN.RESOLVE_CREATE_EDITABILITY",
+            "not_required": "ESIGN.RESOLVE_CREATE_EDITABILITY",
+            "invalid_signature_type": "ESIGN.ISSUES",
+            "unresolved": "ESIGN.ISSUES"
+          },
+          "prerequisites": [
+            "ESIGN.RESOLVE_REFERENCE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "select_electronic_signature_create_transactions for ordinary combined create; other requests return not_required",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 63
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ESIGN.RESOLVE_CREATE_EDITABILITY",
+          "node_type": "decision",
+          "sequence": 5,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "ESIGN.APPLY_CREATE_DEFAULTS",
+            "not_required": "ESIGN.APPLY_CREATE_DEFAULTS",
+            "unresolved": "ESIGN.ISSUES"
+          },
+          "prerequisites": [
+            "ESIGN.SELECT_CREATE_TRANSACTIONS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "read_electronic_signature_create_editability for ordinary combined create; other operations return not_required",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 64
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ESIGN.APPLY_CREATE_DEFAULTS",
+          "node_type": "decision",
+          "sequence": 6,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "applied": "ESIGN.READ_CHILD_EDITABILITY",
+            "not_required": "ESIGN.READ_CHILD_EDITABILITY",
+            "invalid": "ESIGN.ISSUES"
+          },
+          "prerequisites": [
+            "ESIGN.RESOLVE_CREATE_EDITABILITY"
+          ],
+          "on_failure": "stop",
+          "applies_when": "For combined creation after catalog selection and editability derivation, apply the Standard Defaults independently to each selected transaction using validated request values and Data Loader captured records. Existing updates and deletes return not_required; do not apply creation defaults or populate omitted update fields",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 18
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ESIGN.READ_CHILD_EDITABILITY",
+          "node_type": "decision",
+          "sequence": 7,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "editable": "ESIGN.RESOLVE_SIGNATURE_TYPE",
+            "not_required": "ESIGN.RESOLVE_SIGNATURE_TYPE",
+            "not_editable": "ESIGN.ISSUES",
+            "unresolved": "ESIGN.ISSUES"
+          },
+          "prerequisites": [
+            "ESIGN.APPLY_CREATE_DEFAULTS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "read_electronic_signature_child_editability before a type update; false follows not_editable; flag-only and non-update requests return not_required",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 65
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ESIGN.RESOLVE_SIGNATURE_TYPE",
+          "node_type": "decision",
+          "sequence": 8,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "ESIGN.ENFORCE_POLICY",
+            "not_required": "ESIGN.ENFORCE_POLICY",
+            "invalid_signature_type": "ESIGN.ISSUES",
+            "unresolved": "ESIGN.ISSUES"
+          },
+          "prerequisites": [
+            "ESIGN.READ_CHILD_EDITABILITY"
+          ],
+          "on_failure": "stop",
+          "applies_when": "resolve_electronic_signature_type_code for a supplied label after editable outcome; direct supported code or no type update returns not_required",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 66
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ESIGN.ENFORCE_POLICY",
+          "node_type": "decision",
+          "sequence": 9,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "compliant": "ESIGN.CHECK_HANDOFF",
+            "blocked": "ESIGN.ISSUES"
+          },
+          "prerequisites": [
+            "ESIGN.RESOLVE_SIGNATURE_TYPE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Every request; developer-confirmed chat request and Data Loader captured records supply local evaluation authority",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 55
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ESIGN.CHECK_HANDOFF",
+          "node_type": "decision",
+          "sequence": 10,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "ESIGN.DONE_VALIDATION",
+            "blocked": "ESIGN.ISSUES"
+          },
+          "prerequisites": [
+            "ESIGN.ENFORCE_POLICY"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only after contract completion; authorizes no mutation",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 76
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ESIGN.DONE_VALIDATION",
+          "node_type": "terminal",
+          "sequence": 11,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "ESIGN.CHECK_HANDOFF"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Validation gates satisfied; return to core.data-loader for its preview and approval workflow",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 77
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ESIGN.ISSUES",
+          "node_type": "terminal",
+          "sequence": 12,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Unsupported request or unresolved authoring/runtime contract; return blockers",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 78
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

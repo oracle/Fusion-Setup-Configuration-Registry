@@ -6,7 +6,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import os
 import subprocess
 import sys
 import tempfile
@@ -19,11 +18,13 @@ from openapi_output_formatter import convert_to_extraction_objects
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
 from openapi_response_schema_validator import validate_openapi_response_schemas
+from connector_artifacts import (
+    artifact_path, new_preview_directory, publish_current_pointer, write_new_text,
+)
 
 
 POST_PATH = "/api/risk-cloud/rc-tools-ms/dataintegration/v1/dataIntegratorConnectorDefinitions"
 PROHIBITED_FIELDS = {
-    "attributeMappings", "flows", "flowDetails", "flowComponentDetails", "functions",
     "authenticationDetails", "clientSecret", "accessToken", "refreshToken", "privateKey",
 }
 BASE_CONNECTOR_SETUP_KEYS = {
@@ -59,7 +60,7 @@ def resolve_source_type(connector_type: str) -> dict[str, Any]:
 
 
 def reject_prohibited(value: Any) -> None:
-    """Reject prohibited fields anywhere in a credential-free payload."""
+    """Reject prohibited connector-definition fields recursively."""
     if isinstance(value, dict):
         for key, nested in value.items():
             if key in PROHIBITED_FIELDS:
@@ -68,6 +69,38 @@ def reject_prohibited(value: Any) -> None:
     elif isinstance(value, list):
         for nested in value:
             reject_prohibited(nested)
+
+
+def normalize_target(value: str) -> str:
+    parsed = urlsplit(value.strip())
+    if (parsed.scheme.lower() != "https" or not parsed.netloc or parsed.query
+            or parsed.fragment or parsed.username is not None or parsed.password is not None):
+        raise ValueError("REST base URL must be an absolute HTTPS URL without credentials, query or fragment")
+    return urlunsplit(("https", parsed.netloc.lower(), parsed.path.rstrip("/"), "", ""))
+
+
+def approval_envelope(payload: dict[str, Any], target: str, project_root: str) -> dict[str, Any]:
+    return {"approval_version": 2, "target": normalize_target(target),
+            "method": "POST", "path": POST_PATH,
+            "project_root": str(Path(project_root).resolve()), "payload": payload}
+
+
+def approval_digest(envelope: dict[str, Any]) -> str:
+    return hashlib.sha256(canonical_json(envelope).encode("utf-8")).hexdigest()
+
+
+def verify_approval(state: Any, approved_digest: str, project_root: str) -> None:
+    required = {"approval_version", "target", "method", "path", "project_root", "payload", "digest"}
+    if not isinstance(state, dict) or set(state) != required or state.get("approval_version") != 2:
+        raise ValueError("approval envelope is unsupported; regenerate preview and obtain approval again")
+    if not isinstance(state["target"], str) or not isinstance(state["payload"], dict):
+        raise ValueError("invalid approval envelope")
+    expected = approval_envelope(state["payload"], state["target"], project_root)
+    envelope = {key: value for key, value in state.items() if key != "digest"}
+    if envelope != expected or state["digest"] != approved_digest or approval_digest(envelope) != approved_digest:
+        raise ValueError("approval envelope integrity or selected project verification failed")
+    review_artifact_directory(project_root)
+    reject_prohibited(state["payload"])
 
 
 def require_approved_rest_target(properties_path: Path, approved_target: str) -> None:
@@ -82,13 +115,7 @@ def require_approved_rest_target(properties_path: Path, approved_target: str) ->
     if not configured_target:
         raise ValueError("properties file is missing restBaseUrl")
 
-    def normalize(value: str) -> str:
-        parsed = urlsplit(value.strip())
-        if parsed.scheme.lower() != "https" or not parsed.netloc or parsed.query or parsed.fragment:
-            raise ValueError("REST base URL must be an absolute HTTPS URL without query or fragment")
-        return urlunsplit(("https", parsed.netloc.lower(), parsed.path.rstrip("/"), "", ""))
-
-    if normalize(configured_target) != normalize(approved_target):
+    if normalize_target(configured_target) != normalize_target(approved_target):
         raise ValueError("REST client properties target does not match the approval-bound target")
 
 
@@ -148,41 +175,39 @@ def validate_connector_setup(setup: Any) -> None:
         raise ValueError("connector setup URLs must use HTTPS")
 
 
-def publish_json(path: Path, value: dict[str, Any]) -> None:
-    """Atomically publish a review artifact with restrictive permissions."""
-    temporary = path.with_name(path.name + ".tmp")
-    temporary.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    os.chmod(temporary, 0o600)
-    os.replace(temporary, path)
-
-
 def review_artifact_directory(project_root: str) -> Path:
     root = Path(project_root).resolve()
     if not (root / "state" / "project-state.json").is_file():
         raise ValueError("project root must be an initialized FSCR project workspace")
-    return root / REVIEW_ARTIFACT_DIRECTORY
+    return artifact_path(root, root / REVIEW_ARTIFACT_DIRECTORY)
 
 
 def write_state(payload: dict[str, Any], args: argparse.Namespace) -> tuple[Path, str, dict[str, str]]:
-    digest = hashlib.sha256(canonical_json(payload).encode()).hexdigest()
-    state = {"target": args.target_url.rstrip("/"), "method": "POST", "path": POST_PATH, "digest": digest, "payload": payload}
-    directory = review_artifact_directory(args.project_root)
-    directory.mkdir(mode=0o700, parents=True, exist_ok=True)
+    state = approval_envelope(payload, args.target_url, args.project_root)
+    digest = approval_digest(state)
+    state["digest"] = digest
+    if (Path(args.openapi_file_name).name != args.openapi_file_name
+            or args.openapi_file_name in {"connector-definition-approval.json", "connector-definition-approval.md"}):
+        raise ValueError("OpenAPI file name must be a non-reserved basename")
+    current = review_artifact_directory(args.project_root)
+    directory = new_preview_directory(current, args.project_root)
     openapi_path = directory / args.openapi_file_name
     approval_path = directory / "connector-definition-approval.json"
     report_path = directory / "connector-definition-approval.md"
-    publish_json(openapi_path, payload["extractedData"]["fileContents"])
-    publish_json(approval_path, state)
-    report_path.write_text(
+    write_new_text(openapi_path, json.dumps(payload["extractedData"]["fileContents"], ensure_ascii=False, indent=2) + "\n", args.project_root)
+    write_new_text(approval_path, json.dumps(state, ensure_ascii=False, indent=2) + "\n", args.project_root)
+    write_new_text(report_path,
         "# Connector Definition Approval Required\n\n"
         f"Target environment: {state['target']}\n\n"
         f"Operation: {state['method']} {state['path']}\n\n"
         "Review the complete, credential-free payload in `connector-definition-approval.json`.\n\n"
-        f"Payload SHA-256: `{digest}`\n",
-        encoding="utf-8",
+        f"Project workspace: {state['project_root']}\n\n"
+        f"Approval envelope SHA-256: `{digest}`\n",
+        args.project_root,
     )
-    os.chmod(report_path, 0o600)
-    return approval_path, digest, {"openapi": str(openapi_path), "approval": str(approval_path), "report": str(report_path)}
+    artifacts = {"openapi": str(openapi_path), "approval": str(approval_path), "report": str(report_path)}
+    pointer = publish_current_pointer(current, {"approvalState": str(approval_path), "digest": digest, "artifacts": artifacts}, args.project_root)
+    return approval_path, digest, {**artifacts, "currentPointer": str(pointer)}
 
 
 def connector_id_from_response(response: Any) -> str | None:
@@ -236,6 +261,7 @@ def main() -> int:
     connector_setup.add_argument("--connector-setup-json")
     connector_setup.add_argument("--connector-setup-file")
     execute_parser = subcommands.add_parser("execute")
+    execute_parser.add_argument("--project-root", required=True, help="Selected initialized workspace; must match the approved envelope.")
     execute_parser.add_argument("--approval-state", required=True)
     execute_parser.add_argument("--approve-digest", required=True)
     execute_parser.add_argument("--properties", required=True, help="Fusion/Risk Cloud properties file passed to the shared REST client.")
@@ -254,21 +280,19 @@ def main() -> int:
             state_path, digest, artifacts = write_state(payload, args)
             print(json.dumps({"approvalRequired": True, "target": args.target_url.rstrip("/"), "method": "POST", "path": POST_PATH, "approvalState": str(state_path), "digest": digest, "artifacts": artifacts}, ensure_ascii=False, indent=2))
             return 0
-        state = json.loads(Path(args.approval_state).read_text(encoding="utf-8"))
-        if state.get("digest") != args.approve_digest:
-            raise ValueError("approval digest does not match the retained preview")
-        expected_digest = hashlib.sha256(canonical_json(state.get("payload")).encode()).hexdigest()
-        if state["digest"] != expected_digest:
-            raise ValueError("approval payload integrity verification failed")
+        args.approval_state = artifact_path(args.project_root, args.approval_state)
+        state = json.loads(args.approval_state.read_text(encoding="utf-8"))
+        verify_approval(state, args.approve_digest, args.project_root)
         require_approved_rest_target(Path(args.properties), state["target"])
         client = Path(__file__).resolve().parents[6] / "core/fusion-api/rest-api-client/scripts/fusion_rmc_rest_client.py"
         body_path = Path(args.approval_state).with_suffix(".payload.json")
-        body_path.write_text(json.dumps(state["payload"], ensure_ascii=False) + "\n", encoding="utf-8")
-        os.chmod(body_path, 0o600)
+        write_new_text(body_path, json.dumps(state["payload"], ensure_ascii=False) + "\n", args.project_root)
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json", prefix="epm-connector-response-", delete=False, encoding="utf-8") as response:
             response_path = response.name
         command = [sys.executable, str(client), POST_PATH, "--method", "POST", "--body-file", str(body_path), "--output", response_path, "--properties", args.properties]
         try:
+            # Recheck the selected connection immediately before dispatch.
+            require_approved_rest_target(Path(args.properties), state["target"])
             result = subprocess.run(command, check=False)
             if result.returncode != 0:
                 return result.returncode

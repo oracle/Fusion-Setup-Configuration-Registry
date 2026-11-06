@@ -1,6 +1,8 @@
 # Identical option-alias qualification
 
-Candidate `identical-option-aliases-11.13.27.01-candidate-v1` is implemented in
+The adapter checks the fresh template schema without a release-number allowlist. Candidate preparation does not qualify ordinary option writes by itself.
+
+Candidate `identical-option-aliases-schema-candidate-v1` is implemented in
 `fsm_transport.compose_changes` and `prepare_members`. It is available only for
 an explicitly selected, non-production maintainer qualification run. It is not
 yet a qualified customer profile or evidence of a successful Fusion import.
@@ -16,7 +18,7 @@ BuName and empty OtherOrgId; explicit global scope uses empty BuName and -1.
 Organization changes remain solely in EXM_ORG_SETTING. Preserve all template
 members and metadata bytes. Never include unrelated baseline rows in the delta.
 
-The exact schema/release guard remains mandatory. Canonical revalidation rejects
+The exact schema guard remains mandatory. Canonical revalidation rejects
 forged codes/values/fields and duplicate requested identities. The source-backed
 reason to test this strategy is that the reviewed shared-node collision picks
 one alias; either candidate alias supplies the same requested values. Offline

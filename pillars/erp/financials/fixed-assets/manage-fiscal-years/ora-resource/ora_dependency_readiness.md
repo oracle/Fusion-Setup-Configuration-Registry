@@ -5,7 +5,7 @@
 | Sequence | Dependency | Required Action |
 |---:|---|---|
 | 1 | Ledger and Fixed Assets start evidence | Resolve the earliest complete ledger fiscal year when a ledger is supplied, and obtain one clear Oldest DPIS value before applying the Start fiscal year defaulting rule. Retrieve System Controls once per target environment and reuse its Oldest DPIS value for all ledgers and subsequent requests; do not fetch it separately for each ledger. |
-| 2 | Equivalent Fixed Assets fiscal year | After deriving ledger periods or validating the user-defined fiscal-year cycle and resolving the optional start year from System Controls, always find matching existing Fixed Assets fiscal years, including when a Fiscal Year Name was supplied, then obtain the user reuse-or-create decision. This gate is mandatory before exact-name checking, preview, or package preparation. |
+| 2 | Equivalent Fixed Assets fiscal year | After deriving ledger periods or validating the user-defined fiscal-year cycle and resolving the optional start year from System Controls, check a supplied candidate Fiscal Year Name read-only first (or mark it not applicable when omitted), then find matching existing Fixed Assets fiscal years and obtain the user reuse-or-create decision. The candidate check never replaces that decision. This gate is mandatory before preview or package preparation; a newly supplied or changed create-new name must pass exact-name checking after the decision. |
 | 3 | Selected fiscal-year action | Reuse the exact user-selected equivalent fiscal year, or create the user-named new fiscal year, only after all technical values are known. |
 
 ## Required Checks

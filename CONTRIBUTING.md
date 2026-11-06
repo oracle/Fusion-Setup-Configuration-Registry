@@ -5,7 +5,7 @@ Please let us know your ideas, missing features, or bugs found. Please [file a R
 
 Any information, ideas or suggestions that you provide to us either through a Bug Report or a Feature Request shall be considered Feedback. 
 
-If you think you've found a security vulnerability, do not raise a GitHub issue and follow the instructions in our [security policy](./security.md).
+If you think you've found a security vulnerability, do not raise a GitHub issue and follow the instructions in our [security policy](./SECURITY.md).
 ## Contributing code
 
 For legal reasons, we cannot accept external pull requests. 

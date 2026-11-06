@@ -57,3 +57,19 @@ project/{project_id}/artifacts/shared/token-usage/current/token-usage-log.md
 
 Use exact tokenizer/API accounting when available; otherwise use the repository
 default `chars/4` estimate and note any exclusions.
+
+## Implementation Validation
+
+- [Prevalidation](validation/prevalidation/SKILL.md):
+  environment readiness and the run-or-skip gate before Run Book creation.
+- [Implementation Review](validation/configuration-completeness-validator/SKILL.md):
+  approved requirements, task evidence, actual setup and manual verification gaps.
+- [Transactional Validation Coordinator](validation/transactional-validation-coordinator/SKILL.md):
+  one explicitly selected pillar check/SVF, declared execution route and cleanup.
+- [Implementation Summary and Evidence](validation/implementation-summary-and-evidence/SKILL.md):
+  traceable HTML/JSON reports and scoped readiness.
+
+Prevalidation is hybrid; the other validation workflows are assisted. Product
+checks remain pillar-owned; missing live routes are blocked.
+[Validation Reporting](../core/validation/reporting/SKILL.md)
+provides local schema checks, assessment and report publication.

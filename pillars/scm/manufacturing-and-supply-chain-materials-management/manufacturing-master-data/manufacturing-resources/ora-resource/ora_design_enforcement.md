@@ -4,10 +4,10 @@
 
 | Sequence | Step | What Must Happen |
 |---|---|---|
-| 1 | Validate resource identity | Confirm required organization, type, unique code/name, and UOM. |
+| 1 | Validate resource identity | On create, confirm required organization, type, unique code/name, and UOM. On PATCH, resolve the existing resource identity and validate only explicitly supplied changes; do not require unchanged create fields. |
 | 2 | Validate supported configuration | Confirm resource class, costing, HCM scheduling, automation, and inactive-date rules that apply. |
 | 3 | Validate child compatibility | Confirm labor and equipment instances match the parent resource type and are valid for their associations. |
-| 4 | Enforce import route | Use core.data-loader; use REST as primary and FSM only under the existing task-local fallback and approval gate. |
+| 4 | Enforce import route | Use core.data-loader with the manifest dataloader_import_mode unless the active workflow records an explicit supported mode override. Validate the selected native FSM package or REST source and retain the task-local artifact validation and approval gate. |
 
 ## Design Rules
 

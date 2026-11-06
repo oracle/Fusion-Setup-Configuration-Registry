@@ -23,7 +23,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 100
+            "line": 104
           },
           "readiness": {
             "status": "ready",
@@ -73,7 +73,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 173
+            "line": 181
           },
           "readiness": {
             "status": "ready",
@@ -98,7 +98,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 174
+            "line": 182
           },
           "readiness": {
             "status": "ready",
@@ -124,7 +124,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 101
+            "line": 105
           },
           "readiness": {
             "status": "ready",
@@ -139,17 +139,18 @@
           "execution_route": "local",
           "transitions": {
             "valid": "FY.APPLY_DEFAULTS",
+            "not_applicable": "FY.APPLY_DEFAULTS",
             "invalid": "FY.HANDLE_INPUT"
           },
           "prerequisites": [
             "FY.DECIDE_EQUIVALENT"
           ],
           "on_failure": "stop",
-          "applies_when": "User selected create-new; require the first Fiscal Year Date interval to contain Oldest DPIS.",
+          "applies_when": "User selected create-new. For an Oldest-DPIS-based start, including a missing start defaulted from System Controls, require the first Fiscal Year Date interval to contain Oldest DPIS; return valid or invalid. For a ledger-derived or explicitly supplied non-DPIS start, validate its selected cycle and coverage, preserve the accepted basis, and return not_applicable for DPIS containment; invalid basis or coverage returns invalid.",
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 102
+            "line": 106
           },
           "readiness": {
             "status": "ready",
@@ -170,11 +171,11 @@
             "FY.VALIDATE_DPIS_CONTAINMENT"
           ],
           "on_failure": "stop",
-          "applies_when": "User selected create-new and the pre-decision exact-name check found no existing fiscal year.",
+          "applies_when": "User selected create-new and the exact selected name is confirmed absent. Reuse a current pre-decision name check only for the same unchanged name and target; otherwise complete the selected-name check after the decision before applying defaults.",
           "source": {
             "file": "ora_defaulting_rules.md",
             "anchor": "task-nodes",
-            "line": 41
+            "line": 46
           },
           "readiness": {
             "status": "ready",

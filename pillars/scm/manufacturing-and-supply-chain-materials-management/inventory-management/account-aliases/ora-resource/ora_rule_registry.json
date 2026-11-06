@@ -1,0 +1,82 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "ORA_ACCOUNT_ALIASES",
+      "task_name": "Account Aliases",
+      "start_node": "ACCOUNT_ALIASES.NORMALIZE_FSM_DATES",
+      "nodes": [
+        {
+          "id": "ACCOUNT_ALIASES.NORMALIZE_FSM_DATES",
+          "node_type": "step",
+          "sequence": 10,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "normalized": "RETURN_SUCCESS",
+            "ambiguous-or-invalid": "RETURN_ISSUES"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Before preparing an Account Aliases FSM CSV row with an Enable Date or Disable Date.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 22
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RETURN_SUCCESS",
+          "node_type": "terminal",
+          "sequence": 20,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "ACCOUNT_ALIASES.NORMALIZE_FSM_DATES"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Every supplied Account Aliases Enable Date and Disable Date is normalized to `YYYY/MM/DD`, or Disable Date is blank.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 21
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RETURN_ISSUES",
+          "node_type": "terminal",
+          "sequence": 30,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "continue",
+          "applies_when": "An Account Aliases Enable Date or Disable Date requires user clarification before FSM CSV preparation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 22
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

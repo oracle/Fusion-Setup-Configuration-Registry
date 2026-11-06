@@ -16,7 +16,7 @@ These rules are reusable across target environments. Planner readiness means the
 | Evidence | Boundary |
 |---|---|
 | UI direction defaults POSITIVE, NEGATIVE and BOTH | UI initialization is not an FSM import default contract. |
-| Blank BuName in organization-setting import maps to -1 | Do not infer that omitted scope means global. The shipped organization-setting transport profile covers its exact schema and release; other representations need qualification. |
+| Blank BuName in organization-setting import maps to -1 | Do not infer that omitted scope means global. The shipped organization-setting transport profile covers its exact schema; other representations need qualification. |
 | Setup-option global branch compares OtherOrgId text with -1 | Do not copy numeric BU IDs across environments or collapse this branch into the organization-setting rule. |
 | Runtime global fallback when BU option row is absent | An existing row with a non-enabling value is not the same as an absent row. Runtime fallback does not authorize silently defaulting a setup value. |
 

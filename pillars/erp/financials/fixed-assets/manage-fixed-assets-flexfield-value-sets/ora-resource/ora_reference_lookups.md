@@ -188,4 +188,3 @@ Exclude no-op sets from the change proposal. Any blocked set stops the batch.
 |---|---|---:|---|---|---|---|---|
 | VSET.LOOKUP_EXISTING | decision | 30 | evaluate_result | match->VSET.CHECK_VALUE_SCOPE;absent->VSET.APPLY_DEFAULTS;different_or_ambiguous->VSET.HANDLE_LOOKUP | VSET.RESOLVE_DEPENDENCIES | stop | REST definition batch retrieved and pagination, filters and visibility verified |
 | VSET.CHECK_VALUE_SCOPE | decision | 35 | evaluate_result | definition_only->VSET.DONE_MATCH;values_present->VSET.DONE_VALUES;values_missing->VSET.APPLY_DEFAULTS;blocked->VSET.HANDLE_VALUES | VSET.LOOKUP_EXISTING | stop | Existing definition matches; compare requested values against complete grouped REST responses |
-| VSET.HANDED_OFF_TO_PARENT | terminal | 120 | terminal | none | VSET.IMPORT_GATE | continue | Accepted — pending parent verification. The Fixed Assets parent owns status, process-log review, and fresh target read-back. |

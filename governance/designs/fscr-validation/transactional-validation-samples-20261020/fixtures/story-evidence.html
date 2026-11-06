@@ -1,0 +1,2116 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Synthetic evidence catalog - FSCR review samples</title><style>
+:root{--ink:#20343e;--muted:#5b6c73;--line:#dbe1df;--teal:#0e6862}
+*{box-sizing:border-box}body{margin:0;background:#f4f3ef;color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{background:#173e45;color:white;padding:18px 28px;display:flex;justify-content:space-between;gap:20px}header a{color:white}
+main{max-width:1180px;margin:0 auto;padding:28px 24px 64px}h1{font-size:42px;line-height:1.1;margin:16px 0}h2{font-size:23px;line-height:1.25;margin:28px 0 12px}
+p{margin:12px 0 18px}a{color:var(--teal)}.notice{background:#fff0cc;border-left:5px solid #a97415;padding:14px 18px;font-size:14px}
+.meta{color:var(--muted);font-size:14px}.eyebrow{letter-spacing:.1em;text-transform:uppercase;color:var(--teal);font-size:12px;font-weight:800}
+.sheet{background:white;border:1px solid var(--line);border-radius:12px;padding:24px;margin-top:24px}
+.sheet>:first-child{margin-top:0}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:14px;margin:14px 0 22px;table-layout:fixed}
+th,td{padding:12px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left;overflow-wrap:anywhere}th{background:#edf3f1;font-size:12px}
+tr:last-child td{border-bottom:0}.callout{border-left:5px solid #698793;border-radius:6px;background:#edf3f5;padding:18px 22px;margin:20px 0}.callout strong{display:block;font-size:21px}
+.callout p{margin:6px 0 0}.good{border-color:#25725b;background:#eaf5ef}.bad{border-color:#b3493a;background:#fff0ed}.warn{border-color:#af7816;background:#fff4da}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0}.metric{padding:18px;background:#f5f7f6;border:1px solid var(--line);border-radius:7px}
+.metric b{font-size:30px;display:block}.metric span{font-size:12px;letter-spacing:.04em;color:var(--muted)}
+li{margin:10px 0}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;background:#f5f7f6;padding:16px}.links{display:flex;flex-wrap:wrap;gap:12px 20px}
+footer{margin-top:30px;font-size:12px;color:var(--muted)}.badge{display:inline-block;padding:3px 8px;border-radius:4px;background:#e4eee9;font-size:12px;font-weight:800}
+@media(max-width:700px){main{padding:20px 14px}h1{font-size:31px}.sheet{padding:16px}table{min-width:610px}.metrics{gap:6px}.metric{padding:12px}.metric b{font-size:23px}header{padding:16px}}
+@media print{body{background:white;font-size:11px}main{max-width:none;padding:0}header{background:white;color:#20343e}header a,.links{display:none}h1{font-size:28px}h2{font-size:18px}.sheet{border:0;padding:0;break-before:page}.sheet:first-of-type{break-before:auto}table{font-size:10px;min-width:0!important}.callout,.metrics,tr{break-inside:avoid}th,td{padding:7px}.notice{font-size:10px}.meta{font-size:10px}}
+</style></head><body>
+<header><strong>FSCR / VALIDATION</strong><a href="../index.html">Review pack index</a></header><main>
+<p class="notice"><strong>SYNTHETIC SAMPLE - FOR REVIEW. All values, times, approvals and evidence are fictional. No Fusion calls, configuration changes or transactions were performed.</strong></p><div class="eyebrow">Shareable report example</div><h1>Synthetic evidence catalog</h1><p class="meta">Fictional references shared by all three reports</p>
+<section class="sheet" id="impl-approved-scope"><h2>impl-approved-scope</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;implementation-review&quot;,
+    &quot;record_type&quot;: &quot;scope_ref&quot;,
+    &quot;sample_record&quot;: &quot;sample-evidence.html#impl-approved-scope&quot;
+  },
+  {
+    &quot;stage&quot;: &quot;implementation-review&quot;,
+    &quot;record_type&quot;: &quot;decisions&quot;,
+    &quot;sample_record&quot;: {
+      &quot;decision_id&quot;: &quot;impl-demo-baseline&quot;,
+      &quot;summary&quot;: &quot;Fictional DEMO-1.0 requirements define the four-item demonstration scope; no real customer approval or environment is represented.&quot;,
+      &quot;owner&quot;: &quot;Framework implementation lead&quot;,
+      &quot;source_ref&quot;: &quot;sample-evidence.html#impl-approved-scope&quot;
+    }
+  }
+]</pre></section><section class="sheet" id="impl-business-unit"><h2>impl-business-unit</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;implementation-review&quot;,
+    &quot;record_type&quot;: &quot;checks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;result_id&quot;: &quot;impl-result-1&quot;,
+      &quot;check_id&quot;: &quot;impl-business-unit&quot;,
+      &quot;check_version&quot;: &quot;1.0.0&quot;,
+      &quot;title&quot;: &quot;Verify business unit procurement enablement&quot;,
+      &quot;owner&quot;: &quot;Framework implementation lead&quot;,
+      &quot;required&quot;: true,
+      &quot;blocking&quot;: true,
+      &quot;requirement_refs&quot;: [
+        &quot;impl-req-1&quot;
+      ],
+      &quot;task_refs&quot;: [
+        &quot;DEMO-T1&quot;
+      ],
+      &quot;source_ref&quot;: &quot;sample-evidence.html#impl-check-1&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;method&quot;: &quot;artifact&quot;,
+      &quot;environment&quot;: &quot;DEMO-TEST&quot;,
+      &quot;observed_at&quot;: &quot;2026-10-20T10:01:00Z&quot;,
+      &quot;evidence_current&quot;: true,
+      &quot;reason&quot;: &quot;&quot;,
+      &quot;assertions&quot;: [
+        {
+          &quot;assertion_id&quot;: &quot;impl-assertion-1&quot;,
+          &quot;expected&quot;: &quot;DEMO-BU is enabled for procurement.&quot;,
+          &quot;observed&quot;: &quot;Synthetic observation: DEMO-BU is enabled for procurement.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#impl-business-unit&quot;
+          ]
+        }
+      ],
+      &quot;evidence_refs&quot;: [
+        &quot;sample-evidence.html#impl-business-unit&quot;
+      ],
+      &quot;performed_by&quot;: &quot;&quot;,
+      &quot;next_action&quot;: &quot;None required for this fictional check.&quot;
+    }
+  }
+]</pre></section><section class="sheet" id="impl-check-1"><h2>impl-check-1</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;implementation-review&quot;,
+    &quot;record_type&quot;: &quot;checks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;result_id&quot;: &quot;impl-result-1&quot;,
+      &quot;check_id&quot;: &quot;impl-business-unit&quot;,
+      &quot;check_version&quot;: &quot;1.0.0&quot;,
+      &quot;title&quot;: &quot;Verify business unit procurement enablement&quot;,
+      &quot;owner&quot;: &quot;Framework implementation lead&quot;,
+      &quot;required&quot;: true,
+      &quot;blocking&quot;: true,
+      &quot;requirement_refs&quot;: [
+        &quot;impl-req-1&quot;
+      ],
+      &quot;task_refs&quot;: [
+        &quot;DEMO-T1&quot;
+      ],
+      &quot;source_ref&quot;: &quot;sample-evidence.html#impl-check-1&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;method&quot;: &quot;artifact&quot;,
+      &quot;environment&quot;: &quot;DEMO-TEST&quot;,
+      &quot;observed_at&quot;: &quot;2026-10-20T10:01:00Z&quot;,
+      &quot;evidence_current&quot;: true,
+      &quot;reason&quot;: &quot;&quot;,
+      &quot;assertions&quot;: [
+        {
+          &quot;assertion_id&quot;: &quot;impl-assertion-1&quot;,
+          &quot;expected&quot;: &quot;DEMO-BU is enabled for procurement.&quot;,
+          &quot;observed&quot;: &quot;Synthetic observation: DEMO-BU is enabled for procurement.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#impl-business-unit&quot;
+          ]
+        }
+      ],
+      &quot;evidence_refs&quot;: [
+        &quot;sample-evidence.html#impl-business-unit&quot;
+      ],
+      &quot;performed_by&quot;: &quot;&quot;,
+      &quot;next_action&quot;: &quot;None required for this fictional check.&quot;
+    }
+  }
+]</pre></section><section class="sheet" id="impl-check-2"><h2>impl-check-2</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;implementation-review&quot;,
+    &quot;record_type&quot;: &quot;checks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;result_id&quot;: &quot;impl-result-2&quot;,
+      &quot;check_id&quot;: &quot;impl-supplier-site&quot;,
+      &quot;check_version&quot;: &quot;1.0.0&quot;,
+      &quot;title&quot;: &quot;Verify supplier site activation and business unit&quot;,
+      &quot;owner&quot;: &quot;Procurement pillar owner&quot;,
+      &quot;required&quot;: true,
+      &quot;blocking&quot;: true,
+      &quot;requirement_refs&quot;: [
+        &quot;impl-req-2&quot;
+      ],
+      &quot;task_refs&quot;: [
+        &quot;DEMO-T2&quot;
+      ],
+      &quot;source_ref&quot;: &quot;sample-evidence.html#impl-check-2&quot;,
+      &quot;status&quot;: &quot;FAIL&quot;,
+      &quot;method&quot;: &quot;artifact&quot;,
+      &quot;environment&quot;: &quot;DEMO-TEST&quot;,
+      &quot;observed_at&quot;: &quot;2026-10-20T10:02:00Z&quot;,
+      &quot;evidence_current&quot;: true,
+      &quot;reason&quot;: &quot;The fictional site activation differs from the approved expectation even though DEMO-T2 is completed.&quot;,
+      &quot;assertions&quot;: [
+        {
+          &quot;assertion_id&quot;: &quot;impl-assertion-2&quot;,
+          &quot;expected&quot;: &quot;DEMO-SITE is active and assigned to DEMO-BU.&quot;,
+          &quot;observed&quot;: &quot;Synthetic observation: DEMO-SITE is inactive and assigned to DEMO-BU.&quot;,
+          &quot;status&quot;: &quot;FAIL&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#impl-supplier-site&quot;
+          ]
+        }
+      ],
+      &quot;evidence_refs&quot;: [
+        &quot;sample-evidence.html#impl-supplier-site&quot;
+      ],
+      &quot;performed_by&quot;: &quot;&quot;,
+      &quot;next_action&quot;: &quot;Correct the inactive supplier site through its owning implementation skill and approval controls, then request a new read-back validation; this report does not change setup.&quot;
+    }
+  }
+]</pre></section><section class="sheet" id="impl-check-3"><h2>impl-check-3</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;implementation-review&quot;,
+    &quot;record_type&quot;: &quot;checks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;result_id&quot;: &quot;impl-result-3&quot;,
+      &quot;check_id&quot;: &quot;impl-purchasable-item&quot;,
+      &quot;check_version&quot;: &quot;1.0.0&quot;,
+      &quot;title&quot;: &quot;Verify purchasable item organization&quot;,
+      &quot;owner&quot;: &quot;Procurement pillar owner&quot;,
+      &quot;required&quot;: true,
+      &quot;blocking&quot;: true,
+      &quot;requirement_refs&quot;: [
+        &quot;impl-req-3&quot;
+      ],
+      &quot;task_refs&quot;: [
+        &quot;DEMO-T3&quot;
+      ],
+      &quot;source_ref&quot;: &quot;sample-evidence.html#impl-check-3&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;method&quot;: &quot;artifact&quot;,
+      &quot;environment&quot;: &quot;DEMO-TEST&quot;,
+      &quot;observed_at&quot;: &quot;2026-10-20T10:03:00Z&quot;,
+      &quot;evidence_current&quot;: true,
+      &quot;reason&quot;: &quot;&quot;,
+      &quot;assertions&quot;: [
+        {
+          &quot;assertion_id&quot;: &quot;impl-assertion-3&quot;,
+          &quot;expected&quot;: &quot;DEMO-ITEM is purchasable in DEMO-ORG.&quot;,
+          &quot;observed&quot;: &quot;Synthetic observation: DEMO-ITEM is purchasable in DEMO-ORG.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#impl-purchasable-item&quot;
+          ]
+        }
+      ],
+      &quot;evidence_refs&quot;: [
+        &quot;sample-evidence.html#impl-purchasable-item&quot;
+      ],
+      &quot;performed_by&quot;: &quot;&quot;,
+      &quot;next_action&quot;: &quot;None required for this fictional check.&quot;
+    }
+  }
+]</pre></section><section class="sheet" id="impl-check-4"><h2>impl-check-4</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;implementation-review&quot;,
+    &quot;record_type&quot;: &quot;checks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;result_id&quot;: &quot;impl-result-4&quot;,
+      &quot;check_id&quot;: &quot;impl-approval-rule&quot;,
+      &quot;check_version&quot;: &quot;1.0.0&quot;,
+      &quot;title&quot;: &quot;Verify approval rule through a manual application check&quot;,
+      &quot;owner&quot;: &quot;Implementer&quot;,
+      &quot;required&quot;: true,
+      &quot;blocking&quot;: true,
+      &quot;requirement_refs&quot;: [
+        &quot;impl-req-4&quot;
+      ],
+      &quot;task_refs&quot;: [
+        &quot;DEMO-T4&quot;
+      ],
+      &quot;source_ref&quot;: &quot;sample-evidence.html#impl-check-4&quot;,
+      &quot;status&quot;: &quot;NOT_RUN&quot;,
+      &quot;method&quot;: &quot;none&quot;,
+      &quot;environment&quot;: &quot;DEMO-TEST&quot;,
+      &quot;observed_at&quot;: &quot;2026-10-20T10:04:00Z&quot;,
+      &quot;evidence_current&quot;: false,
+      &quot;reason&quot;: &quot;The task is pending and no manual observation has been supplied. The fictional assessment timestamp records this pending state, not a completed check.&quot;,
+      &quot;assertions&quot;: [
+        {
+          &quot;assertion_id&quot;: &quot;impl-assertion-4&quot;,
+          &quot;expected&quot;: &quot;DEMO-APPROVAL is enabled with approver group DEMO-APPROVERS.&quot;,
+          &quot;observed&quot;: &quot;&quot;,
+          &quot;status&quot;: &quot;NOT_OBSERVED&quot;,
+          &quot;evidence_refs&quot;: []
+        }
+      ],
+      &quot;evidence_refs&quot;: [],
+      &quot;performed_by&quot;: &quot;&quot;,
+      &quot;next_action&quot;: &quot;Complete the approval rule through its owning skill, then run the pillar-provided manual check and supply sanitized evidence with performer and observation time. A bypass leaves verification unconfirmed.&quot;
+    }
+  }
+]</pre></section><section class="sheet" id="impl-purchasable-item"><h2>impl-purchasable-item</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;implementation-review&quot;,
+    &quot;record_type&quot;: &quot;checks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;result_id&quot;: &quot;impl-result-3&quot;,
+      &quot;check_id&quot;: &quot;impl-purchasable-item&quot;,
+      &quot;check_version&quot;: &quot;1.0.0&quot;,
+      &quot;title&quot;: &quot;Verify purchasable item organization&quot;,
+      &quot;owner&quot;: &quot;Procurement pillar owner&quot;,
+      &quot;required&quot;: true,
+      &quot;blocking&quot;: true,
+      &quot;requirement_refs&quot;: [
+        &quot;impl-req-3&quot;
+      ],
+      &quot;task_refs&quot;: [
+        &quot;DEMO-T3&quot;
+      ],
+      &quot;source_ref&quot;: &quot;sample-evidence.html#impl-check-3&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;method&quot;: &quot;artifact&quot;,
+      &quot;environment&quot;: &quot;DEMO-TEST&quot;,
+      &quot;observed_at&quot;: &quot;2026-10-20T10:03:00Z&quot;,
+      &quot;evidence_current&quot;: true,
+      &quot;reason&quot;: &quot;&quot;,
+      &quot;assertions&quot;: [
+        {
+          &quot;assertion_id&quot;: &quot;impl-assertion-3&quot;,
+          &quot;expected&quot;: &quot;DEMO-ITEM is purchasable in DEMO-ORG.&quot;,
+          &quot;observed&quot;: &quot;Synthetic observation: DEMO-ITEM is purchasable in DEMO-ORG.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#impl-purchasable-item&quot;
+          ]
+        }
+      ],
+      &quot;evidence_refs&quot;: [
+        &quot;sample-evidence.html#impl-purchasable-item&quot;
+      ],
+      &quot;performed_by&quot;: &quot;&quot;,
+      &quot;next_action&quot;: &quot;None required for this fictional check.&quot;
+    }
+  }
+]</pre></section><section class="sheet" id="impl-requirement-1"><h2>impl-requirement-1</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;implementation-review&quot;,
+    &quot;record_type&quot;: &quot;requirements&quot;,
+    &quot;sample_record&quot;: {
+      &quot;requirement_id&quot;: &quot;impl-req-1&quot;,
+      &quot;description&quot;: &quot;Business unit is enabled for the approved procurement scope.&quot;,
+      &quot;source_ref&quot;: &quot;sample-evidence.html#impl-requirement-1&quot;,
+      &quot;expected_setup&quot;: &quot;Business unit DEMO-BU is enabled for procurement.&quot;,
+      &quot;task_refs&quot;: [
+        &quot;DEMO-T1&quot;
+      ],
+      &quot;check_ids&quot;: [
+        &quot;impl-business-unit&quot;
+      ],
+      &quot;owner&quot;: &quot;Framework implementation lead&quot;,
+      &quot;required&quot;: true
+    }
+  }
+]</pre></section><section class="sheet" id="impl-requirement-2"><h2>impl-requirement-2</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;implementation-review&quot;,
+    &quot;record_type&quot;: &quot;requirements&quot;,
+    &quot;sample_record&quot;: {
+      &quot;requirement_id&quot;: &quot;impl-req-2&quot;,
+      &quot;description&quot;: &quot;Supplier site is active and linked to the approved business unit.&quot;,
+      &quot;source_ref&quot;: &quot;sample-evidence.html#impl-requirement-2&quot;,
+      &quot;expected_setup&quot;: &quot;Supplier site DEMO-SITE is active and assigned to DEMO-BU.&quot;,
+      &quot;task_refs&quot;: [
+        &quot;DEMO-T2&quot;
+      ],
+      &quot;check_ids&quot;: [
+        &quot;impl-supplier-site&quot;
+      ],
+      &quot;owner&quot;: &quot;Procurement pillar owner&quot;,
+      &quot;required&quot;: true
+    }
+  }
+]</pre></section><section class="sheet" id="impl-requirement-3"><h2>impl-requirement-3</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;implementation-review&quot;,
+    &quot;record_type&quot;: &quot;requirements&quot;,
+    &quot;sample_record&quot;: {
+      &quot;requirement_id&quot;: &quot;impl-req-3&quot;,
+      &quot;description&quot;: &quot;Item is enabled for purchasing in the approved organization.&quot;,
+      &quot;source_ref&quot;: &quot;sample-evidence.html#impl-requirement-3&quot;,
+      &quot;expected_setup&quot;: &quot;Item DEMO-ITEM is purchasable in organization DEMO-ORG.&quot;,
+      &quot;task_refs&quot;: [
+        &quot;DEMO-T3&quot;
+      ],
+      &quot;check_ids&quot;: [
+        &quot;impl-purchasable-item&quot;
+      ],
+      &quot;owner&quot;: &quot;Procurement pillar owner&quot;,
+      &quot;required&quot;: true
+    }
+  }
+]</pre></section><section class="sheet" id="impl-requirement-4"><h2>impl-requirement-4</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;implementation-review&quot;,
+    &quot;record_type&quot;: &quot;requirements&quot;,
+    &quot;sample_record&quot;: {
+      &quot;requirement_id&quot;: &quot;impl-req-4&quot;,
+      &quot;description&quot;: &quot;Approval rule is configured and manually verified.&quot;,
+      &quot;source_ref&quot;: &quot;sample-evidence.html#impl-requirement-4&quot;,
+      &quot;expected_setup&quot;: &quot;Approval rule DEMO-APPROVAL is enabled with the agreed approver group DEMO-APPROVERS.&quot;,
+      &quot;task_refs&quot;: [
+        &quot;DEMO-T4&quot;
+      ],
+      &quot;check_ids&quot;: [
+        &quot;impl-approval-rule&quot;
+      ],
+      &quot;owner&quot;: &quot;Implementer&quot;,
+      &quot;required&quot;: true
+    }
+  }
+]</pre></section><section class="sheet" id="impl-supplier-site"><h2>impl-supplier-site</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;implementation-review&quot;,
+    &quot;record_type&quot;: &quot;checks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;result_id&quot;: &quot;impl-result-2&quot;,
+      &quot;check_id&quot;: &quot;impl-supplier-site&quot;,
+      &quot;check_version&quot;: &quot;1.0.0&quot;,
+      &quot;title&quot;: &quot;Verify supplier site activation and business unit&quot;,
+      &quot;owner&quot;: &quot;Procurement pillar owner&quot;,
+      &quot;required&quot;: true,
+      &quot;blocking&quot;: true,
+      &quot;requirement_refs&quot;: [
+        &quot;impl-req-2&quot;
+      ],
+      &quot;task_refs&quot;: [
+        &quot;DEMO-T2&quot;
+      ],
+      &quot;source_ref&quot;: &quot;sample-evidence.html#impl-check-2&quot;,
+      &quot;status&quot;: &quot;FAIL&quot;,
+      &quot;method&quot;: &quot;artifact&quot;,
+      &quot;environment&quot;: &quot;DEMO-TEST&quot;,
+      &quot;observed_at&quot;: &quot;2026-10-20T10:02:00Z&quot;,
+      &quot;evidence_current&quot;: true,
+      &quot;reason&quot;: &quot;The fictional site activation differs from the approved expectation even though DEMO-T2 is completed.&quot;,
+      &quot;assertions&quot;: [
+        {
+          &quot;assertion_id&quot;: &quot;impl-assertion-2&quot;,
+          &quot;expected&quot;: &quot;DEMO-SITE is active and assigned to DEMO-BU.&quot;,
+          &quot;observed&quot;: &quot;Synthetic observation: DEMO-SITE is inactive and assigned to DEMO-BU.&quot;,
+          &quot;status&quot;: &quot;FAIL&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#impl-supplier-site&quot;
+          ]
+        }
+      ],
+      &quot;evidence_refs&quot;: [
+        &quot;sample-evidence.html#impl-supplier-site&quot;
+      ],
+      &quot;performed_by&quot;: &quot;&quot;,
+      &quot;next_action&quot;: &quot;Correct the inactive supplier site through its owning implementation skill and approval controls, then request a new read-back validation; this report does not change setup.&quot;
+    }
+  }
+]</pre></section><section class="sheet" id="impl-task-1"><h2>impl-task-1</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;implementation-review&quot;,
+    &quot;record_type&quot;: &quot;tasks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;task_id&quot;: &quot;DEMO-T1&quot;,
+      &quot;title&quot;: &quot;Business unit&quot;,
+      &quot;status&quot;: &quot;completed&quot;,
+      &quot;source_ref&quot;: &quot;sample-evidence.html#impl-task-1&quot;,
+      &quot;captured_at&quot;: &quot;2026-10-20T09:59:00Z&quot;,
+      &quot;environment&quot;: &quot;DEMO-TEST&quot;,
+      &quot;evidence_current&quot;: true,
+      &quot;details&quot;: &quot;Fictional source status: Completed. Synthetic evidence confirms the approved procurement enablement.&quot;,
+      &quot;owner&quot;: &quot;Framework implementation lead&quot;,
+      &quot;completed_at&quot;: &quot;2026-10-20T09:00:00Z&quot;
+    }
+  }
+]</pre></section><section class="sheet" id="impl-task-2"><h2>impl-task-2</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;implementation-review&quot;,
+    &quot;record_type&quot;: &quot;tasks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;task_id&quot;: &quot;DEMO-T2&quot;,
+      &quot;title&quot;: &quot;Supplier/site&quot;,
+      &quot;status&quot;: &quot;completed&quot;,
+      &quot;source_ref&quot;: &quot;sample-evidence.html#impl-task-2&quot;,
+      &quot;captured_at&quot;: &quot;2026-10-20T09:59:00Z&quot;,
+      &quot;environment&quot;: &quot;DEMO-TEST&quot;,
+      &quot;evidence_current&quot;: true,
+      &quot;details&quot;: &quot;Fictional source status: Completed. The separate synthetic value check finds the supplier site inactive; task completion does not prove correctness.&quot;,
+      &quot;owner&quot;: &quot;Procurement pillar owner&quot;,
+      &quot;completed_at&quot;: &quot;2026-10-20T09:15:00Z&quot;
+    }
+  }
+]</pre></section><section class="sheet" id="impl-task-3"><h2>impl-task-3</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;implementation-review&quot;,
+    &quot;record_type&quot;: &quot;tasks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;task_id&quot;: &quot;DEMO-T3&quot;,
+      &quot;title&quot;: &quot;Purchasable item&quot;,
+      &quot;status&quot;: &quot;completed&quot;,
+      &quot;source_ref&quot;: &quot;sample-evidence.html#impl-task-3&quot;,
+      &quot;captured_at&quot;: &quot;2026-10-20T09:59:00Z&quot;,
+      &quot;environment&quot;: &quot;DEMO-TEST&quot;,
+      &quot;evidence_current&quot;: true,
+      &quot;details&quot;: &quot;Fictional source status: Completed. Synthetic evidence confirms purchasing is enabled in the intended organization.&quot;,
+      &quot;owner&quot;: &quot;Procurement pillar owner&quot;,
+      &quot;completed_at&quot;: &quot;2026-10-20T09:20:00Z&quot;
+    }
+  }
+]</pre></section><section class="sheet" id="impl-task-4"><h2>impl-task-4</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;implementation-review&quot;,
+    &quot;record_type&quot;: &quot;tasks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;task_id&quot;: &quot;DEMO-T4&quot;,
+      &quot;title&quot;: &quot;Approval rule&quot;,
+      &quot;status&quot;: &quot;pending&quot;,
+      &quot;source_ref&quot;: &quot;sample-evidence.html#impl-task-4&quot;,
+      &quot;captured_at&quot;: &quot;2026-10-20T09:59:00Z&quot;,
+      &quot;environment&quot;: &quot;DEMO-TEST&quot;,
+      &quot;evidence_current&quot;: true,
+      &quot;details&quot;: &quot;Fictional source status: Pending. No completion time or manual verification evidence is available.&quot;,
+      &quot;owner&quot;: &quot;Implementer&quot;,
+      &quot;completed_at&quot;: null
+    }
+  }
+]</pre></section><section class="sheet" id="pre-auth"><h2>pre-auth</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;prevalidation&quot;,
+    &quot;record_type&quot;: &quot;checks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;category&quot;: &quot;environment_authentication&quot;,
+      &quot;check_name&quot;: &quot;Selected environment and read-session identity&quot;,
+      &quot;required&quot;: true,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;repository_evidence&quot;: [
+        &quot;Synthetic sample reference: sample-evidence.html#pre-auth; no repository or live-environment inspection is claimed.&quot;
+      ],
+      &quot;live_environment_evidence&quot;: [
+        &quot;SYNTHETIC — illustrative evidence only; no live call occurred. Fictional observation: the sample read-session identity matches DEMO-TEST and the approved sample scope.&quot;
+      ],
+      &quot;artifact_references&quot;: [
+        &quot;sample-evidence.html#pre-auth&quot;
+      ],
+      &quot;external_identifiers&quot;: [],
+      &quot;failure_classification&quot;: null,
+      &quot;recommended_remediation&quot;: &quot;No issue is illustrated for this check. Collect real evidence through the declared workflow before using this result operationally.&quot;,
+      &quot;notes&quot;: &quot;Project demo-procurement-validation. Synthetic example only: no login or environment request occurred. The actual Fusion release is unknown; this sample does not certify release compatibility.&quot;
+    }
+  },
+  {
+    &quot;stage&quot;: &quot;prevalidation&quot;,
+    &quot;record_type&quot;: &quot;scope&quot;,
+    &quot;sample_record&quot;: {
+      &quot;pillar&quot;: &quot;SCM&quot;,
+      &quot;offering&quot;: &quot;Procurement&quot;,
+      &quot;functional_areas&quot;: [
+        &quot;DEMO-FA-PROCUREMENT&quot;
+      ],
+      &quot;planned_setup_tasks&quot;: [
+        &quot;DEMO-T1 — Configure business unit DEMO-BU&quot;,
+        &quot;DEMO-T2 — Configure supplier DEMO-SUP and site DEMO-SITE&quot;,
+        &quot;DEMO-T3 — Configure purchasable item DEMO-ITEM&quot;,
+        &quot;DEMO-T4 — Configure approval rule DEMO-APPROVAL&quot;
+      ],
+      &quot;task_details&quot;: [
+        {
+          &quot;sequence&quot;: 1,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T1&quot;,
+          &quot;task_name&quot;: &quot;Configure business unit DEMO-BU&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        },
+        {
+          &quot;sequence&quot;: 2,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T2&quot;,
+          &quot;task_name&quot;: &quot;Configure supplier DEMO-SUP and site DEMO-SITE&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        },
+        {
+          &quot;sequence&quot;: 3,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T3&quot;,
+          &quot;task_name&quot;: &quot;Configure purchasable item DEMO-ITEM&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        },
+        {
+          &quot;sequence&quot;: 4,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T4&quot;,
+          &quot;task_name&quot;: &quot;Configure approval rule DEMO-APPROVAL&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        }
+      ]
+    }
+  }
+]</pre></section><section class="sheet" id="pre-catalog"><h2>pre-catalog</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;prevalidation&quot;,
+    &quot;record_type&quot;: &quot;checks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;category&quot;: &quot;catalog_readiness&quot;,
+      &quot;check_name&quot;: &quot;Planning catalog identity and mapping coverage&quot;,
+      &quot;required&quot;: true,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;repository_evidence&quot;: [
+        &quot;Synthetic sample reference: sample-evidence.html#pre-catalog; no repository or live-environment inspection is claimed.&quot;
+      ],
+      &quot;live_environment_evidence&quot;: [
+        &quot;SYNTHETIC — illustrative evidence only; no live call occurred. Fictional observation: the sample catalog maps all four DEMO task identifiers to the selected sample planning group without ambiguity.&quot;
+      ],
+      &quot;artifact_references&quot;: [
+        &quot;sample-evidence.html#pre-catalog&quot;
+      ],
+      &quot;external_identifiers&quot;: [],
+      &quot;failure_classification&quot;: null,
+      &quot;recommended_remediation&quot;: &quot;No issue is illustrated for this check. Collect real evidence through the declared workflow before using this result operationally.&quot;,
+      &quot;notes&quot;: &quot;DEMO task and functional-area codes are fictional identifiers, not Oracle catalog entries. No Oracle catalog availability was checked.&quot;
+    }
+  },
+  {
+    &quot;stage&quot;: &quot;prevalidation&quot;,
+    &quot;record_type&quot;: &quot;scope&quot;,
+    &quot;sample_record&quot;: {
+      &quot;pillar&quot;: &quot;SCM&quot;,
+      &quot;offering&quot;: &quot;Procurement&quot;,
+      &quot;functional_areas&quot;: [
+        &quot;DEMO-FA-PROCUREMENT&quot;
+      ],
+      &quot;planned_setup_tasks&quot;: [
+        &quot;DEMO-T1 — Configure business unit DEMO-BU&quot;,
+        &quot;DEMO-T2 — Configure supplier DEMO-SUP and site DEMO-SITE&quot;,
+        &quot;DEMO-T3 — Configure purchasable item DEMO-ITEM&quot;,
+        &quot;DEMO-T4 — Configure approval rule DEMO-APPROVAL&quot;
+      ],
+      &quot;task_details&quot;: [
+        {
+          &quot;sequence&quot;: 1,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T1&quot;,
+          &quot;task_name&quot;: &quot;Configure business unit DEMO-BU&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        },
+        {
+          &quot;sequence&quot;: 2,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T2&quot;,
+          &quot;task_name&quot;: &quot;Configure supplier DEMO-SUP and site DEMO-SITE&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        },
+        {
+          &quot;sequence&quot;: 3,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T3&quot;,
+          &quot;task_name&quot;: &quot;Configure purchasable item DEMO-ITEM&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        },
+        {
+          &quot;sequence&quot;: 4,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T4&quot;,
+          &quot;task_name&quot;: &quot;Configure approval rule DEMO-APPROVAL&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        }
+      ]
+    }
+  }
+]</pre></section><section class="sheet" id="pre-loader"><h2>pre-loader</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;prevalidation&quot;,
+    &quot;record_type&quot;: &quot;checks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;category&quot;: &quot;data_loader_readiness&quot;,
+      &quot;check_name&quot;: &quot;Declared loader route and metadata visibility&quot;,
+      &quot;required&quot;: true,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;repository_evidence&quot;: [
+        &quot;Synthetic sample reference: sample-evidence.html#pre-loader; no repository or live-environment inspection is claimed.&quot;
+      ],
+      &quot;live_environment_evidence&quot;: [
+        &quot;SYNTHETIC — illustrative evidence only; no live call occurred. Fictional observation: the sample route-evidence record marks the declared metadata read checks for the four planned tasks as available for the sample identity.&quot;
+      ],
+      &quot;artifact_references&quot;: [
+        &quot;sample-evidence.html#pre-loader&quot;
+      ],
+      &quot;external_identifiers&quot;: [],
+      &quot;failure_classification&quot;: null,
+      &quot;recommended_remediation&quot;: &quot;No issue is illustrated for this check. Collect real evidence through the declared workflow before using this result operationally.&quot;,
+      &quot;notes&quot;: &quot;No actual Data Loader object, registration, endpoint or payload is asserted. No upload, sample load, validation job or import was performed; future load success is not established.&quot;
+    }
+  },
+  {
+    &quot;stage&quot;: &quot;prevalidation&quot;,
+    &quot;record_type&quot;: &quot;scope&quot;,
+    &quot;sample_record&quot;: {
+      &quot;pillar&quot;: &quot;SCM&quot;,
+      &quot;offering&quot;: &quot;Procurement&quot;,
+      &quot;functional_areas&quot;: [
+        &quot;DEMO-FA-PROCUREMENT&quot;
+      ],
+      &quot;planned_setup_tasks&quot;: [
+        &quot;DEMO-T1 — Configure business unit DEMO-BU&quot;,
+        &quot;DEMO-T2 — Configure supplier DEMO-SUP and site DEMO-SITE&quot;,
+        &quot;DEMO-T3 — Configure purchasable item DEMO-ITEM&quot;,
+        &quot;DEMO-T4 — Configure approval rule DEMO-APPROVAL&quot;
+      ],
+      &quot;task_details&quot;: [
+        {
+          &quot;sequence&quot;: 1,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T1&quot;,
+          &quot;task_name&quot;: &quot;Configure business unit DEMO-BU&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        },
+        {
+          &quot;sequence&quot;: 2,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T2&quot;,
+          &quot;task_name&quot;: &quot;Configure supplier DEMO-SUP and site DEMO-SITE&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        },
+        {
+          &quot;sequence&quot;: 3,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T3&quot;,
+          &quot;task_name&quot;: &quot;Configure purchasable item DEMO-ITEM&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        },
+        {
+          &quot;sequence&quot;: 4,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T4&quot;,
+          &quot;task_name&quot;: &quot;Configure approval rule DEMO-APPROVAL&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        }
+      ]
+    }
+  }
+]</pre></section><section class="sheet" id="pre-privileges"><h2>pre-privileges</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;prevalidation&quot;,
+    &quot;record_type&quot;: &quot;checks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;category&quot;: &quot;privilege_connectivity&quot;,
+      &quot;check_name&quot;: &quot;Permissions for the selected read checks&quot;,
+      &quot;required&quot;: true,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;repository_evidence&quot;: [
+        &quot;Synthetic sample reference: sample-evidence.html#pre-privileges; no repository or live-environment inspection is claimed.&quot;
+      ],
+      &quot;live_environment_evidence&quot;: [
+        &quot;SYNTHETIC — illustrative evidence only; no live call occurred. Fictional observation: the sample read checks above complete without recorded authentication, authorization or transport errors.&quot;
+      ],
+      &quot;artifact_references&quot;: [
+        &quot;sample-evidence.html#pre-privileges&quot;
+      ],
+      &quot;external_identifiers&quot;: [],
+      &quot;failure_classification&quot;: null,
+      &quot;recommended_remediation&quot;: &quot;No issue is illustrated for this check. Collect real evidence through the declared workflow before using this result operationally.&quot;,
+      &quot;notes&quot;: &quot;This example covers only the selected reads. It does not certify all OAuth scopes, Fusion roles, business-data access, write privileges or transactional permissions.&quot;
+    }
+  },
+  {
+    &quot;stage&quot;: &quot;prevalidation&quot;,
+    &quot;record_type&quot;: &quot;scope&quot;,
+    &quot;sample_record&quot;: {
+      &quot;pillar&quot;: &quot;SCM&quot;,
+      &quot;offering&quot;: &quot;Procurement&quot;,
+      &quot;functional_areas&quot;: [
+        &quot;DEMO-FA-PROCUREMENT&quot;
+      ],
+      &quot;planned_setup_tasks&quot;: [
+        &quot;DEMO-T1 — Configure business unit DEMO-BU&quot;,
+        &quot;DEMO-T2 — Configure supplier DEMO-SUP and site DEMO-SITE&quot;,
+        &quot;DEMO-T3 — Configure purchasable item DEMO-ITEM&quot;,
+        &quot;DEMO-T4 — Configure approval rule DEMO-APPROVAL&quot;
+      ],
+      &quot;task_details&quot;: [
+        {
+          &quot;sequence&quot;: 1,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T1&quot;,
+          &quot;task_name&quot;: &quot;Configure business unit DEMO-BU&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        },
+        {
+          &quot;sequence&quot;: 2,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T2&quot;,
+          &quot;task_name&quot;: &quot;Configure supplier DEMO-SUP and site DEMO-SITE&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        },
+        {
+          &quot;sequence&quot;: 3,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T3&quot;,
+          &quot;task_name&quot;: &quot;Configure purchasable item DEMO-ITEM&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        },
+        {
+          &quot;sequence&quot;: 4,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T4&quot;,
+          &quot;task_name&quot;: &quot;Configure approval rule DEMO-APPROVAL&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        }
+      ]
+    }
+  }
+]</pre></section><section class="sheet" id="pre-runbook-read"><h2>pre-runbook-read</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;prevalidation&quot;,
+    &quot;record_type&quot;: &quot;checks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;category&quot;: &quot;runbook_read_readiness&quot;,
+      &quot;check_name&quot;: &quot;Run Book list connectivity before creation&quot;,
+      &quot;required&quot;: true,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;repository_evidence&quot;: [
+        &quot;Synthetic sample reference: sample-evidence.html#pre-runbook-read; no repository or live-environment inspection is claimed.&quot;
+      ],
+      &quot;live_environment_evidence&quot;: [
+        &quot;SYNTHETIC — illustrative evidence only; no live call occurred. Fictional observation: the sample Run Book list read succeeds and returns no books for this new sample project.&quot;
+      ],
+      &quot;artifact_references&quot;: [
+        &quot;sample-evidence.html#pre-runbook-read&quot;
+      ],
+      &quot;external_identifiers&quot;: [],
+      &quot;failure_classification&quot;: null,
+      &quot;recommended_remediation&quot;: &quot;No issue is illustrated for this check. Collect real evidence through the declared workflow before using this result operationally.&quot;,
+      &quot;notes&quot;: &quot;A successful empty list demonstrates only the illustrated list-read check. No existing Run Book was inspected, no Run Book ID exists, and task-detail or write access remains unverified.&quot;
+    }
+  },
+  {
+    &quot;stage&quot;: &quot;prevalidation&quot;,
+    &quot;record_type&quot;: &quot;scope&quot;,
+    &quot;sample_record&quot;: {
+      &quot;pillar&quot;: &quot;SCM&quot;,
+      &quot;offering&quot;: &quot;Procurement&quot;,
+      &quot;functional_areas&quot;: [
+        &quot;DEMO-FA-PROCUREMENT&quot;
+      ],
+      &quot;planned_setup_tasks&quot;: [
+        &quot;DEMO-T1 — Configure business unit DEMO-BU&quot;,
+        &quot;DEMO-T2 — Configure supplier DEMO-SUP and site DEMO-SITE&quot;,
+        &quot;DEMO-T3 — Configure purchasable item DEMO-ITEM&quot;,
+        &quot;DEMO-T4 — Configure approval rule DEMO-APPROVAL&quot;
+      ],
+      &quot;task_details&quot;: [
+        {
+          &quot;sequence&quot;: 1,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T1&quot;,
+          &quot;task_name&quot;: &quot;Configure business unit DEMO-BU&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        },
+        {
+          &quot;sequence&quot;: 2,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T2&quot;,
+          &quot;task_name&quot;: &quot;Configure supplier DEMO-SUP and site DEMO-SITE&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        },
+        {
+          &quot;sequence&quot;: 3,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T3&quot;,
+          &quot;task_name&quot;: &quot;Configure purchasable item DEMO-ITEM&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        },
+        {
+          &quot;sequence&quot;: 4,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T4&quot;,
+          &quot;task_name&quot;: &quot;Configure approval rule DEMO-APPROVAL&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        }
+      ]
+    }
+  }
+]</pre></section><section class="sheet" id="pre-runbook-write"><h2>pre-runbook-write</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;prevalidation&quot;,
+    &quot;record_type&quot;: &quot;checks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;category&quot;: &quot;runbook_write_verification&quot;,
+      &quot;check_name&quot;: &quot;Run Book write verification deferred to core workflow&quot;,
+      &quot;required&quot;: true,
+      &quot;status&quot;: &quot;NOT APPLICABLE&quot;,
+      &quot;repository_evidence&quot;: [
+        &quot;Synthetic sample stage decision: pre_runbook excludes Run Book creation and write verification during this assessment.&quot;
+      ],
+      &quot;live_environment_evidence&quot;: [],
+      &quot;artifact_references&quot;: [
+        &quot;sample-evidence.html#pre-runbook-write&quot;
+      ],
+      &quot;external_identifiers&quot;: [],
+      &quot;failure_classification&quot;: null,
+      &quot;recommended_remediation&quot;: &quot;Resume the originally authorized creation workflow through core.runbook only after its normal prerequisites and operation-specific checks are satisfied.&quot;,
+      &quot;notes&quot;: &quot;READY applies only to this synthetic pre_runbook assessment. No Run Book was created and write permission remains unverified. In standalone full_readiness, the required isolated-write check must not be excluded; an unavailable or declined supported write verification is BLOCKED and prevents READY.&quot;
+    }
+  },
+  {
+    &quot;stage&quot;: &quot;prevalidation&quot;,
+    &quot;record_type&quot;: &quot;scope&quot;,
+    &quot;sample_record&quot;: {
+      &quot;pillar&quot;: &quot;SCM&quot;,
+      &quot;offering&quot;: &quot;Procurement&quot;,
+      &quot;functional_areas&quot;: [
+        &quot;DEMO-FA-PROCUREMENT&quot;
+      ],
+      &quot;planned_setup_tasks&quot;: [
+        &quot;DEMO-T1 — Configure business unit DEMO-BU&quot;,
+        &quot;DEMO-T2 — Configure supplier DEMO-SUP and site DEMO-SITE&quot;,
+        &quot;DEMO-T3 — Configure purchasable item DEMO-ITEM&quot;,
+        &quot;DEMO-T4 — Configure approval rule DEMO-APPROVAL&quot;
+      ],
+      &quot;task_details&quot;: [
+        {
+          &quot;sequence&quot;: 1,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T1&quot;,
+          &quot;task_name&quot;: &quot;Configure business unit DEMO-BU&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        },
+        {
+          &quot;sequence&quot;: 2,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T2&quot;,
+          &quot;task_name&quot;: &quot;Configure supplier DEMO-SUP and site DEMO-SITE&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        },
+        {
+          &quot;sequence&quot;: 3,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T3&quot;,
+          &quot;task_name&quot;: &quot;Configure purchasable item DEMO-ITEM&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        },
+        {
+          &quot;sequence&quot;: 4,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T4&quot;,
+          &quot;task_name&quot;: &quot;Configure approval rule DEMO-APPROVAL&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        }
+      ]
+    }
+  }
+]</pre></section><section class="sheet" id="pre-scope"><h2>pre-scope</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;prevalidation&quot;,
+    &quot;record_type&quot;: &quot;checks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;category&quot;: &quot;offering_functional_area_readiness&quot;,
+      &quot;check_name&quot;: &quot;Offering and functional-area scope&quot;,
+      &quot;required&quot;: true,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;repository_evidence&quot;: [
+        &quot;Synthetic sample reference: sample-evidence.html#pre-scope; no repository or live-environment inspection is claimed.&quot;
+      ],
+      &quot;live_environment_evidence&quot;: [
+        &quot;SYNTHETIC - no live call occurred. At the fictional 08:00 UTC assessment, the sample capability record identifies SCM / Procurement and DEMO-FA-PROCUREMENT as enabled, with the fictional required feature DEMO-PROCUREMENT-SETUP active. The mapping covers all four planned tasks. These invented names and observations do not identify a real Oracle feature or endpoint.&quot;
+      ],
+      &quot;artifact_references&quot;: [
+        &quot;sample-evidence.html#pre-scope&quot;
+      ],
+      &quot;external_identifiers&quot;: [],
+      &quot;failure_classification&quot;: null,
+      &quot;recommended_remediation&quot;: &quot;No issue is illustrated for this check. Collect real evidence through the declared workflow before using this result operationally.&quot;,
+      &quot;notes&quot;: &quot;The fixture separately records intended scope, visible catalog mapping and an observed enabled/required-feature state. A real assessment must collect those distinct facts through its supported route; catalog visibility alone does not prove enablement.&quot;
+    }
+  },
+  {
+    &quot;stage&quot;: &quot;prevalidation&quot;,
+    &quot;record_type&quot;: &quot;scope&quot;,
+    &quot;sample_record&quot;: {
+      &quot;pillar&quot;: &quot;SCM&quot;,
+      &quot;offering&quot;: &quot;Procurement&quot;,
+      &quot;functional_areas&quot;: [
+        &quot;DEMO-FA-PROCUREMENT&quot;
+      ],
+      &quot;planned_setup_tasks&quot;: [
+        &quot;DEMO-T1 — Configure business unit DEMO-BU&quot;,
+        &quot;DEMO-T2 — Configure supplier DEMO-SUP and site DEMO-SITE&quot;,
+        &quot;DEMO-T3 — Configure purchasable item DEMO-ITEM&quot;,
+        &quot;DEMO-T4 — Configure approval rule DEMO-APPROVAL&quot;
+      ],
+      &quot;task_details&quot;: [
+        {
+          &quot;sequence&quot;: 1,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T1&quot;,
+          &quot;task_name&quot;: &quot;Configure business unit DEMO-BU&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        },
+        {
+          &quot;sequence&quot;: 2,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T2&quot;,
+          &quot;task_name&quot;: &quot;Configure supplier DEMO-SUP and site DEMO-SITE&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        },
+        {
+          &quot;sequence&quot;: 3,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T3&quot;,
+          &quot;task_name&quot;: &quot;Configure purchasable item DEMO-ITEM&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        },
+        {
+          &quot;sequence&quot;: 4,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T4&quot;,
+          &quot;task_name&quot;: &quot;Configure approval rule DEMO-APPROVAL&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        }
+      ]
+    }
+  }
+]</pre></section><section class="sheet" id="pre-tasks"><h2>pre-tasks</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;prevalidation&quot;,
+    &quot;record_type&quot;: &quot;checks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;category&quot;: &quot;setup_task_readiness&quot;,
+      &quot;check_name&quot;: &quot;Planned task coverage and dependencies&quot;,
+      &quot;required&quot;: true,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;repository_evidence&quot;: [
+        &quot;Synthetic sample reference: sample-evidence.html#pre-tasks; no repository or live-environment inspection is claimed.&quot;
+      ],
+      &quot;live_environment_evidence&quot;: [
+        &quot;SYNTHETIC — illustrative evidence only; no live call occurred. Fictional observation: DEMO-T1 through DEMO-T4 are mapped once each; the example orders the business-unit task before dependent supplier/site and approval setup.&quot;
+      ],
+      &quot;artifact_references&quot;: [
+        &quot;sample-evidence.html#pre-tasks&quot;
+      ],
+      &quot;external_identifiers&quot;: [],
+      &quot;failure_classification&quot;: null,
+      &quot;recommended_remediation&quot;: &quot;No issue is illustrated for this check. Collect real evidence through the declared workflow before using this result operationally.&quot;,
+      &quot;notes&quot;: &quot;This is a planning check. All four tasks remain planned; no task has been created in an Oracle Run Book or completed. Pillar owners must confirm real task relationships.&quot;
+    }
+  },
+  {
+    &quot;stage&quot;: &quot;prevalidation&quot;,
+    &quot;record_type&quot;: &quot;scope&quot;,
+    &quot;sample_record&quot;: {
+      &quot;pillar&quot;: &quot;SCM&quot;,
+      &quot;offering&quot;: &quot;Procurement&quot;,
+      &quot;functional_areas&quot;: [
+        &quot;DEMO-FA-PROCUREMENT&quot;
+      ],
+      &quot;planned_setup_tasks&quot;: [
+        &quot;DEMO-T1 — Configure business unit DEMO-BU&quot;,
+        &quot;DEMO-T2 — Configure supplier DEMO-SUP and site DEMO-SITE&quot;,
+        &quot;DEMO-T3 — Configure purchasable item DEMO-ITEM&quot;,
+        &quot;DEMO-T4 — Configure approval rule DEMO-APPROVAL&quot;
+      ],
+      &quot;task_details&quot;: [
+        {
+          &quot;sequence&quot;: 1,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T1&quot;,
+          &quot;task_name&quot;: &quot;Configure business unit DEMO-BU&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        },
+        {
+          &quot;sequence&quot;: 2,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T2&quot;,
+          &quot;task_name&quot;: &quot;Configure supplier DEMO-SUP and site DEMO-SITE&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        },
+        {
+          &quot;sequence&quot;: 3,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T3&quot;,
+          &quot;task_name&quot;: &quot;Configure purchasable item DEMO-ITEM&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        },
+        {
+          &quot;sequence&quot;: 4,
+          &quot;functional_area_code&quot;: &quot;DEMO-FA-PROCUREMENT&quot;,
+          &quot;functional_area_name&quot;: &quot;Demo procurement setup (fictional planning group)&quot;,
+          &quot;task_code&quot;: &quot;DEMO-T4&quot;,
+          &quot;task_name&quot;: &quot;Configure approval rule DEMO-APPROVAL&quot;,
+          &quot;phase&quot;: &quot;Planned; implementation not started&quot;
+        }
+      ]
+    }
+  }
+]</pre></section><section class="sheet" id="tx-before-cleanup"><h2>tx-before-cleanup</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;transactional-validation&quot;,
+    &quot;record_type&quot;: &quot;checks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;result_id&quot;: &quot;demo-tx-result-001&quot;,
+      &quot;check_id&quot;: &quot;demo-draft-requisition-check&quot;,
+      &quot;check_version&quot;: &quot;DEMO-1.0&quot;,
+      &quot;title&quot;: &quot;Create and verify one draft purchase requisition&quot;,
+      &quot;owner&quot;: &quot;Demo procurement SME (fictional)&quot;,
+      &quot;required&quot;: true,
+      &quot;blocking&quot;: true,
+      &quot;requirement_refs&quot;: [
+        &quot;demo-r1&quot;,
+        &quot;demo-r2&quot;,
+        &quot;demo-r3&quot;,
+        &quot;demo-r4&quot;
+      ],
+      &quot;task_refs&quot;: [
+        &quot;DEMO-T1&quot;,
+        &quot;DEMO-T2&quot;,
+        &quot;DEMO-T3&quot;,
+        &quot;DEMO-T4&quot;
+      ],
+      &quot;source_ref&quot;: &quot;sample-evidence.html#tx-manual-scenario&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;method&quot;: &quot;manual-evidence&quot;,
+      &quot;environment&quot;: &quot;DEMO-TEST&quot;,
+      &quot;observed_at&quot;: &quot;2026-10-20T12:05:00Z&quot;,
+      &quot;evidence_current&quot;: true,
+      &quot;reason&quot;: &quot;Synthetic manual observations satisfy the selected draft-only assertions after separate prerequisite correction and review.&quot;,
+      &quot;assertions&quot;: [
+        {
+          &quot;assertion_id&quot;: &quot;corrected-prerequisites-reviewed&quot;,
+          &quot;expected&quot;: &quot;Before this separate invocation, confirm the previously inactive supplier site was corrected and the previously pending approval-rule setup was completed.&quot;,
+          &quot;observed&quot;: &quot;Synthetic review at 11:30 UTC records site correction at 11:10 UTC and approval-rule completion at 11:20 UTC; all four prerequisite task records are complete.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#tx-prerequisites&quot;
+          ]
+        },
+        {
+          &quot;assertion_id&quot;: &quot;draft-saved&quot;,
+          &quot;expected&quot;: &quot;One primary requisition record is saved in draft status with one line of quantity 1, without submission.&quot;,
+          &quot;observed&quot;: &quot;Fictional record DEMO-REQ-001 was saved at 12:04 UTC; the 12:05 UTC manual evidence shows draft status, one line and quantity 1.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#tx-draft-saved&quot;,
+            &quot;sample-evidence.html#tx-before-cleanup&quot;
+          ]
+        },
+        {
+          &quot;assertion_id&quot;: &quot;configured-references-retained&quot;,
+          &quot;expected&quot;: &quot;The saved draft retains DEMO-BU, DEMO-ITEM, DEMO-SUP and DEMO-SITE.&quot;,
+          &quot;observed&quot;: &quot;Synthetic manual read-back at 12:05 UTC shows the intended fictional business-unit, item, supplier and active-site references retained on DEMO-REQ-001.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#tx-reference-readback&quot;,
+            &quot;sample-evidence.html#tx-before-cleanup&quot;
+          ]
+        }
+      ],
+      &quot;evidence_refs&quot;: [
+        &quot;sample-evidence.html#tx-prerequisites&quot;,
+        &quot;sample-evidence.html#tx-execution-authorization&quot;,
+        &quot;sample-evidence.html#tx-draft-saved&quot;,
+        &quot;sample-evidence.html#tx-reference-readback&quot;,
+        &quot;sample-evidence.html#tx-before-cleanup&quot;
+      ],
+      &quot;performed_by&quot;: &quot;Demo implementer (fictional)&quot;,
+      &quot;next_action&quot;: &quot;&quot;,
+      &quot;transaction&quot;: {
+        &quot;test_key&quot;: &quot;DEMO-DRAFT-REQ-001&quot;,
+        &quot;record_id&quot;: &quot;DEMO-REQ-001&quot;,
+        &quot;request_id&quot;: &quot;DEMO-MANUAL-REQUEST-001&quot;,
+        &quot;new_primary_count&quot;: 1,
+        &quot;reused&quot;: false,
+        &quot;approval_ref&quot;: &quot;sample-evidence.html#tx-execution-authorization&quot;,
+        &quot;side_effects&quot;: [
+          &quot;Synthetic scenario: one primary draft requisition DEMO-REQ-001 with one intrinsic line and quantity 1; no other independent records created.&quot;,
+          &quot;No submission, approval request, purchase order, receipt or downstream processing is included in the scenario.&quot;,
+          &quot;Evidence captured at 12:05 UTC before separately authorized deletion of DEMO-REQ-001 at 12:08 UTC.&quot;
+        ],
+        &quot;cleanup_status&quot;: &quot;removed-verified&quot;,
+        &quot;cleanup_evidence_refs&quot;: [
+          &quot;sample-evidence.html#tx-before-cleanup&quot;,
+          &quot;sample-evidence.html#tx-cleanup-authorization&quot;,
+          &quot;sample-evidence.html#tx-cleanup-record&quot;,
+          &quot;sample-evidence.html#tx-cleanup-verification&quot;
+        ],
+        &quot;cleanup_owner&quot;: &quot;Demo implementer (fictional)&quot;,
+        &quot;cleanup_next_action&quot;: &quot;&quot;
+      }
+    }
+  }
+]</pre></section><section class="sheet" id="tx-cleanup-authorization"><h2>tx-cleanup-authorization</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;transactional-validation&quot;,
+    &quot;record_type&quot;: &quot;checks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;result_id&quot;: &quot;demo-tx-result-001&quot;,
+      &quot;check_id&quot;: &quot;demo-draft-requisition-check&quot;,
+      &quot;check_version&quot;: &quot;DEMO-1.0&quot;,
+      &quot;title&quot;: &quot;Create and verify one draft purchase requisition&quot;,
+      &quot;owner&quot;: &quot;Demo procurement SME (fictional)&quot;,
+      &quot;required&quot;: true,
+      &quot;blocking&quot;: true,
+      &quot;requirement_refs&quot;: [
+        &quot;demo-r1&quot;,
+        &quot;demo-r2&quot;,
+        &quot;demo-r3&quot;,
+        &quot;demo-r4&quot;
+      ],
+      &quot;task_refs&quot;: [
+        &quot;DEMO-T1&quot;,
+        &quot;DEMO-T2&quot;,
+        &quot;DEMO-T3&quot;,
+        &quot;DEMO-T4&quot;
+      ],
+      &quot;source_ref&quot;: &quot;sample-evidence.html#tx-manual-scenario&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;method&quot;: &quot;manual-evidence&quot;,
+      &quot;environment&quot;: &quot;DEMO-TEST&quot;,
+      &quot;observed_at&quot;: &quot;2026-10-20T12:05:00Z&quot;,
+      &quot;evidence_current&quot;: true,
+      &quot;reason&quot;: &quot;Synthetic manual observations satisfy the selected draft-only assertions after separate prerequisite correction and review.&quot;,
+      &quot;assertions&quot;: [
+        {
+          &quot;assertion_id&quot;: &quot;corrected-prerequisites-reviewed&quot;,
+          &quot;expected&quot;: &quot;Before this separate invocation, confirm the previously inactive supplier site was corrected and the previously pending approval-rule setup was completed.&quot;,
+          &quot;observed&quot;: &quot;Synthetic review at 11:30 UTC records site correction at 11:10 UTC and approval-rule completion at 11:20 UTC; all four prerequisite task records are complete.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#tx-prerequisites&quot;
+          ]
+        },
+        {
+          &quot;assertion_id&quot;: &quot;draft-saved&quot;,
+          &quot;expected&quot;: &quot;One primary requisition record is saved in draft status with one line of quantity 1, without submission.&quot;,
+          &quot;observed&quot;: &quot;Fictional record DEMO-REQ-001 was saved at 12:04 UTC; the 12:05 UTC manual evidence shows draft status, one line and quantity 1.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#tx-draft-saved&quot;,
+            &quot;sample-evidence.html#tx-before-cleanup&quot;
+          ]
+        },
+        {
+          &quot;assertion_id&quot;: &quot;configured-references-retained&quot;,
+          &quot;expected&quot;: &quot;The saved draft retains DEMO-BU, DEMO-ITEM, DEMO-SUP and DEMO-SITE.&quot;,
+          &quot;observed&quot;: &quot;Synthetic manual read-back at 12:05 UTC shows the intended fictional business-unit, item, supplier and active-site references retained on DEMO-REQ-001.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#tx-reference-readback&quot;,
+            &quot;sample-evidence.html#tx-before-cleanup&quot;
+          ]
+        }
+      ],
+      &quot;evidence_refs&quot;: [
+        &quot;sample-evidence.html#tx-prerequisites&quot;,
+        &quot;sample-evidence.html#tx-execution-authorization&quot;,
+        &quot;sample-evidence.html#tx-draft-saved&quot;,
+        &quot;sample-evidence.html#tx-reference-readback&quot;,
+        &quot;sample-evidence.html#tx-before-cleanup&quot;
+      ],
+      &quot;performed_by&quot;: &quot;Demo implementer (fictional)&quot;,
+      &quot;next_action&quot;: &quot;&quot;,
+      &quot;transaction&quot;: {
+        &quot;test_key&quot;: &quot;DEMO-DRAFT-REQ-001&quot;,
+        &quot;record_id&quot;: &quot;DEMO-REQ-001&quot;,
+        &quot;request_id&quot;: &quot;DEMO-MANUAL-REQUEST-001&quot;,
+        &quot;new_primary_count&quot;: 1,
+        &quot;reused&quot;: false,
+        &quot;approval_ref&quot;: &quot;sample-evidence.html#tx-execution-authorization&quot;,
+        &quot;side_effects&quot;: [
+          &quot;Synthetic scenario: one primary draft requisition DEMO-REQ-001 with one intrinsic line and quantity 1; no other independent records created.&quot;,
+          &quot;No submission, approval request, purchase order, receipt or downstream processing is included in the scenario.&quot;,
+          &quot;Evidence captured at 12:05 UTC before separately authorized deletion of DEMO-REQ-001 at 12:08 UTC.&quot;
+        ],
+        &quot;cleanup_status&quot;: &quot;removed-verified&quot;,
+        &quot;cleanup_evidence_refs&quot;: [
+          &quot;sample-evidence.html#tx-before-cleanup&quot;,
+          &quot;sample-evidence.html#tx-cleanup-authorization&quot;,
+          &quot;sample-evidence.html#tx-cleanup-record&quot;,
+          &quot;sample-evidence.html#tx-cleanup-verification&quot;
+        ],
+        &quot;cleanup_owner&quot;: &quot;Demo implementer (fictional)&quot;,
+        &quot;cleanup_next_action&quot;: &quot;&quot;
+      }
+    }
+  },
+  {
+    &quot;stage&quot;: &quot;transactional-validation&quot;,
+    &quot;record_type&quot;: &quot;decisions&quot;,
+    &quot;sample_record&quot;: {
+      &quot;decision_id&quot;: &quot;demo-tx-cleanup-authorization&quot;,
+      &quot;summary&quot;: &quot;After inspecting the 12:05 UTC pre-deletion evidence, a separate synthetic user authorization at 12:07 UTC requests deletion of only DEMO-REQ-001. No deletion is implied by the original test request.&quot;,
+      &quot;owner&quot;: &quot;Demo project owner (fictional)&quot;,
+      &quot;source_ref&quot;: &quot;sample-evidence.html#tx-cleanup-authorization&quot;
+    }
+  }
+]</pre></section><section class="sheet" id="tx-cleanup-record"><h2>tx-cleanup-record</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;transactional-validation&quot;,
+    &quot;record_type&quot;: &quot;checks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;result_id&quot;: &quot;demo-tx-result-001&quot;,
+      &quot;check_id&quot;: &quot;demo-draft-requisition-check&quot;,
+      &quot;check_version&quot;: &quot;DEMO-1.0&quot;,
+      &quot;title&quot;: &quot;Create and verify one draft purchase requisition&quot;,
+      &quot;owner&quot;: &quot;Demo procurement SME (fictional)&quot;,
+      &quot;required&quot;: true,
+      &quot;blocking&quot;: true,
+      &quot;requirement_refs&quot;: [
+        &quot;demo-r1&quot;,
+        &quot;demo-r2&quot;,
+        &quot;demo-r3&quot;,
+        &quot;demo-r4&quot;
+      ],
+      &quot;task_refs&quot;: [
+        &quot;DEMO-T1&quot;,
+        &quot;DEMO-T2&quot;,
+        &quot;DEMO-T3&quot;,
+        &quot;DEMO-T4&quot;
+      ],
+      &quot;source_ref&quot;: &quot;sample-evidence.html#tx-manual-scenario&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;method&quot;: &quot;manual-evidence&quot;,
+      &quot;environment&quot;: &quot;DEMO-TEST&quot;,
+      &quot;observed_at&quot;: &quot;2026-10-20T12:05:00Z&quot;,
+      &quot;evidence_current&quot;: true,
+      &quot;reason&quot;: &quot;Synthetic manual observations satisfy the selected draft-only assertions after separate prerequisite correction and review.&quot;,
+      &quot;assertions&quot;: [
+        {
+          &quot;assertion_id&quot;: &quot;corrected-prerequisites-reviewed&quot;,
+          &quot;expected&quot;: &quot;Before this separate invocation, confirm the previously inactive supplier site was corrected and the previously pending approval-rule setup was completed.&quot;,
+          &quot;observed&quot;: &quot;Synthetic review at 11:30 UTC records site correction at 11:10 UTC and approval-rule completion at 11:20 UTC; all four prerequisite task records are complete.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#tx-prerequisites&quot;
+          ]
+        },
+        {
+          &quot;assertion_id&quot;: &quot;draft-saved&quot;,
+          &quot;expected&quot;: &quot;One primary requisition record is saved in draft status with one line of quantity 1, without submission.&quot;,
+          &quot;observed&quot;: &quot;Fictional record DEMO-REQ-001 was saved at 12:04 UTC; the 12:05 UTC manual evidence shows draft status, one line and quantity 1.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#tx-draft-saved&quot;,
+            &quot;sample-evidence.html#tx-before-cleanup&quot;
+          ]
+        },
+        {
+          &quot;assertion_id&quot;: &quot;configured-references-retained&quot;,
+          &quot;expected&quot;: &quot;The saved draft retains DEMO-BU, DEMO-ITEM, DEMO-SUP and DEMO-SITE.&quot;,
+          &quot;observed&quot;: &quot;Synthetic manual read-back at 12:05 UTC shows the intended fictional business-unit, item, supplier and active-site references retained on DEMO-REQ-001.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#tx-reference-readback&quot;,
+            &quot;sample-evidence.html#tx-before-cleanup&quot;
+          ]
+        }
+      ],
+      &quot;evidence_refs&quot;: [
+        &quot;sample-evidence.html#tx-prerequisites&quot;,
+        &quot;sample-evidence.html#tx-execution-authorization&quot;,
+        &quot;sample-evidence.html#tx-draft-saved&quot;,
+        &quot;sample-evidence.html#tx-reference-readback&quot;,
+        &quot;sample-evidence.html#tx-before-cleanup&quot;
+      ],
+      &quot;performed_by&quot;: &quot;Demo implementer (fictional)&quot;,
+      &quot;next_action&quot;: &quot;&quot;,
+      &quot;transaction&quot;: {
+        &quot;test_key&quot;: &quot;DEMO-DRAFT-REQ-001&quot;,
+        &quot;record_id&quot;: &quot;DEMO-REQ-001&quot;,
+        &quot;request_id&quot;: &quot;DEMO-MANUAL-REQUEST-001&quot;,
+        &quot;new_primary_count&quot;: 1,
+        &quot;reused&quot;: false,
+        &quot;approval_ref&quot;: &quot;sample-evidence.html#tx-execution-authorization&quot;,
+        &quot;side_effects&quot;: [
+          &quot;Synthetic scenario: one primary draft requisition DEMO-REQ-001 with one intrinsic line and quantity 1; no other independent records created.&quot;,
+          &quot;No submission, approval request, purchase order, receipt or downstream processing is included in the scenario.&quot;,
+          &quot;Evidence captured at 12:05 UTC before separately authorized deletion of DEMO-REQ-001 at 12:08 UTC.&quot;
+        ],
+        &quot;cleanup_status&quot;: &quot;removed-verified&quot;,
+        &quot;cleanup_evidence_refs&quot;: [
+          &quot;sample-evidence.html#tx-before-cleanup&quot;,
+          &quot;sample-evidence.html#tx-cleanup-authorization&quot;,
+          &quot;sample-evidence.html#tx-cleanup-record&quot;,
+          &quot;sample-evidence.html#tx-cleanup-verification&quot;
+        ],
+        &quot;cleanup_owner&quot;: &quot;Demo implementer (fictional)&quot;,
+        &quot;cleanup_next_action&quot;: &quot;&quot;
+      }
+    }
+  },
+  {
+    &quot;stage&quot;: &quot;transactional-validation&quot;,
+    &quot;record_type&quot;: &quot;decisions&quot;,
+    &quot;sample_record&quot;: {
+      &quot;decision_id&quot;: &quot;demo-tx-cleanup-completed&quot;,
+      &quot;summary&quot;: &quot;Synthetic cleanup record documents deletion of DEMO-REQ-001 at 12:08 UTC and manual absence verification at 12:09 UTC; the evidence captured before deletion is retained for this sample.&quot;,
+      &quot;owner&quot;: &quot;Demo implementer (fictional)&quot;,
+      &quot;source_ref&quot;: &quot;sample-evidence.html#tx-cleanup-record&quot;
+    }
+  }
+]</pre></section><section class="sheet" id="tx-cleanup-verification"><h2>tx-cleanup-verification</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;transactional-validation&quot;,
+    &quot;record_type&quot;: &quot;checks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;result_id&quot;: &quot;demo-tx-result-001&quot;,
+      &quot;check_id&quot;: &quot;demo-draft-requisition-check&quot;,
+      &quot;check_version&quot;: &quot;DEMO-1.0&quot;,
+      &quot;title&quot;: &quot;Create and verify one draft purchase requisition&quot;,
+      &quot;owner&quot;: &quot;Demo procurement SME (fictional)&quot;,
+      &quot;required&quot;: true,
+      &quot;blocking&quot;: true,
+      &quot;requirement_refs&quot;: [
+        &quot;demo-r1&quot;,
+        &quot;demo-r2&quot;,
+        &quot;demo-r3&quot;,
+        &quot;demo-r4&quot;
+      ],
+      &quot;task_refs&quot;: [
+        &quot;DEMO-T1&quot;,
+        &quot;DEMO-T2&quot;,
+        &quot;DEMO-T3&quot;,
+        &quot;DEMO-T4&quot;
+      ],
+      &quot;source_ref&quot;: &quot;sample-evidence.html#tx-manual-scenario&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;method&quot;: &quot;manual-evidence&quot;,
+      &quot;environment&quot;: &quot;DEMO-TEST&quot;,
+      &quot;observed_at&quot;: &quot;2026-10-20T12:05:00Z&quot;,
+      &quot;evidence_current&quot;: true,
+      &quot;reason&quot;: &quot;Synthetic manual observations satisfy the selected draft-only assertions after separate prerequisite correction and review.&quot;,
+      &quot;assertions&quot;: [
+        {
+          &quot;assertion_id&quot;: &quot;corrected-prerequisites-reviewed&quot;,
+          &quot;expected&quot;: &quot;Before this separate invocation, confirm the previously inactive supplier site was corrected and the previously pending approval-rule setup was completed.&quot;,
+          &quot;observed&quot;: &quot;Synthetic review at 11:30 UTC records site correction at 11:10 UTC and approval-rule completion at 11:20 UTC; all four prerequisite task records are complete.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#tx-prerequisites&quot;
+          ]
+        },
+        {
+          &quot;assertion_id&quot;: &quot;draft-saved&quot;,
+          &quot;expected&quot;: &quot;One primary requisition record is saved in draft status with one line of quantity 1, without submission.&quot;,
+          &quot;observed&quot;: &quot;Fictional record DEMO-REQ-001 was saved at 12:04 UTC; the 12:05 UTC manual evidence shows draft status, one line and quantity 1.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#tx-draft-saved&quot;,
+            &quot;sample-evidence.html#tx-before-cleanup&quot;
+          ]
+        },
+        {
+          &quot;assertion_id&quot;: &quot;configured-references-retained&quot;,
+          &quot;expected&quot;: &quot;The saved draft retains DEMO-BU, DEMO-ITEM, DEMO-SUP and DEMO-SITE.&quot;,
+          &quot;observed&quot;: &quot;Synthetic manual read-back at 12:05 UTC shows the intended fictional business-unit, item, supplier and active-site references retained on DEMO-REQ-001.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#tx-reference-readback&quot;,
+            &quot;sample-evidence.html#tx-before-cleanup&quot;
+          ]
+        }
+      ],
+      &quot;evidence_refs&quot;: [
+        &quot;sample-evidence.html#tx-prerequisites&quot;,
+        &quot;sample-evidence.html#tx-execution-authorization&quot;,
+        &quot;sample-evidence.html#tx-draft-saved&quot;,
+        &quot;sample-evidence.html#tx-reference-readback&quot;,
+        &quot;sample-evidence.html#tx-before-cleanup&quot;
+      ],
+      &quot;performed_by&quot;: &quot;Demo implementer (fictional)&quot;,
+      &quot;next_action&quot;: &quot;&quot;,
+      &quot;transaction&quot;: {
+        &quot;test_key&quot;: &quot;DEMO-DRAFT-REQ-001&quot;,
+        &quot;record_id&quot;: &quot;DEMO-REQ-001&quot;,
+        &quot;request_id&quot;: &quot;DEMO-MANUAL-REQUEST-001&quot;,
+        &quot;new_primary_count&quot;: 1,
+        &quot;reused&quot;: false,
+        &quot;approval_ref&quot;: &quot;sample-evidence.html#tx-execution-authorization&quot;,
+        &quot;side_effects&quot;: [
+          &quot;Synthetic scenario: one primary draft requisition DEMO-REQ-001 with one intrinsic line and quantity 1; no other independent records created.&quot;,
+          &quot;No submission, approval request, purchase order, receipt or downstream processing is included in the scenario.&quot;,
+          &quot;Evidence captured at 12:05 UTC before separately authorized deletion of DEMO-REQ-001 at 12:08 UTC.&quot;
+        ],
+        &quot;cleanup_status&quot;: &quot;removed-verified&quot;,
+        &quot;cleanup_evidence_refs&quot;: [
+          &quot;sample-evidence.html#tx-before-cleanup&quot;,
+          &quot;sample-evidence.html#tx-cleanup-authorization&quot;,
+          &quot;sample-evidence.html#tx-cleanup-record&quot;,
+          &quot;sample-evidence.html#tx-cleanup-verification&quot;
+        ],
+        &quot;cleanup_owner&quot;: &quot;Demo implementer (fictional)&quot;,
+        &quot;cleanup_next_action&quot;: &quot;&quot;
+      }
+    }
+  }
+]</pre></section><section class="sheet" id="tx-draft-saved"><h2>tx-draft-saved</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;transactional-validation&quot;,
+    &quot;record_type&quot;: &quot;checks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;result_id&quot;: &quot;demo-tx-result-001&quot;,
+      &quot;check_id&quot;: &quot;demo-draft-requisition-check&quot;,
+      &quot;check_version&quot;: &quot;DEMO-1.0&quot;,
+      &quot;title&quot;: &quot;Create and verify one draft purchase requisition&quot;,
+      &quot;owner&quot;: &quot;Demo procurement SME (fictional)&quot;,
+      &quot;required&quot;: true,
+      &quot;blocking&quot;: true,
+      &quot;requirement_refs&quot;: [
+        &quot;demo-r1&quot;,
+        &quot;demo-r2&quot;,
+        &quot;demo-r3&quot;,
+        &quot;demo-r4&quot;
+      ],
+      &quot;task_refs&quot;: [
+        &quot;DEMO-T1&quot;,
+        &quot;DEMO-T2&quot;,
+        &quot;DEMO-T3&quot;,
+        &quot;DEMO-T4&quot;
+      ],
+      &quot;source_ref&quot;: &quot;sample-evidence.html#tx-manual-scenario&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;method&quot;: &quot;manual-evidence&quot;,
+      &quot;environment&quot;: &quot;DEMO-TEST&quot;,
+      &quot;observed_at&quot;: &quot;2026-10-20T12:05:00Z&quot;,
+      &quot;evidence_current&quot;: true,
+      &quot;reason&quot;: &quot;Synthetic manual observations satisfy the selected draft-only assertions after separate prerequisite correction and review.&quot;,
+      &quot;assertions&quot;: [
+        {
+          &quot;assertion_id&quot;: &quot;corrected-prerequisites-reviewed&quot;,
+          &quot;expected&quot;: &quot;Before this separate invocation, confirm the previously inactive supplier site was corrected and the previously pending approval-rule setup was completed.&quot;,
+          &quot;observed&quot;: &quot;Synthetic review at 11:30 UTC records site correction at 11:10 UTC and approval-rule completion at 11:20 UTC; all four prerequisite task records are complete.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#tx-prerequisites&quot;
+          ]
+        },
+        {
+          &quot;assertion_id&quot;: &quot;draft-saved&quot;,
+          &quot;expected&quot;: &quot;One primary requisition record is saved in draft status with one line of quantity 1, without submission.&quot;,
+          &quot;observed&quot;: &quot;Fictional record DEMO-REQ-001 was saved at 12:04 UTC; the 12:05 UTC manual evidence shows draft status, one line and quantity 1.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#tx-draft-saved&quot;,
+            &quot;sample-evidence.html#tx-before-cleanup&quot;
+          ]
+        },
+        {
+          &quot;assertion_id&quot;: &quot;configured-references-retained&quot;,
+          &quot;expected&quot;: &quot;The saved draft retains DEMO-BU, DEMO-ITEM, DEMO-SUP and DEMO-SITE.&quot;,
+          &quot;observed&quot;: &quot;Synthetic manual read-back at 12:05 UTC shows the intended fictional business-unit, item, supplier and active-site references retained on DEMO-REQ-001.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#tx-reference-readback&quot;,
+            &quot;sample-evidence.html#tx-before-cleanup&quot;
+          ]
+        }
+      ],
+      &quot;evidence_refs&quot;: [
+        &quot;sample-evidence.html#tx-prerequisites&quot;,
+        &quot;sample-evidence.html#tx-execution-authorization&quot;,
+        &quot;sample-evidence.html#tx-draft-saved&quot;,
+        &quot;sample-evidence.html#tx-reference-readback&quot;,
+        &quot;sample-evidence.html#tx-before-cleanup&quot;
+      ],
+      &quot;performed_by&quot;: &quot;Demo implementer (fictional)&quot;,
+      &quot;next_action&quot;: &quot;&quot;,
+      &quot;transaction&quot;: {
+        &quot;test_key&quot;: &quot;DEMO-DRAFT-REQ-001&quot;,
+        &quot;record_id&quot;: &quot;DEMO-REQ-001&quot;,
+        &quot;request_id&quot;: &quot;DEMO-MANUAL-REQUEST-001&quot;,
+        &quot;new_primary_count&quot;: 1,
+        &quot;reused&quot;: false,
+        &quot;approval_ref&quot;: &quot;sample-evidence.html#tx-execution-authorization&quot;,
+        &quot;side_effects&quot;: [
+          &quot;Synthetic scenario: one primary draft requisition DEMO-REQ-001 with one intrinsic line and quantity 1; no other independent records created.&quot;,
+          &quot;No submission, approval request, purchase order, receipt or downstream processing is included in the scenario.&quot;,
+          &quot;Evidence captured at 12:05 UTC before separately authorized deletion of DEMO-REQ-001 at 12:08 UTC.&quot;
+        ],
+        &quot;cleanup_status&quot;: &quot;removed-verified&quot;,
+        &quot;cleanup_evidence_refs&quot;: [
+          &quot;sample-evidence.html#tx-before-cleanup&quot;,
+          &quot;sample-evidence.html#tx-cleanup-authorization&quot;,
+          &quot;sample-evidence.html#tx-cleanup-record&quot;,
+          &quot;sample-evidence.html#tx-cleanup-verification&quot;
+        ],
+        &quot;cleanup_owner&quot;: &quot;Demo implementer (fictional)&quot;,
+        &quot;cleanup_next_action&quot;: &quot;&quot;
+      }
+    }
+  }
+]</pre></section><section class="sheet" id="tx-execution-authorization"><h2>tx-execution-authorization</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;transactional-validation&quot;,
+    &quot;record_type&quot;: &quot;checks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;result_id&quot;: &quot;demo-tx-result-001&quot;,
+      &quot;check_id&quot;: &quot;demo-draft-requisition-check&quot;,
+      &quot;check_version&quot;: &quot;DEMO-1.0&quot;,
+      &quot;title&quot;: &quot;Create and verify one draft purchase requisition&quot;,
+      &quot;owner&quot;: &quot;Demo procurement SME (fictional)&quot;,
+      &quot;required&quot;: true,
+      &quot;blocking&quot;: true,
+      &quot;requirement_refs&quot;: [
+        &quot;demo-r1&quot;,
+        &quot;demo-r2&quot;,
+        &quot;demo-r3&quot;,
+        &quot;demo-r4&quot;
+      ],
+      &quot;task_refs&quot;: [
+        &quot;DEMO-T1&quot;,
+        &quot;DEMO-T2&quot;,
+        &quot;DEMO-T3&quot;,
+        &quot;DEMO-T4&quot;
+      ],
+      &quot;source_ref&quot;: &quot;sample-evidence.html#tx-manual-scenario&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;method&quot;: &quot;manual-evidence&quot;,
+      &quot;environment&quot;: &quot;DEMO-TEST&quot;,
+      &quot;observed_at&quot;: &quot;2026-10-20T12:05:00Z&quot;,
+      &quot;evidence_current&quot;: true,
+      &quot;reason&quot;: &quot;Synthetic manual observations satisfy the selected draft-only assertions after separate prerequisite correction and review.&quot;,
+      &quot;assertions&quot;: [
+        {
+          &quot;assertion_id&quot;: &quot;corrected-prerequisites-reviewed&quot;,
+          &quot;expected&quot;: &quot;Before this separate invocation, confirm the previously inactive supplier site was corrected and the previously pending approval-rule setup was completed.&quot;,
+          &quot;observed&quot;: &quot;Synthetic review at 11:30 UTC records site correction at 11:10 UTC and approval-rule completion at 11:20 UTC; all four prerequisite task records are complete.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#tx-prerequisites&quot;
+          ]
+        },
+        {
+          &quot;assertion_id&quot;: &quot;draft-saved&quot;,
+          &quot;expected&quot;: &quot;One primary requisition record is saved in draft status with one line of quantity 1, without submission.&quot;,
+          &quot;observed&quot;: &quot;Fictional record DEMO-REQ-001 was saved at 12:04 UTC; the 12:05 UTC manual evidence shows draft status, one line and quantity 1.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#tx-draft-saved&quot;,
+            &quot;sample-evidence.html#tx-before-cleanup&quot;
+          ]
+        },
+        {
+          &quot;assertion_id&quot;: &quot;configured-references-retained&quot;,
+          &quot;expected&quot;: &quot;The saved draft retains DEMO-BU, DEMO-ITEM, DEMO-SUP and DEMO-SITE.&quot;,
+          &quot;observed&quot;: &quot;Synthetic manual read-back at 12:05 UTC shows the intended fictional business-unit, item, supplier and active-site references retained on DEMO-REQ-001.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#tx-reference-readback&quot;,
+            &quot;sample-evidence.html#tx-before-cleanup&quot;
+          ]
+        }
+      ],
+      &quot;evidence_refs&quot;: [
+        &quot;sample-evidence.html#tx-prerequisites&quot;,
+        &quot;sample-evidence.html#tx-execution-authorization&quot;,
+        &quot;sample-evidence.html#tx-draft-saved&quot;,
+        &quot;sample-evidence.html#tx-reference-readback&quot;,
+        &quot;sample-evidence.html#tx-before-cleanup&quot;
+      ],
+      &quot;performed_by&quot;: &quot;Demo implementer (fictional)&quot;,
+      &quot;next_action&quot;: &quot;&quot;,
+      &quot;transaction&quot;: {
+        &quot;test_key&quot;: &quot;DEMO-DRAFT-REQ-001&quot;,
+        &quot;record_id&quot;: &quot;DEMO-REQ-001&quot;,
+        &quot;request_id&quot;: &quot;DEMO-MANUAL-REQUEST-001&quot;,
+        &quot;new_primary_count&quot;: 1,
+        &quot;reused&quot;: false,
+        &quot;approval_ref&quot;: &quot;sample-evidence.html#tx-execution-authorization&quot;,
+        &quot;side_effects&quot;: [
+          &quot;Synthetic scenario: one primary draft requisition DEMO-REQ-001 with one intrinsic line and quantity 1; no other independent records created.&quot;,
+          &quot;No submission, approval request, purchase order, receipt or downstream processing is included in the scenario.&quot;,
+          &quot;Evidence captured at 12:05 UTC before separately authorized deletion of DEMO-REQ-001 at 12:08 UTC.&quot;
+        ],
+        &quot;cleanup_status&quot;: &quot;removed-verified&quot;,
+        &quot;cleanup_evidence_refs&quot;: [
+          &quot;sample-evidence.html#tx-before-cleanup&quot;,
+          &quot;sample-evidence.html#tx-cleanup-authorization&quot;,
+          &quot;sample-evidence.html#tx-cleanup-record&quot;,
+          &quot;sample-evidence.html#tx-cleanup-verification&quot;
+        ],
+        &quot;cleanup_owner&quot;: &quot;Demo implementer (fictional)&quot;,
+        &quot;cleanup_next_action&quot;: &quot;&quot;
+      }
+    }
+  },
+  {
+    &quot;stage&quot;: &quot;transactional-validation&quot;,
+    &quot;record_type&quot;: &quot;decisions&quot;,
+    &quot;sample_record&quot;: {
+      &quot;decision_id&quot;: &quot;demo-tx-exact-request&quot;,
+      &quot;summary&quot;: &quot;Synthetic exact user request at 12:00 UTC authorizes one draft requisition with DEMO-BU, DEMO-ITEM, DEMO-SUP, DEMO-SITE and quantity 1; retain evidence and do not submit it. This is not real authorization.&quot;,
+      &quot;owner&quot;: &quot;Demo project owner (fictional)&quot;,
+      &quot;source_ref&quot;: &quot;sample-evidence.html#tx-execution-authorization&quot;
+    }
+  }
+]</pre></section><section class="sheet" id="tx-manual-scenario"><h2>tx-manual-scenario</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;transactional-validation&quot;,
+    &quot;record_type&quot;: &quot;checks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;result_id&quot;: &quot;demo-tx-result-001&quot;,
+      &quot;check_id&quot;: &quot;demo-draft-requisition-check&quot;,
+      &quot;check_version&quot;: &quot;DEMO-1.0&quot;,
+      &quot;title&quot;: &quot;Create and verify one draft purchase requisition&quot;,
+      &quot;owner&quot;: &quot;Demo procurement SME (fictional)&quot;,
+      &quot;required&quot;: true,
+      &quot;blocking&quot;: true,
+      &quot;requirement_refs&quot;: [
+        &quot;demo-r1&quot;,
+        &quot;demo-r2&quot;,
+        &quot;demo-r3&quot;,
+        &quot;demo-r4&quot;
+      ],
+      &quot;task_refs&quot;: [
+        &quot;DEMO-T1&quot;,
+        &quot;DEMO-T2&quot;,
+        &quot;DEMO-T3&quot;,
+        &quot;DEMO-T4&quot;
+      ],
+      &quot;source_ref&quot;: &quot;sample-evidence.html#tx-manual-scenario&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;method&quot;: &quot;manual-evidence&quot;,
+      &quot;environment&quot;: &quot;DEMO-TEST&quot;,
+      &quot;observed_at&quot;: &quot;2026-10-20T12:05:00Z&quot;,
+      &quot;evidence_current&quot;: true,
+      &quot;reason&quot;: &quot;Synthetic manual observations satisfy the selected draft-only assertions after separate prerequisite correction and review.&quot;,
+      &quot;assertions&quot;: [
+        {
+          &quot;assertion_id&quot;: &quot;corrected-prerequisites-reviewed&quot;,
+          &quot;expected&quot;: &quot;Before this separate invocation, confirm the previously inactive supplier site was corrected and the previously pending approval-rule setup was completed.&quot;,
+          &quot;observed&quot;: &quot;Synthetic review at 11:30 UTC records site correction at 11:10 UTC and approval-rule completion at 11:20 UTC; all four prerequisite task records are complete.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#tx-prerequisites&quot;
+          ]
+        },
+        {
+          &quot;assertion_id&quot;: &quot;draft-saved&quot;,
+          &quot;expected&quot;: &quot;One primary requisition record is saved in draft status with one line of quantity 1, without submission.&quot;,
+          &quot;observed&quot;: &quot;Fictional record DEMO-REQ-001 was saved at 12:04 UTC; the 12:05 UTC manual evidence shows draft status, one line and quantity 1.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#tx-draft-saved&quot;,
+            &quot;sample-evidence.html#tx-before-cleanup&quot;
+          ]
+        },
+        {
+          &quot;assertion_id&quot;: &quot;configured-references-retained&quot;,
+          &quot;expected&quot;: &quot;The saved draft retains DEMO-BU, DEMO-ITEM, DEMO-SUP and DEMO-SITE.&quot;,
+          &quot;observed&quot;: &quot;Synthetic manual read-back at 12:05 UTC shows the intended fictional business-unit, item, supplier and active-site references retained on DEMO-REQ-001.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#tx-reference-readback&quot;,
+            &quot;sample-evidence.html#tx-before-cleanup&quot;
+          ]
+        }
+      ],
+      &quot;evidence_refs&quot;: [
+        &quot;sample-evidence.html#tx-prerequisites&quot;,
+        &quot;sample-evidence.html#tx-execution-authorization&quot;,
+        &quot;sample-evidence.html#tx-draft-saved&quot;,
+        &quot;sample-evidence.html#tx-reference-readback&quot;,
+        &quot;sample-evidence.html#tx-before-cleanup&quot;
+      ],
+      &quot;performed_by&quot;: &quot;Demo implementer (fictional)&quot;,
+      &quot;next_action&quot;: &quot;&quot;,
+      &quot;transaction&quot;: {
+        &quot;test_key&quot;: &quot;DEMO-DRAFT-REQ-001&quot;,
+        &quot;record_id&quot;: &quot;DEMO-REQ-001&quot;,
+        &quot;request_id&quot;: &quot;DEMO-MANUAL-REQUEST-001&quot;,
+        &quot;new_primary_count&quot;: 1,
+        &quot;reused&quot;: false,
+        &quot;approval_ref&quot;: &quot;sample-evidence.html#tx-execution-authorization&quot;,
+        &quot;side_effects&quot;: [
+          &quot;Synthetic scenario: one primary draft requisition DEMO-REQ-001 with one intrinsic line and quantity 1; no other independent records created.&quot;,
+          &quot;No submission, approval request, purchase order, receipt or downstream processing is included in the scenario.&quot;,
+          &quot;Evidence captured at 12:05 UTC before separately authorized deletion of DEMO-REQ-001 at 12:08 UTC.&quot;
+        ],
+        &quot;cleanup_status&quot;: &quot;removed-verified&quot;,
+        &quot;cleanup_evidence_refs&quot;: [
+          &quot;sample-evidence.html#tx-before-cleanup&quot;,
+          &quot;sample-evidence.html#tx-cleanup-authorization&quot;,
+          &quot;sample-evidence.html#tx-cleanup-record&quot;,
+          &quot;sample-evidence.html#tx-cleanup-verification&quot;
+        ],
+        &quot;cleanup_owner&quot;: &quot;Demo implementer (fictional)&quot;,
+        &quot;cleanup_next_action&quot;: &quot;&quot;
+      }
+    }
+  }
+]</pre></section><section class="sheet" id="tx-prerequisites"><h2>tx-prerequisites</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;transactional-validation&quot;,
+    &quot;record_type&quot;: &quot;checks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;result_id&quot;: &quot;demo-tx-result-001&quot;,
+      &quot;check_id&quot;: &quot;demo-draft-requisition-check&quot;,
+      &quot;check_version&quot;: &quot;DEMO-1.0&quot;,
+      &quot;title&quot;: &quot;Create and verify one draft purchase requisition&quot;,
+      &quot;owner&quot;: &quot;Demo procurement SME (fictional)&quot;,
+      &quot;required&quot;: true,
+      &quot;blocking&quot;: true,
+      &quot;requirement_refs&quot;: [
+        &quot;demo-r1&quot;,
+        &quot;demo-r2&quot;,
+        &quot;demo-r3&quot;,
+        &quot;demo-r4&quot;
+      ],
+      &quot;task_refs&quot;: [
+        &quot;DEMO-T1&quot;,
+        &quot;DEMO-T2&quot;,
+        &quot;DEMO-T3&quot;,
+        &quot;DEMO-T4&quot;
+      ],
+      &quot;source_ref&quot;: &quot;sample-evidence.html#tx-manual-scenario&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;method&quot;: &quot;manual-evidence&quot;,
+      &quot;environment&quot;: &quot;DEMO-TEST&quot;,
+      &quot;observed_at&quot;: &quot;2026-10-20T12:05:00Z&quot;,
+      &quot;evidence_current&quot;: true,
+      &quot;reason&quot;: &quot;Synthetic manual observations satisfy the selected draft-only assertions after separate prerequisite correction and review.&quot;,
+      &quot;assertions&quot;: [
+        {
+          &quot;assertion_id&quot;: &quot;corrected-prerequisites-reviewed&quot;,
+          &quot;expected&quot;: &quot;Before this separate invocation, confirm the previously inactive supplier site was corrected and the previously pending approval-rule setup was completed.&quot;,
+          &quot;observed&quot;: &quot;Synthetic review at 11:30 UTC records site correction at 11:10 UTC and approval-rule completion at 11:20 UTC; all four prerequisite task records are complete.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#tx-prerequisites&quot;
+          ]
+        },
+        {
+          &quot;assertion_id&quot;: &quot;draft-saved&quot;,
+          &quot;expected&quot;: &quot;One primary requisition record is saved in draft status with one line of quantity 1, without submission.&quot;,
+          &quot;observed&quot;: &quot;Fictional record DEMO-REQ-001 was saved at 12:04 UTC; the 12:05 UTC manual evidence shows draft status, one line and quantity 1.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#tx-draft-saved&quot;,
+            &quot;sample-evidence.html#tx-before-cleanup&quot;
+          ]
+        },
+        {
+          &quot;assertion_id&quot;: &quot;configured-references-retained&quot;,
+          &quot;expected&quot;: &quot;The saved draft retains DEMO-BU, DEMO-ITEM, DEMO-SUP and DEMO-SITE.&quot;,
+          &quot;observed&quot;: &quot;Synthetic manual read-back at 12:05 UTC shows the intended fictional business-unit, item, supplier and active-site references retained on DEMO-REQ-001.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#tx-reference-readback&quot;,
+            &quot;sample-evidence.html#tx-before-cleanup&quot;
+          ]
+        }
+      ],
+      &quot;evidence_refs&quot;: [
+        &quot;sample-evidence.html#tx-prerequisites&quot;,
+        &quot;sample-evidence.html#tx-execution-authorization&quot;,
+        &quot;sample-evidence.html#tx-draft-saved&quot;,
+        &quot;sample-evidence.html#tx-reference-readback&quot;,
+        &quot;sample-evidence.html#tx-before-cleanup&quot;
+      ],
+      &quot;performed_by&quot;: &quot;Demo implementer (fictional)&quot;,
+      &quot;next_action&quot;: &quot;&quot;,
+      &quot;transaction&quot;: {
+        &quot;test_key&quot;: &quot;DEMO-DRAFT-REQ-001&quot;,
+        &quot;record_id&quot;: &quot;DEMO-REQ-001&quot;,
+        &quot;request_id&quot;: &quot;DEMO-MANUAL-REQUEST-001&quot;,
+        &quot;new_primary_count&quot;: 1,
+        &quot;reused&quot;: false,
+        &quot;approval_ref&quot;: &quot;sample-evidence.html#tx-execution-authorization&quot;,
+        &quot;side_effects&quot;: [
+          &quot;Synthetic scenario: one primary draft requisition DEMO-REQ-001 with one intrinsic line and quantity 1; no other independent records created.&quot;,
+          &quot;No submission, approval request, purchase order, receipt or downstream processing is included in the scenario.&quot;,
+          &quot;Evidence captured at 12:05 UTC before separately authorized deletion of DEMO-REQ-001 at 12:08 UTC.&quot;
+        ],
+        &quot;cleanup_status&quot;: &quot;removed-verified&quot;,
+        &quot;cleanup_evidence_refs&quot;: [
+          &quot;sample-evidence.html#tx-before-cleanup&quot;,
+          &quot;sample-evidence.html#tx-cleanup-authorization&quot;,
+          &quot;sample-evidence.html#tx-cleanup-record&quot;,
+          &quot;sample-evidence.html#tx-cleanup-verification&quot;
+        ],
+        &quot;cleanup_owner&quot;: &quot;Demo implementer (fictional)&quot;,
+        &quot;cleanup_next_action&quot;: &quot;&quot;
+      }
+    }
+  },
+  {
+    &quot;stage&quot;: &quot;transactional-validation&quot;,
+    &quot;record_type&quot;: &quot;tasks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;task_id&quot;: &quot;DEMO-T1&quot;,
+      &quot;title&quot;: &quot;Business unit&quot;,
+      &quot;status&quot;: &quot;completed&quot;,
+      &quot;source_ref&quot;: &quot;sample-evidence.html#tx-prerequisites&quot;,
+      &quot;captured_at&quot;: &quot;2026-10-20T11:30:00Z&quot;,
+      &quot;environment&quot;: &quot;DEMO-TEST&quot;,
+      &quot;evidence_current&quot;: true,
+      &quot;details&quot;: &quot;Fictional business unit DEMO-BU available; completed at 09:00 UTC.&quot;,
+      &quot;owner&quot;: &quot;Demo implementer (fictional)&quot;,
+      &quot;completed_at&quot;: &quot;2026-10-20T09:00:00Z&quot;
+    }
+  },
+  {
+    &quot;stage&quot;: &quot;transactional-validation&quot;,
+    &quot;record_type&quot;: &quot;tasks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;task_id&quot;: &quot;DEMO-T2&quot;,
+      &quot;title&quot;: &quot;Supplier/site&quot;,
+      &quot;status&quot;: &quot;completed&quot;,
+      &quot;source_ref&quot;: &quot;sample-evidence.html#tx-prerequisites&quot;,
+      &quot;captured_at&quot;: &quot;2026-10-20T11:30:00Z&quot;,
+      &quot;environment&quot;: &quot;DEMO-TEST&quot;,
+      &quot;evidence_current&quot;: true,
+      &quot;details&quot;: &quot;Earlier inactive-site blocker corrected at 11:10 UTC; fictional site DEMO-SITE is now active, supported by the later prerequisite evidence.&quot;,
+      &quot;owner&quot;: &quot;Demo implementer (fictional)&quot;,
+      &quot;completed_at&quot;: &quot;2026-10-20T11:10:00Z&quot;
+    }
+  },
+  {
+    &quot;stage&quot;: &quot;transactional-validation&quot;,
+    &quot;record_type&quot;: &quot;tasks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;task_id&quot;: &quot;DEMO-T3&quot;,
+      &quot;title&quot;: &quot;Purchasable item&quot;,
+      &quot;status&quot;: &quot;completed&quot;,
+      &quot;source_ref&quot;: &quot;sample-evidence.html#tx-prerequisites&quot;,
+      &quot;captured_at&quot;: &quot;2026-10-20T11:30:00Z&quot;,
+      &quot;environment&quot;: &quot;DEMO-TEST&quot;,
+      &quot;evidence_current&quot;: true,
+      &quot;details&quot;: &quot;Fictional item DEMO-ITEM available; completed at 09:20 UTC.&quot;,
+      &quot;owner&quot;: &quot;Demo implementer (fictional)&quot;,
+      &quot;completed_at&quot;: &quot;2026-10-20T09:20:00Z&quot;
+    }
+  },
+  {
+    &quot;stage&quot;: &quot;transactional-validation&quot;,
+    &quot;record_type&quot;: &quot;tasks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;task_id&quot;: &quot;DEMO-T4&quot;,
+      &quot;title&quot;: &quot;Approval rule&quot;,
+      &quot;status&quot;: &quot;completed&quot;,
+      &quot;source_ref&quot;: &quot;sample-evidence.html#tx-prerequisites&quot;,
+      &quot;captured_at&quot;: &quot;2026-10-20T11:30:00Z&quot;,
+      &quot;environment&quot;: &quot;DEMO-TEST&quot;,
+      &quot;evidence_current&quot;: true,
+      &quot;details&quot;: &quot;Earlier pending setup completed at 11:20 UTC and reviewed at 11:30 UTC. No approval transaction was executed.&quot;,
+      &quot;owner&quot;: &quot;Demo implementer (fictional)&quot;,
+      &quot;completed_at&quot;: &quot;2026-10-20T11:20:00Z&quot;
+    }
+  },
+  {
+    &quot;stage&quot;: &quot;transactional-validation&quot;,
+    &quot;record_type&quot;: &quot;decisions&quot;,
+    &quot;sample_record&quot;: {
+      &quot;decision_id&quot;: &quot;demo-tx-prerequisite-gate&quot;,
+      &quot;summary&quot;: &quot;Synthetic prerequisite review at 11:30 UTC confirmed the site and approval-rule corrections before starting this separate 12:00 UTC invocation; the earlier BLOCKED report remains unchanged.&quot;,
+      &quot;owner&quot;: &quot;Demo procurement SME (fictional)&quot;,
+      &quot;source_ref&quot;: &quot;sample-evidence.html#tx-prerequisites&quot;
+    }
+  }
+]</pre></section><section class="sheet" id="tx-reference-readback"><h2>tx-reference-readback</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;transactional-validation&quot;,
+    &quot;record_type&quot;: &quot;checks&quot;,
+    &quot;sample_record&quot;: {
+      &quot;result_id&quot;: &quot;demo-tx-result-001&quot;,
+      &quot;check_id&quot;: &quot;demo-draft-requisition-check&quot;,
+      &quot;check_version&quot;: &quot;DEMO-1.0&quot;,
+      &quot;title&quot;: &quot;Create and verify one draft purchase requisition&quot;,
+      &quot;owner&quot;: &quot;Demo procurement SME (fictional)&quot;,
+      &quot;required&quot;: true,
+      &quot;blocking&quot;: true,
+      &quot;requirement_refs&quot;: [
+        &quot;demo-r1&quot;,
+        &quot;demo-r2&quot;,
+        &quot;demo-r3&quot;,
+        &quot;demo-r4&quot;
+      ],
+      &quot;task_refs&quot;: [
+        &quot;DEMO-T1&quot;,
+        &quot;DEMO-T2&quot;,
+        &quot;DEMO-T3&quot;,
+        &quot;DEMO-T4&quot;
+      ],
+      &quot;source_ref&quot;: &quot;sample-evidence.html#tx-manual-scenario&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;method&quot;: &quot;manual-evidence&quot;,
+      &quot;environment&quot;: &quot;DEMO-TEST&quot;,
+      &quot;observed_at&quot;: &quot;2026-10-20T12:05:00Z&quot;,
+      &quot;evidence_current&quot;: true,
+      &quot;reason&quot;: &quot;Synthetic manual observations satisfy the selected draft-only assertions after separate prerequisite correction and review.&quot;,
+      &quot;assertions&quot;: [
+        {
+          &quot;assertion_id&quot;: &quot;corrected-prerequisites-reviewed&quot;,
+          &quot;expected&quot;: &quot;Before this separate invocation, confirm the previously inactive supplier site was corrected and the previously pending approval-rule setup was completed.&quot;,
+          &quot;observed&quot;: &quot;Synthetic review at 11:30 UTC records site correction at 11:10 UTC and approval-rule completion at 11:20 UTC; all four prerequisite task records are complete.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#tx-prerequisites&quot;
+          ]
+        },
+        {
+          &quot;assertion_id&quot;: &quot;draft-saved&quot;,
+          &quot;expected&quot;: &quot;One primary requisition record is saved in draft status with one line of quantity 1, without submission.&quot;,
+          &quot;observed&quot;: &quot;Fictional record DEMO-REQ-001 was saved at 12:04 UTC; the 12:05 UTC manual evidence shows draft status, one line and quantity 1.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#tx-draft-saved&quot;,
+            &quot;sample-evidence.html#tx-before-cleanup&quot;
+          ]
+        },
+        {
+          &quot;assertion_id&quot;: &quot;configured-references-retained&quot;,
+          &quot;expected&quot;: &quot;The saved draft retains DEMO-BU, DEMO-ITEM, DEMO-SUP and DEMO-SITE.&quot;,
+          &quot;observed&quot;: &quot;Synthetic manual read-back at 12:05 UTC shows the intended fictional business-unit, item, supplier and active-site references retained on DEMO-REQ-001.&quot;,
+          &quot;status&quot;: &quot;PASS&quot;,
+          &quot;evidence_refs&quot;: [
+            &quot;sample-evidence.html#tx-reference-readback&quot;,
+            &quot;sample-evidence.html#tx-before-cleanup&quot;
+          ]
+        }
+      ],
+      &quot;evidence_refs&quot;: [
+        &quot;sample-evidence.html#tx-prerequisites&quot;,
+        &quot;sample-evidence.html#tx-execution-authorization&quot;,
+        &quot;sample-evidence.html#tx-draft-saved&quot;,
+        &quot;sample-evidence.html#tx-reference-readback&quot;,
+        &quot;sample-evidence.html#tx-before-cleanup&quot;
+      ],
+      &quot;performed_by&quot;: &quot;Demo implementer (fictional)&quot;,
+      &quot;next_action&quot;: &quot;&quot;,
+      &quot;transaction&quot;: {
+        &quot;test_key&quot;: &quot;DEMO-DRAFT-REQ-001&quot;,
+        &quot;record_id&quot;: &quot;DEMO-REQ-001&quot;,
+        &quot;request_id&quot;: &quot;DEMO-MANUAL-REQUEST-001&quot;,
+        &quot;new_primary_count&quot;: 1,
+        &quot;reused&quot;: false,
+        &quot;approval_ref&quot;: &quot;sample-evidence.html#tx-execution-authorization&quot;,
+        &quot;side_effects&quot;: [
+          &quot;Synthetic scenario: one primary draft requisition DEMO-REQ-001 with one intrinsic line and quantity 1; no other independent records created.&quot;,
+          &quot;No submission, approval request, purchase order, receipt or downstream processing is included in the scenario.&quot;,
+          &quot;Evidence captured at 12:05 UTC before separately authorized deletion of DEMO-REQ-001 at 12:08 UTC.&quot;
+        ],
+        &quot;cleanup_status&quot;: &quot;removed-verified&quot;,
+        &quot;cleanup_evidence_refs&quot;: [
+          &quot;sample-evidence.html#tx-before-cleanup&quot;,
+          &quot;sample-evidence.html#tx-cleanup-authorization&quot;,
+          &quot;sample-evidence.html#tx-cleanup-record&quot;,
+          &quot;sample-evidence.html#tx-cleanup-verification&quot;
+        ],
+        &quot;cleanup_owner&quot;: &quot;Demo implementer (fictional)&quot;,
+        &quot;cleanup_next_action&quot;: &quot;&quot;
+      }
+    }
+  }
+]</pre></section><section class="sheet" id="tx-requirements"><h2>tx-requirements</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;transactional-validation&quot;,
+    &quot;record_type&quot;: &quot;requirements&quot;,
+    &quot;sample_record&quot;: {
+      &quot;requirement_id&quot;: &quot;demo-r1&quot;,
+      &quot;description&quot;: &quot;Use the intended business unit for the draft requisition&quot;,
+      &quot;source_ref&quot;: &quot;sample-evidence.html#tx-requirements&quot;,
+      &quot;expected_setup&quot;: &quot;Fictional business unit DEMO-BU is available and its reference is retained on the saved draft.&quot;,
+      &quot;task_refs&quot;: [
+        &quot;DEMO-T1&quot;
+      ],
+      &quot;check_ids&quot;: [
+        &quot;demo-draft-requisition-check&quot;
+      ],
+      &quot;owner&quot;: &quot;Demo procurement SME (fictional)&quot;,
+      &quot;required&quot;: true
+    }
+  },
+  {
+    &quot;stage&quot;: &quot;transactional-validation&quot;,
+    &quot;record_type&quot;: &quot;requirements&quot;,
+    &quot;sample_record&quot;: {
+      &quot;requirement_id&quot;: &quot;demo-r2&quot;,
+      &quot;description&quot;: &quot;Use the corrected supplier and active site&quot;,
+      &quot;source_ref&quot;: &quot;sample-evidence.html#tx-requirements&quot;,
+      &quot;expected_setup&quot;: &quot;Fictional supplier DEMO-SUP and corrected active site DEMO-SITE are available and retained on the saved draft.&quot;,
+      &quot;task_refs&quot;: [
+        &quot;DEMO-T2&quot;
+      ],
+      &quot;check_ids&quot;: [
+        &quot;demo-draft-requisition-check&quot;
+      ],
+      &quot;owner&quot;: &quot;Demo procurement SME (fictional)&quot;,
+      &quot;required&quot;: true
+    }
+  },
+  {
+    &quot;stage&quot;: &quot;transactional-validation&quot;,
+    &quot;record_type&quot;: &quot;requirements&quot;,
+    &quot;sample_record&quot;: {
+      &quot;requirement_id&quot;: &quot;demo-r3&quot;,
+      &quot;description&quot;: &quot;Use the intended purchasable item with a quantity of one&quot;,
+      &quot;source_ref&quot;: &quot;sample-evidence.html#tx-requirements&quot;,
+      &quot;expected_setup&quot;: &quot;Fictional item DEMO-ITEM is available for the draft and the quantity remains 1.&quot;,
+      &quot;task_refs&quot;: [
+        &quot;DEMO-T3&quot;
+      ],
+      &quot;check_ids&quot;: [
+        &quot;demo-draft-requisition-check&quot;
+      ],
+      &quot;owner&quot;: &quot;Demo procurement SME (fictional)&quot;,
+      &quot;required&quot;: true
+    }
+  },
+  {
+    &quot;stage&quot;: &quot;transactional-validation&quot;,
+    &quot;record_type&quot;: &quot;requirements&quot;,
+    &quot;sample_record&quot;: {
+      &quot;requirement_id&quot;: &quot;demo-r4&quot;,
+      &quot;description&quot;: &quot;Require approval-rule setup to be complete before the bounded draft check&quot;,
+      &quot;source_ref&quot;: &quot;sample-evidence.html#tx-requirements&quot;,
+      &quot;expected_setup&quot;: &quot;The previously pending rule is completed and reviewed as prerequisite evidence; this draft-only check does not exercise an approval workflow.&quot;,
+      &quot;task_refs&quot;: [
+        &quot;DEMO-T4&quot;
+      ],
+      &quot;check_ids&quot;: [
+        &quot;demo-draft-requisition-check&quot;
+      ],
+      &quot;owner&quot;: &quot;Demo procurement SME (fictional)&quot;,
+      &quot;required&quot;: true
+    }
+  }
+]</pre></section><section class="sheet" id="tx-scope"><h2>tx-scope</h2><p>This is a fictional fixture note used to explain the reports. It is not a log, screenshot, real approval or independent observation.</p><pre>[
+  {
+    &quot;stage&quot;: &quot;transactional-validation&quot;,
+    &quot;record_type&quot;: &quot;scope_ref&quot;,
+    &quot;sample_record&quot;: &quot;sample-evidence.html#tx-scope&quot;
+  }
+]</pre></section><footer>Proposed user-facing layout. Outcomes below were calculated by the existing local validators from synthetic JSON. This presentation has not been integrated into the framework skills.<br>FSCR Framework Team - Review samples - 20 October 2026.</footer></main></body></html>

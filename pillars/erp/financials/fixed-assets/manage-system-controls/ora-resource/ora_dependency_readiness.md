@@ -23,4 +23,8 @@
 | Technical lookup gap | An export, read-only contract, code, or identifier is unresolved. | No |
 | Existing System Controls set | An exact existing Enterprise Name row is found. Show it as read-only; no create or update path is available. | No |
 
+## Task Nodes
 
+| Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
+|---|---|---|---|---|---|---|---|
+| SYS.RESOLVE_DEPENDENCIES | decision | 38 | resolve_dependency | ready->SYS.PRESENT_REFERENCE_PREVIEW;blocked->SYS.HANDLE_DEPENDENCY | SYS.COLLECT_CREATE_INPUTS | stop | Existing System Controls absence is confirmed and creation inputs are valid |

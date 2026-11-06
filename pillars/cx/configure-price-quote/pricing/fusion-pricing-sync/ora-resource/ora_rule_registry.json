@@ -1,0 +1,154 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "CUSTOM_FUSION_PRICING_SYNC",
+      "task_name": "Fusion Pricing Sync",
+      "start_node": "DATA_LOADER_SYNC.RESOLVE_CHARGE_SET",
+      "nodes": [
+        {
+          "id": "DATA_LOADER_SYNC.RESOLVE_CHARGE_SET",
+          "node_type": "step",
+          "sequence": 10,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "DATA_LOADER_SYNC.VALIDATE_CHARGE_SET_LOAD",
+            "invalid": "DATA_LOADER_SYNC.HANDLE_ISSUE"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Resolve the Data Loader business object and download its DAT template/schema",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 22
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "DATA_LOADER_SYNC.VALIDATE_CHARGE_SET_LOAD",
+          "node_type": "step",
+          "sequence": 20,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "DATA_LOADER_SYNC.SUBMIT_CHARGE_SET_LOAD",
+            "invalid": "DATA_LOADER_SYNC.HANDLE_ISSUE"
+          },
+          "prerequisites": [
+            "DATA_LOADER_SYNC.RESOLVE_CHARGE_SET"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Validate the single POST trigger, optional integer chargeId, immutable ZIP, and task context through core.data-loader; do not upload before approval.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 62
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "DATA_LOADER_SYNC.SUBMIT_CHARGE_SET_LOAD",
+          "node_type": "step",
+          "sequence": 30,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "submitted": "DATA_LOADER_SYNC.DONE_SUCCESS",
+            "failed": "DATA_LOADER_SYNC.HANDLE_ISSUE"
+          },
+          "prerequisites": [
+            "DATA_LOADER_SYNC.VALIDATE_CHARGE_SET_LOAD"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Upload the approved CpqChargeSetSync archive and initiate the fixed IMPORT_AND_LOAD action",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 35
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "DATA_LOADER_SYNC.DONE_SUCCESS",
+          "node_type": "terminal",
+          "sequence": 40,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "DATA_LOADER_SYNC.SUBMIT_CHARGE_SET_LOAD"
+          ],
+          "on_failure": "stop",
+          "applies_when": "The Data Loader initiation succeeded",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 36
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "DATA_LOADER_SYNC.HANDLE_ISSUE",
+          "node_type": "step",
+          "sequence": 100,
+          "action_type": "error_handler",
+          "execution_route": "local",
+          "transitions": {
+            "handled": "DATA_LOADER_SYNC.RETURN_ISSUES"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Any metadata, validation, approval, or initiation issue",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 37
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "DATA_LOADER_SYNC.RETURN_ISSUES",
+          "node_type": "terminal",
+          "sequence": 110,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "A blocking issue was classified and disclosed",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 38
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

@@ -225,11 +225,14 @@ def _attachment_label(label: Any) -> str:
     return cleaned or "Attachment"
 
 
+_DASHBOARD_TABLE_HEADER = "| Sequence | Task | Status |"
+_DASHBOARD_TABLE_DIVIDER = "|---:|---|---|"
+
 _TASK_TABLE_HEADER = "| Sequence | Task | Status | % Completed | Required |"
 _TASK_TABLE_DIVIDER = "|---:|---|---|---:|---|"
 
 
-def _task_table_row(task: Dict[str, Any]) -> str:
+def _task_table_row(task: Dict[str, Any], *, include_details: bool = True) -> str:
     percentage = task.get("percentage")
     progress = f"{percentage}%" if isinstance(percentage, int) else "—"
     sequence = task.get("sequence")
@@ -245,9 +248,8 @@ def _task_table_row(task: Dict[str, Any]) -> str:
                 _cell(sequence_display),
                 _cell(task.get("name"), "Unnamed task"),
                 _cell(task.get("status"), "Unknown"),
-                _cell(progress),
-                "Yes" if task.get("required") else "No",
             )
+            + ((_cell(progress), "Yes" if task.get("required") else "No") if include_details else ())
         )
         + " |"
     )
@@ -269,8 +271,8 @@ def dashboard_markdown(model: Dict[str, Any], summary: str) -> str:
             (
                 f"## {_cell(stage.get('name'), 'Tasks')}",
                 "",
-                _TASK_TABLE_HEADER,
-                _TASK_TABLE_DIVIDER,
+                _DASHBOARD_TABLE_HEADER,
+                _DASHBOARD_TABLE_DIVIDER,
             )
         )
         stage_task_count = 0
@@ -279,9 +281,9 @@ def dashboard_markdown(model: Dict[str, Any], summary: str) -> str:
                 continue
             task_count += 1
             stage_task_count += 1
-            lines.append(_task_table_row(task))
+            lines.append(_task_table_row(task, include_details=False))
         if not stage_task_count:
-            lines.append("| — | No tasks | — | — | — |")
+            lines.append("| — | No tasks | — |")
         lines.append("")
     if not task_count:
         if not any(isinstance(stage, dict) for stage in model.get("stages") or []):
@@ -289,9 +291,9 @@ def dashboard_markdown(model: Dict[str, Any], summary: str) -> str:
                 (
                     "## Tasks",
                     "",
-                    _TASK_TABLE_HEADER,
-                    _TASK_TABLE_DIVIDER,
-                    "| — | No tasks | — | — | — |",
+                    _DASHBOARD_TABLE_HEADER,
+                    _DASHBOARD_TABLE_DIVIDER,
+                    "| — | No tasks | — |",
                 )
             )
     return "\n".join(lines).rstrip()
@@ -333,14 +335,6 @@ def task_markdown(model: Dict[str, Any]) -> str:
         _TASK_TABLE_DIVIDER,
         _task_table_row(model),
     ]
-    dependency_message = None
-    if model.get("dependency"):
-        dependency = _cell(model["dependency"])
-        if model.get("status") == "Dependent":
-            dependency_message = f"This task is dependent on **{dependency}**."
-        else:
-            lines.extend(("", "## Dependency", "", dependency))
-
     notes = _visible_notes(model.get("notesHtml"))
     if notes:
         lines.extend(("", "## Notes", "", escape(notes, quote=False)))
@@ -444,6 +438,4 @@ def task_markdown(model: Dict[str, Any]) -> str:
                 lines.append(
                     f"- {_link(document.get('fileName') or 'Document', document['previewUrl'])}"
                 )
-    if dependency_message:
-        lines.extend(("", dependency_message))
     return "\n".join(lines)

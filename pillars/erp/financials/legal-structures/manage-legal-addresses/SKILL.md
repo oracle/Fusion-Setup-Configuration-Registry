@@ -19,7 +19,7 @@ source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 type: "planning"
 execution_mode: "assisted"
 owner_team: "ERP financials pillar team"
-version: "0.1.0"
+version: "0.2.0"
 inputs:
   - "implementation_objective"
   - "project_context"
@@ -145,11 +145,18 @@ This assisted workflow prepares a package locally and stops before upload or any
 
 1. Require a fresh, same-target, same-release, successful same-task FSM export as the immutable baseline. Bind the exact environment and task identity, current `ASM_SETUP_CSV_METADATA.xml`, exact CSV member hierarchy, exact header spelling and order, and the exported encoding.
 2. Re-run the complete task ora-resource graph against the reviewed inputs and baseline. Fail closed with a task-specific package-contract gap if any source, mapping, value, member hierarchy, header, encoding, carrier, or system-blank rule is missing or ambiguous; do not invent a package contract.
-3. Build the smallest supported create delta from the task resources. Modify only `XLE_LE_LEGAL_ADDRESS.csv`; preserve the ASM metadata, every unrelated row, and every untouched archive member byte-for-byte where the package format permits. Author exactly the reviewed new address row with the documented `CreatedByModule` value, new collision-checked `OrigSystemReference`, validation-status semantics, country style/layout, and required system-owned blanks.
-4. Do not copy physical IDs, audit fields, object-version fields, ESS fields, or service-owned values from the baseline or another row. Copy a value only when the task resources explicitly authorize it as a carrier.
-5. Produce a ZIP-valid immutable FSM archive, its SHA-256 digest, a member inventory, a row/member semantic diff against the baseline, and a sanitized package-preparation receipt containing no secrets or sensitive payload values.
-6. Any source, mapping, value, package byte, member inventory, or hash change invalidates this preview state and requires the full validation and package-preparation workflow to run again.
-7. On success, return `READY_FOR_DATA_LOADER_PREVIEW`. Do not claim `READY_FOR_IMPORT` or approval. Stop before upload or mutation and hand the exact immutable archive to `core.data-loader`, which owns Task Hook validation, preview, explicit approval, archive-hash verification, upload, and initiation.
+3. Build a new-rows-only upload archive; the immutable export is reference evidence for metadata, headers, and duplicate checks, never the upload payload. Preserve `ASM_SETUP_CSV_METADATA.xml` byte-for-byte and retain the exact exported CSV member hierarchy, header bytes/order, and encoding. In `XLE_LE_LEGAL_ADDRESS.csv`, include only the reviewed new addresses that passed complete-scope duplicate checks. Keep every companion CSV header-only with zero data rows. Exclude every existing baseline row, including existing addresses, legal entities, establishments, registrations, and functions. Omitting rows from this create package does not request deletion in Fusion. Do not submit an unfiltered export or append new rows to a populated baseline for upload.
+4. Every new address row must have nonblank `LeFormattedAddress`, `CreatedByModule` set to `XLE_CREATE_LE`, and a new collision-checked `OrigSystemReference`. Apply the deterministic formatting contract in `ora-resource/ora_defaulting_rules.md`: replace every comma in a supplied complete single-line address with `/`, preserving the other characters and spaces. For component-only input, derive a nonblank value from the reviewed components and resolved country layout; block if the source or mapping is ambiguous. Validate the final CSV value, not just the input or preview.
+5. Do not copy physical IDs, audit fields, object-version fields, ESS fields, or service-owned values from the baseline or another row. Copy a value only when the task resources explicitly authorize it as a carrier. Keep Fusion-generated `FormattedAddress` and `FormattedMultilineAddress` blank; this blank treatment never applies to `LeFormattedAddress`.
+6. Reparse every CSV in the final ZIP. Require its address data-row count and identities to equal exactly the reviewed unique new candidate set, all `LeFormattedAddress` values to be populated and normalized, existing data rows included to equal zero, and every companion data-row count to equal zero. Require at least one new row; if all requested addresses already exist, return Existing Match without submitting an empty import. Block a mismatch before Data Loader preview. Produce the immutable archive, SHA-256, per-member baseline/upload row counts, header/metadata fingerprints, and a semantic diff explicitly showing excluded baseline rows and newly authored rows. Record a sanitized package-preparation receipt.
+7. Any source, mapping, value, package byte, member inventory, or hash change invalidates this preview state and requires the full validation and package-preparation workflow to run again.
+8. On success, return `READY_FOR_DATA_LOADER_PREVIEW`. Do not claim `READY_FOR_IMPORT` or approval. Stop before upload or mutation and hand the exact immutable archive to `core.data-loader`, which owns Task Hook validation, preview, explicit approval, archive-hash verification, upload, and initiation. A standalone new-rows-only package is the normal contract for this task, not an exception requiring a baseline-preservation waiver.
+
+### Outcome Reporting and Verification
+
+Keep the central Data Loader approval, initiation, monitoring, and report contracts unchanged. Accepted initiation means submitted, not created; return its initiation report without automatic status polling. When the user requests status, results, errors, or verification, use the central monitoring workflow and apply `ora-resource/ora_error_handling.md` before making a task-level success or failure claim.
+
+Inspect the current, correctly correlated FSM ProcessLog, underlying process completion state, and relevant object counters alongside Data Loader status/errors. A Data Loader error with a still-running FSM process is a status discrepancy, not proof that address creation failed. Missing or incomplete logs leave the task outcome unverified. Confirm exact new-row persistence through a fresh same-target export before claiming the address or a particular field value is present in Fusion. Distinguish the authored `LeFormattedAddress` from the returned value and Fusion-generated display fields; do not promise the submitted slash string will be displayed verbatim.
 
 
 ## Inputs

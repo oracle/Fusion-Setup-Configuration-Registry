@@ -23,7 +23,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 38
+            "line": 66
           },
           "readiness": {
             "status": "ready",
@@ -50,7 +50,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 36
+            "line": 49
           },
           "readiness": {
             "status": "ready",
@@ -75,7 +75,7 @@
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 35
+            "line": 38
           },
           "readiness": {
             "status": "ready",
@@ -100,7 +100,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 37
+            "line": 50
           },
           "readiness": {
             "status": "ready",
@@ -124,7 +124,7 @@
           "source": {
             "file": "ora_defaulting_rules.md",
             "anchor": "task-nodes",
-            "line": 14
+            "line": 16
           },
           "readiness": {
             "status": "ready",
@@ -138,7 +138,7 @@
           "action_type": "design_enforcement",
           "execution_route": "local",
           "transitions": {
-            "compliant": "RECALL.PARAMETERS.GATE-PREVIEW-APPROVAL",
+            "compliant": "RECALL.PARAMETERS.DONE-READY-FOR-PREVIEW",
             "blocked": "RECALL.PARAMETERS.HANDLE-DESIGN-BLOCKER"
           },
           "prerequisites": [
@@ -158,31 +158,6 @@
           }
         },
         {
-          "id": "RECALL.PARAMETERS.GATE-PREVIEW-APPROVAL",
-          "node_type": "decision",
-          "sequence": 60,
-          "action_type": "execution_gate",
-          "execution_route": "local",
-          "transitions": {
-            "approved_preview": "RECALL.PARAMETERS.DONE-READY-FOR-IMPORT",
-            "approval_missing": "RECALL.PARAMETERS.HANDLE-APPROVAL-BLOCKER"
-          },
-          "prerequisites": [
-            "RECALL.PARAMETERS.ENFORCE-DESIGN"
-          ],
-          "on_failure": "stop",
-          "applies_when": "A live import is requested after core.data-loader produces an immutable preview",
-          "source": {
-            "file": "ora_error_handling.md",
-            "anchor": "task-nodes",
-            "line": 45
-          },
-          "readiness": {
-            "status": "ready",
-            "blocking_reasons": []
-          }
-        },
-        {
           "id": "RECALL.PARAMETERS.HANDLE-INPUT-ERROR",
           "node_type": "step",
           "sequence": 70,
@@ -191,15 +166,13 @@
           "transitions": {
             "handled": "RECALL.PARAMETERS.RETURN-ISSUES"
           },
-          "prerequisites": [
-            "RECALL.PARAMETERS.VALIDATE-INPUT"
-          ],
+          "prerequisites": [],
           "on_failure": "stop",
           "applies_when": "Input validation is invalid",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 46
+            "line": 51
           },
           "readiness": {
             "status": "ready",
@@ -215,15 +188,13 @@
           "transitions": {
             "handled": "RECALL.PARAMETERS.RETURN-ISSUES"
           },
-          "prerequisites": [
-            "RECALL.PARAMETERS.LOOKUP-EXISTING"
-          ],
+          "prerequisites": [],
           "on_failure": "stop",
           "applies_when": "A reconciliation, dependency, or describe lookup is blocked, ambiguous, unsupported, or failed",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 47
+            "line": 52
           },
           "readiness": {
             "status": "ready",
@@ -239,15 +210,13 @@
           "transitions": {
             "handled": "RECALL.PARAMETERS.RETURN-ISSUES"
           },
-          "prerequisites": [
-            "RECALL.PARAMETERS.RESOLVE-DEPENDENCIES"
-          ],
+          "prerequisites": [],
           "on_failure": "stop",
           "applies_when": "A required dependency is blocked",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 48
+            "line": 53
           },
           "readiness": {
             "status": "ready",
@@ -263,15 +232,13 @@
           "transitions": {
             "handled": "RECALL.PARAMETERS.RETURN-ISSUES"
           },
-          "prerequisites": [
-            "RECALL.PARAMETERS.DESCRIBE-CONTRACT"
-          ],
+          "prerequisites": [],
           "on_failure": "stop",
           "applies_when": "Describe metadata is unsupported or incomplete",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 49
+            "line": 54
           },
           "readiness": {
             "status": "ready",
@@ -287,15 +254,13 @@
           "transitions": {
             "handled": "RECALL.PARAMETERS.RETURN-ISSUES"
           },
-          "prerequisites": [
-            "RECALL.PARAMETERS.ENFORCE-DESIGN"
-          ],
+          "prerequisites": [],
           "on_failure": "stop",
           "applies_when": "A design rule blocks preview",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 50
+            "line": 55
           },
           "readiness": {
             "status": "ready",
@@ -303,45 +268,21 @@
           }
         },
         {
-          "id": "RECALL.PARAMETERS.HANDLE-APPROVAL-BLOCKER",
-          "node_type": "step",
-          "sequence": 110,
-          "action_type": "error_handler",
-          "execution_route": "local",
-          "transitions": {
-            "handled": "RECALL.PARAMETERS.RETURN-ISSUES"
-          },
-          "prerequisites": [
-            "RECALL.PARAMETERS.GATE-PREVIEW-APPROVAL"
-          ],
-          "on_failure": "stop",
-          "applies_when": "Current explicit approval is missing or stale",
-          "source": {
-            "file": "ora_error_handling.md",
-            "anchor": "task-nodes",
-            "line": 51
-          },
-          "readiness": {
-            "status": "ready",
-            "blocking_reasons": []
-          }
-        },
-        {
-          "id": "RECALL.PARAMETERS.DONE-READY-FOR-IMPORT",
+          "id": "RECALL.PARAMETERS.DONE-READY-FOR-PREVIEW",
           "node_type": "terminal",
           "sequence": 120,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
           "prerequisites": [
-            "RECALL.PARAMETERS.GATE-PREVIEW-APPROVAL"
+            "RECALL.PARAMETERS.ENFORCE-DESIGN"
           ],
           "on_failure": "stop",
-          "applies_when": "The immutable preview is approved; core.data-loader owns the later import and verification workflow",
+          "applies_when": "Task rules passed; return ordered results to Task Hook for digest-bound preview, approval and archive verification before core.data-loader submission",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 52
+            "line": 56
           },
           "readiness": {
             "status": "ready",
@@ -357,11 +298,11 @@
           "transitions": {},
           "prerequisites": [],
           "on_failure": "stop",
-          "applies_when": "Validation, lookup, dependency, design, or approval issues are handled",
+          "applies_when": "Validation, lookup, dependency, or design issues are handled",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 53
+            "line": 57
           },
           "readiness": {
             "status": "ready",

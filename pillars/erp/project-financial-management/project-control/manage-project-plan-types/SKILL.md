@@ -17,7 +17,7 @@ source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 type: "planning"
 execution_mode: "assisted"
 owner_team: "ERP project financial management pillar team"
-version: "0.3.5"
+version: "0.3.8"
 inputs:
   - "project_id"
   - "customer_project_plan_type_request"
@@ -143,7 +143,20 @@ validation, classification/matching, persistence and approval gates still apply.
    and [reference lookups](ora-resource/ora_reference_lookups.md) for LOV sources
    and eligibility. Read the dependency, design and error resources through the
    compiled rule plan before preview.
+   For a new plan type, automatic forecast generation defaults to disabled
+   (`ProgAutoGenFcstVer=N`); do not ask the user to confirm that default.
+   The legacy source value `Prog_Sett_Automatically_generate_fo="Remaining plan"`
+   repeats an ETC method, not an instruction to enable forecasts. Retain an
+   independently supplied ETC selection, disclose this misplaced legacy value,
+   and apply the create default without asking an enable/disable question.
+   Require a forecast financial plan type only when generation is explicitly
+   enabled. Explicit supported checkbox choices win; updates and duplicates
+   preserve their existing/source value when no forecast change is requested.
 4. Distinguish defaults, explicit choices and retained values in the preview.
+   For submitted create/update Task Settings, enabling synchronization with an
+   empty effective Date Adjustment Buffer in Days applies 0. An explicit integer
+   overrides the retained buffer; an omitted nonempty retained buffer is preserved.
+   Keep inactive buffers unchanged and disclose any applied zero in the preview.
    Explain disabled/dependent choices in business terms. In particular, planning
    amounts COST_ONLY does not itself enable tracking project costs. Calendar
    affects available rate dates and profiles; rate mode belongs to each business
@@ -152,6 +165,12 @@ validation, classification/matching, persistence and approval gates still apply.
    Never present a partially represented request as complete. For a package
    boundary, explain the unsupported option and continue independent supported
    work; do not direct the consultant to perform UI maintenance.
+   Retain the supplied business-input object as `sourceInput` in the canonical
+   preparation request and `finalData.sourceInput` in the preview input. Keep
+   explicit later corrections in that effective input with their provenance.
+   In particular, `Curr_Set_Use_Conversion=true` selects the shared-conversion
+   action; preparation translates it and preview checks its persistent result.
+   Canonical-only requests remain supported when no source-form input exists.
 6. Deletion is excluded from this skill, including deletion of child assignments.
    Do not research deletion eligibility or offer an alternate deletion route.
    Disabling multicurrency with retained currency rows is also excluded because
@@ -285,6 +304,13 @@ separate requirement, overload another column, or assume an unconfigured DFF.
    and does not invoke Data Loader. Continue to step 7 only for submission.
 7. Route the immutable ZIP and its SHA-256 to `core.data-loader`. A same-request `auto-approve`, `auto approve`, `approve without asking`, or `skip confirmation` instruction authorizes this one load after every validation gate passes; otherwise wait for later approval of the exact preview. Auto-approval never waives validation or authorizes a retry.
 8. Before submission, preflight a safe writable task-local execution-receipt destination. After accepted initiation, register the returned UCM Content ID, Data Loader Request ID, approved archive reference/checksum, target, project, task and latest status through the declared core project services. Return the loader's complete In Progress report without automatic status checks, process logs, exports or readback. Acceptance means initiated, not completed or verified. If submission is uncertain or receipt persistence fails, preserve any known identifiers, record the failure and stop; repair only local evidence and never resubmit under the old approval.
+   Retain a separate local copy of the task-approved envelope before handing
+   the loader its disposable envelope. Capture the actual structured initiation
+   result from the selected core adapter. Use `scripts/execution_receipt.py`
+   to persist its allowlisted IDs and approved binding, then register that
+   receipt through the existing project services. The helper performs local
+   checks only; it does not submit, poll, or infer completion. Missing receipt
+   persistence must never trigger another load.
 9. Only on a later explicit status/results/verification request, validate the registered target, project, task, request ID and approved-archive binding before external calls. Missing or mismatched context blocks. Delegate status/count/error checks to `core.data-loader`; never repeat preparation, approval or submission. A status-only request returns that status without an export. An active status or bounded timeout returns In Progress and waits for another request; terminal failure stops. For requested setup verification, require terminal success before a fresh same-task export through `shared.setup-export.task-level-export`, then compare requested fields and preserved groups/children with the approved preview. Retain returned process diagnostics when available. Missing or mismatched readback prevents verified completion and does not authorize another write.
 
 An indeterminate submission with no recoverable request ID requires a later

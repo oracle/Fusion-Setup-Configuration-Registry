@@ -1019,6 +1019,8 @@ def _response_messages(value: Any) -> list[str]:
                 "msgtext",
                 "title",
                 "o:errorcode",
+                "errorcode",
+                "errormessage",
                 "status",
                 "requestid",
             } and nested not in (None, ""):

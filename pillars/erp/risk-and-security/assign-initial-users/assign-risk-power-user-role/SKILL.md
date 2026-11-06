@@ -93,6 +93,12 @@ eligibility checks, and postcondition evaluation; it neither creates request
 manifests nor calls Fusion. Its machine-readable input and output are internal;
 use its Markdown table result when communicating with the consultant.
 
+A successful, valid role response that omits `members` means no people are
+assigned, just like `members: []`. Report “No people are currently assigned to
+the Risk Power User role.” and continue the existing eligibility and approval
+flow. An explicitly null or non-list `members` value remains invalid. Empty
+membership does not verify provisioning or automatically complete this task.
+
 ## Authentication
 
 Use `core.fusion-api.rest-api-client` for authentication and every Fusion

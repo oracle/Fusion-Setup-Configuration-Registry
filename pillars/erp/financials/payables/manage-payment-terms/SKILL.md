@@ -114,13 +114,24 @@ This task supports creating and updating Payment Terms setup records. It does no
   `AP_TERM_HEADER_TRANSLATION.AP_TERM_HEADER.Name + Language`. Fusion resolves
   the root alternate key and derives internal parent keys. Never put an
   internal ID in the CSV. See `ora-resource/ora_design_enforcement.md`.
-- For every update to an `AP_TERM_LINE` or `AP_TERM_HEADER_TRANSLATION` row,
-  include the matching `AP_TERM_HEADER` row in the same FSM archive, with its
-  audit fields blank. The parent row may also carry an explicitly requested
-  header update.
+- For every create or update of an `AP_TERM_LINE`, `AP_TERM_SUBSCRIPTION`,
+  or `AP_TERM_HEADER_TRANSLATION` row, include the matching `AP_TERM_HEADER`
+  row in the same FSM archive. Unless an explicit header operation supplies
+  it, copy the parent unchanged from the fresh current-data export and blank
+  all audit fields. Include each parent only once. Block generation if the
+  parent is absent from both the explicit operations and the fresh baseline;
+  validation must reject missing or changed supporting parents.
   Fusion can mark a child-only archive as successfully imported while skipping
   its update. The non-production `AP_TERM_LINE` test proved this behavior:
   a child-only `DueDays` change remained unpersisted after a successful import.
+- A new `AP_TERM_HEADER` must include at least one explicitly requested
+  `AP_TERM_LINE` installment for that same header in the package. This applies
+  to enabled and disabled new terms. A set assignment or translation does not
+  replace an installment. Stop before preview or ZIP generation with
+  `AP_AT_LEAST_ONE_CHILD` and ask for installment details; never invent a line.
+  For an existing term, a header update or child create/update does not require
+  adding another installment. Keep its existing installments unchanged unless
+  the user requests a change.
 - For a create with `AP_TERM_HEADER_TRANSLATION` rows, use the header key
   as the logical target. Fusion may display and export the explicit US
   translation name instead of that key. Derive this alias only from the
@@ -128,30 +139,32 @@ This task supports creating and updating Payment Terms setup records. It does no
   record the header-key-to-display-name mapping. A KO row is translation
   evidence, not another payment-term header.
 - For a new payment-term header, default an omitted or blank `EnabledFlag` to `Y`, `Type` to `STD`, and `StartDateActive` to the package-builder system date in `YYYY/MM/DD`; record each applied value as an explicit default and serialize it into the CSV. A supplied `Type` must be exactly `STD`; reject every other Type before package generation. Other explicit request values override their corresponding defaults. See `ora-resource/ora_defaulting_rules.md`.
+- When preparing an import ZIP, use the date format shown in the fresh export for new or changed dates. Keep unchanged dates exactly as exported.
 - Validate header dates and Rank before package generation. Dates must use the supported calendar-date format, and `EndDateActive` cannot precede `StartDateActive`. Rank is compared globally across Payment Terms, must be a whole numeric value of at most 18 digits, and must not duplicate another header's numeric Rank; do not invent a positive or minimum Rank rule. See `ora-resource/ora_input_validation.md`.
 - Validate every effective payment-term line before package generation. Require exactly one due basis (`DuePercent` or `DueAmount`) and exactly one complete due-date method (`DueDays`, `DueDayOfMonth` with `DueMonthsForward`, `FixedDate`, or `Calendar`). Percentage lines for a term must total exactly 100; amount lines must include a zero-amount line; and one term cannot mix percentage and amount bases. Enforce the documented day/month ranges, nonnegative due values, complete discount pairs, and ordered discount dates and percentages. See `ora-resource/ora_input_validation.md` and `ora-resource/ora_design_enforcement.md`.
-- Treat a read-only GET that checks an already supplied CSV value as an advisory
-  preflight. This includes `setIdSetsLOV` for `SetCode` and
-  `payablesCalendarTypes` for `Calendar`. Run
-  `scripts/resolve_reference_prerequisites.py` before normalization. The
-  calendar query must join its name and type filters with `and`, never `;`.
-  One or more readable results allow processing to continue; do not make a
-  local exact, uniqueness, or case decision. A readable no-result is a warning
-  for Fusion to validate during import.
-
-  Any availability problem records `validation_skipped`. An HTTP 400 also adds
-  a `resolver_contract_issue` to `resolverFindings`, including the resolver,
-  endpoint, supplied value, query fingerprint, sanitized diagnostic, time, and
-  maintainer action. Keep the customer candidate eligible for the separately
-  approved FSM import. During implementation review, assess these findings in the
-  resolved design, preview, and candidate handoff; fix or reverify each issue
-  before changing the released skill. This rule does not apply when a GET must
-  derive a CSV value, resolve a required internal key, or choose an update
-  target. Do not replace the check with a proxy, UI value, or write operation;
-  Fusion's import result remains authoritative. See
-  `ora-resource/ora_reference_lookups.md`,
-  `ora-resource/ora_dependency_readiness.md`, and
-  `ora-resource/ora_error_handling.md`.
+- Accept a set code, a set name, or an unspecified "set" in the user's request.
+  Keep an explicit code unchanged. For a name, look up `SetName` and get its
+  `SetCode`. For an unspecified set, search both fields and count distinct
+  SetCodes. One distinct code allows processing; multiple codes require the
+  user to choose; no matches stop ZIP/import. Never guess a code, change its
+  case, or substitute a different set. Show any name-to-code mapping in the
+  preview. See [Reference Lookups](ora-resource/ora_reference_lookups.md).
+- Run `scripts/resolve_reference_prerequisites.py` before normalization. It
+  accepts `setReference` input and fills the subscription's `SetCode` only
+  after a complete, clear lookup. A supplied code or Calendar is checked by a
+  read-only GET: a readable result allows processing, no rows stop it, and
+  malformed responses stop it. The calendar query joins its name and type
+  filters with `and`.
+- For an uploaded ZIP containing set assignments or installment Calendars, run the same reference helper
+  with `--package` before `validate-upload`. Pass its saved results using
+  `--reference-evidence`. These results must cover every SetCode and nonblank installment Calendar
+  in that exact ZIP. Missing results, no matches, or malformed responses stop validation.
+  An unavailable API follows the supplied-value warning rule below.
+- If a check for an explicit code or Calendar is unavailable, record
+  `validation_skipped` and keep the supplied value for the separately approved
+  import. HTTP 400 also records a `resolver_contract_issue` for maintenance.
+  If a name or unspecified set cannot be fully looked up, stop and ask for the
+  Set Code; do not use the skipped-check rule to invent a required value.
 - Keep template-required audit columns as technical package behavior. Do not ask an implementation user to invent audit values; preserve non-requested values and rows from the fresh current export. See `ora-resource/ora_defaulting_rules.md` and `ora-resource/ora_input_validation.md`.
 - Keep all adapter package construction and validation offline. Live export, preview, import, monitoring, persisted-state verification, commit, push, merge, and publication require their separate approvals. See `e2e-adapter.json` and `ora-resource/ora_design_enforcement.md`.
 
@@ -223,3 +236,49 @@ Use this task metadata when invoking those skills:
 ## Implementation Notes
 
 Use the parent functional-area skill `erp.financials.payables` for functional-area sequencing and scope decisions. Track token usage for any generated project artifact or skill-run record using the manifest policy.
+
+## Verifying Changes After Import
+
+`reconcile` can report `PASS` only after the workflow has observed a successful
+import and a later completed export from the same task and environment. Supply
+`--verification-evidence <observations.json> --environment <selected-environment>
+--base-url <selected-https-origin> --import-request-id <completed-import-request>`
+along with the baseline, approved candidate, blueprint, requirements and export.
+Missing, stale or mismatched evidence leaves verification `PENDING`; say that
+saved changes have not yet been verified.
+
+For an offline file comparison, use `reconcile --compare-only`. Its result is
+`MATCH` or `DIFFERENT`, with `persistenceVerification=NOT_PERFORMED`. A file match
+does not prove that an import occurred. Package building and import approval
+are unchanged. See [Error Handling](ora-resource/ora_error_handling.md#reconciliation-evidence)
+for the required observations.
+
+
+## Reference Lookup Evidence
+
+When a design or uploaded ZIP uses lookup receipts, follow
+[Reference evidence provenance](references/reference-evidence-provenance.md).
+Keep the selected target separate from evidence, require matching environment
+and HTTPS origin, and rerun preflight for missing, malformed, future, or
+more-than-24-hour-old observations. The same provenance checks apply to
+unavailable lookup warnings. An offline receipt does not authorize a live call
+or prove that Fusion imported the ZIP.
+
+
+## Uploaded Package Compatibility
+
+Before reporting an uploaded ZIP as valid, supply `validate-upload` with
+`--target-context <selected-target.json>` from the independently selected
+workflow target. Both baseline and uploaded metadata must match its environment
+and release. Read [Uploaded package compatibility](references/uploaded-package-compatibility.md)
+for the contract and migration boundary. Matching schemas alone do not establish
+source/target compatibility.
+
+
+## Source Manifest Labels and Origins
+
+When producing a source manifest or verifying post-import observations, follow
+[Manifest labels and HTTPS origins](references/manifest-labels-and-origins.md).
+A source manifest's environment must match its ZIP metadata; keep migration
+destination information separate. Use a credential-free HTTPS origin without
+an API path, query or fragment. A template-only label requires an empty package.

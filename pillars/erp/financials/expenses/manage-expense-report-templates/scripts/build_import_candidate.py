@@ -18,6 +18,7 @@ from copy import deepcopy
 from decimal import Decimal, InvalidOperation
 from pathlib import Path, PurePosixPath
 from typing import Any
+import reference_values
 
 
 TASK_CODE = "EXM_MANAGE_EXPENSE_REPORT_TEMPLATES"
@@ -437,7 +438,7 @@ def resolve_category_code(
     if not code or code not in available:
         choices = ", ".join(sorted(available)) or "(none)"
         raise CandidateBuildError(
-            f"{label} category does not resolve to a code present in the fresh baseline. Available codes: {choices}."
+            f"{label} category does not resolve to an active destination lookup code. Available codes: {choices}."
         )
     return code
 
@@ -542,7 +543,7 @@ def build_type_row(
     tax_fields_empty: bool = False,
 ) -> tuple[str, dict[str, str], dict[str, str] | None, int | None]:
     allowed = {
-        "operation", "name", "match_name", "category_value", "itemization", "project_use",
+        "operation", "name", "match_name", "category_value", "account_number", "itemization", "project_use",
         "prepaid", "itemization_only", "flexfield_segments", "receipt_rules", "field_behaviors", *TYPE_FIELDS,
     }
     reject_unknown(item, allowed, f"{label}.expense_type")
@@ -681,10 +682,10 @@ def build_type_row(
     if "itemization_only" in item:
         row["ItemizationOnlyFlag"] = "" if item["itemization_only"] is None else flag(item["itemization_only"], f"{type_label}.itemization_only")
     if cash_only_no_account_or_projects:
-        # Current workbook intake deliberately has no account or project inputs.
-        # Empty CSV values represent null account/default-expenditure references.
+        # Account fields preserve the baseline on edits. New accounts are
+        # resolved by the caller from the BU's primary ledger, never user input.
         for column in fields:
-            if column in {"LedgerName", "ExpenditureTypeName", "AccountCombination"} or re.fullmatch(r"Segment\d+", column, re.IGNORECASE):
+            if column == "ExpenditureTypeName":
                 row[column] = ""
         row["EnableProjectsFlag"] = "N"
         if "RcptRequiredProjFlag" in row:
@@ -1020,7 +1021,8 @@ def build_mapping_changes(design, templates, type_rows, members, baseline_zip, e
 
 
 def build_candidate(
-    baseline_zip: Path, design_path: Path, output_zip: Path, preview_path: Path, seed_reference_path: Path
+    baseline_zip: Path, design_path: Path, output_zip: Path, preview_path: Path, seed_reference_path: Path,
+    reference_evidence_path: Path | None = None,
 ) -> dict[str, Any]:
     if output_zip.resolve() == preview_path.resolve():
         raise CandidateBuildError("Candidate ZIP and preview output must use different paths.")
@@ -1048,9 +1050,13 @@ def build_candidate(
     design = read_json_object(design_path, "Normalized candidate design")
     templates = validate_design(design, baseline_sha256)
     design, templates = resolve_operation_free_design(design, templates, template_rows, type_rows, members)
-    seed_reference_map = {} if design.get("schema_version") in {"1.2", "1.3", "1.4", "1.5"} else seed_category_map(seed_reference_path)
-    available_categories = {row["CategoryCode"].strip().upper() for row in type_rows if row.get("CategoryCode", "").strip()}
-    seed_map = seed_reference_map
+    references = read_json_object(reference_evidence_path, "Destination reference evidence") if reference_evidence_path else {}
+    category_requested = any("category_code" in item or "category_value" in item
+                             for template in templates for item in template.get("expense_types", []))
+    try:
+        available_categories, seed_map = reference_values.categories(references, design["environment"], baseline_sha256) if category_requested else (set(), {})
+    except ValueError as error:
+        raise CandidateBuildError(str(error)) from error
 
     default_business_unit = design.get("business_unit")
     template_deltas: list[dict[str, Any]] = []
@@ -1060,6 +1066,10 @@ def build_candidate(
         business_unit = require_text(
             template.get("business_unit", default_business_unit), f"{label}.business_unit", maximum=240
         )
+        try:
+            resolved_bu = reference_values.business_unit(references, design["environment"], baseline_sha256, business_unit)
+        except ValueError as error:
+            raise CandidateBuildError(str(error)) from error
         operation = template["operation"]
         template_after, template_before, existing_template_index = build_template_row(
             template_fields, template_rows, business_unit, template, operation, label,
@@ -1083,12 +1093,27 @@ def build_candidate(
             if normalized_name in seen_types:
                 raise CandidateBuildError(f"Duplicate expense type in {label}: {type_name}")
             seen_types.add(normalized_name)
+            item = deepcopy(item)
+            if "category_value" in item and "category_code" not in item:
+                submitted = require_text(item["category_value"], f"{label}.category_value", maximum=80)
+                item["category_code"] = seed_map.get(submitted.casefold(), "")
+            account = item.pop("account_number", ...)
             type_operation, type_after, type_before, existing_type_index = build_type_row(
                 type_fields, type_rows, business_unit, template, operation, item, seed_map,
                 available_categories, label, require_explicit_category=design.get("schema_version") in {"1.2", "1.3", "1.4", "1.5"},
                 cash_only_no_account_or_projects=design.get("schema_version") in {"1.3", "1.4", "1.5"},
                 tax_fields_empty=design.get("schema_version") in {"1.4", "1.5"},
             )
+            if account is not ...:
+                if "Segment1" not in type_fields or "LedgerName" not in type_fields:
+                    raise CandidateBuildError("Fresh schema must expose Segment1 and LedgerName for an expense account.")
+                if account is None:
+                    raise CandidateBuildError("Expense Type Account clearing is not established; omit unchanged accounts.")
+                type_after["Segment1"] = require_text(account, f"{label}.account_number", maximum=25)
+                try:
+                    type_after["LedgerName"] = reference_values.ledger_name(references, design["environment"], baseline_sha256, resolved_bu)
+                except ValueError as error:
+                    raise CandidateBuildError(str(error)) from error
             if type_operation == "create":
                 type_rows.append(type_after)
             elif type_operation == "edit" and existing_type_index is not None:
@@ -1216,6 +1241,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--output-zip", required=True, type=Path)
     parser.add_argument("--preview-output", required=True, type=Path)
     parser.add_argument("--seed-reference", type=Path, default=default_seed_reference())
+    parser.add_argument("--reference-evidence", required=True, type=Path,
+                        help="Fresh core-captured category, BU, and optional primary-ledger REST evidence")
     return parser.parse_args(argv)
 
 
@@ -1228,6 +1255,7 @@ def main(argv: list[str] | None = None) -> int:
             args.output_zip,
             args.preview_output,
             args.seed_reference,
+            args.reference_evidence,
         )
     except CandidateBuildError as error:
         print(f"Candidate build failed: {error}", file=sys.stderr)

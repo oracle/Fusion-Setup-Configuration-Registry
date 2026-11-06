@@ -10,7 +10,7 @@ functional_area_code: "ORA_ZCA_INTEGRATIONS"
 type: "planning"
 execution_mode: "assisted"
 owner_team: "CX sales pillar team"
-version: "0.1.2"
+version: "0.1.0"
 inputs:
   - "implementation_objective"
   - "project_context"
@@ -76,6 +76,7 @@ workspace_outputs:
     default_location: "project/{project_id}/artifacts/shared/token-usage/current/token-usage-log.md"
     versioning_policy: "append-only"
 required_setup_tasks:
+  - "ORA_ZCA_OSC_CPQ_INTEGRATION"
   - "ORA_MANAGE_DATA_ENRICHMENT_INTEGRATION"
 applicability:
   industries:
@@ -106,14 +107,8 @@ Use this functional-area skill after Sales scope is confirmed and the project ne
 
 ## Setup Tasks
 
-1. [Manage Data Enrichment Integration](manage-data-enrichment-integration/SKILL.md) (`ORA_MANAGE_DATA_ENRICHMENT_INTEGRATION`)
-
-## Withdrawn Sales CPQ Integration Route
-
-For Sales CPQ integration requests or existing project bindings to the withdrawn
-Sales integration skill, read the [26D withdrawal and handoff
-record](references/26d-sales-cpq-integration-removal.md). It defines the manual
-handoff and replanning path; it does not restore a task execution skill.
+1. [Manage Oracle CX Sales to Oracle CPQ Cloud Integration](manage-oracle-cx-sales-to-oracle-cpq-cloud-integration/SKILL.md) (`ORA_ZCA_OSC_CPQ_INTEGRATION`)
+2. [Manage Data Enrichment Integration](manage-data-enrichment-integration/SKILL.md) (`ORA_MANAGE_DATA_ENRICHMENT_INTEGRATION`)
 
 ## Inputs
 

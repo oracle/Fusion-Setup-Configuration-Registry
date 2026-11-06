@@ -10,7 +10,7 @@ functional_area_code: "ORA_MOO_OPPORTUNITIES"
 type: "planning"
 execution_mode: "assisted"
 owner_team: "CX sales pillar team"
-version: "0.12.5"
+version: "0.12.4"
 inputs:
   - "implementation_objective"
   - "project_context"
@@ -129,11 +129,13 @@ task context or import package.
 
 ## Purpose
 
-Provide CX Sales implementation guidance for the Opportunities functional area.
+Provide CX Sales implementation guidance for the Opportunities functional area
+and route opportunity quoting or Sales-side Oracle CPQ setup to the canonical
+integration skill.
 
 ## When to Use
 
-Use this functional-area skill after Sales scope is confirmed and the project needs opportunities setup planning, baseline export, import sequencing, or validation checkpoints.
+Use this functional-area skill after Sales scope is confirmed and the project needs opportunities setup planning, baseline export, import sequencing, validation checkpoints, or opportunity quoting integration with Oracle CPQ.
 
 ## Catalog Metadata
 
@@ -309,6 +311,21 @@ Accepted Data Loader initiation is terminal for that request. Retrieve status,
 errors, ProcessLog, and live post-change verification only after a later
 explicit status or results request; never poll or resubmit automatically.
 
+## Related Opportunity Integration Skill
+
+Route an Opportunities request to
+[Manage Oracle CX Sales to Oracle CPQ Cloud Integration](../integrations/manage-oracle-cx-sales-to-oracle-cpq-cloud-integration/SKILL.md)
+when it includes Oracle CPQ quoting, a Sales Order Instance, Create Quote, Edit
+Quote, Copy Quote, Create a Version, Get Proposal, CPQ commerce-process
+metadata, or setup task `ORA_ZCA_OSC_CPQ_INTEGRATION`.
+
+Preserve the catalog identity of that setup task as Sales → Integrations
+(`ORA_ZCA_INTEGRATIONS`). Treat it as a related Opportunities capability, not a
+native Opportunities setup task. Invoke the canonical integration skill
+for its validation, CPQ GET-only metadata resolution, Fusion export/import,
+approval, diagnostics, and verification workflow. Do not copy its scripts,
+resources, credentials flow, or task registry into this skill.
+
 ## Default Mutation Route
 
 For every Opportunities setup task with `dataloader_import_mode: FSM`, use the
@@ -337,7 +354,14 @@ from a generic request to create, update, disable, or delete setup data.
 
 Record the routed skill ID, setup task code, catalog owner, child readiness or
 terminal status, sanitized artifact references, blockers, and safe next action
-in the Opportunities setup plan.
+in the Opportunities setup plan. Keep CPQ-side mutations outside the
+Opportunities skill boundary.
+
+If "configure Oracle CPQ" includes CPQ-side process, document, action, SSO, or
+deployment changes, split the scope explicitly. Execute only the CX Sales-side
+integration task through the routed skill and return a CPQ-owner handoff with
+the unresolved CPQ-side prerequisites and next action; do not report the full
+request complete from this skill.
 
 ## Inputs
 
@@ -357,5 +381,7 @@ in the Opportunities setup plan.
 ## Implementation Notes
 
 Use the generated nested setup-task skills for native Opportunities task-level
-planning and sequencing. Track token usage for any generated project artifact
-or skill-run record using the manifest policy.
+planning and sequencing. When CPQ is in scope, route its work to the canonical
+integration skill and include the sanitized result in the Opportunities plan
+without changing its catalog ownership. Track token usage for any generated
+project artifact or skill-run record using the manifest policy.

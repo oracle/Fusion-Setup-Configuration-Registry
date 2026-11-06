@@ -86,6 +86,7 @@ required_setup_tasks:
   - "ORA_RCS_MANAGE_INV_ORG_VALUE_SETS"
   - "ORA_RCS_MANAGE_MFG_PLANT_PROFILE"
   - "ORA_RCS_MANAGE_CALENDAR_PROFILE_OPTION"
+  - "ORA_EDR_ELECTRONIC_SIGN_PREF"
 applicability:
   industries:
     - "All"
@@ -125,6 +126,7 @@ Use this functional-area skill after Manufacturing and Supply Chain Materials Ma
 8. [Manage Inventory Organizations Value Sets](manage-inventory-organizations-value-sets.md) (`ORA_RCS_MANAGE_INV_ORG_VALUE_SETS`)
 9. [Manage Plant Profiles](manage-plant-profiles.md) (`ORA_RCS_MANAGE_MFG_PLANT_PROFILE`)
 10. [Manage SCM Enterprise Calendar Profile Option](manage-scm-enterprise-calendar-profile-option.md) (`ORA_RCS_MANAGE_CALENDAR_PROFILE_OPTION`)
+11. [Configure Electronic Signature Preferences](configure-electronic-signature-preferences/SKILL.md) (`ORA_EDR_ELECTRONIC_SIGN_PREF`)
 
 ## Inputs
 

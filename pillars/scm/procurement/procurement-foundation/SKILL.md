@@ -81,6 +81,9 @@ required_setup_tasks:
   - "PO_MANAGE_DOCUMENT_STYLES"
   - "POR_MANAGE_AGENT_ASSIGNMENTS_CATEGORY_HIERARCHY"
   - "PO_MANAGE_PROCUREMENT_AGENTS"
+  - "POR_CONFIGURE_REQUISITIONING_BUSINESS_FUNCTION"
+  - "PO_MANAGE_PURCHASING_PROFILE_OPTIONS"
+  - "PO_CONFIGURE_PROCUREMENT_BUSINESS_FUNCTION"
 applicability:
   industries:
     - "All"
@@ -115,6 +118,9 @@ Use this functional-area skill after Procurement scope is confirmed and the proj
 3. [Manage Document Styles](manage-document-styles/SKILL.md) (`PO_MANAGE_DOCUMENT_STYLES`)
 4. [Manage Procurement Category Hierarchy](manage-procurement-category-hierarchy/SKILL.md) (`POR_MANAGE_AGENT_ASSIGNMENTS_CATEGORY_HIERARCHY`)
 5. [Manage Procurement Agents](manage-procurement-agents/SKILL.md) (`PO_MANAGE_PROCUREMENT_AGENTS`)
+6. [Configure Requisitioning Business Function](configure-requisitioning-business-function/SKILL.md) (`POR_CONFIGURE_REQUISITIONING_BUSINESS_FUNCTION`)
+7. [Manage Purchasing Profile Options](manage-purchasing-profile-options/SKILL.md) (`PO_MANAGE_PURCHASING_PROFILE_OPTIONS`)
+8. [Configure Procurement Business Function](configure-procurement-business-function/SKILL.md) (`PO_CONFIGURE_PROCUREMENT_BUSINESS_FUNCTION`)
 
 ## Inputs
 

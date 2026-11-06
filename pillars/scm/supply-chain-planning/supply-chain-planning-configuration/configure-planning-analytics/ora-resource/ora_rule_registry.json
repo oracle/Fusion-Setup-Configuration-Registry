@@ -1347,7 +1347,7 @@
           "transitions": {},
           "prerequisites": [],
           "on_failure": "stop",
-          "applies_when": "Return missing, unsupported, invalid, ambiguous, failed or blocked details and the corrective action; no write",
+          "applies_when": "Classify and persist the failure using Error Classifications and Disclosure Rules; return missing, unsupported, invalid, ambiguous, failed or blocked details and the corrective action; no write",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",

@@ -1,4 +1,4 @@
-"""Render the mandatory, offline follow-up for an accepted Data Loader request."""
+"""Render offline pre-report commentary for an accepted Data Loader request."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ STATUS_QUESTION = "Would you like me to check the status of this Data Loader req
 
 
 def build_followup(request_id: str) -> str:
-    """Return text to append to the core initiation report, without checking status."""
+    """Return commentary to emit before Core's unchanged final report; never query status."""
     if not request_id.isdecimal() or int(request_id) <= 0:
         raise ValueError("accepted Data Loader Request ID must be a positive integer")
     return (

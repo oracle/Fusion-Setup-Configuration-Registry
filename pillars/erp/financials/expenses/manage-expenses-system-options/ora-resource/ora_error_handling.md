@@ -5,7 +5,7 @@
 | Situation | What Should Happen |
 |---|---|
 | The workbook, baseline export, metadata identity, or CSV digest changes after validation | Classify as catalog mismatch; stop and obtain a new export and validation result |
-| A requested record is a Create, inherited value, dynamic reference, candidate mapping, unmapped field, or an option without an exact value code | Classify as unsupported_by_confirmed_fsm_contract; identify the field and do not generate a package |
+| A requested value is inherited, a dynamic reference, candidate mapping, unmapped field, or an option without an exact confirmed value code | Classify as unsupported_by_confirmed_fsm_contract; identify the field and do not generate a package. Confirmed creates and missing overrides are supported through sparse insertion |
 | An option CSV has no exact row, duplicate rows, a mismatched header, or paired option files differ on a requested row | Classify as catalog mismatch; do not choose a row or repair the export |
 | The package changes after it is built | Classify as artifact persistence; restart Data Loader preflight, Task Hook validation, and approval with the changed package |
 | Data Loader preflight, Task Hook validation, approval, submission, monitoring, or ProcessLog verification fails | Preserve the returned safe diagnostic, stop before retry, and follow core.data-loader's declared recovery path |

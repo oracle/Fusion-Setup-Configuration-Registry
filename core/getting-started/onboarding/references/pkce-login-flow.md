@@ -23,26 +23,41 @@ OAuth or implementation workflow and its prerequisites.
 Complete the [illustrated IAM application setup](iam-client-application-setup.md):
 create and activate the Mobile Application in the Identity Domain associated with
 your Fusion instance, enable Authorization code, register the loopback callback,
-and add the required resource scopes. If **Enforce grants as authorization** is
+and add the four scopes marked mandatory in the updated 26D guide: `scope`,
+`ai_scope`, `boss_scope`, and `fusion_common_scope`. Add optional product scopes
+only for modules in the implementation; Field Service and CX Unity also require
+their own base URLs. The [scope setup steps and screenshots](iam-client-application-setup.md#5-add-resource-scopes)
+show these selections and where to find the optional service URLs. For Field
+Service and CX Unity, the updated guide requires only each product's highlighted
+scope during FSCR implementation: the full scope ending in `field-service-common/`
+for `fs_scope`, and the full scope ending in `unitycxunity` for `cdp_scope`.
+The other scopes displayed for those products are not required for this setup.
+If **Enforce grants as authorization** is
 enabled, assign the intended FSCR users or groups to the mobile application before
 login, as described in the 26D setup guide. The user signing in also needs the Fusion
 roles and data access required by the eventual REST operation.
 
-Configure `core/auth/fusionEnv.properties`. This example uses placeholders, not
-working environment values:
+Configure `core/auth/fusionEnv.properties` using the
+[full setup example](iam-client-application-setup.md#7-configure-fusionenvproperties).
+The minimal example below shows only the properties used by a standard Fusion
+REST login; it does not replace the guide's four mandatory setup scopes. It uses
+placeholders, not working environment values:
 
 ```properties
 environment=MY_FUSION_ENV
 restBaseUrl=https://fusion.example.invalid
 clientId=YOUR_REGISTERED_CLIENT_ID
 redirectUrl=http://127.0.0.1:8765/oauth/callback
-pkce=true
 scope=YOUR_EXACT_REGISTERED_FUSION_SCOPE
 ```
 
 Use the Fusion HTTPS origin for `restBaseUrl`, and copy the Client ID and exact
-scope from the intended IAM application. Match `redirectUrl` exactly to the
-registered URI. `pkce=true` is also the default when the property is absent.
+scope from the intended IAM application, preserving a trailing `/` if present.
+Do not add a slash when the registered scope has none. Resource names may vary
+by environment; consult the Fusion domain administrator if the correct resource
+or scope is unclear. Match `redirectUrl` exactly to the
+registered URI. Omit `pkce` from the properties file for the default Mobile
+Application setup; PKCE is enabled automatically when the property is absent.
 Do not put a client secret, access token, `authorizeUrl`, or `tokenUrl` here.
 OAuth endpoints come from the separate private trust policy described below.
 See the [property mapping](fusion-environment-configuration.md) for other services.

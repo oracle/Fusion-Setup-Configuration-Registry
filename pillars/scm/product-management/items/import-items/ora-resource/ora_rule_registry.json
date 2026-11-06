@@ -5,15 +5,199 @@
     {
       "task_code": "EGP_IMPORT_ITEMS",
       "task_name": "Import Items",
-      "start_node": "ITEM_IMPORT.VALIDATE_FBDI",
+      "start_node": "ITEM_IMPORT.CHECK_ITEM_INDEX",
       "nodes": [
-        {"id":"ITEM_IMPORT.VALIDATE_FBDI","node_type":"step","sequence":1,"action_type":"validate_input","execution_route":"local","transitions":{"valid":"ITEM_IMPORT.CONFIRM_LOADER_ROUTE","invalid":"ITEM_IMPORT.FAILED"},"prerequisites":[],"on_failure":"stop","applies_when":"Validate source, current public template, package, and immutable evidence before handoff.","source":{"file":"ora_input_validation.md","anchor":"task-nodes"},"readiness":{"status":"ready","blocking_reasons":[]}},
-        {"id":"ITEM_IMPORT.CONFIRM_LOADER_ROUTE","node_type":"step","sequence":2,"action_type":"resolve_dependency","execution_route":"local","transitions":{"ready":"ITEM_IMPORT.HANDOFF_GATE","blocked":"ITEM_IMPORT.FAILED"},"prerequisites":["ITEM_IMPORT.VALIDATE_FBDI"],"on_failure":"stop","applies_when":"Confirm handoff to core.data-loader with registered business object item.","source":{"file":"ora_dependency_readiness.md","anchor":"task-nodes"},"readiness":{"status":"ready","blocking_reasons":[]}},
-        {"id":"ITEM_IMPORT.HANDOFF_GATE","node_type":"decision","sequence":3,"action_type":"execution_gate","execution_route":"local","transitions":{"ready":"ITEM_IMPORT.READY_FOR_CORE_DATA_LOADER","blocked":"ITEM_IMPORT.FAILED"},"prerequisites":["ITEM_IMPORT.CONFIRM_LOADER_ROUTE"],"on_failure":"stop","applies_when":"Immediately before handing the unchanged validated ZIP to core.data-loader.","source":{"file":"ora_error_handling.md","anchor":"task-nodes"},"readiness":{"status":"ready","blocking_reasons":[]}},
-        {"id":"ITEM_IMPORT.READY_FOR_CORE_DATA_LOADER","node_type":"terminal","sequence":4,"action_type":"terminal","execution_route":"local","transitions":{},"prerequisites":["ITEM_IMPORT.HANDOFF_GATE"],"on_failure":"continue","applies_when":"Local validation and immutable handoff evidence are complete.","source":{"file":"ora_error_handling.md","anchor":"task-nodes"},"readiness":{"status":"ready","blocking_reasons":[]}},
-        {"id":"ITEM_IMPORT.FAILED","node_type":"terminal","sequence":5,"action_type":"terminal","execution_route":"local","transitions":{},"prerequisites":[],"on_failure":"continue","applies_when":"A local validation, template, or artifact-persistence failure occurs.","source":{"file":"ora_error_handling.md","anchor":"task-nodes"},"readiness":{"status":"ready","blocking_reasons":[]}}
+        {
+          "id": "ITEM_IMPORT.CHECK_ITEM_INDEX",
+          "node_type": "decision",
+          "sequence": 1,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "available": "ITEM_IMPORT.INDEX_DEPENDENCY_READY",
+            "index_remediation_required": "ITEM_IMPORT.INDEX_REMEDIATION_REQUIRED",
+            "failure": "ITEM_IMPORT.FAILED"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Before the current Import Items preparation and validation workflow begins; use verify_item_search_index_readiness.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 41
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ITEM_IMPORT.INDEX_DEPENDENCY_READY",
+          "node_type": "step",
+          "sequence": 2,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "ITEM_IMPORT.VALIDATE_FBDI",
+            "blocked": "ITEM_IMPORT.FAILED"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "The lookup returned valid HTTP 200 zero-result search response.",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 37
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ITEM_IMPORT.VALIDATE_FBDI",
+          "node_type": "step",
+          "sequence": 3,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "ITEM_IMPORT.CONFIRM_LOADER_ROUTE",
+            "invalid": "ITEM_IMPORT.FAILED"
+          },
+          "prerequisites": [
+            "ITEM_IMPORT.INDEX_DEPENDENCY_READY"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Validate source, current template, package, and immutable evidence after the item-index dependency gate passes.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 22
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ITEM_IMPORT.CONFIRM_LOADER_ROUTE",
+          "node_type": "step",
+          "sequence": 4,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "ITEM_IMPORT.HANDOFF_GATE",
+            "blocked": "ITEM_IMPORT.FAILED"
+          },
+          "prerequisites": [
+            "ITEM_IMPORT.VALIDATE_FBDI"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Confirm the immutable ZIP and handoff evidence are complete; pass `--business-object item` during core.data-loader preflight for live FBDI route validation.",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 38
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ITEM_IMPORT.HANDOFF_GATE",
+          "node_type": "decision",
+          "sequence": 5,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "ITEM_IMPORT.READY_FOR_CORE_DATA_LOADER",
+            "blocked": "ITEM_IMPORT.FAILED"
+          },
+          "prerequisites": [
+            "ITEM_IMPORT.CONFIRM_LOADER_ROUTE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Immediately before handing the unchanged validated ZIP to core.data-loader.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 60
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ITEM_IMPORT.READY_FOR_CORE_DATA_LOADER",
+          "node_type": "terminal",
+          "sequence": 6,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "ITEM_IMPORT.HANDOFF_GATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Local validation and immutable handoff evidence are complete.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 61
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ITEM_IMPORT.INDEX_REMEDIATION_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 7,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "ITEM_IMPORT.CHECK_ITEM_INDEX"
+          ],
+          "on_failure": "stop",
+          "applies_when": "The Item Index is unavailable. Return the index-remediation handoff to Product Management orchestration; do not continue Import Items.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 62
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ITEM_IMPORT.FAILED",
+          "node_type": "terminal",
+          "sequence": 8,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "continue",
+          "applies_when": "Any item-index lookup, local validation, template, or artifact-persistence failure occurs.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 63
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
       ],
-      "readiness":{"status":"ready","blocking_reasons":[]}
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
     }
   ]
 }

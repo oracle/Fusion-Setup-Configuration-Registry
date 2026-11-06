@@ -84,3 +84,4 @@ every mapped set and dependent parent before classifying a value as missing.
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---:|---:|---|---|---|---|---|
 | MAK.RESOLVE_REFERENCES | decision | 20 | reference_lookup | resolved->MAK.CHECK_DEPENDENCIES;unresolved_or_ambiguous->MAK.HANDLE_LOOKUP | MAK.VALIDATE_INPUT | stop | Obtain applicable current references after valid intake; record verified findings before dependency evaluation. |
+| MAK.RESOLVE_OPERATION | decision | 35 | evaluate_result | create_new->MAK.APPLY_DEFAULTS;update_existing->MAK.APPLY_DEFAULTS;decision_required->MAK.HANDLE_OPERATION_DECISION | MAK.CHECK_DEPENDENCIES | stop | Compare requested operation with exact existing-key evidence. |

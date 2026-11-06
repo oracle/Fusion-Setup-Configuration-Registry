@@ -1,0 +1,337 @@
+{
+  "run": {
+    "schema_version": "1.0",
+    "project_id": "demo-procurement-validation",
+    "run_id": "demo-implementation-review-20261020",
+    "stage": "implementation-review",
+    "environment": "DEMO-TEST",
+    "started_at": "2026-10-20T10:00:00Z",
+    "request": "SYNTHETIC DEMONSTRATION: review four fictional procurement requirements against fictional Run Book status and sample evidence; no live Fusion checks or transaction execution.",
+    "scope": "SYNTHETIC SAMPLE ONLY: business unit, supplier/site, purchasable item and approval rule. Every value, identity, timestamp, observation and outcome is fictional.",
+    "scope_ref": "sample-evidence.html#impl-approved-scope",
+    "requirement_version": "DEMO-1.0",
+    "redaction_reviewed": true,
+    "requirements": [
+      {
+        "requirement_id": "impl-req-1",
+        "description": "Business unit is enabled for the approved procurement scope.",
+        "source_ref": "sample-evidence.html#impl-requirement-1",
+        "expected_setup": "Business unit DEMO-BU is enabled for procurement.",
+        "task_refs": [
+          "DEMO-T1"
+        ],
+        "check_ids": [
+          "impl-business-unit"
+        ],
+        "owner": "Framework implementation lead",
+        "required": true
+      },
+      {
+        "requirement_id": "impl-req-2",
+        "description": "Supplier site is active and linked to the approved business unit.",
+        "source_ref": "sample-evidence.html#impl-requirement-2",
+        "expected_setup": "Supplier site DEMO-SITE is active and assigned to DEMO-BU.",
+        "task_refs": [
+          "DEMO-T2"
+        ],
+        "check_ids": [
+          "impl-supplier-site"
+        ],
+        "owner": "Procurement pillar owner",
+        "required": true
+      },
+      {
+        "requirement_id": "impl-req-3",
+        "description": "Item is enabled for purchasing in the approved organization.",
+        "source_ref": "sample-evidence.html#impl-requirement-3",
+        "expected_setup": "Item DEMO-ITEM is purchasable in organization DEMO-ORG.",
+        "task_refs": [
+          "DEMO-T3"
+        ],
+        "check_ids": [
+          "impl-purchasable-item"
+        ],
+        "owner": "Procurement pillar owner",
+        "required": true
+      },
+      {
+        "requirement_id": "impl-req-4",
+        "description": "Approval rule is configured and manually verified.",
+        "source_ref": "sample-evidence.html#impl-requirement-4",
+        "expected_setup": "Approval rule DEMO-APPROVAL is enabled with the agreed approver group DEMO-APPROVERS.",
+        "task_refs": [
+          "DEMO-T4"
+        ],
+        "check_ids": [
+          "impl-approval-rule"
+        ],
+        "owner": "Implementer",
+        "required": true
+      }
+    ],
+    "tasks": [
+      {
+        "task_id": "DEMO-T1",
+        "title": "Business unit",
+        "status": "completed",
+        "source_ref": "sample-evidence.html#impl-task-1",
+        "captured_at": "2026-10-20T09:59:00Z",
+        "environment": "DEMO-TEST",
+        "evidence_current": true,
+        "details": "Fictional source status: Completed. Synthetic evidence confirms the approved procurement enablement.",
+        "owner": "Framework implementation lead",
+        "completed_at": "2026-10-20T09:00:00Z"
+      },
+      {
+        "task_id": "DEMO-T2",
+        "title": "Supplier/site",
+        "status": "completed",
+        "source_ref": "sample-evidence.html#impl-task-2",
+        "captured_at": "2026-10-20T09:59:00Z",
+        "environment": "DEMO-TEST",
+        "evidence_current": true,
+        "details": "Fictional source status: Completed. The separate synthetic value check finds the supplier site inactive; task completion does not prove correctness.",
+        "owner": "Procurement pillar owner",
+        "completed_at": "2026-10-20T09:15:00Z"
+      },
+      {
+        "task_id": "DEMO-T3",
+        "title": "Purchasable item",
+        "status": "completed",
+        "source_ref": "sample-evidence.html#impl-task-3",
+        "captured_at": "2026-10-20T09:59:00Z",
+        "environment": "DEMO-TEST",
+        "evidence_current": true,
+        "details": "Fictional source status: Completed. Synthetic evidence confirms purchasing is enabled in the intended organization.",
+        "owner": "Procurement pillar owner",
+        "completed_at": "2026-10-20T09:20:00Z"
+      },
+      {
+        "task_id": "DEMO-T4",
+        "title": "Approval rule",
+        "status": "pending",
+        "source_ref": "sample-evidence.html#impl-task-4",
+        "captured_at": "2026-10-20T09:59:00Z",
+        "environment": "DEMO-TEST",
+        "evidence_current": true,
+        "details": "Fictional source status: Pending. No completion time or manual verification evidence is available.",
+        "owner": "Implementer",
+        "completed_at": null
+      }
+    ],
+    "checks": [
+      {
+        "result_id": "impl-result-1",
+        "check_id": "impl-business-unit",
+        "check_version": "1.0.0",
+        "title": "Verify business unit procurement enablement",
+        "owner": "Framework implementation lead",
+        "required": true,
+        "blocking": true,
+        "requirement_refs": [
+          "impl-req-1"
+        ],
+        "task_refs": [
+          "DEMO-T1"
+        ],
+        "source_ref": "sample-evidence.html#impl-check-1",
+        "status": "PASS",
+        "method": "artifact",
+        "environment": "DEMO-TEST",
+        "observed_at": "2026-10-20T10:01:00Z",
+        "evidence_current": true,
+        "reason": "",
+        "assertions": [
+          {
+            "assertion_id": "impl-assertion-1",
+            "expected": "DEMO-BU is enabled for procurement.",
+            "observed": "Synthetic observation: DEMO-BU is enabled for procurement.",
+            "status": "PASS",
+            "evidence_refs": [
+              "sample-evidence.html#impl-business-unit"
+            ]
+          }
+        ],
+        "evidence_refs": [
+          "sample-evidence.html#impl-business-unit"
+        ],
+        "performed_by": "",
+        "next_action": "None required for this fictional check."
+      },
+      {
+        "result_id": "impl-result-2",
+        "check_id": "impl-supplier-site",
+        "check_version": "1.0.0",
+        "title": "Verify supplier site activation and business unit",
+        "owner": "Procurement pillar owner",
+        "required": true,
+        "blocking": true,
+        "requirement_refs": [
+          "impl-req-2"
+        ],
+        "task_refs": [
+          "DEMO-T2"
+        ],
+        "source_ref": "sample-evidence.html#impl-check-2",
+        "status": "FAIL",
+        "method": "artifact",
+        "environment": "DEMO-TEST",
+        "observed_at": "2026-10-20T10:02:00Z",
+        "evidence_current": true,
+        "reason": "The fictional site activation differs from the approved expectation even though DEMO-T2 is completed.",
+        "assertions": [
+          {
+            "assertion_id": "impl-assertion-2",
+            "expected": "DEMO-SITE is active and assigned to DEMO-BU.",
+            "observed": "Synthetic observation: DEMO-SITE is inactive and assigned to DEMO-BU.",
+            "status": "FAIL",
+            "evidence_refs": [
+              "sample-evidence.html#impl-supplier-site"
+            ]
+          }
+        ],
+        "evidence_refs": [
+          "sample-evidence.html#impl-supplier-site"
+        ],
+        "performed_by": "",
+        "next_action": "Correct the inactive supplier site through its owning implementation skill and approval controls, then request a new read-back validation; this report does not change setup."
+      },
+      {
+        "result_id": "impl-result-3",
+        "check_id": "impl-purchasable-item",
+        "check_version": "1.0.0",
+        "title": "Verify purchasable item organization",
+        "owner": "Procurement pillar owner",
+        "required": true,
+        "blocking": true,
+        "requirement_refs": [
+          "impl-req-3"
+        ],
+        "task_refs": [
+          "DEMO-T3"
+        ],
+        "source_ref": "sample-evidence.html#impl-check-3",
+        "status": "PASS",
+        "method": "artifact",
+        "environment": "DEMO-TEST",
+        "observed_at": "2026-10-20T10:03:00Z",
+        "evidence_current": true,
+        "reason": "",
+        "assertions": [
+          {
+            "assertion_id": "impl-assertion-3",
+            "expected": "DEMO-ITEM is purchasable in DEMO-ORG.",
+            "observed": "Synthetic observation: DEMO-ITEM is purchasable in DEMO-ORG.",
+            "status": "PASS",
+            "evidence_refs": [
+              "sample-evidence.html#impl-purchasable-item"
+            ]
+          }
+        ],
+        "evidence_refs": [
+          "sample-evidence.html#impl-purchasable-item"
+        ],
+        "performed_by": "",
+        "next_action": "None required for this fictional check."
+      },
+      {
+        "result_id": "impl-result-4",
+        "check_id": "impl-approval-rule",
+        "check_version": "1.0.0",
+        "title": "Verify approval rule through a manual application check",
+        "owner": "Implementer",
+        "required": true,
+        "blocking": true,
+        "requirement_refs": [
+          "impl-req-4"
+        ],
+        "task_refs": [
+          "DEMO-T4"
+        ],
+        "source_ref": "sample-evidence.html#impl-check-4",
+        "status": "NOT_RUN",
+        "method": "none",
+        "environment": "DEMO-TEST",
+        "observed_at": "2026-10-20T10:04:00Z",
+        "evidence_current": false,
+        "reason": "The task is pending and no manual observation has been supplied. The fictional assessment timestamp records this pending state, not a completed check.",
+        "assertions": [
+          {
+            "assertion_id": "impl-assertion-4",
+            "expected": "DEMO-APPROVAL is enabled with approver group DEMO-APPROVERS.",
+            "observed": "",
+            "status": "NOT_OBSERVED",
+            "evidence_refs": []
+          }
+        ],
+        "evidence_refs": [],
+        "performed_by": "",
+        "next_action": "Complete the approval rule through its owning skill, then run the pillar-provided manual check and supply sanitized evidence with performer and observation time. A bypass leaves verification unconfirmed."
+      }
+    ],
+    "decisions": [
+      {
+        "decision_id": "impl-demo-baseline",
+        "summary": "Fictional DEMO-1.0 requirements define the four-item demonstration scope; no real customer approval or environment is represented.",
+        "owner": "Framework implementation lead",
+        "source_ref": "sample-evidence.html#impl-approved-scope"
+      }
+    ],
+    "recommendations": [
+      {
+        "message": "Preserve DEMO-T2 as source-recorded Completed while reporting supplier-site verification as FAIL; correct setup only through the owning skill and reassess.",
+        "owner": "Procurement pillar owner",
+        "source_ref": "sample-evidence.html#impl-supplier-site"
+      },
+      {
+        "message": "Complete DEMO-T4 and run the manual approval-rule check; retain NOT_RUN until attributable evidence exists.",
+        "owner": "Implementer",
+        "source_ref": "sample-evidence.html#impl-check-4"
+      },
+      {
+        "message": "Keep this demonstration separate from real implementation evidence; do not infer project readiness or authorize any transaction from it.",
+        "owner": "Framework implementation lead",
+        "source_ref": "sample-evidence.html#impl-approved-scope"
+      }
+    ],
+    "limitations": [
+      "SYNTHETIC DEMONSTRATION ONLY. All project identities, tasks, requirements, timestamps, evidence references and observed values are invented. No live Fusion checks were run.",
+      "The redaction_reviewed flag applies only to this dummy input. It is not an automated sanitization or verification result.",
+      "sample-evidence.html references name fictional explanatory fixtures, not production records or independently collected API responses.",
+      "The source task list has three completed tasks and one pending task. The separate four checks contain two PASS, one blocking FAIL and one required NOT_RUN.",
+      "No transaction was selected, created, reused, submitted or cleaned up. This implementation-review sample cannot authorize transaction execution.",
+      "The manual check has no observation; its recorded timestamp denotes the fictional pending assessment only."
+    ],
+    "errors": []
+  },
+  "assessment": {
+    "readiness": "BLOCKED",
+    "readiness_scope": "implementation-review",
+    "counts": {
+      "PASS": 2,
+      "FAIL": 1,
+      "BLOCKED": 0,
+      "INDETERMINATE": 0,
+      "SKIPPED": 0,
+      "NOT_RUN": 1,
+      "NOT_APPLICABLE": 0
+    },
+    "requirement_count": 4,
+    "task_count": 4,
+    "gaps": [
+      "impl-supplier-site: unresolved FAIL",
+      "impl-supplier-site: required verification incomplete, stale or attested only",
+      "impl-approval-rule: required verification incomplete, stale or attested only",
+      "DEMO-T4: task incomplete or evidence stale"
+    ],
+    "blockers": [
+      "impl-supplier-site: FAIL"
+    ],
+    "followups": [
+      "Framework implementation lead: None required for this fictional check.",
+      "Procurement pillar owner: Correct the inactive supplier site through its owning implementation skill and approval controls, then request a new read-back validation; this report does not change setup.",
+      "Procurement pillar owner: None required for this fictional check.",
+      "Implementer: Complete the approval rule through its owning skill, then run the pillar-provided manual check and supply sanitized evidence with performer and observation time. A bypass leaves verification unconfirmed."
+    ]
+  }
+}

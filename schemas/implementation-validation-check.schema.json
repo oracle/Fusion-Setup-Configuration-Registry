@@ -1,0 +1,405 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fdos.oracle.example/schemas/implementation-validation-check.schema.json",
+  "title": "Implementation Validation Check",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "check_id",
+    "version",
+    "title",
+    "owner",
+    "reviewer",
+    "pillar",
+    "offering",
+    "purpose",
+    "exclusions",
+    "applicability",
+    "kind",
+    "source_kind",
+    "source_ref",
+    "supported_releases",
+    "requirement_refs",
+    "task_refs",
+    "required",
+    "blocking",
+    "prerequisites",
+    "privileges",
+    "inputs",
+    "execution",
+    "assertions",
+    "limits",
+    "side_effects",
+    "cleanup",
+    "references"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "check_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,119}$"
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "owner": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reviewer": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pillar": {
+      "type": "string",
+      "minLength": 1
+    },
+    "offering": {
+      "type": "string",
+      "minLength": 1
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 1
+    },
+    "exclusions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "applicability": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "setup",
+        "transactional"
+      ]
+    },
+    "source_kind": {
+      "type": "string",
+      "enum": [
+        "pillar-check",
+        "svf"
+      ]
+    },
+    "source_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "supported_releases": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "requirement_refs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "task_refs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "required": {
+      "type": "boolean"
+    },
+    "blocking": {
+      "type": "boolean"
+    },
+    "prerequisites": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "privileges": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "required",
+          "constraints",
+          "source_strategy"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "constraints": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "source_strategy": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method",
+        "workflow_ref",
+        "client_ref",
+        "operation",
+        "steps",
+        "timeout_seconds",
+        "poll_interval_seconds"
+      ],
+      "properties": {
+        "method": {
+          "type": "string",
+          "enum": [
+            "api",
+            "manual",
+            "artifact"
+          ]
+        },
+        "workflow_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "client_ref": {
+          "type": "string"
+        },
+        "operation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "timeout_seconds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "poll_interval_seconds": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "assertions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "assertion_id",
+          "expected",
+          "verification"
+        ],
+        "properties": {
+          "assertion_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9._-]{0,119}$"
+          },
+          "expected": {
+            "type": "string",
+            "minLength": 1
+          },
+          "verification": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_new_primary_records",
+        "mandatory_child_bounds",
+        "payload_enforcement",
+        "test_marker",
+        "stable_key_strategy",
+        "duplicate_lookup"
+      ],
+      "properties": {
+        "max_new_primary_records": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "mandatory_child_bounds": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "collection",
+              "maximum"
+            ],
+            "properties": {
+              "collection": {
+                "type": "string",
+                "minLength": 1
+              },
+              "maximum": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        },
+        "payload_enforcement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "test_marker": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stable_key_strategy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "duplicate_lookup": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "side_effects": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy",
+        "workflow_ref",
+        "instructions",
+        "owner"
+      ],
+      "properties": {
+        "policy": {
+          "type": "string",
+          "enum": [
+            "none",
+            "delete",
+            "cancel",
+            "retain",
+            "manual"
+          ]
+        },
+        "workflow_ref": {
+          "type": "string"
+        },
+        "instructions": {
+          "type": "string",
+          "minLength": 1
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "references": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "setup"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "limits": {
+            "properties": {
+              "max_new_primary_records": {
+                "const": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "execution": {
+            "properties": {
+              "method": {
+                "const": "api"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "execution": {
+            "properties": {
+              "client_ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

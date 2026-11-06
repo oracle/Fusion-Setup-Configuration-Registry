@@ -68,6 +68,13 @@ whether the setup checkbox is selectable.
 It has no CSV flag. For explicit shared-attribute intent, preparation accepts
 `copyConversionAttributes: true` in its internal normalized request. Omit it
 for independently configured attributes. Do not serialize a guessed boolean.
+When source-form input supplies `Curr_Set_Use_Conversion`, retain it in
+`sourceInput`. Preparation maps explicit true to the action, rejects an
+explicit contradictory action and preserves independent conversion choices
+for false/unspecified intent. The preview checks the resulting persistent
+destinations against `finalData.sourceInput`; equal Pc/Pfc values alone do
+not establish that RateSch attributes were copied. Include every derived
+change even when a visible checkbox has no stored Boolean representation.
 
 For the supported COST_ONLY project-plan PLAN_TYPE options row:
 

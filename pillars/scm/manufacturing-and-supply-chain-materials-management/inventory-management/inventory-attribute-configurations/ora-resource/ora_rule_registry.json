@@ -1,0 +1,210 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "ORA_INVENTORY_ATTRIBUTE_CONFIGURATION",
+      "task_name": "Inventory Attribute Configurations",
+      "start_node": "IAC.NORMALIZE_CONTROLS",
+      "nodes": [
+        {
+          "id": "IAC.NORMALIZE_CONTROLS",
+          "node_type": "step",
+          "sequence": 10,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "IAC.RESOLVE_APPLICABILITY_LEVEL",
+            "invalid": "IAC.HANDLE_ERROR"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Before Data Loader task validation or import preparation.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 68
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "IAC.RESOLVE_APPLICABILITY_LEVEL",
+          "node_type": "decision",
+          "sequence": 20,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "IAC.RESOLVE_SOURCE_TYPE",
+            "skipped": "IAC.RESOLVE_SOURCE_TYPE",
+            "blocked": "IAC.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "IAC.NORMALIZE_CONTROLS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "An Applicability Level Meaning and/or ApplicabilityCode is supplied.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 42
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "IAC.RESOLVE_SOURCE_TYPE",
+          "node_type": "decision",
+          "sequence": 25,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "IAC.RESOLVE_STATUS",
+            "skipped": "IAC.RESOLVE_STATUS",
+            "blocked": "IAC.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "IAC.RESOLVE_APPLICABILITY_LEVEL"
+          ],
+          "on_failure": "stop",
+          "applies_when": "A Source Type Meaning and/or SourceType is supplied.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 43
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "IAC.RESOLVE_STATUS",
+          "node_type": "decision",
+          "sequence": 27,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "IAC.DATA_LOADER_HANDOFF",
+            "skipped": "IAC.DATA_LOADER_HANDOFF",
+            "blocked": "IAC.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "IAC.RESOLVE_SOURCE_TYPE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "A Status Meaning and/or Status is supplied.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 44
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "IAC.DATA_LOADER_HANDOFF",
+          "node_type": "decision",
+          "sequence": 30,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "IAC.DONE",
+            "blocked": "IAC.HANDLE_ERROR",
+            "failure": "IAC.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "IAC.RESOLVE_STATUS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Local validation and optional approved lookups have passed; hand preparation to core.data-loader.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 44
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "IAC.HANDLE_ERROR",
+          "node_type": "step",
+          "sequence": 40,
+          "action_type": "error_handler",
+          "execution_route": "local",
+          "transitions": {
+            "handled": "IAC.RETURN_ISSUES"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Any local validation, lookup, or Data Loader handoff issue.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 45
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "IAC.RETURN_ISSUES",
+          "node_type": "terminal",
+          "sequence": 50,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "IAC.HANDLE_ERROR"
+          ],
+          "on_failure": "stop",
+          "applies_when": "A blocking issue was classified and disclosed.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 46
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "IAC.DONE",
+          "node_type": "terminal",
+          "sequence": 60,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "IAC.DATA_LOADER_HANDOFF"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Local task rules passed and core.data-loader owns subsequent validation and execution.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 47
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

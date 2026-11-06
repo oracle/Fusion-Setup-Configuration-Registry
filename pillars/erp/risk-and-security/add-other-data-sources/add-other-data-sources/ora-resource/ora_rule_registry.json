@@ -73,7 +73,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 28
+            "line": 30
           },
           "readiness": {
             "status": "ready",
@@ -127,7 +127,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 29
+            "line": 31
           },
           "readiness": {
             "status": "ready",
@@ -177,7 +177,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 39
+            "line": 40
           },
           "readiness": {
             "status": "ready",
@@ -199,7 +199,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 40
+            "line": 41
           },
           "readiness": {
             "status": "ready",
@@ -219,7 +219,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 41
+            "line": 42
           },
           "readiness": {
             "status": "ready",
@@ -241,7 +241,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 42
+            "line": 43
           },
           "readiness": {
             "status": "ready",

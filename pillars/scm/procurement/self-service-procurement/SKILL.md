@@ -77,7 +77,6 @@ workspace_outputs:
     default_location: "project/{project_id}/artifacts/shared/token-usage/current/token-usage-log.md"
     versioning_policy: "append-only"
 required_setup_tasks:
-  - "POR_CONFIGURE_REQUISITIONING_BUSINESS_FUNCTION"
   - "POR_MANAGE_REQUISITION_DESCRIPTIVE_FLEXFIELDS"
   - "POR_MANAGE_INFORMATION_TEMPLATE_DESCRIPTIVE_FLEXFIELDS"
   - "POR_MANAGE_SELF_SERVICE_PROCUREMENT_PROFILE_OPTIONS"
@@ -113,13 +112,12 @@ Use this functional-area skill after Procurement scope is confirmed and the proj
 
 ## Setup Tasks
 
-1. [Configure Requisitioning Business Function](configure-requisitioning-business-function/SKILL.md) (`POR_CONFIGURE_REQUISITIONING_BUSINESS_FUNCTION`)
-2. [Manage Requisition Descriptive Flexfields](manage-requisition-descriptive-flexfields/SKILL.md) (`POR_MANAGE_REQUISITION_DESCRIPTIVE_FLEXFIELDS`)
-3. [Manage Information Template Descriptive Flexfields](manage-information-template-descriptive-flexfields/SKILL.md) (`POR_MANAGE_INFORMATION_TEMPLATE_DESCRIPTIVE_FLEXFIELDS`)
-4. [Manage Self Service Procurement Profile Options](manage-self-service-procurement-profile-options.md) (`POR_MANAGE_SELF_SERVICE_PROCUREMENT_PROFILE_OPTIONS`)
-5. [Manage Requisition Value Sets](manage-requisition-value-sets.md) (`POR_MANAGE_REQUISITION_VALUE_SETS`)
-6. [Manage Information Template Value Sets](manage-information-template-value-sets.md) (`POR_MANAGE_INFORMATION_TEMPLATE_VALUE_SETS`)
-7. [Manage Catalog Category Hierarchy](manage-catalog-category-hierarchy/SKILL.md) (`POR_MANAGE_CATALOG_CATEGORY_HIERARCHY`)
+1. [Manage Requisition Descriptive Flexfields](manage-requisition-descriptive-flexfields/SKILL.md) (`POR_MANAGE_REQUISITION_DESCRIPTIVE_FLEXFIELDS`)
+2. [Manage Information Template Descriptive Flexfields](manage-information-template-descriptive-flexfields/SKILL.md) (`POR_MANAGE_INFORMATION_TEMPLATE_DESCRIPTIVE_FLEXFIELDS`)
+3. [Manage Self Service Procurement Profile Options](manage-self-service-procurement-profile-options.md) (`POR_MANAGE_SELF_SERVICE_PROCUREMENT_PROFILE_OPTIONS`)
+4. [Manage Requisition Value Sets](manage-requisition-value-sets.md) (`POR_MANAGE_REQUISITION_VALUE_SETS`)
+5. [Manage Information Template Value Sets](manage-information-template-value-sets.md) (`POR_MANAGE_INFORMATION_TEMPLATE_VALUE_SETS`)
+6. [Manage Catalog Category Hierarchy](manage-catalog-category-hierarchy/SKILL.md) (`POR_MANAGE_CATALOG_CATEGORY_HIERARCHY`)
 
 ## Inputs
 

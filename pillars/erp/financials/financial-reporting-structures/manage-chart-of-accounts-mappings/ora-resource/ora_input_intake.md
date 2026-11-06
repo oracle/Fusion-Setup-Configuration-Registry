@@ -9,7 +9,8 @@
 | Rollup-rule table | Target segment and value, one or two source segments, detail values or parent values, hierarchy evidence, and accounting date | Rollup rules |
 | Account-rule table | Complete target account combination, source detail values, coherent ranges or permitted parents, description, exception rationale, and current export-derived FSM contract evidence | Account rules |
 | Current Oracle XLSM | Unmodified current Chart of Accounts Mapping Rules Import workbook with instructions, tooltips, macros, and original column order | FBDI segment and rollup rules |
-| Same-task export or supported read-only evidence | Existing mapping header and rules, technical codes, hierarchy versions, values, and audit metadata | Existence and comparison |
+| Current target template/spec ZIP | CSV headers and ASM_SETUP_CSV_METADATA.xml, checked against the Reviewed FSM Schema and Reviewed FSM Field Semantics sections in ora-resource/ora_reference_lookups.md | FSM preparation; no full data export required |
+| Current target mapping evidence | Exact-name header, rules, provenance, coverage, and audit metadata | Existence and comparison before submission; unrelated exports are contract evidence only |
 
 ## Dependency Inputs
 
@@ -25,7 +26,7 @@
 | Source chart of accounts | Yes | Resolve the single source parent | Template decides | Match one enabled chart and obtain supported technical identity |
 | Target chart of accounts | Yes | Resolve the single target parent | Template decides | Match one enabled chart and obtain supported technical identity |
 | Current FBDI template evidence | Conditional | Establish exact FBDI columns, codes, lengths, CSV files, and ZIP shape | No | Required only when multiple-source rules are requested or the user explicitly selects FBDI |
-| Existing mapping evidence | Yes | Prevent duplicates and unsafe updates | No | Search by mapping name, then compare parent and child definitions |
+| Existing mapping evidence | Required for submission; pending is allowed for local preparation | Prevent duplicates and unsafe updates | No | Search by mapping name, then compare parent and child definitions |
 
 ## Body Field Rules
 

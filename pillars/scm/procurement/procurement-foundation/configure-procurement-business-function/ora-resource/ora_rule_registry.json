@@ -1,0 +1,82 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "PO_CONFIGURE_PROCUREMENT_BUSINESS_FUNCTION",
+      "task_name": "Configure Procurement Business Function",
+      "start_node": "PBF.VALIDATE_INPUT",
+      "nodes": [
+        {
+          "id": "PBF.VALIDATE_INPUT",
+          "node_type": "step",
+          "sequence": 1,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "PBF.READY",
+            "invalid": "PBF.BLOCKED"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Before configuration values are submitted",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 23
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PBF.READY",
+          "node_type": "terminal",
+          "sequence": 2,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "PBF.VALIDATE_INPUT"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Input validation has passed",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 7
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PBF.BLOCKED",
+          "node_type": "terminal",
+          "sequence": 3,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "continue",
+          "applies_when": "Input validation has failed",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 8
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

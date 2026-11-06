@@ -123,3 +123,9 @@ do not correct it by trial and error.
 A verification blocker never authorizes another System Controls package or
 import.
 
+## Task Nodes
+
+| Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
+|---|---|---|---|---|---|---|---|
+| SYS.LOOKUP_EXISTING | decision | 30 | reference_lookup | create_path->SYS.COLLECT_CREATE_INPUTS;already_configured->SYS.DONE_READ_ONLY;unresolved->SYS.HANDLE_LOOKUP | SYS.VALIDATE_INPUT | stop | Enterprise Name is valid |
+| SYS.PRESENT_REFERENCE_PREVIEW | decision | 39 | evaluate_result | complete->SYS.APPLY_DEFAULTS;incomplete->SYS.HANDLE_LOOKUP | SYS.RESOLVE_DEPENDENCIES | stop | The System Controls create path is confirmed |

@@ -14,16 +14,91 @@
           "action_type": "validate_input",
           "execution_route": "local",
           "transitions": {
-            "valid": "WORKSTATIONS.FSM_PREPARE",
+            "valid": "WORKSTATIONS.VERIFY_CSV_SUPPORT",
             "incomplete": "WORKSTATIONS.RETURN_ISSUES"
           },
           "prerequisites": [],
           "on_failure": "stop",
-          "applies_when": "When assessing Workstations CSV template input using the supplied evidence manifest.",
+          "applies_when": "Evaluate applicable common required fields using the supplied validated input. Apply FSM header, parent and translation-format checks only to an explicitly selected FSM task CSV package; do not require FSM headers for an explicitly selected REST workbook. Use that workbook's current generated attribute and key definitions. Missing or ambiguous route context, missing applicable findings or failed applicable checks return incomplete. Local checks do not establish import acceptance.",
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
+            "line": 42
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "WORKSTATIONS.VERIFY_CSV_SUPPORT",
+          "node_type": "step",
+          "sequence": 11,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "supported": "WORKSTATIONS.CHECK_CSV_CONTRACT",
+            "incomplete": "WORKSTATIONS.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "WORKSTATIONS.VALIDATE_DOCUMENTED_HEADERS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "For explicitly selected FSM task CSV input, apply verify_workstations_csv_support to current selected-target Fusion task CSV flags. For an explicitly selected REST workbook, supported records that this FSM-only lookup is not applicable; it does not assert task CSV support and performs no CSV-support request. Missing route context or failed applicable lookup returns incomplete.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
             "line": 50
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "WORKSTATIONS.CHECK_CSV_CONTRACT",
+          "node_type": "step",
+          "sequence": 12,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "complete": "WORKSTATIONS.CHECK_PACKAGE_CONTRACT",
+            "incomplete": "WORKSTATIONS.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "WORKSTATIONS.VERIFY_CSV_SUPPORT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "For explicitly selected FSM task CSV input, classify the complete selected-input/format findings under verify_workstations_csv_contract. For an explicitly selected REST workbook, complete records that this FSM-only comparison is not applicable, not that a CSV comparison ran or passed. Missing route context or failed applicable findings returns incomplete. Common domain checks and the selected REST validation remain required; service acceptance and saved values remain separate.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 51
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "WORKSTATIONS.CHECK_PACKAGE_CONTRACT",
+          "node_type": "step",
+          "sequence": 14,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "complete": "WORKSTATIONS.FSM_PREPARE",
+            "incomplete": "WORKSTATIONS.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "WORKSTATIONS.CHECK_CSV_CONTRACT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Classify prior recorded local shared-workflow findings using verify_workstations_fresh_template and verify_workstations_package_contract; require their exact target/task/archive bindings; missing or mismatched findings return incomplete. No export, preparation, new file inspection or external request occurs in this node. Apply these FSM package checks only to explicitly selected FSM input. For an explicitly selected REST workbook, complete records that the FSM package comparison is not applicable; it does not waive REST preparation or common domain validation. Missing or ambiguous route context returns incomplete.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 52
           },
           "readiness": {
             "status": "ready",
@@ -37,18 +112,43 @@
           "action_type": "resolve_dependency",
           "execution_route": "local",
           "transitions": {
-            "ready": "WORKSTATIONS.DESIGN_CREATE_CONTRACT",
+            "ready": "WORKSTATIONS.RESOLVE_DESIGN_REFERENCES",
             "missing": "WORKSTATIONS.RETURN_ISSUES"
           },
           "prerequisites": [
-            "WORKSTATIONS.VALIDATE_DOCUMENTED_HEADERS"
+            "WORKSTATIONS.CHECK_PACKAGE_CONTRACT"
           ],
           "on_failure": "stop",
-          "applies_when": "Before an FSM Workstations package is prepared or imported.",
+          "applies_when": "Evaluate the named Dependency Rules from prior verified outcomes only; do not fetch/export, prepare an archive or infer local readiness. Apply these FSM package dependencies only to explicitly selected FSM input. For an explicitly selected REST workbook, ready records that these FSM-only dependencies are not applicable. Missing or ambiguous route context or an unmet applicable dependency returns missing. Continue common domain checks; no REST validation or approval is waived.",
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 32
+            "line": 33
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "WORKSTATIONS.RESOLVE_DESIGN_REFERENCES",
+          "node_type": "step",
+          "sequence": 18,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "WORKSTATIONS.DESIGN_CREATE_CONTRACT",
+            "incomplete": "WORKSTATIONS.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "WORKSTATIONS.FSM_PREPARE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Use only applicable Live Lookups for manufacturing organization, parent Work Center, code/name duplication and supplied equipment/supply/completion values; manufacturing-plant organization and parent Work Center identity contracts are documented; the completion subinventory/locator request and match contract is documented; the exact supplied CSV, bounded duplicate/assignment and source date checking methods are authored. Execute the applicable methods and return actual failed/unverified findings without certifying final service acceptance.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 53
           },
           "readiness": {
             "status": "ready",
@@ -62,19 +162,44 @@
           "action_type": "design_enforcement",
           "execution_route": "local",
           "transitions": {
-            "pass": "WORKSTATIONS.DONE",
+            "pass": "WORKSTATIONS.IMPORT_APPROVAL",
             "failure": "WORKSTATIONS.RETURN_ISSUES",
             "incomplete": "WORKSTATIONS.RETURN_ISSUES"
           },
           "prerequisites": [
-            "WORKSTATIONS.FSM_PREPARE"
+            "WORKSTATIONS.RESOLVE_DESIGN_REFERENCES"
           ],
           "on_failure": "stop",
-          "applies_when": "When source-backed Workstation creation checks can be evaluated.",
+          "applies_when": "Evaluate only the source-backed Design Rules using their named authoritative results; missing lookup contract blocks planning.",
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 28
+            "line": 57
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "WORKSTATIONS.IMPORT_APPROVAL",
+          "node_type": "decision",
+          "sequence": 25,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "approved": "WORKSTATIONS.DONE",
+            "incomplete": "WORKSTATIONS.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "WORKSTATIONS.DESIGN_CREATE_CONTRACT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Verify the mandatory core.data-loader handoff preserves the exact immutable artifact and delegates post-validation approval to its existing Task Hook/preflight workflow; do not request an approval envelope before task-rule evaluation finishes and do not perform a mutation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 34
           },
           "readiness": {
             "status": "ready",
@@ -89,14 +214,14 @@
           "execution_route": "local",
           "transitions": {},
           "prerequisites": [
-            "WORKSTATIONS.DESIGN_CREATE_CONTRACT"
+            "WORKSTATIONS.IMPORT_APPROVAL"
           ],
-          "on_failure": "continue",
-          "applies_when": "The documented input and design checks pass. This terminal does not authorize FSM package assembly or a Fusion write.",
+          "on_failure": "stop",
+          "applies_when": "Return successful documented task-rule checks and delegated approval boundary only; current submission approval remains with core.data-loader and this terminal is not import or saved-value proof.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 26
+            "line": 35
           },
           "readiness": {
             "status": "ready",
@@ -111,12 +236,12 @@
           "execution_route": "local",
           "transitions": {},
           "prerequisites": [],
-          "on_failure": "continue",
-          "applies_when": "A validation or design check fails, or a required FSM contract remains undocumented.",
+          "on_failure": "stop",
+          "applies_when": "Return exact unresolved authoring contract or failed rule; no mutation or implicit local readiness.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 27
+            "line": 36
           },
           "readiness": {
             "status": "ready",

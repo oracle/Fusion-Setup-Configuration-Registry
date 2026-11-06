@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Require a persisted, index-matched delta before Data Loader preparation."""
+"""Validate an index delta and captured Data Loader rows before approval."""
 
 from __future__ import annotations
 
@@ -9,12 +9,69 @@ import io
 import json
 from pathlib import Path
 import sys
-from typing import Any
 import zipfile
+from typing import Any
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from index_attribute_contract import (AttributeContractError, captured_rows, matches_selectors,
+                                      selectors, validate_post, resolve_requested_removal, backend_id)
 
 
 class DeltaGuardError(ValueError):
     """Raised when a calculated index delta is missing or unsafe to use."""
+
+
+def archive_records(path: Path, expected_sha256: str) -> list[dict]:
+    """Read one snapshot of Core's immutable ZIP, bound to its preflight digest.
+
+    This is task-specific row validation only. Core owns source conversion,
+    preflight-envelope verification, approval and upload integrity checks.
+    """
+    if (not isinstance(expected_sha256, str) or len(expected_sha256) != 64
+            or any(c not in "0123456789abcdef" for c in expected_sha256)):
+        raise DeltaGuardError("The Core preflight archive SHA-256 is required.")
+    try:
+        content = path.read_bytes()
+        if hashlib.sha256(content).hexdigest() != expected_sha256:
+            raise DeltaGuardError("The prepared archive differs from Core's preflight digest.")
+        with zipfile.ZipFile(io.BytesIO(content)) as archive:
+            members = [m for m in archive.infolist()
+                       if not any(p.casefold() in {"_macosx", "__macosx"}
+                                  for p in m.filename.split("/"))]
+            if (len(members) != 1 or members[0].filename !=
+                    "productManagementESIndexedAttributes.dat"):
+                raise DeltaGuardError("The prepared ZIP must contain one indexed-attributes DAT.")
+            lines = archive.read(members[0]).decode("utf-8-sig").splitlines()
+    except (OSError, zipfile.BadZipFile, UnicodeDecodeError, RuntimeError) as error:
+        raise DeltaGuardError("Unable to read the prepared indexed-attributes ZIP.") from error
+    headers = None
+    values = []
+    for line in lines:
+        if not line.strip() or line.lstrip().startswith("#"):
+            continue
+        parts = line.split("|")
+        if len(parts) < 3 or parts[1] != "productManagementESIndexedAttributes":
+            raise DeltaGuardError("The prepared DAT targets another business object.")
+        if parts[0] == "METADATA":
+            if headers is not None:
+                raise DeltaGuardError("The prepared DAT contains duplicate metadata sections.")
+            headers = parts[2:]
+            if (any(not h or h != h.strip() for h in headers)
+                    or len(set(headers)) != len(headers) or "RestAction" not in headers):
+                raise DeltaGuardError("The prepared DAT headers are malformed.")
+            continue
+        if (headers is None or parts[0] not in {"MERGE", "DELETE"}
+                or len(parts) != len(headers) + 2):
+            raise DeltaGuardError("The prepared DAT has a malformed data row.")
+        action = parts[2:][headers.index("RestAction")]
+        if (action not in {"POST", "DELETE"}
+                or (parts[0] == "DELETE") != (action == "DELETE")):
+            raise DeltaGuardError("The DAT directive differs from RestAction.")
+        values.append(parts[2:])
+    if headers is None or not values:
+        raise DeltaGuardError("The prepared DAT has no data rows.")
+    return [{"sections": [{"discriminator": "productManagementESIndexedAttributes",
+                            "headers": headers, "rows": values}]}]
 
 
 def _read_object(path: Path, label: str) -> dict[str, Any]:
@@ -44,57 +101,61 @@ def _identity(row: dict[str, Any], label: str) -> tuple[str, str, str]:
                  ("attribute_code", "group_code", "object_code"))
 
 
+def _subtype(row: dict[str, Any]) -> str:
+    value = row.get("object_sub_type_code")
+    if value in (None, ""):
+        return ""
+    return _nonblank(value, "ObjectSubTypeCode")
+
+
+def _present(identity, existing, subtype: str | None = None) -> bool:
+    matches = [row for row in existing if _identity(row, "existing identity") == identity]
+    if subtype is None:
+        # A resolved record without a subtype uses the three-code comparison.
+        return bool(matches)
+    if any("object_sub_type_code" not in row for row in matches):
+        raise DeltaGuardError("Existing ObjectSubTypeCode evidence is missing for a scoped addition.")
+    return any(_subtype(row) == subtype for row in matches)
+
+
+def validate_readback(canonical: str, additions: list, removals: list, response: dict) -> dict:
+    """Verify submitted changes using a complete core-retrieved index response."""
+    _nonblank(canonical, "canonical_index_name")
+    if (not isinstance(response, dict) or not isinstance(response.get("items"), list)
+            or response.get("hasMore") is True):
+        raise DeltaGuardError("Readback must contain a complete items response.")
+    existing = []
+    for item in response["items"]:
+        if not isinstance(item, dict) or item.get("IndexName") != canonical:
+            raise DeltaGuardError("Readback contains another index or an invalid row.")
+        row = {key: item.get(field) for key, field in (
+            ("attribute_code", "AttributeCode"), ("group_code", "GroupCode"),
+            ("object_code", "ObjectCode"), ("attribute_id", "AttributeId"))}
+        if "ObjectSubTypeCode" in item:
+            row["object_sub_type_code"] = item["ObjectSubTypeCode"]
+        _identity(row, "readback identity")
+        existing.append(row)
+    for row in _rows(additions, "submitted additions"):
+        if not _present(_identity(row, "submitted addition"), existing, _subtype(row) or None):
+            raise DeltaGuardError("Readback is missing a submitted POST identity or ObjectSubTypeCode.")
+    for row in _rows(removals, "submitted removals"):
+        identifier = _nonblank(row.get("attribute_id"), "submitted DELETE AttributeId")
+        if any(item["attribute_id"] in (None, "") for item in existing):
+            raise DeltaGuardError("Readback is missing AttributeId evidence for DELETE verification.")
+        if any(str(item["attribute_id"]) == identifier for item in existing):
+            raise DeltaGuardError("Readback retains a submitted DELETE AttributeId.")
+    return {"canonical_index_name": canonical, "readback_verified": True}
+
+
 def _request_digest(request: dict[str, Any]) -> str:
     encoded = json.dumps(request, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
 
 
-def _request_field(row: dict[str, Any], field: str) -> Any:
-    aliases = {
-        "attribute_name": "AttributeName",
-        "group_name": "GroupName",
-        "object_name": "ObjectName",
-        "group_code": "GroupCode",
-        "object_code": "ObjectCode",
-        "attribute_id": "AttributeId",
-    }
-    return row.get(field, row.get(aliases[field]))
-
-
-def _archive_rows(path: Path) -> tuple[list[dict[str, str]], str]:
-    try:
-        payload = path.read_bytes()
-        # Validate the exact snapshot being hashed, never a reopened source path.
-        with zipfile.ZipFile(io.BytesIO(payload)) as archive:
-            if archive.namelist() != ["productManagementESIndexedAttributes.dat"]:
-                raise DeltaGuardError("The final ZIP must contain one root indexed-attributes DAT.")
-            lines = archive.read("productManagementESIndexedAttributes.dat").decode("utf-8-sig").splitlines()
-    except (OSError, zipfile.BadZipFile, UnicodeDecodeError, RuntimeError) as error:
-        raise DeltaGuardError("Unable to read the final indexed-attributes ZIP.") from error
-    header: list[str] | None = None
-    rows: list[dict[str, str]] = []
-    for line in lines:
-        if not line.strip():
-            continue
-        parts = line.split("|")
-        if len(parts) < 3 or parts[1] != "productManagementESIndexedAttributes":
-            raise DeltaGuardError("The final DAT has an unexpected section.")
-        if parts[0] == "METADATA":
-            if header is not None:
-                raise DeltaGuardError("The final DAT has multiple METADATA rows.")
-            header = parts[2:]
-            continue
-        if header is None or parts[0] not in {"MERGE", "DELETE"} or len(parts) != len(header) + 2:
-            raise DeltaGuardError("The final DAT has a malformed data row.")
-        rows.append(dict(zip(header, parts[2:])) | {"_dat_action": parts[0]})
-    if header is None or not rows:
-        raise DeltaGuardError("The final DAT has no data rows.")
-    return rows, hashlib.sha256(payload).hexdigest()
-
-
 def validate_delta(
     request: dict[str, Any], delta: dict[str, Any], *, require_data_loader: bool,
-    archive: Path | None = None,
+    records: list | None = None,
+    create_contract: dict | None = None,
 ) -> dict[str, Any]:
     """Validate the delta evidence required before loader artifact preparation."""
 
@@ -116,35 +177,48 @@ def validate_delta(
     validated_seeded = _rows(delta.get("validated_seeded_additions"), "validated_seeded_additions")
     requested_additions = _rows(request.get("attributes_to_add"), "request attributes_to_add")
     requested_removals = _rows(request.get("attributes_to_remove"), "request attributes_to_remove")
+    resolved_removals = _rows(delta.get("resolved_requested_removals", []), "resolved_requested_removals")
+    if len(resolved_removals) != len(requested_removals):
+        raise DeltaGuardError("Every requested removal must have one resolved identity; refresh legacy removal evidence.")
     if len(resolved) != len(requested_additions):
         raise DeltaGuardError("Every requested addition must have one resolved identity.")
     resolved_ids: list[tuple[str, str, str]] = []
+    resolved_subtypes = {}
     for index, (source, target) in enumerate(zip(requested_additions, resolved)):
         if target.get("request_index") != index:
             raise DeltaGuardError("Resolved addition order does not match the request.")
-        if _nonblank(target.get("attribute_name"), "resolved attribute_name").casefold() != _nonblank(
-            _request_field(source, "attribute_name"), "requested attribute_name"
-        ).casefold():
-            raise DeltaGuardError("Resolved addition does not match the requested attribute.")
-        for field in ("group_code", "object_code"):
-            supplied = _request_field(source, field)
-            if supplied is not None and supplied != target.get(field):
-                raise DeltaGuardError("Resolved addition scope differs from the request.")
+        record = {"".join(part.title() for part in key.split("_")): value
+                  for key, value in target.items()}
+        if not selectors(source, "attribute") or not matches_selectors(source, record):
+            raise DeltaGuardError("Resolved addition identity differs from the request.")
         resolved_ids.append(_identity(target, "resolved addition"))
+        if selectors(source, "object_sub_type"):
+            _nonblank(target.get("object_sub_type_code"), "resolved ObjectSubTypeCode")
+        code = _subtype(target)
+        if code:
+            identity = resolved_ids[-1]
+            if identity in resolved_subtypes and resolved_subtypes[identity] != code:
+                raise DeltaGuardError("Conflicting object subtypes for one addition identity.")
+            resolved_subtypes[identity] = code
     seeded_ids = [_identity(row, "seeded identity") for row in seeded]
     existing_ids = [_identity(row, "existing identity") for row in existing]
-    if len(set(seeded_ids)) != len(seeded_ids) or len(set(existing_ids)) != len(existing_ids):
+    existing_keys = [(*_identity(row, "existing identity"), _subtype(row)) for row in existing]
+    if len(set(seeded_ids)) != len(seeded_ids) or len(set(existing_keys)) != len(existing_keys):
         raise DeltaGuardError("Seeded or existing identities contain duplicates.")
     validated_seeded_ids = [_identity(row, "validated seeded addition") for row in validated_seeded]
     if len(set(validated_seeded_ids)) != len(validated_seeded_ids) or set(validated_seeded_ids) != (
         set(seeded_ids) - set(existing_ids)
     ):
         raise DeltaGuardError("Validated seeded additions do not match missing seeded identities.")
-    expected_additions = set(seeded_ids + resolved_ids) - set(existing_ids)
+    expected_additions = (set(seeded_ids) - set(existing_ids)) | {
+        identity for identity in resolved_ids
+        if not _present(identity, existing, resolved_subtypes.get(identity))
+    }
     actual_additions = [_identity(row, "addition") for row in additions]
     if len(set(actual_additions)) != len(actual_additions) or set(actual_additions) != expected_additions:
         raise DeltaGuardError("POST rows do not equal the calculated addition delta.")
     source_by_identity: dict[tuple[str, str, str], tuple[str, str, str]] = {}
+    source_subtypes: dict[tuple[str, str, str], str] = {}
     for source_row in validated_seeded + resolved:
         identity = _identity(source_row, "validated addition source")
         names = tuple(_nonblank(source_row.get(field), f"validated source {field}") for field in
@@ -152,6 +226,10 @@ def validate_delta(
         if identity in source_by_identity and source_by_identity[identity] != names:
             raise DeltaGuardError("Validated sources disagree on one addition identity.")
         source_by_identity[identity] = names
+        subtype = _subtype(source_row)
+        if identity in source_subtypes and source_subtypes[identity] != subtype:
+            raise DeltaGuardError("Validated sources disagree on ObjectSubTypeCode.")
+        source_subtypes[identity] = subtype
     if len(removals) != len(requested_removals):
         raise DeltaGuardError("DELETE rows do not match the requested removals.")
     data_loader_required = delta.get("data_loader_required")
@@ -163,6 +241,9 @@ def validate_delta(
         raise DeltaGuardError("No calculated Data Loader change set is available for preparation.")
 
     for row in additions:
+        subtype = source_subtypes[_identity(row, "addition")]
+        if _subtype(row) != subtype:
+            raise DeltaGuardError("POST ObjectSubTypeCode differs from validated metadata.")
         if row.get("rest_action") != "POST":
             raise DeltaGuardError("Every calculated addition must use RestAction POST.")
         for field in ("attribute_code", "group_code", "object_code"):
@@ -175,48 +256,88 @@ def validate_delta(
         names = tuple(row[field] for field in ("attribute_name", "group_name", "object_name"))
         if names != source_by_identity[_identity(row, "addition")]:
             raise DeltaGuardError("POST row names differ from the validated source.")
-    for index, (source, row) in enumerate(zip(requested_removals, removals)):
+    removal_ids = set()
+    existing_response = {"items": [
+        {"IndexName": canonical} | {
+            "".join(part.title() for part in key.split("_")): value
+            for key, value in item.items()}
+        for item in existing], "hasMore": False}
+    for index, (source, row, resolved_removal) in enumerate(zip(requested_removals, removals, resolved_removals)):
         if row.get("rest_action") != "DELETE":
             raise DeltaGuardError("Every calculated removal must use RestAction DELETE.")
         _nonblank(row.get("attribute_id"), "removal attribute_id")
-        if row.get("request_index") != index:
+        if row.get("request_index") != index or resolved_removal.get("request_index") != index:
             raise DeltaGuardError("DELETE row order does not match the request.")
-        for field in ("attribute_name", "group_name", "object_name"):
-            if _nonblank(row.get(field), f"removal {field}").casefold() != _nonblank(
-                _request_field(source, field), f"requested removal {field}"
-            ).casefold():
-                raise DeltaGuardError("DELETE row identity differs from the request.")
-        supplied_id = _request_field(source, "attribute_id")
-        if supplied_id is not None and str(supplied_id) != str(row["attribute_id"]):
-            raise DeltaGuardError("DELETE AttributeId differs from the request.")
-        matches = [
-            existing_row for existing_row in existing
-            if all(str(existing_row.get(field, "")).casefold() == str(row[field]).casefold()
-                   for field in ("attribute_name", "group_name", "object_name"))
-        ]
-        if len(matches) != 1 or str(matches[0].get("attribute_id")) != str(row["attribute_id"]):
+        resolution = resolve_requested_removal(
+            source, canonical, existing_response,
+            scope_confirmed=resolved_removal.get("scope_confirmed") is True)
+        if resolution["status"] != "removal_resolved":
+            raise DeltaGuardError("Removal scope requires candidate confirmation.")
+        candidate = resolution["candidate"]
+        for field in ("attribute_name", "group_name", "object_name", "attribute_code",
+                      "group_code", "object_code", "object_sub_type_code", "object_sub_type_name"):
+            key = "".join(part.title() for part in field.split("_"))
+            expected = candidate.get(key) or ""
+            if any((evidence.get(field) or "") != expected for evidence in (row, resolved_removal)):
+                raise DeltaGuardError(f"DELETE {field} differs from the resolved backend record.")
+        identifier = backend_id(candidate.get("AttributeId"))
+        if any(backend_id(evidence.get("attribute_id")) != identifier for evidence in (row, resolved_removal)):
             raise DeltaGuardError("DELETE row does not match one existing backend record.")
+        if identifier in removal_ids:
+            raise DeltaGuardError("Duplicate DELETE backend AttributeId.")
+        # Compare the original resolved addition requirements, including those
+        # already satisfied by the pre-load snapshot, not only generated POSTs.
+        # An unscoped addition uses triplet matching; a resolved subtype narrows
+        # the requirement even when the user did not explicitly supply it.
+        for addition in resolved:
+            if (_identity(addition, "resolved addition") == _identity(row, "removal")
+                    and (not _subtype(addition) or _subtype(addition) == _subtype(row))):
+                raise DeltaGuardError(
+                    f"Conflicting addition request {addition['request_index']} and removal request {index}: "
+                    "the resolved attribute scopes overlap. Choose add or remove before preparing the load."
+                )
+        removal_ids.add(identifier)
 
-    archive_digest = None
-    if archive is not None:
-        rows, archive_digest = _archive_rows(archive)
-        expected = [
-            ("POST", row["attribute_name"], row["group_name"], row["object_name"], "")
-            for row in additions
-        ] + [
-            ("DELETE", row["attribute_name"], row["group_name"], row["object_name"], str(row["attribute_id"]))
-            for row in removals
-        ]
-        actual = []
-        for row in rows:
+    rows = None
+    if records is not None:
+        rows = captured_rows(records)
+        if additions and create_contract is None:
+            raise DeltaGuardError("Captured POST validation requires the live create contract.")
+    if rows is not None:
+        expected = additions + removals
+        if len(rows) != len(expected):
+            raise DeltaGuardError("Captured rows do not match the calculated delta.")
+        for row, target in zip(rows, expected):
             if row.get("IndexName") != canonical:
-                raise DeltaGuardError("The final DAT contains another index.")
-            if row.get("RestAction") not in {"POST", "DELETE"}:
-                raise DeltaGuardError("The final DAT has an unsupported RestAction.")
-            actual.append(tuple(row.get(field, "") for field in
-                                ("RestAction", "AttributeName", "GroupName", "ObjectName", "AttributeId")))
-        if actual != expected:
-            raise DeltaGuardError("The final DAT rows do not match the persisted delta.")
+                raise DeltaGuardError("The prepared row contains another index.")
+            if row.get("RestAction") != target["rest_action"]:
+                raise DeltaGuardError("Prepared row actions do not match the delta.")
+            fields = ("AttributeName", "GroupName", "ObjectName", "AttributeId")
+            keys = ("attribute_name", "group_name", "object_name", "attribute_id")
+            for field, key in zip(fields, keys):
+                if (row.get(field) or "") != (target.get(key) or ""):
+                    raise DeltaGuardError("Prepared rows do not match the validated names or ID.")
+            if row["RestAction"] == "DELETE":
+                for field, key in (("AttributeCode", "attribute_code"),
+                                   ("GroupCode", "group_code"), ("ObjectCode", "object_code"),
+                                   ("ObjectSubTypeCode", "object_sub_type_code"),
+                                   ("ObjectSubTypeName", "object_sub_type_name")):
+                    # Some registered DELETE templates contain only names and ID.
+                    # Any supplied optional identity value must still agree.
+                    if row.get(field) not in (None, "") and row[field] != target.get(key):
+                        raise DeltaGuardError(f"DELETE {field} differs from validated metadata.")
+            if row["RestAction"] == "POST":
+                if (row.get("ObjectSubTypeCode") or "") != (target.get("object_sub_type_code") or ""):
+                    raise DeltaGuardError("POST ObjectSubTypeCode differs from validated metadata.")
+                for field, key in (("AttributeCode", "attribute_code"),
+                                   ("GroupCode", "group_code"), ("ObjectCode", "object_code")):
+                    if row.get(field) != target[key]:
+                        raise DeltaGuardError(f"POST {field} differs from validated metadata.")
+                if create_contract is not None:
+                    resolved_row = {"IndexName": canonical} | {
+                        "".join(part.title() for part in key.split("_")): value
+                        for key, value in target.items()}
+                    validate_post(row, resolved_row, create_contract)
 
     return {
         "canonical_index_name": canonical,
@@ -224,26 +345,71 @@ def validate_delta(
         "removal_count": len(removals),
         "data_loader_required": data_loader_required,
         "request_sha256": _request_digest(request),
-        "archive_sha256": archive_digest,
     }
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--request", required=True, type=Path)
-    parser.add_argument("--delta", required=True, type=Path)
-    parser.add_argument("--archive", type=Path, help="Final immutable ZIP to bind to the calculated delta.")
+    parser.add_argument("--stdin", action="store_true", help="Read request, delta, records and create_contract from one in-memory JSON envelope.")
+    parser.add_argument("--captured", action="store_true", help="Require normalized artifact records for an offline pre-approval check (with --stdin).")
+    parser.add_argument("--archive", type=Path, help="Exact immutable ZIP prepared by Core Data Loader (with --stdin).")
+    parser.add_argument("--archive-sha256", help="Exact archiveSha256 returned by Core preflight; required with --archive.")
+    parser.add_argument("--readback", action="store_true", help="Verify submitted delta against a complete readback response (with --stdin).")
+    parser.add_argument("--request", type=Path)
+    parser.add_argument("--delta", type=Path)
     parser.add_argument(
         "--require-data-loader",
         action="store_true",
-        help="Block unless the persisted delta has at least one Data Loader change row.",
+        help="Block unless the calculated delta has at least one Data Loader change row.",
     )
     args = parser.parse_args(argv)
     try:
-        request = _read_object(args.request, "single-index request")
-        delta = _read_object(args.delta, "index_attribute_delta")
-        print(json.dumps(validate_delta(request, delta, require_data_loader=args.require_data_loader, archive=args.archive), sort_keys=True))
-    except DeltaGuardError as error:
+        if bool(args.archive) != bool(args.archive_sha256):
+            raise DeltaGuardError("--archive and --archive-sha256 must be supplied together.")
+        if args.archive and (not args.stdin or args.captured or args.readback):
+            raise DeltaGuardError("--archive requires --stdin and cannot be combined with --captured or --readback.")
+        if (args.captured or args.readback) and not args.stdin:
+            raise DeltaGuardError("--captured and --readback require --stdin.")
+        if args.readback and (args.captured or args.require_data_loader):
+            raise DeltaGuardError("Readback is separate from pre-approval validation.")
+        if args.stdin:
+            if args.request or args.delta:
+                raise DeltaGuardError("--stdin cannot be combined with file inputs.")
+            data = json.load(sys.stdin)
+            if not isinstance(data, dict) or not isinstance(data.get("request"), dict) or not isinstance(data.get("delta"), dict):
+                raise DeltaGuardError("Envelope requires request and delta objects.")
+            if args.archive:
+                if "records" in data:
+                    raise DeltaGuardError("Archive validation cannot accept independent records.")
+                data["records"] = archive_records(args.archive, args.archive_sha256)
+            if args.readback:
+                canonical = data["request"].get("canonical_index_name")
+                submitted = data["delta"]
+                if (submitted.get("canonical_index_name") != canonical
+                        or submitted.get("environment") != data["request"].get("environment")
+                        or submitted.get("request_sha256") != _request_digest(data["request"])):
+                    raise DeltaGuardError("Readback delta differs from the submitted request context.")
+                print(json.dumps(validate_readback(canonical, submitted.get("attributes_to_add"),
+                                                  submitted.get("attributes_to_remove"), data.get("readback")),
+                                 sort_keys=True))
+                return 0
+            if args.captured and not isinstance(data.get("records"), list):
+                raise DeltaGuardError("Pre-approval check requires normalized artifact records.")
+            result = validate_delta(data["request"], data["delta"],
+                                    require_data_loader=args.require_data_loader,
+                                    records=data.get("records"), create_contract=data.get("create_contract"))
+            # Approval and preflight persistence remain owned by Core.
+            result.pop("request_sha256", None)
+            if args.archive:
+                result["archive_sha256"] = args.archive_sha256
+            print(json.dumps(result, sort_keys=True))
+        else:
+            if not args.request or not args.delta:
+                raise DeltaGuardError("Use --stdin for live work, or --request and --delta for offline checks.")
+            request = _read_object(args.request, "single-index request")
+            delta = _read_object(args.delta, "index_attribute_delta")
+            print(json.dumps(validate_delta(request, delta, require_data_loader=args.require_data_loader), sort_keys=True))
+    except (DeltaGuardError, AttributeContractError, json.JSONDecodeError) as error:
         print(f"Index delta guard blocked: {error}", file=sys.stderr)
         return 2
     return 0

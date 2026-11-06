@@ -15,14 +15,15 @@
           "execution_route": "local",
           "transitions": {
             "explicit_reuse": "CAL.LOOKUP_EXISTING_REUSE",
-            "create_or_update": "CAL.VALIDATE_FISCAL_YEAR"
+            "create_or_update": "CAL.CHECK_REQUIRED_INPUT"
           },
           "prerequisites": [],
           "on_failure": "stop",
           "applies_when": "A Calendar request is received",
           "source": {
             "file": "ora_input_validation.md",
-            "anchor": "fiscal-year-first-gate"
+            "anchor": "task-nodes",
+            "line": 219
           },
           "readiness": {
             "status": "ready",
@@ -46,7 +47,8 @@
           "applies_when": "An explicit reuse request names one Calendar",
           "source": {
             "file": "ora_reference_lookups.md",
-            "anchor": "local-lookups"
+            "anchor": "task-nodes",
+            "line": 284
           },
           "readiness": {
             "status": "ready",
@@ -54,47 +56,49 @@
           }
         },
         {
-          "id": "CAL.VALIDATE_FISCAL_YEAR",
+          "id": "CAL.CHECK_REQUIRED_INPUT",
           "node_type": "decision",
-          "sequence": 5,
-          "action_type": "reference_lookup",
-          "execution_route": "fusion-rest",
-          "transitions": {
-            "valid": "CAL.VALIDATE_INPUT",
-            "start_year_confirmation_required": "CAL.CONFIRM_NEAREST_START_YEAR",
-            "not_supplied": "CAL.DISCOVER_FISCAL_YEARS",
-            "invalid_or_unresolved": "CAL.HANDLE_DEPENDENCY"
-          },
-          "prerequisites": [],
-          "on_failure": "stop",
-          "applies_when": "A Fiscal Year Name is supplied",
-          "source": {
-            "file": "ora_input_validation.md",
-            "anchor": "fiscal-year-first-gate"
-          },
-          "readiness": {
-            "status": "ready",
-            "blocking_reasons": []
-          }
-        },
-        {
-          "id": "CAL.CONFIRM_NEAREST_START_YEAR",
-          "node_type": "decision",
-          "sequence": 7,
-          "action_type": "business_decision",
+          "sequence": 3,
+          "action_type": "validate_input",
           "execution_route": "local",
           "transitions": {
-            "confirmed": "CAL.VALIDATE_INPUT",
-            "declined_or_unresolved": "CAL.HANDLE_DEPENDENCY"
+            "valid": "CAL.ROUTE_FISCAL_YEAR",
+            "invalid": "CAL.HANDLE_INPUT"
           },
           "prerequisites": [
-            "CAL.VALIDATE_FISCAL_YEAR"
+            "CAL.CLASSIFY_REQUEST"
           ],
           "on_failure": "stop",
-          "applies_when": "The exact fiscal year exists but the requested Start Fiscal Year is unavailable",
+          "applies_when": "Before any live lookup for create/update, render Input Preview and apply the required-input checks for the current user-defined or ledger-derived collection stage. Missing required input stops the request; exact-name reuse follows its separate lookup path.",
           "source": {
             "file": "ora_input_validation.md",
-            "anchor": "fiscal-year-first-gate"
+            "anchor": "task-nodes",
+            "line": 220
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CAL.ROUTE_FISCAL_YEAR",
+          "node_type": "decision",
+          "sequence": 5,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "supplied": "CAL.VALIDATE_FISCAL_YEAR",
+            "not_supplied": "CAL.DISCOVER_FISCAL_YEARS"
+          },
+          "prerequisites": [
+            "CAL.CHECK_REQUIRED_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Required-input preflight passed; classify whether an exact Fiscal Year Name was supplied. This node performs no live lookup.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 221
           },
           "readiness": {
             "status": "ready",
@@ -113,13 +117,14 @@
             "unresolved": "CAL.HANDLE_LOOKUP"
           },
           "prerequisites": [
-            "CAL.VALIDATE_FISCAL_YEAR"
+            "CAL.ROUTE_FISCAL_YEAR"
           ],
           "on_failure": "stop",
           "applies_when": "Fiscal Year Name is missing after the Input Preview",
           "source": {
             "file": "ora_reference_lookups.md",
-            "anchor": "live-lookups"
+            "anchor": "task-nodes",
+            "line": 285
           },
           "readiness": {
             "status": "ready",
@@ -130,21 +135,49 @@
           "id": "CAL.CONFIRM_FISCAL_YEAR",
           "node_type": "decision",
           "sequence": 9,
-          "action_type": "customer_decision",
+          "action_type": "evaluate_result",
           "execution_route": "local",
           "transitions": {
             "candidate_selected": "CAL.VALIDATE_FISCAL_YEAR",
             "another_exact_name_supplied": "CAL.VALIDATE_FISCAL_YEAR",
-            "fiscal_year_details_needed": "CAL.HANDLE_INPUT"
+            "fiscal_year_details_needed": "CAL.HANDLE_INPUT",
+            "selection_pending": "CAL.HANDLE_INPUT"
           },
           "prerequisites": [
             "CAL.DISCOVER_FISCAL_YEARS"
           ],
           "on_failure": "stop",
-          "applies_when": "One or more qualifying Fiscal Years were found",
+          "applies_when": "Evaluate the customer selection from the complete candidate list, including a sole candidate. A selected candidate or another exact supplied name must pass CAL.VALIDATE_FISCAL_YEAR; an unanswered selection returns missing input.",
           "source": {
             "file": "ora_input_validation.md",
-            "anchor": "input-preview-and-fiscal-year-selection"
+            "anchor": "task-nodes",
+            "line": 222
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CAL.VALIDATE_FISCAL_YEAR",
+          "node_type": "decision",
+          "sequence": 10,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "valid": "CAL.VALIDATE_INPUT",
+            "start_year_unavailable": "CAL.HANDLE_DEPENDENCY",
+            "invalid_or_unresolved": "CAL.HANDLE_DEPENDENCY"
+          },
+          "prerequisites": [
+            "CAL.ROUTE_FISCAL_YEAR"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Use resolve_fiscal_year_for_calendar and resolve_calendar_date_basis_from_fiscal_year to validate the supplied or customer-selected exact fiscal year and Start Fiscal Year. If the start row is unavailable, stop and request an exact available row or fiscal-year extension; never substitute a nearest year.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 286
           },
           "readiness": {
             "status": "ready",
@@ -154,7 +187,7 @@
         {
           "id": "CAL.VALIDATE_INPUT",
           "node_type": "decision",
-          "sequence": 10,
+          "sequence": 15,
           "action_type": "validate_input",
           "execution_route": "local",
           "transitions": {
@@ -165,11 +198,11 @@
             "CAL.VALIDATE_FISCAL_YEAR"
           ],
           "on_failure": "stop",
-          "applies_when": "Fiscal Year Name is validated or must be collected",
+          "applies_when": "The exact selected fiscal year and Start Fiscal Year passed CAL.VALIDATE_FISCAL_YEAR; apply Field Validation and Calendar Consistency Rules.",
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 110
+            "line": 223
           },
           "readiness": {
             "status": "ready",
@@ -194,7 +227,7 @@
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 122
+            "line": 155
           },
           "readiness": {
             "status": "ready",
@@ -221,7 +254,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 55
+            "line": 287
           },
           "readiness": {
             "status": "ready",
@@ -232,22 +265,22 @@
           "id": "CAL.DECIDE_UPDATE_OR_NEW",
           "node_type": "decision",
           "sequence": 35,
-          "action_type": "customer_decision",
+          "action_type": "evaluate_result",
           "execution_route": "local",
           "transitions": {
             "update_selected": "CAL.APPLY_DEFAULTS",
-            "create_new_selected": "CAL.VALIDATE_INPUT",
-            "unresolved": "CAL.HANDLE_LOOKUP"
+            "create_new_selected": "CAL.NEW_INPUT_REQUIRED",
+            "unresolved": "CAL.HANDLE_INPUT"
           },
           "prerequisites": [
             "CAL.LOOKUP_EXISTING"
           ],
           "on_failure": "stop",
-          "applies_when": "One complete existing calendar differs from the proposed definition",
+          "applies_when": "Complete existing-state evidence differs from the proposal; evaluate the customer update-or-create-new choice. Update continues; create-new returns for exact new Calendar Name collection and fresh validation; an unanswered choice is missing input, not a lookup failure.",
           "source": {
             "file": "ora_reference_lookups.md",
-            "anchor": "existing-calendar-lookup-outcomes",
-            "line": 23
+            "anchor": "task-nodes",
+            "line": 288
           },
           "readiness": {
             "status": "ready",
@@ -272,7 +305,7 @@
           "source": {
             "file": "ora_defaulting_rules.md",
             "anchor": "task-nodes",
-            "line": 40
+            "line": 90
           },
           "readiness": {
             "status": "ready",
@@ -297,7 +330,7 @@
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 47
+            "line": 37
           },
           "readiness": {
             "status": "ready",
@@ -311,18 +344,18 @@
           "action_type": "execution_gate",
           "execution_route": "local",
           "transitions": {
-            "approved": "CAL.HANDED_OFF_TO_PARENT",
+            "approved_and_accepted": "CAL.HANDED_OFF_TO_PARENT",
             "blocked": "CAL.HANDLE_APPROVAL"
           },
           "prerequisites": [
             "CAL.ENFORCE_DESIGN"
           ],
           "on_failure": "stop",
-          "applies_when": "A reviewed package is proposed for import",
+          "applies_when": "Require the parent-governed approvals for the exact immutable package and core.data-loader acceptance before returning accepted; approval alone is not acceptance.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 61
+            "line": 83
           },
           "readiness": {
             "status": "ready",
@@ -338,15 +371,13 @@
           "transitions": {
             "handled": "CAL.ISSUES"
           },
-          "prerequisites": [
-            "CAL.VALIDATE_INPUT"
-          ],
+          "prerequisites": [],
           "on_failure": "stop",
-          "applies_when": "Input is invalid",
+          "applies_when": "Required input or customer selection is missing or invalid; return MISSING and list only the unresolved values.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 62
+            "line": 84
           },
           "readiness": {
             "status": "ready",
@@ -362,15 +393,13 @@
           "transitions": {
             "handled": "CAL.ISSUES"
           },
-          "prerequisites": [
-            "CAL.RESOLVE_DEPENDENCIES"
-          ],
+          "prerequisites": [],
           "on_failure": "stop",
           "applies_when": "A prerequisite or required decision is unresolved",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 63
+            "line": 85
           },
           "readiness": {
             "status": "ready",
@@ -386,15 +415,13 @@
           "transitions": {
             "handled": "CAL.ISSUES"
           },
-          "prerequisites": [
-            "CAL.LOOKUP_EXISTING"
-          ],
+          "prerequisites": [],
           "on_failure": "stop",
-          "applies_when": "Lookup evidence is missing, different, or ambiguous",
+          "applies_when": "Lookup evidence is missing, incomplete, unavailable, or ambiguous; a complete differing definition follows CAL.DECIDE_UPDATE_OR_NEW.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 64
+            "line": 86
           },
           "readiness": {
             "status": "ready",
@@ -418,7 +445,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 65
+            "line": 87
           },
           "readiness": {
             "status": "ready",
@@ -442,29 +469,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 66
-          },
-          "readiness": {
-            "status": "ready",
-            "blocking_reasons": []
-          }
-        },
-        {
-          "id": "CAL.HANDED_OFF_TO_PARENT",
-          "node_type": "terminal",
-          "sequence": 170,
-          "action_type": "terminal",
-          "execution_route": "local",
-          "transitions": {},
-          "prerequisites": [
-            "CAL.IMPORT_GATE"
-          ],
-          "on_failure": "continue",
-          "applies_when": "Calendar import is accepted — pending parent verification.",
-          "source": {
-            "file": "ora_error_handling.md",
-            "anchor": "task-nodes",
-            "line": 67
+            "line": 88
           },
           "readiness": {
             "status": "ready",
@@ -486,7 +491,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 68
+            "line": 89
           },
           "readiness": {
             "status": "ready",
@@ -508,7 +513,29 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 68
+            "line": 90
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CAL.NEW_INPUT_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 123,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CAL.DECIDE_UPDATE_OR_NEW"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return MISSING with the create-new choice retained. Collect the exact new Calendar Name and restart at CAL.CLASSIFY_REQUEST with refreshed evidence and no reused approval; do not prepare a package in this run.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 91
           },
           "readiness": {
             "status": "ready",
@@ -528,7 +555,29 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 69
+            "line": 92
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CAL.HANDED_OFF_TO_PARENT",
+          "node_type": "terminal",
+          "sequence": 170,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CAL.IMPORT_GATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Calendar import is accepted \u2014 pending parent verification.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 93
           },
           "readiness": {
             "status": "ready",

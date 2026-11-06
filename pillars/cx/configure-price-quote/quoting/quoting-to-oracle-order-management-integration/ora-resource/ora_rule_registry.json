@@ -1,0 +1,329 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "CUSTOM_QUOTING_TO_ORACLE_ORDER_MANAGEMENT_INTEGRATION",
+      "task_name": "Quoting to Oracle Order Management Integration",
+      "start_node": "CPQOM.VALIDATE_SCOPE",
+      "nodes": [
+        {
+          "id": "CPQOM.VALIDATE_SCOPE",
+          "node_type": "step",
+          "sequence": 10,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "CPQOM.VERIFY_OM_OFFERING",
+            "invalid": "CPQOM.HANDLE_ISSUE"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Before CPQ to OM integration planning or configuration",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 25
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CPQOM.VERIFY_OM_OFFERING",
+          "node_type": "step",
+          "sequence": 20,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CPQOM.VERIFY_CPQ_OFFERING",
+            "unavailable": "CPQOM.HANDLE_ISSUE"
+          },
+          "prerequisites": [
+            "CPQOM.VALIDATE_SCOPE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Before native CPQ to OM integration planning",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 31
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CPQOM.VERIFY_CPQ_OFFERING",
+          "node_type": "step",
+          "sequence": 30,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CPQOM.CHECK_COMMERCE_SETTING",
+            "unavailable": "CPQOM.HANDLE_ISSUE"
+          },
+          "prerequisites": [
+            "CPQOM.VERIFY_OM_OFFERING"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Before native CPQ to OM integration planning",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 32
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CPQOM.CHECK_COMMERCE_SETTING",
+          "node_type": "step",
+          "sequence": 35,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "compliant": "CPQOM.CHECK_GENERIC_INTEGRATION",
+            "update_required": "CPQOM.COMMERCE_CHANGE_GATE",
+            "lookup_failed": "CPQOM.HANDLE_ISSUE"
+          },
+          "prerequisites": [
+            "CPQOM.VERIFY_CPQ_OFFERING"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Before Generic Integration Data Loader validation",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 33
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CPQOM.COMMERCE_CHANGE_GATE",
+          "node_type": "step",
+          "sequence": 38,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "preview_ready": "CPQOM.COMMERCE_IMPORT_READY",
+            "payload_invalid": "CPQOM.HANDLE_ISSUE"
+          },
+          "prerequisites": [
+            "CPQOM.CHECK_COMMERCE_SETTING"
+          ],
+          "on_failure": "stop",
+          "applies_when": "The Commerce setting is not Yes; require the exact validated final CpqCommerceSettings archive records and leave approval to the Core Data Loader and Task Hook preview",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 41
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CPQOM.COMMERCE_IMPORT_READY",
+          "node_type": "terminal",
+          "sequence": 39,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CPQOM.COMMERCE_CHANGE_GATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "The fixed Commerce setting archive records are ready for the Core Data Loader approval preview; no upload or initiation has occurred",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 42
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CPQOM.CHECK_GENERIC_INTEGRATION",
+          "node_type": "decision",
+          "sequence": 45,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "present": "CPQOM.CHECK_READINESS",
+            "absent": "CPQOM.GENERIC_CHANGE_GATE",
+            "ambiguous": "CPQOM.HANDLE_ISSUE",
+            "lookup_failed": "CPQOM.HANDLE_ISSUE"
+          },
+          "prerequisites": [
+            "CPQOM.CHECK_COMMERCE_SETTING"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Before preparing or uploading Fusion Account Integration",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 34
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CPQOM.GENERIC_CHANGE_GATE",
+          "node_type": "step",
+          "sequence": 48,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "preview_ready": "CPQOM.GENERIC_INTEGRATION_READY",
+            "payload_invalid": "CPQOM.HANDLE_ISSUE"
+          },
+          "prerequisites": [
+            "CPQOM.CHECK_GENERIC_INTEGRATION"
+          ],
+          "on_failure": "stop",
+          "applies_when": "The named Generic Integration is absent; require live Data Loader metadata, validated final IntegrationVendors archive records, placeholder credentials, and enabled=false before Task Hook builds its approval preview",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 43
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CPQOM.CHECK_READINESS",
+          "node_type": "step",
+          "sequence": 50,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "CPQOM.VERIFY_OM_PROCESS_ASSIGNMENT_RULE",
+            "blocked": "CPQOM.HANDLE_ISSUE"
+          },
+          "prerequisites": [
+            "CPQOM.CHECK_GENERIC_INTEGRATION"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Before manual OM process-assignment-rule confirmation; require verify_native_flow_prerequisites_confirmation",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 34
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CPQOM.GENERIC_INTEGRATION_READY",
+          "node_type": "terminal",
+          "sequence": 55,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CPQOM.GENERIC_CHANGE_GATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "The validated Generic Integration archive records are ready for the Core Data Loader approval preview; no upload or initiation has occurred",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 44
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CPQOM.VERIFY_OM_PROCESS_ASSIGNMENT_RULE",
+          "node_type": "step",
+          "sequence": 75,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "confirmed": "CPQOM.PROCESS_ASSIGNMENT_RULE_READY",
+            "manual_action_required": "CPQOM.HANDLE_ISSUE"
+          },
+          "prerequisites": [
+            "CPQOM.CHECK_READINESS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Before native CPQ--OM orders are submitted",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 35
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CPQOM.PROCESS_ASSIGNMENT_RULE_READY",
+          "node_type": "terminal",
+          "sequence": 78,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CPQOM.VERIFY_OM_PROCESS_ASSIGNMENT_RULE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "The Oracle CPQ process assignment rule is administrator-confirmed active and deployed",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 45
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CPQOM.HANDLE_ISSUE",
+          "node_type": "terminal",
+          "sequence": 80,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Any validation, dependency, lookup, design, or execution blocker",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 46
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

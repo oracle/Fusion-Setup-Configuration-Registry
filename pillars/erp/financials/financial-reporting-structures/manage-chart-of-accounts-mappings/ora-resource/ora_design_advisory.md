@@ -60,7 +60,7 @@
 | First-go readiness, existence comparison, approval, and source precedence | USER-01 |
 | COA resolution, mapping-name duplicate error, EO method semantics, rollup bounds, and account-rule identity | EO-01 |
 | COA, segment, value-set, maximum-size, and method lookup evidence | VO-01 |
-| Read-only source and target COA resolution before export | REST-01 |
+| Read-only source and target COA resolution for mapping validation; template/spec export is independent | REST-01 |
 | Read-only value-set definition lookup and returned child-values navigation | REST-02, REST-03 |
 | Catalog task identity and supported CSV routing | REPO-01 |
 | Mapping is conditional, not baseline COA setup | User-approved review direction |

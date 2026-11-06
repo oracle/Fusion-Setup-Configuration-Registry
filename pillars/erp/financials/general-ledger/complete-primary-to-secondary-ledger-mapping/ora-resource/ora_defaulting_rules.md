@@ -9,7 +9,7 @@
 | Name4 | Exact directional mapping name | Structure instances differ | No; user selects the business mapping and the resolver supplies its exact identity | resolve_directional_coa_mapping |
 | AlcDefaultConvRateTypeTrans | Intentional blank | Source and target currencies are the same | No | resolve_existing_relationship |
 | AlcDefaultConvRateTypeTrans | Exact user-selected rate type | Source and target currencies differ | No; Corporate is not a default | find_conversion_rate_type_exact |
-| OrgIdTrans | -1 | Exact same-release controlled mapping transition starts at -99 and all child aliases are validated | No; block on any unexpected current state | resolve_existing_relationship |
+| OrgIdTrans | Preserve exact export value, including -99 or -1 | Every existing relationship; Name4 assignment is not a key transition | No; never default, normalize, or rewrite the key | resolve_existing_relationship |
 | RelationshipEnabledFlag | Preserve exact export; controlled new relationship remains N | Mapping is completed but activation is not authorized | No | resolve_existing_relationship |
 | InheritCreationUser | Y | Exact same-release matching-role controlled relationship and export does not already own a value | Preserve existing; disclose controlled default | resolve_existing_relationship |
 | AutomaticPostFlag | N | Exact same-release matching-role controlled relationship and export does not already own a value | Preserve existing; user-requested enablement requires exact supported contract | resolve_existing_relationship |
@@ -34,8 +34,8 @@
 
 | Member | Population Behavior |
 |---|---|
-| ORA_GL_LEDGER_RELATIONSHIP.csv | Own the exact approved relationship delta: directional Name4 when required, user-selected rate type when required, proven OrgIdTrans transition, and only exact supported relationship fields; preserve all others |
-| ORA_GL_JOUNAL_CONVERSION_RULES.csv | Update child parent OrgId alias with the relationship transition; preserve all existing rules; create only the exact controlled matching-role catch-all and never synthesize selective or universal Subledger policy |
+| ORA_GL_LEDGER_RELATIONSHIP.csv | Own the exact approved relationship delta: directional Name4 when required, user-selected rate type when required, and only exact supported relationship fields; preserve OrgIdTrans, RelationshipTypeCode, and all other parent-key fields |
+| ORA_GL_JOUNAL_CONVERSION_RULES.csv | Preserve every child parent OrgId alias exactly with its exported relationship tuple; preserve all existing rules; create only the exact controlled matching-role catch-all and never synthesize selective or universal Subledger policy |
 | ORA_PRIMARY_BALANCING_SEGMENT_VALUE_CONVERSION_RULES.csv | Header-only unless controlled conversion was explicitly selected; each row uses exact parent tuple plus required SourceSegmentValue and Meaning; optional columns remain blank unless deployed and requested |
 | GL_LEDGER_SEG_VAL_ASSIGNMENT.csv | Preserve unless explicit direct assignment is separately selected and supported; no row when the owning ledger uses BalSegValueOptionCode A |
 | GL_LEDGER.csv and ORA_GL_PRIMARY_LEDGER_CONFIG.csv | Dependency closure only; preserve rows and actual headers |
@@ -48,10 +48,10 @@
 | Physical Area | Exact Policy |
 |---|---|
 | Relationship parent and role | Preserve exact source/target names, categories, conversion level, currency, ApplicationShortName, and all ten parent-key columns; never rebuild a child key from display text alone |
-| Relationship lifecycle | Own only the proven OrgIdTrans mapping transition; preserve relationship status/enabled state, InheritCreationUser, AutomaticPostFlag, AlcNoRateActionCode, AlcInheritConversionType, target service ID/ShortName, disable dates, and initialization fields unless an explicit supported choice owns them |
+| Relationship lifecycle | Mapping completion owns no OrgIdTrans transition; preserve the exported key, relationship status/enabled state, InheritCreationUser, AutomaticPostFlag, AlcNoRateActionCode, AlcInheritConversionType, target service ID/ShortName, disable dates, and initialization fields unless an explicit supported choice owns them |
 | Relationship structural/rate options | Populate Name4 only from the exact directional mapping when COAs differ and the rate type only from user choice when currencies differ; preserve RevalFromPriLgrCurr and all other translation/rate-policy fields by relationship type |
 | Relationship BSV options | Preserve tree code/version, replication flag, replication date, segment-value/type fields, and related optional attributes unless a controlled exact-role design was explicitly selected; otherwise use the UI handoff |
-| Journal-rule parent | Preserve the exact relationship ten-column parent tuple and update its OrgId alias only with the parent transition |
+| Journal-rule parent | Preserve the exact exported ten-column relationship parent tuple, including OrgIdTrans and RelationshipTypeCode; never rewrite child aliases merely to assign a COA mapping |
 | Journal-rule body | Keep source/category key and name coherent with UserUpdatableFlag and IncludeFlag; preserve relationship conversion flags/rate in columns 38 and 39; DFFs are opt-in and audit fields are service owned |
 | BSV conversion body | SourceSegmentValue and Meaning are required for each authored row; DFF/date/number fields remain blank unless deployed and explicitly requested; audit fields remain service owned |
 | Direct BSV assignment body | Preserve parent keys, exact SegmentValue, LedgerName, optional dates, SLA sequencing, legal-entity and DFF values; SegmentTypeCode/SegmentValueTypeCode require exact same-role evidence |

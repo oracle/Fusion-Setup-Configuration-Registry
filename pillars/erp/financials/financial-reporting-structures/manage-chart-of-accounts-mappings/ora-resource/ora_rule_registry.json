@@ -22,7 +22,7 @@
           "source": {
             "file": "ora_input_intake.md",
             "anchor": "task-nodes",
-            "line": 48
+            "line": 49
           },
           "readiness": {
             "status": "ready",
@@ -36,7 +36,7 @@
           "action_type": "validate_input",
           "execution_route": "local",
           "transitions": {
-            "valid": "COAMAP.FIND_SOURCE"
+            "valid": "COAMAP.CONTRACT"
           },
           "prerequisites": [
             "COAMAP.COLLECT"
@@ -46,7 +46,31 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 68
+            "line": 70
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "COAMAP.CONTRACT",
+          "node_type": "step",
+          "sequence": 3,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "COAMAP.FIND_SOURCE"
+          },
+          "prerequisites": [
+            "COAMAP.VALIDATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Contract evidence needed; independent template/spec export has no mapping or COA prerequisites",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 54
           },
           "readiness": {
             "status": "ready",
@@ -56,21 +80,21 @@
         {
           "id": "COAMAP.FIND_SOURCE",
           "node_type": "step",
-          "sequence": 3,
+          "sequence": 4,
           "action_type": "reference_lookup",
           "execution_route": "fusion-rest",
           "transitions": {
             "resolved": "COAMAP.FIND_TARGET"
           },
           "prerequisites": [
-            "COAMAP.VALIDATE"
+            "COAMAP.CONTRACT"
           ],
           "on_failure": "stop",
           "applies_when": "Always",
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 45
+            "line": 213
           },
           "readiness": {
             "status": "ready",
@@ -80,7 +104,7 @@
         {
           "id": "COAMAP.FIND_TARGET",
           "node_type": "step",
-          "sequence": 4,
+          "sequence": 5,
           "action_type": "reference_lookup",
           "execution_route": "fusion-rest",
           "transitions": {
@@ -94,7 +118,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 46
+            "line": 214
           },
           "readiness": {
             "status": "ready",
@@ -104,13 +128,14 @@
         {
           "id": "COAMAP.LOOKUP",
           "node_type": "decision",
-          "sequence": 5,
+          "sequence": 6,
           "action_type": "reference_lookup",
           "execution_route": "fusion-rest",
           "transitions": {
             "identical": "COAMAP.DONE_EXISTING",
             "new_or_approved_update": "COAMAP.DEPENDENCIES",
-            "different": "COAMAP.NEEDS_DIRECTION"
+            "different": "COAMAP.NEEDS_DIRECTION",
+            "pending": "COAMAP.DEPENDENCIES"
           },
           "prerequisites": [
             "COAMAP.FIND_TARGET"
@@ -120,7 +145,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 47
+            "line": 215
           },
           "readiness": {
             "status": "ready",
@@ -130,7 +155,7 @@
         {
           "id": "COAMAP.DEPENDENCIES",
           "node_type": "step",
-          "sequence": 6,
+          "sequence": 7,
           "action_type": "resolve_dependency",
           "execution_route": "local",
           "transitions": {
@@ -140,11 +165,11 @@
             "COAMAP.LOOKUP"
           ],
           "on_failure": "stop",
-          "applies_when": "New mapping or approved update",
+          "applies_when": "New mapping, approved update, or local preparation with pending comparison",
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 54
+            "line": 55
           },
           "readiness": {
             "status": "ready",
@@ -154,7 +179,7 @@
         {
           "id": "COAMAP.DEFAULT",
           "node_type": "step",
-          "sequence": 7,
+          "sequence": 8,
           "action_type": "apply_default",
           "execution_route": "local",
           "transitions": {
@@ -164,7 +189,7 @@
             "COAMAP.DEPENDENCIES"
           ],
           "on_failure": "stop",
-          "applies_when": "New mapping or approved update",
+          "applies_when": "New mapping, approved update, or local preparation with pending comparison",
           "source": {
             "file": "ora_defaulting_rules.md",
             "anchor": "task-nodes",
@@ -178,7 +203,7 @@
         {
           "id": "COAMAP.ENFORCE",
           "node_type": "step",
-          "sequence": 8,
+          "sequence": 9,
           "action_type": "design_enforcement",
           "execution_route": "local",
           "transitions": {
@@ -188,11 +213,11 @@
             "COAMAP.DEFAULT"
           ],
           "on_failure": "stop",
-          "applies_when": "New mapping or approved update",
+          "applies_when": "New mapping, approved update, or local preparation with pending comparison",
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 105
+            "line": 106
           },
           "readiness": {
             "status": "ready",
@@ -202,9 +227,9 @@
         {
           "id": "COAMAP.BULK",
           "node_type": "step",
-          "sequence": 9,
+          "sequence": 10,
           "action_type": "process_bulk",
-          "execution_route": "fsm-task-csv-import",
+          "execution_route": "local",
           "transitions": {
             "ready": "COAMAP.PREVIEW"
           },
@@ -212,11 +237,11 @@
             "COAMAP.ENFORCE"
           ],
           "on_failure": "stop",
-          "applies_when": "New mapping or approved update",
+          "applies_when": "New mapping, approved update, or local preparation with pending comparison",
           "source": {
             "file": "ora_bulk_intake.md",
             "anchor": "task-nodes",
-            "line": 65
+            "line": 66
           },
           "readiness": {
             "status": "ready",
@@ -226,11 +251,12 @@
         {
           "id": "COAMAP.PREVIEW",
           "node_type": "step",
-          "sequence": 10,
+          "sequence": 11,
           "action_type": "preview_gate",
           "execution_route": "local",
           "transitions": {
-            "pass": "COAMAP.APPROVAL"
+            "pass": "COAMAP.APPROVAL",
+            "prepared_only": "COAMAP.DONE_PREPARED"
           },
           "prerequisites": [
             "COAMAP.BULK"
@@ -240,7 +266,7 @@
           "source": {
             "file": "ora_rest_execution.md",
             "anchor": "task-nodes",
-            "line": 77
+            "line": 84
           },
           "readiness": {
             "status": "ready",
@@ -250,7 +276,7 @@
         {
           "id": "COAMAP.APPROVAL",
           "node_type": "decision",
-          "sequence": 11,
+          "sequence": 12,
           "action_type": "approval_gate",
           "execution_route": "local",
           "transitions": {
@@ -265,7 +291,7 @@
           "source": {
             "file": "ora_rest_execution.md",
             "anchor": "task-nodes",
-            "line": 78
+            "line": 85
           },
           "readiness": {
             "status": "ready",
@@ -275,22 +301,23 @@
         {
           "id": "COAMAP.EXECUTE",
           "node_type": "step",
-          "sequence": 12,
+          "sequence": 13,
           "action_type": "execution_gate",
           "execution_route": "local",
           "transitions": {
-            "success": "COAMAP.VERIFY",
+            "success": "COAMAP.DONE_SUBMITTED",
+            "status_requested": "COAMAP.VERIFY",
             "failed": "COAMAP.ERROR"
           },
           "prerequisites": [
             "COAMAP.APPROVAL"
           ],
           "on_failure": "stop",
-          "applies_when": "Exact action is approved",
+          "applies_when": "Exact mutation is approved; status_requested is only a later user-requested read using prior accepted submission context",
           "source": {
             "file": "ora_rest_execution.md",
             "anchor": "task-nodes",
-            "line": 79
+            "line": 86
           },
           "readiness": {
             "status": "ready",
@@ -300,22 +327,23 @@
         {
           "id": "COAMAP.VERIFY",
           "node_type": "decision",
-          "sequence": 13,
+          "sequence": 14,
           "action_type": "evaluate_result",
           "execution_route": "local",
           "transitions": {
             "verified": "COAMAP.DONE_LIVE",
+            "pending": "COAMAP.DONE_PENDING",
             "failed": "COAMAP.ERROR"
           },
           "prerequisites": [
             "COAMAP.EXECUTE"
           ],
           "on_failure": "stop",
-          "applies_when": "After an approved live action",
+          "applies_when": "Only a later explicit user result request for an accepted load; use the shared Data Loader status workflow",
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 69
+            "line": 71
           },
           "readiness": {
             "status": "ready",
@@ -325,7 +353,7 @@
         {
           "id": "COAMAP.ERROR",
           "node_type": "step",
-          "sequence": 14,
+          "sequence": 15,
           "action_type": "error_handler",
           "execution_route": "local",
           "transitions": {
@@ -339,7 +367,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 74
+            "line": 78
           },
           "readiness": {
             "status": "ready",
@@ -349,7 +377,7 @@
         {
           "id": "COAMAP.DONE_LIVE",
           "node_type": "terminal",
-          "sequence": 15,
+          "sequence": 16,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
@@ -361,7 +389,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 75
+            "line": 79
           },
           "readiness": {
             "status": "ready",
@@ -371,7 +399,7 @@
         {
           "id": "COAMAP.DONE_EXISTING",
           "node_type": "terminal",
-          "sequence": 16,
+          "sequence": 17,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
@@ -383,7 +411,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 76
+            "line": 80
           },
           "readiness": {
             "status": "ready",
@@ -393,7 +421,7 @@
         {
           "id": "COAMAP.NEEDS_DIRECTION",
           "node_type": "terminal",
-          "sequence": 17,
+          "sequence": 18,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
@@ -405,7 +433,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 77
+            "line": 81
           },
           "readiness": {
             "status": "ready",
@@ -415,7 +443,7 @@
         {
           "id": "COAMAP.STOPPED",
           "node_type": "terminal",
-          "sequence": 18,
+          "sequence": 19,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
@@ -425,7 +453,73 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 78
+            "line": 82
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "COAMAP.DONE_PREPARED",
+          "node_type": "terminal",
+          "sequence": 20,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "COAMAP.PREVIEW"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Local package prepared; current target mapping comparison pending; no submission approval or live mutation",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 83
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "COAMAP.DONE_SUBMITTED",
+          "node_type": "terminal",
+          "sequence": 21,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "COAMAP.EXECUTE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Data Loader accepted initiation; return its response immediately without polling or claiming import completion",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 84
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "COAMAP.DONE_PENDING",
+          "node_type": "terminal",
+          "sequence": 22,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "COAMAP.VERIFY"
+          ],
+          "on_failure": "stop",
+          "applies_when": "A user-requested result check is in progress or not available yet; return current status without automatic polling or resubmission",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 85
           },
           "readiness": {
             "status": "ready",

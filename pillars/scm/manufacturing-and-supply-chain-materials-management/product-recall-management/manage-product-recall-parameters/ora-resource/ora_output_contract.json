@@ -12,16 +12,20 @@
         "requested_operations",
         "preconditions",
         "approval_gate"
-      ]
+      ],
+      "default_location": "project/{project_id}/artifacts/pillars/scm/manufacturing-and-supply-chain-materials-management/product-recall-management/manage-product-recall-parameters/current/",
+      "registration_policy": "Register a sanitized planning/checkpoint artifact under this supported artifact_type using the manifest artifact registry/version services."
     },
     "setup_data_routing": {
-      "artifact_type": "setup_data_routing",
+      "artifact_type": "configuration_blueprint",
       "required_fields": [
         "export_route",
         "validation_routes",
         "import_route",
         "business_objects"
-      ]
+      ],
+      "default_location": "project/{project_id}/artifacts/pillars/scm/manufacturing-and-supply-chain-materials-management/product-recall-management/manage-product-recall-parameters/current/",
+      "registration_policy": "Register a sanitized planning/checkpoint artifact under this supported artifact_type using the manifest artifact registry/version services."
     },
     "validation_checkpoints": {
       "artifact_type": "validation_result",
@@ -30,7 +34,9 @@
         "checks",
         "blocking_issues",
         "evidence_references"
-      ]
+      ],
+      "default_location": "project/{project_id}/artifacts/pillars/scm/manufacturing-and-supply-chain-materials-management/product-recall-management/manage-product-recall-parameters/current/",
+      "registration_policy": "Register a sanitized planning/checkpoint artifact under this supported artifact_type using the manifest artifact registry/version services."
     }
   },
   "constraints": {
@@ -43,6 +49,18 @@
       "recallSubinventories"
     ],
     "import_route": "core.data-loader",
-    "approval_required_before_live_import": true
+    "approval_required_before_live_import": true,
+    "excluded_persisted_fields": [
+      "captured_source_records",
+      "native_source_bytes",
+      "payloads",
+      "loader_preview",
+      "preview_id",
+      "preview_fingerprint",
+      "approval_record",
+      "credentials",
+      "worker_identity_details"
+    ],
+    "persistence_scope": "These exclusions apply to task-authored planning and checkpoint artifacts. Core Data Loader and Task Hook retain their prescribed internal immutable upload, preflight, preview, approval and validation-envelope artifacts under their own contracts."
   }
 }

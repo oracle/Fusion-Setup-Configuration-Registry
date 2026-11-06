@@ -8,6 +8,7 @@ import json
 import os
 import posixpath
 import re
+import stat
 import subprocess
 import tempfile
 import zipfile
@@ -24,10 +25,15 @@ except ModuleNotFoundError:
 
 
 MAX_SHEET_NAME_LENGTH = 30
+_MAX_XLSX_ROW = 1_048_576
+_MAX_XLSX_COLUMN = 16_384
+# Bound rectangular output even when a legal, very wide header is supplied.
+_MAX_SHEET_OUTPUT_CELLS = 1_000_000
 _ILLEGAL_SHEET_NAME_CHARACTERS = re.compile(r"[\[\]:*?/\\]")
 _RESERVED_SHEET_NAMES = frozenset({"history"})
 LEGACY_MAP_SHEET = "Data Loader Map"
 LEGACY_MAP_HEADERS = ("Sheet Name", "Discriminator", "Parent Discriminator", "Business Object Name")
+SET_COMMANDS_SHEET = "set commands"
 ATTRIBUTE_DETAILS_HEADERS = (
     "Attribute Name", "Display Label", "Description", "Data Type", "Required",
     "Key Classification", "User-Key Alternatives", "Reference Type", "Reference Object",
@@ -240,6 +246,8 @@ class _Sheet:
     title: str
     state: str
     rows: tuple[tuple[str, ...], ...]
+    # Parsed sheets omit empty rows; generated sheets use contiguous numbering.
+    source_row_numbers: tuple[int, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -482,13 +490,127 @@ def _app_properties_xml(sheet_list: tuple[_Sheet, ...]) -> bytes:
     return _xml_bytes(root)
 
 
+def _artifact_runtime_available(node: Path, node_modules: Path) -> bool:
+    """Fall back only for missing dependencies; propagate broken-runtime errors."""
+    try:
+        if not stat.S_ISREG(node.stat().st_mode) or not stat.S_ISDIR(node_modules.stat().st_mode):
+            return False
+    except FileNotFoundError:
+        return False
+    environment = os.environ.copy()
+    environment["NODE_PATH"] = str(node_modules)
+    probe = subprocess.run(
+        [str(node), "-e", """
+try {
+    require.resolve("@oai/artifact-tool");
+} catch (error) {
+    if (error.code === "MODULE_NOT_FOUND" &&
+        error.message.startsWith("Cannot find module '@oai/artifact-tool'")) {
+        process.exit(3);
+    }
+    throw error;
+}
+"""],
+        cwd=str(_ARTIFACT_WRITER.parent),
+        env=environment,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if probe.returncode == 3:
+        return False
+    if probe.returncode:
+        detail = (probe.stderr or probe.stdout).strip()
+        raise OSError(f"Unable to check bundled XLSX runtime: {detail or 'unknown error'}")
+    return True
+
+
+def _write_generic_workbook(sheets: tuple[_Sheet, ...], output_path: Path) -> None:
+    """Write a complete, literal-text XLSX package using only the standard library."""
+    content_ns = "http://schemas.openxmlformats.org/package/2006/content-types"
+    spreadsheet_type = "application/vnd.openxmlformats-officedocument.spreadsheetml."
+    # Package readers used by the preview require unprefixed package metadata.
+    content_types = ET.Element("Types", {"xmlns": content_ns})
+    for extension, content_type in (
+        ("rels", "application/vnd.openxmlformats-package.relationships+xml"),
+        ("xml", "application/xml"),
+    ):
+        ET.SubElement(content_types, "Default", {
+            "Extension": extension, "ContentType": content_type,
+        })
+
+    root_relationships = ET.Element("Relationships", {"xmlns": _PKG_REL_NS})
+    for index, (target, relationship_type) in enumerate((
+        ("xl/workbook.xml", _REL_NS + "/officeDocument"),
+        ("docProps/core.xml", _PKG_REL_NS + "/metadata/core-properties"),
+        ("docProps/app.xml", _REL_NS + "/extended-properties"),
+    ), start=1):
+        ET.SubElement(root_relationships, "Relationship", {
+            "Id": f"rId{index}", "Type": relationship_type, "Target": "/" + target,
+        })
+
+    workbook = ET.Element(_tag("workbook"))
+    views = ET.SubElement(workbook, _tag("bookViews"))
+    first_visible = next((index for index, sheet in enumerate(sheets) if sheet.state == "visible"), 0)
+    ET.SubElement(views, _tag("workbookView"), {"activeTab": str(first_visible)})
+    workbook_sheets = ET.SubElement(workbook, _tag("sheets"))
+    relationships = ET.Element("Relationships", {"xmlns": _PKG_REL_NS})
+    styles = ET.fromstring(_STYLE_XML)
+    text_style = _ensure_text_style(styles)
+    shared_values, shared_indexes, shared_count = _shared_string_table(sheets)
+    parts = {
+        "docProps/core.xml": (_core_properties_xml(), "application/vnd.openxmlformats-package.core-properties+xml"),
+        "docProps/app.xml": (_app_properties_xml(sheets), "application/vnd.openxmlformats-officedocument.extended-properties+xml"),
+    }
+    for index, sheet in enumerate(sheets, start=1):
+        attributes = {"name": sheet.title, "sheetId": str(index), f"{{{_REL_NS}}}id": f"rId{index}"}
+        if sheet.state != "visible":
+            attributes["state"] = sheet.state
+        ET.SubElement(workbook_sheets, _tag("sheet"), attributes)
+        target = f"xl/worksheets/sheet{index}.xml"
+        ET.SubElement(relationships, "Relationship", {
+            "Id": f"rId{index}", "Type": _REL_NS + "/worksheet", "Target": "/" + target,
+        })
+        parts[target] = (_worksheet_xml(sheet.rows, shared_indexes, text_style), spreadsheet_type + "worksheet+xml")
+
+    for index, (target, kind, content, content_type) in enumerate((
+        ("xl/styles.xml", "styles", _xml_bytes(styles), spreadsheet_type + "styles+xml"),
+        ("xl/sharedStrings.xml", "sharedStrings", _shared_strings_xml(shared_values, shared_count), spreadsheet_type + "sharedStrings+xml"),
+        ("xl/theme/theme1.xml", "theme", _THEME_XML, "application/vnd.openxmlformats-officedocument.theme+xml"),
+    ), start=len(sheets) + 1):
+        ET.SubElement(relationships, "Relationship", {
+            "Id": f"rId{index}", "Type": _REL_NS + "/" + kind, "Target": "/" + target,
+        })
+        parts[target] = (content, content_type)
+    parts["xl/workbook.xml"] = (_xml_bytes(workbook), spreadsheet_type + "sheet.main+xml")
+    for target, (_, content_type) in parts.items():
+        ET.SubElement(content_types, "Override", {
+            "PartName": "/" + target, "ContentType": content_type,
+        })
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.NamedTemporaryFile(suffix=".xlsx", dir=output_path.parent, delete=False) as handle:
+        temporary_path = Path(handle.name)
+    try:
+        with zipfile.ZipFile(temporary_path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+            archive.writestr("[Content_Types].xml", _xml_bytes(content_types))
+            archive.writestr("_rels/.rels", _xml_bytes(root_relationships))
+            archive.writestr("xl/_rels/workbook.xml.rels", _xml_bytes(relationships))
+            for target, (content, _) in parts.items():
+                archive.writestr(target, content)
+        temporary_path.replace(output_path)
+    finally:
+        temporary_path.unlink(missing_ok=True)
+
+
 def _write_workbook(sheets: Iterable[_Sheet], output_path: Path) -> None:
     sheet_list = tuple(sheets)
     node_path = Path.home() / ".cache" / "codex-runtimes" / "codex-primary-runtime" / "dependencies" / "node"
     node = Path(os.environ.get("DATA_LOADER_ARTIFACT_NODE", node_path / "bin" / "node"))
     node_modules = Path(os.environ.get("DATA_LOADER_ARTIFACT_NODE_MODULES", node_path / "node_modules"))
-    if not node.is_file() or not node_modules.is_dir():
-        raise OSError("The bundled Codex spreadsheet runtime is required to generate XLSX samples.")
+    if not _artifact_runtime_available(node, node_modules):
+        _write_generic_workbook(sheet_list, output_path)
+        return
     if not _ARTIFACT_WRITER.is_file():
         raise OSError(f"Missing XLSX serializer: {_ARTIFACT_WRITER}")
 
@@ -526,64 +648,64 @@ def _write_workbook(sheets: Iterable[_Sheet], output_path: Path) -> None:
 
 def _restore_literal_text_cells(output_path: Path, sheets: tuple[_Sheet, ...]) -> None:
     """Replace inferred values with exact shared-string Data Loader literals."""
-    with zipfile.ZipFile(output_path) as source:
-        workbook = _xml(source, "xl/workbook.xml")
-        relationships = _relationships(source, "xl/_rels/workbook.xml.rels")
-        styles = _xml(source, "xl/styles.xml")
-        shared_values, shared_indexes, shared_count = _shared_string_table(sheets)
-        text_style_index = _ensure_text_style(styles)
-        workbook_sheets = workbook.findall("x:sheets/x:sheet", _NS)
-        if len(workbook_sheets) != len(sheets):
-            raise OSError("Bundled XLSX serializer returned an unexpected worksheet count.")
-        replacements = {
-            "xl/sharedStrings.xml": _shared_strings_xml(shared_values, shared_count),
-            "xl/styles.xml": _xml_bytes(styles),
-        }
-        for element, sheet in zip(workbook_sheets, sheets):
-            relationship_id = element.get(f"{{{_REL_NS}}}id", "")
-            relationship = relationships.get(relationship_id)
-            if relationship is None or not relationship[0].endswith("/worksheet"):
-                raise OSError("Bundled XLSX serializer returned an invalid worksheet relationship.")
-            worksheet_path = relationship[1]
-            if worksheet_path not in source.namelist():
-                raise OSError("Bundled XLSX serializer omitted a generated worksheet.")
-            replacements[worksheet_path] = _worksheet_xml(
-                sheet.rows,
-                shared_indexes,
-                text_style_index,
-            )
-        with tempfile.NamedTemporaryFile(suffix=".xlsx", delete=False) as handle:
-            replacement_path = Path(handle.name)
-        try:
+    with tempfile.NamedTemporaryFile(suffix=".xlsx", dir=output_path.parent, delete=False) as handle:
+        replacement_path = Path(handle.name)
+    try:
+        with zipfile.ZipFile(output_path) as source:
+            workbook = _xml(source, "xl/workbook.xml")
+            relationships = _relationships(source, "xl/_rels/workbook.xml.rels")
+            styles = _xml(source, "xl/styles.xml")
+            shared_values, shared_indexes, shared_count = _shared_string_table(sheets)
+            text_style_index = _ensure_text_style(styles)
+            workbook_sheets = workbook.findall("x:sheets/x:sheet", _NS)
+            if len(workbook_sheets) != len(sheets):
+                raise OSError("Bundled XLSX serializer returned an unexpected worksheet count.")
+            replacements = {
+                "xl/sharedStrings.xml": _shared_strings_xml(shared_values, shared_count),
+                "xl/styles.xml": _xml_bytes(styles),
+            }
+            for element, sheet in zip(workbook_sheets, sheets):
+                relationship_id = element.get(f"{{{_REL_NS}}}id", "")
+                relationship = relationships.get(relationship_id)
+                if relationship is None or not relationship[0].endswith("/worksheet"):
+                    raise OSError("Bundled XLSX serializer returned an invalid worksheet relationship.")
+                worksheet_path = relationship[1]
+                if worksheet_path not in source.namelist():
+                    raise OSError("Bundled XLSX serializer omitted a generated worksheet.")
+                replacements[worksheet_path] = _worksheet_xml(
+                    sheet.rows,
+                    shared_indexes,
+                    text_style_index,
+                )
             with zipfile.ZipFile(replacement_path, "w", compression=zipfile.ZIP_DEFLATED) as replacement:
                 for item in source.infolist():
                     replacement.writestr(item, replacements.get(item.filename, source.read(item.filename)))
-            replacement_path.replace(output_path)
-        finally:
-            replacement_path.unlink(missing_ok=True)
+        replacement_path.replace(output_path)
+    finally:
+        replacement_path.unlink(missing_ok=True)
 
 
 def _preserve_sheet_states(output_path: Path, sheets: tuple[_Sheet, ...]) -> None:
     """Restore non-visible states that the artifact writer does not expose."""
     if all(sheet.state == "visible" for sheet in sheets):
         return
-    with zipfile.ZipFile(output_path) as source:
-        workbook = ET.fromstring(source.read("xl/workbook.xml"))
-        for element, sheet in zip(workbook.findall("x:sheets/x:sheet", _NS), sheets):
-            if sheet.state == "visible":
-                element.attrib.pop("state", None)
-            else:
-                element.set("state", sheet.state)
-        with tempfile.NamedTemporaryFile(suffix=".xlsx", delete=False) as handle:
-            replacement_path = Path(handle.name)
-        try:
+    with tempfile.NamedTemporaryFile(suffix=".xlsx", dir=output_path.parent, delete=False) as handle:
+        replacement_path = Path(handle.name)
+    try:
+        with zipfile.ZipFile(output_path) as source:
+            workbook = ET.fromstring(source.read("xl/workbook.xml"))
+            for element, sheet in zip(workbook.findall("x:sheets/x:sheet", _NS), sheets):
+                if sheet.state == "visible":
+                    element.attrib.pop("state", None)
+                else:
+                    element.set("state", sheet.state)
             with zipfile.ZipFile(replacement_path, "w", compression=zipfile.ZIP_DEFLATED) as replacement:
                 for item in source.infolist():
                     content = _xml_bytes(workbook) if item.filename == "xl/workbook.xml" else source.read(item.filename)
                     replacement.writestr(item, content)
-            replacement_path.replace(output_path)
-        finally:
-            replacement_path.unlink(missing_ok=True)
+        replacement_path.replace(output_path)
+    finally:
+        replacement_path.unlink(missing_ok=True)
 
 
 def write_sample_workbook(schema: metadata.BusinessObjectSchema, rows: dict[str, tuple[tuple[str, ...], Any]], output_path: Path) -> None:
@@ -802,11 +924,14 @@ def _adf_rest_date_text(value: date | datetime, format_code: str) -> str:
 
 
 def _cell_coordinates(reference: str) -> tuple[int, int]:
-    match = _CELL_REF.match(reference)
+    match = _CELL_REF.fullmatch(reference) if len(reference) <= 10 else None
     if not match: raise metadata.DataLoadError("file-validation", f"XLSX workbook has an invalid cell reference: {reference}")
     column = 0
     for character in match.group(1): column = column * 26 + ord(character) - 64
-    return int(match.group(2)), column
+    row = int(match.group(2))
+    if row > _MAX_XLSX_ROW or column > _MAX_XLSX_COLUMN:
+        raise metadata.DataLoadError("file-validation", f"XLSX workbook has an out-of-range cell reference: {reference}")
+    return row, column
 
 
 def _excel_date(value: str, date_1904: bool) -> date | datetime:
@@ -877,7 +1002,8 @@ def _read_sheet(
     *,
     adf_rest_dates: bool = False,
     date_formats: dict[int, str] | None = None,
-) -> tuple[tuple[str, ...], ...]:
+    enforce_header_width: bool = True,
+) -> tuple[tuple[tuple[str, ...], ...], tuple[int, ...]]:
     root = _xml(archive, name)
     rows: dict[int, dict[int, str]] = {}
     for row in root.findall("x:sheetData/x:row", _NS):
@@ -885,13 +1011,49 @@ def _read_sheet(
             reference = cell.get("r")
             if not reference: raise metadata.DataLoadError("file-validation", "XLSX workbook contains a cell without a reference.")
             row_number, column_number = _cell_coordinates(reference)
-            rows.setdefault(row_number, {})[column_number] = _cell_value(
+            values = rows.setdefault(row_number, {})
+            if column_number in values:
+                raise metadata.DataLoadError("file-validation", f"Worksheet {name} contains duplicate cell {reference}.")
+            values[column_number] = _cell_value(
                 cell, shared, date_styles, date_1904,
                 adf_rest_dates=adf_rest_dates, date_formats=date_formats,
             )
-    if not rows: return ()
-    maximum_row, maximum_column = max(rows), max(column for row in rows.values() for column in row)
-    return tuple(tuple(rows.get(row, {}).get(column, "") for column in range(1, maximum_column + 1)) for row in range(1, maximum_row + 1))
+    # A styled/explicitly empty cell must not enlarge the output rectangle.
+    populated = {
+        number: {column: value for column, value in values.items() if value != ""}
+        for number, values in rows.items()
+    }
+    populated = {number: values for number, values in populated.items() if values}
+    if not populated:
+        return (), ()
+    header_width = max(populated.get(1, {}), default=0)
+    result: list[tuple[str, ...]] = []
+    source_rows: list[int] = []
+    output_cells = 0
+    # Keep a missing header at physical row 1; never promote the first data row.
+    for number in sorted(populated.keys() | {1}):
+        values = populated.get(number, {})
+        last_column = max(values, default=0)
+        if enforce_header_width and header_width and last_column > header_width:
+            raise metadata.DataLoadError(
+                "file-validation",
+                f"Worksheet {name} cell {_column_name(last_column)}{number} contains data beyond the header columns.",
+            )
+        width = max(header_width, last_column)
+        output_cells += width
+        if output_cells > _MAX_SHEET_OUTPUT_CELLS:
+            raise metadata.DataLoadError(
+                "file-validation",
+                f"Worksheet {name} exceeds the output cell limit ({_MAX_SHEET_OUTPUT_CELLS}).",
+            )
+        result.append(tuple(values.get(column, "") for column in range(1, width + 1)))
+        source_rows.append(number)
+    return tuple(result), tuple(source_rows)
+
+
+def _is_set_commands_sheet(title: str) -> bool:
+    """Match Set Commands with optional inter-word whitespace, ignoring case."""
+    return " ".join(title.split()).casefold() in (SET_COMMANDS_SHEET, "setcommands")
 
 
 def _read_workbook(path: Path, *, adf_rest_dates: bool = False) -> _Workbook:
@@ -910,16 +1072,16 @@ def _read_workbook(path: Path, *, adf_rest_dates: bool = False) -> _Workbook:
                 if not relationship or not relationship[0].endswith("/worksheet"): raise metadata.DataLoadError("file-validation", "XLSX workbook has a worksheet without a valid relationship.")
                 title = item.get("name", "")
                 state = item.get("state", "visible")
-                sheets.append(_Sheet(
-                    title, state,
-                    _read_sheet(
-                        archive, relationship[1], shared, date_styles, date_1904,
-                        adf_rest_dates=(
-                            adf_rest_dates and state == "visible" and title != LEGACY_MAP_SHEET
-                        ),
-                        date_formats=date_formats,
+                sheet_rows, source_rows = _read_sheet(
+                    archive, relationship[1], shared, date_styles, date_1904,
+                    adf_rest_dates=(
+                        adf_rest_dates and state == "visible" and title != LEGACY_MAP_SHEET
+                        and not _is_set_commands_sheet(title)
                     ),
-                ))
+                    date_formats=date_formats,
+                    enforce_header_width=(state == "visible" or title == LEGACY_MAP_SHEET),
+                )
+                sheets.append(_Sheet(title, state, sheet_rows, source_rows))
             return _Workbook(tuple(sheets))
     except metadata.DataLoadError: raise
     except (OSError, zipfile.BadZipFile) as exc:
@@ -962,6 +1124,27 @@ def _resolve_sheet_discriminator(sheet_name: str, discriminators: Iterable[str])
     )
 
 
+def _read_set_commands(workbook: _Workbook) -> tuple[tuple[str, str], ...]:
+    """Collect complete pairs, keeping each parameter's last supplied value."""
+    commands: dict[str, str] = {}
+    header_aliases = {"parameter": "parameters", "values": "value"}
+    for sheet in workbook.sheets:
+        if sheet.state != "visible" or not _is_set_commands_sheet(sheet.title) or not sheet.rows:
+            continue
+        headers = tuple(value.strip().casefold() for value in sheet.rows[0])
+        headers = tuple(header_aliases.get(header, header) for header in headers)
+        if "parameters" not in headers or "value" not in headers:
+            continue
+        parameter_index, value_index = headers.index("parameters"), headers.index("value")
+        for row in sheet.rows[1:]:
+            if len(row) <= max(parameter_index, value_index):
+                continue
+            parameter, value = row[parameter_index].strip(), row[value_index].strip()
+            if parameter and value:
+                commands[parameter] = value
+    return tuple(commands.items())
+
+
 def read_xlsx_source(
     path: Path,
     *,
@@ -975,6 +1158,7 @@ def read_xlsx_source(
     visible_sheets = [
         sheet for sheet in workbook.sheets
         if sheet.state == "visible" and sheet.title != LEGACY_MAP_SHEET
+        and not _is_set_commands_sheet(sheet.title)
     ]
     if not visible_sheets: raise metadata.DataLoadError("file-validation", "XLSX workbook must contain at least one visible data worksheet.")
     visible_names = {sheet.title for sheet in visible_sheets}
@@ -1031,7 +1215,8 @@ def read_xlsx_source(
     converted_sections: list[tuple[str, tuple[str, ...], list[str]]] = []
     sections: list[metadata.SourceSection] = []
     for sheet_name, discriminator in mappings:
-        rows = workbook.sheet(sheet_name).rows
+        sheet = workbook.sheet(sheet_name)
+        rows = sheet.rows
         header = tuple(value.strip() for value in (rows[0] if rows else ()))
         if not header:
             raise metadata.DataLoadError("file-validation", f"Sheet {sheet_name} has no header row.")
@@ -1061,7 +1246,8 @@ def read_xlsx_source(
             retained_indexes = tuple(range(len(data_header)))
         if len(set(normalized)) != len(normalized): raise metadata.DataLoadError("file-validation", f"Sheet {sheet_name} has duplicate attribute columns.")
         records: list[str] = []
-        for row_number, row in enumerate(rows[1:], start=2):
+        row_numbers = sheet.source_row_numbers or range(1, len(rows) + 1)
+        for row_number, row in zip(row_numbers[1:], rows[1:]):
             source_values = tuple((list(row) + [""] * len(header))[:len(header)])
             action = source_values[action_index].strip() if action_index is not None else ""
             if action_index is not None and action not in {"", "MERGE", "DELETE"}:
@@ -1088,7 +1274,7 @@ def read_xlsx_source(
     root = business_object_name or root_discriminator
     if not any(records for _discriminator, _header, records in converted_sections):
         raise metadata.DataLoadError("file-validation", "XLSX workbook must include at least one data row.")
-    lines: list[str] = []
+    lines: list[str] = [f"SET {parameter} {value}" for parameter, value in _read_set_commands(workbook)]
     for discriminator, header, records in converted_sections:
         if discriminator == root and not records:
             continue

@@ -22,5 +22,6 @@ Only the explicitly defined cash-only assumptions below are automatic.
 | Policy | No assignment on Create; preserve existing association on Edit | Policy is outside captured scope | No | |
 | Itemization display | Disabled, Enabled, Required | Intake presentation | No | |
 | Legacy itemization labels | Not required becomes Disabled; Optional becomes Enabled | Reading older seed labels | No | |
-| Account, tax, and Projects | Account and tax values null; Projects Disabled; project receipt No; default expenditure type null | Every v1.5 imported expense type | Yes, fixed scope default | Builder |
+| Account | Blank Create is unset; blank Edit preserves; supplied account number resolves the BU primary ledger and maps to Segment1 | Every v1.5 imported expense type | No guessed ledger or account | Destination BU/ledger REST evidence |
+| Tax and Projects | Tax values null; Projects Disabled; project receipt No; default expenditure type null | Every v1.5 imported expense type | Yes, fixed scope default | Builder |
 | Internal IDs, WHO and optimistic-lock data | Generated/resolved or preserved by authorized importer/Fusion | Save/verification | No | |

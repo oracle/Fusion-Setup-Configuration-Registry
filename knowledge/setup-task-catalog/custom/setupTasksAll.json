@@ -1,6 +1,6 @@
 {
-  "count": 102,
-  "totalResults": 102,
+  "count": 104,
+  "totalResults": 104,
   "customTaskRequiredFields": [
     "TaskCode",
     "TaskName",
@@ -53,8 +53,8 @@
       "FunctionalAreaName": "Sales Foundation"
     },
     {
-      "TaskCode": "CUSTOM_SETUP_LINKEDIN_INTEGRATION",
-      "TaskName": "Setup LinkedIn Integration",
+      "TaskCode": "CUSTOM_LINKEDIN_SALES_NAVIGATOR",
+      "TaskName": "LinkedIn Sales Navigator",
       "AvailableFlag": "Y",
       "ExportImportSupportedFlag": "N",
       "CSVExportImportSupportedFlag": "N",
@@ -1287,6 +1287,30 @@
       "OfferingName": "Supply Chain Planning",
       "FunctionalAreaCode": "ORA_MSC_VC_PLANNING_CONFIGURAT",
       "FunctionalAreaName": "Supply Chain Planning Configuration"
+    },
+    {
+      "TaskCode": "CUSTOM_MANUFACTURING_STD_OPERATIONS",
+      "TaskName": "Manufacturing Standard Operations",
+      "AvailableFlag": "Y",
+      "ExportImportSupportedFlag": "N",
+      "CSVExportImportSupportedFlag": "N",
+      "Pillar": "SCM",
+      "OfferingCode": "ORA_MANUFACTURING_AND_SUPPLY_C",
+      "OfferingName": "Manufacturing and Supply Chain Materials Management",
+      "FunctionalAreaCode": "ORA_WIS_COMMON_MFG_WORK_SETUP",
+      "FunctionalAreaName": "Manufacturing Master Data"
+    },
+    {
+      "TaskCode": "CUSTOM_MANUFACTURING_WD_NAME",
+      "TaskName": "Manufacturing Work Definition Names",
+      "AvailableFlag": "Y",
+      "ExportImportSupportedFlag": "N",
+      "CSVExportImportSupportedFlag": "N",
+      "Pillar": "SCM",
+      "OfferingCode": "ORA_MANUFACTURING_AND_SUPPLY_C",
+      "OfferingName": "Manufacturing and Supply Chain Materials Management",
+      "FunctionalAreaCode": "ORA_WIS_COMMON_MFG_WORK_SETUP",
+      "FunctionalAreaName": "Manufacturing Master Data"
     }
   ]
 }

@@ -89,6 +89,13 @@ required_setup_tasks:
   - "ORA_FOM_MANAGE_ORDER_APPROVAL_RULES"
   - "DOO_MANAGE_EXTERNAL_INTERFACE_ROUTING_RULES"
   - "ORA_FOM_MANAGE_ORDER_MANAGEMENT_EXTENSIONS"
+  - "DOO_MANAGE_ORDER_ATTRIBUTES_IDENTIFYING_CHANGE"
+  - "DOO_MANAGE_TASK_TYPES"
+  - "DOO_MANAGE_STATUS_VALUES"
+  - "DOO_MANAGE_TASK_STATUS_CONDITIONS"
+  - "DOO_MANAGE_ORCHESTRATION_PROCESS_DEFINITIONS"
+  - "DOO_MANAGE_PROCESS_CONSTRAINTS"
+  - "DOO_MANAGE_ORCHESTRATION_ATTACHMENT_CATEGORIES"
 applicability:
   industries:
     - "All"
@@ -131,6 +138,13 @@ Use this functional-area skill after Order Management scope is confirmed and the
 11. [Manage Order Approval Rules](manage-order-approval-rules.md) (`ORA_FOM_MANAGE_ORDER_APPROVAL_RULES`)
 12. [Manage External Interface Routing Rules](manage-external-interface-routing-rules.md) (`DOO_MANAGE_EXTERNAL_INTERFACE_ROUTING_RULES`)
 13. [Manage Order Management Extensions](manage-order-management-extensions.md) (`ORA_FOM_MANAGE_ORDER_MANAGEMENT_EXTENSIONS`)
+14. [Manage Order Attributes That Identify Change](manage-order-attributes-that-identify-change.md) (`DOO_MANAGE_ORDER_ATTRIBUTES_IDENTIFYING_CHANGE`)
+15. [Manage Task Types](manage-task-types.md) (`DOO_MANAGE_TASK_TYPES`)
+16. [Manage Status Values](manage-status-values.md) (`DOO_MANAGE_STATUS_VALUES`)
+17. [Manage Task Status Conditions](manage-task-status-conditions.md) (`DOO_MANAGE_TASK_STATUS_CONDITIONS`)
+18. [Manage Orchestration Process Definitions](manage-orchestration-process-definitions.md) (`DOO_MANAGE_ORCHESTRATION_PROCESS_DEFINITIONS`)
+19. [Manage Processing Constraints](manage-processing-constraints.md) (`DOO_MANAGE_PROCESS_CONSTRAINTS`)
+20. [Manage Order Attachment Categories](manage-order-attachment-categories.md) (`DOO_MANAGE_ORCHESTRATION_ATTACHMENT_CATEGORIES`)
 
 ## Inputs
 

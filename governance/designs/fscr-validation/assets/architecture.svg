@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="655" viewBox="0 0 1000 655">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#5A6570"/></marker></defs>
+<rect width="100%" height="100%" fill="white"/>
+<polyline points="500.0,79 500.0,103.5 500.0,103.5 500.0,128" fill="none" stroke="#5A6570" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="500.0,218 500.0,246.0 242.5,246.0 242.5,274" fill="none" stroke="#5A6570" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="500.0,218 500.0,246.0 757.5,246.0 757.5,274" fill="none" stroke="#5A6570" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="242.5,360 242.5,392.5 242.5,392.5 242.5,425" fill="none" stroke="#5A6570" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="757.5,360 757.5,392.5 757.5,392.5 757.5,425" fill="none" stroke="#5A6570" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="242.5,499 242.5,529.5 500.0,529.5 500.0,560" fill="none" stroke="#5A6570" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="245" y="15" width="510" height="64" rx="8" fill="#EAF0F7" stroke="#A8B5C1" stroke-width="1.4"/>
+<text x="500.0" y="42.5" text-anchor="middle" fill="#121C27" font-family="Arial,sans-serif" font-size="19" font-weight="bold">Router</text>
+<text x="500.0" y="66.5" text-anchor="middle" fill="#303B47" font-family="Arial,sans-serif" font-size="16">Intent   project   stage   next action</text>
+<rect x="245" y="128" width="510" height="90" rx="8" fill="#EAF0F7" stroke="#A8B5C1" stroke-width="1.4"/>
+<text x="500.0" y="158.5" text-anchor="middle" fill="#121C27" font-family="Arial,sans-serif" font-size="19" font-weight="bold">Shared validation skills</text>
+<text x="500.0" y="182.5" text-anchor="middle" fill="#303B47" font-family="Arial,sans-serif" font-size="16">Prevalidation   Implementation Review</text>
+<text x="500.0" y="202.5" text-anchor="middle" fill="#303B47" font-family="Arial,sans-serif" font-size="16">Transaction Coordinator   Summary and Evidence</text>
+<rect x="20" y="274" width="445" height="86" rx="8" fill="#EAF3EC" stroke="#A8B5C1" stroke-width="1.4"/>
+<text x="242.5" y="302.5" text-anchor="middle" fill="#121C27" font-family="Arial,sans-serif" font-size="19" font-weight="bold">Pillar definitions and execution</text>
+<text x="242.5" y="326.5" text-anchor="middle" fill="#303B47" font-family="Arial,sans-serif" font-size="16">Applicability   assertions   business procedures</text>
+<text x="242.5" y="346.5" text-anchor="middle" fill="#303B47" font-family="Arial,sans-serif" font-size="16">Input limits   duplicate handling   cleanup</text>
+<rect x="535" y="274" width="445" height="86" rx="8" fill="#F0EFF8" stroke="#A8B5C1" stroke-width="1.4"/>
+<text x="757.5" y="302.5" text-anchor="middle" fill="#121C27" font-family="Arial,sans-serif" font-size="19" font-weight="bold">Core technical services</text>
+<text x="757.5" y="326.5" text-anchor="middle" fill="#303B47" font-family="Arial,sans-serif" font-size="16">Authentication   declared adapters   Run Book</text>
+<text x="757.5" y="346.5" text-anchor="middle" fill="#303B47" font-family="Arial,sans-serif" font-size="16">Service prerequisites and operation approval</text>
+<rect x="20" y="425" width="445" height="74" rx="8" fill="#EAF0F7" stroke="#A8B5C1" stroke-width="1.4"/>
+<text x="242.5" y="457.5" text-anchor="middle" fill="#121C27" font-family="Arial,sans-serif" font-size="19" font-weight="bold">Schemas and local report tools</text>
+<text x="242.5" y="481.5" text-anchor="middle" fill="#303B47" font-family="Arial,sans-serif" font-size="16">Contract checks   readiness rules   HTML and JSON</text>
+<rect x="535" y="425" width="445" height="74" rx="8" fill="#F0EFF8" stroke="#A8B5C1" stroke-width="1.4"/>
+<text x="757.5" y="457.5" text-anchor="middle" fill="#121C27" font-family="Arial,sans-serif" font-size="19" font-weight="bold">Fusion environment</text>
+<text x="757.5" y="481.5" text-anchor="middle" fill="#303B47" font-family="Arial,sans-serif" font-size="16">Access only through a declared approved route</text>
+<rect x="20" y="560" width="960" height="75" rx="8" fill="#FFF2DF" stroke="#A8B5C1" stroke-width="1.4"/>
+<text x="500.0" y="583.0" text-anchor="middle" fill="#121C27" font-family="Arial,sans-serif" font-size="19" font-weight="bold">Project workspace</text>
+<text x="500.0" y="607.0" text-anchor="middle" fill="#303B47" font-family="Arial,sans-serif" font-size="16">Requirements and task references   sanitized evidence   immutable run outputs   decisions</text>
+<text x="500.0" y="627.0" text-anchor="middle" fill="#303B47" font-family="Arial,sans-serif" font-size="16">Artifact index   run records   token usage   authorized untracked exports</text>
+</svg>

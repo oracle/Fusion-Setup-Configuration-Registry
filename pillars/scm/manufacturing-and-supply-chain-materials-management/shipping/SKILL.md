@@ -84,6 +84,7 @@ required_setup_tasks:
   - "ORA_ITEM_PACKING_UNIT_CONFIGURATIONS"
   - "ORA_SHIPPING_COST_TYPES"
   - "ORA_SHIPPING_DOCUMENT_OUTPUT_PREFERENCES"
+  - "ORA_TRANSPORTATION_SCHEDULES"
 applicability:
   industries:
     - "All"
@@ -121,6 +122,7 @@ Use this functional-area skill after Manufacturing and Supply Chain Materials Ma
 6. [Item Packing Unit Configurations](item-packing-unit-configurations/SKILL.md) (`ORA_ITEM_PACKING_UNIT_CONFIGURATIONS`)
 7. [Shipping Cost Types](shipping-cost-types/SKILL.md) (`ORA_SHIPPING_COST_TYPES`)
 8. [Shipping Document Output Preferences](shipping-document-output-preferences/SKILL.md) (`ORA_SHIPPING_DOCUMENT_OUTPUT_PREFERENCES`)
+9. [Transportation Schedules](transportation-schedules/SKILL.md) (`ORA_TRANSPORTATION_SCHEDULES`)
 
 ## Inputs
 

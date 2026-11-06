@@ -23,7 +23,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 35
+            "line": 38
           },
           "readiness": {
             "status": "ready",
@@ -49,7 +49,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 33
+            "line": 35
           },
           "readiness": {
             "status": "ready",
@@ -74,7 +74,7 @@
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 38
+            "line": 42
           },
           "readiness": {
             "status": "ready",
@@ -99,7 +99,7 @@
           "source": {
             "file": "ora_defaulting_rules.md",
             "anchor": "task-nodes",
-            "line": 25
+            "line": 35
           },
           "readiness": {
             "status": "ready",
@@ -124,7 +124,7 @@
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 43
+            "line": 48
           },
           "readiness": {
             "status": "ready",
@@ -150,7 +150,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 73
+            "line": 94
           },
           "readiness": {
             "status": "ready",
@@ -172,7 +172,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 74
+            "line": 95
           },
           "readiness": {
             "status": "ready",
@@ -192,7 +192,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 75
+            "line": 96
           },
           "readiness": {
             "status": "ready",
@@ -214,7 +214,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 76
+            "line": 97
           },
           "readiness": {
             "status": "ready",

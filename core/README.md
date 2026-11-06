@@ -16,3 +16,9 @@ Pillar teams should consume core skills instead of duplicating authentication, A
 | `diagnostics` | Environment health, role access, and instance capability checks. |
 | `fusion-dev` | Fusion development utilities, repository onboarding, catalog and hierarchy-browser management (`fusion-dev/catalog-management/`), and skill generation helpers. |
 | `project-mgmt` | Local project state, artifact registry, artifact versioning, and configuration baseline management. |
+
+## Local Validation Reporting
+
+[Validation Reporting](validation/reporting/SKILL.md) validates sanitized
+implementation evidence and publishes HTML/JSON with project audit metadata.
+It does not contact Fusion or supply a live test runner.

@@ -180,48 +180,41 @@ payload preparation, query BOSS through
 `core.fusion-api.rest-api-client/scripts/boss-rest_client.py`:
 
 ```text
-POST /api/boss/data/objects/ora/riskMgmtRisk/dataIntegration/v1/connectorDefinitions/$query
+GET /api/boss/data/objects/ora/riskMgmtRisk/dataIntegration/v1/connectorDefinitions?$filter=creationStatus='COMPLETED' and connectorStatus='ACTIVE' and sourceTypeName='<seeded_source_type_name>'&$includeTotalItems=true&$limit=1&$fields=id
 ```
 
-Use this request body, replacing `<seeded_source_type_name>` with the resolved
-value:
-
-```json
-{
-  "collection": {
-    "filter": "sourceTypeName='<seeded_source_type_name>' and connectorStatus='ACTIVE' and creationStatus='COMPLETED'"
-  }
-}
-```
-
-Write this JSON to a body file and invoke the existing BOSS REST client:
+Resolve `seeded_source_type_name` dynamically from the selected connector type
+(`EPM-ARCS` or `EPM-FCCS`). All other query parameters remain fixed. Use the
+existing BOSS REST client to encode query parameters; no request body is needed:
 
 ```bash
 python3 core/fusion-api/rest-api-client/scripts/boss-rest_client.py \
-  /api/boss/data/objects/ora/riskMgmtRisk/dataIntegration/v1/connectorDefinitions/$query \
-  --method POST \
-  --body-file <seeded-query.json> \
+  /api/boss/data/objects/ora/riskMgmtRisk/dataIntegration/v1/connectorDefinitions \
+  --method GET \
+  --query "\$filter=creationStatus='COMPLETED' and connectorStatus='ACTIVE' and sourceTypeName='${seeded_source_type_name}'" \
+  --query '$includeTotalItems=true' \
+  --query '$limit=1' \
+  --query '$fields=id' \
   --properties <boss-properties-file> \
   --output <seeded-query-response.json>
 ```
 
-This POST is a read-only BOSS query. It uses `boss_scope` and the separate
-local BOSS token cache through the core REST API client.
+This read uses `boss_scope` and the separate local BOSS token cache through the
+core REST API client. Apply the result rules in
+[Reference Lookups](ora-resource/ora_reference_lookups.md):
 
-- When the returned collection contains multiple records, or `hasMore` is
-  `true`, treat initial connector setup as complete and continue directly to
-  OpenAPI connector preparation without checking individual record status.
-- When exactly one record is returned and it has `creationStatus: COMPLETED`
-  and `connectorStatus: ACTIVE`, continue directly to OpenAPI connector
-  preparation.
-- When exactly one record is returned but is not both completed and active,
-  retain its `id` as `connector_id`, stop OpenAPI preparation, and direct the
-  user to complete credential setup through the Fusion connector UI. Do not
-  prepare or send an authentication PATCH.
-- When the returned collection is empty, report that no seeded connector is
-  available and ask the user to complete seeded connector setup through the
-  Fusion UI. Do not attempt seeded-connector creation, authentication PATCH,
-  OpenAPI generation, or connector-definition registration.
+- A successful response containing at least one record with an `id` confirms
+  that the predefined data source for the selected source type is set up.
+  Continue to OpenAPI preparation. The server filter establishes completed,
+  active status; the projected record need not repeat those status fields.
+- An empty `items` array means no ready predefined data source matched. Stop
+  downstream preparation and ask the user to complete setup through the Fusion
+  UI. It does not prove that no pending connector exists. Do not create a seeded
+  connector, infer its ID, or send an authentication PATCH.
+- A failed request, missing or malformed `items`, or a returned record without
+  an `id` blocks readiness. `hasMore` or a total count alone cannot establish
+  readiness. This is an existence check with `$limit=1`; no pagination or
+  unique-match requirement applies after a matching record is returned.
 
 ## OpenAPI Connector Preparation
 
@@ -387,8 +380,7 @@ from sensitive authentication material and does not contain
 private key. Credentials and authentication details are completed through the
 Risk Cloud UI after connector registration.
 
-Do not include `attributeMappings`, `flows`, `flowDetails`,
-`flowComponentDetails`, or `functions`. Do not include credentials or
+Do not include credentials or
 `authenticationDetails` in this contract.
 
 ### Connector-Definition Approval Protocol
@@ -402,10 +394,10 @@ than an in-memory chat value.
    method, and endpoint. Do not POST at this stage. Generate the following
    review files under the initialized project's
    `artifacts/pillars/erp/risk-and-security/add-other-data-sources/add-epm-data-sources/current/`
-   directory using `run_epm_connector_definition.py preview --project-root <project-root> --target-url <fusion-base-url>`.
+   directory in a new immutable `approvals/preview-<unique-id>/` subfolder using `run_epm_connector_definition.py preview --project-root <project-root> --target-url <fusion-base-url>`.
    The runner derives this directory and does not accept an artifact-directory override:
    - `epm-arcs-openapi.json` or `epm-fccs-openapi.json`
-   - `connector-definition-approval.json` — target, method, digest, and the complete credential-free POST body
+   - `connector-definition-approval.json` — approval version, canonical target URL, method, endpoint, resolved project workspace, digest, and the complete credential-free POST body
    - `connector-definition-approval.md` — user-facing review summary
    
    Open the Markdown summary and approval JSON in Codex, and provide direct
@@ -424,7 +416,7 @@ than an in-memory chat value.
 Target environment: <resolved Fusion base URL>
 Operation: POST /api/risk-cloud/rc-tools-ms/dataintegration/v1/dataIntegratorConnectorDefinitions
 Payload artifact: <link to connector-definition-approval.json>
-Payload SHA-256: <approval artifact digest>
+Approval envelope SHA-256: <approval artifact digest>
 
 Approve creation of this connector definition using the exact payload in the linked artifact?
 ```
@@ -483,3 +475,45 @@ validation artifact.
 ## Implementation Notes
 
 Use the parent functional-area skill `erp.risk-and-security.add-other-data-sources` for functional-area sequencing and scope decisions. When a platform run creates durable project artifacts, track token usage using the manifest policy; local OpenAPI generation and runtime handoff do not require project initialization.
+
+### Approval envelope integrity
+
+The EPM runner hashes the canonical version-2 approval envelope: target URL
+(the environment identity), HTTP method, endpoint, resolved project workspace
+path, and complete credential-free payload. The digest field itself is excluded.
+Execution requires `--project-root <selected-project-root>` alongside
+`--approval-state`, `--approve-digest`, and `--properties`. The selected workspace
+must match the envelope, and the selected connection's `restBaseUrl` must match
+the approved target immediately before dispatch. A changed envelope, changed
+connection target, or legacy payload-only digest fails closed. Regenerate the
+preview and obtain fresh approval; never upgrade an old approval in place.
+
+### Retained approval previews
+
+Each preview creates a new `current/approvals/preview-<unique-id>/` directory
+containing its approval JSON and Markdown summary (and the EPM OpenAPI file
+when applicable). Files are created exclusively and never replaced by another
+preview. Existing files at the old fixed paths are left intact.
+
+Only `current/latest-approval.json` is replaced atomically, after every file in
+the new preview has been written successfully. It points to the latest preview
+for discovery; it is not an approval artifact or an execution input. Link the
+versioned files returned by the runner, retain the exact `approvalState` path
+and digest that the user reviewed, and execute that path even if a later
+preview changes the pointer. A later preview does not grant approval, revoke
+an earlier approval, or authorize replay of a submitted operation.
+
+### Artifact path and overwrite protection
+
+Both connector runners use the functional-area `../scripts/connector_artifacts.py`
+helper. Preview and execution artifacts must remain inside the selected initialized
+project workspace. Symlinked artifact directories, approval files, payload files,
+and current pointers are rejected, including links that point inside the workspace.
+Directories are opened without following symlinks, and artifact files are created
+exclusively with mode `0600`. Only the regular current pointer is replaced atomically.
+
+Execution creates the derived `.payload.json` beside the approved versioned JSON.
+If that destination already exists, execution stops before dispatch and preserves
+the existing file. Do not delete it to retry a possibly submitted POST. Reconcile
+the prior result through the documented recovery route; obtain a new preview and
+approval only when a new submission has been established as appropriate.

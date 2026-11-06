@@ -22,7 +22,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 33
+            "line": 48
           },
           "readiness": {
             "status": "ready",
@@ -47,7 +47,7 @@
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 21
+            "line": 35
           },
           "readiness": {
             "status": "ready",
@@ -68,11 +68,11 @@
             "DEP.CHECK"
           ],
           "on_failure": "stop",
-          "applies_when": "Calendar is supplied",
+          "applies_when": "Calendar is supplied, including an installment Calendar in an uploaded ZIP",
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 25
+            "line": 91
           },
           "readiness": {
             "status": "ready",
@@ -93,11 +93,11 @@
             "LOOKUP.CALENDAR"
           ],
           "on_failure": "stop",
-          "applies_when": "SetCode is supplied",
+          "applies_when": "A set code, set name, or unspecified set is supplied, including SetCode in an uploaded ZIP",
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 26
+            "line": 92
           },
           "readiness": {
             "status": "ready",
@@ -121,7 +121,7 @@
           "source": {
             "file": "ora_defaulting_rules.md",
             "anchor": "task-nodes",
-            "line": 19
+            "line": 23
           },
           "readiness": {
             "status": "ready",
@@ -146,7 +146,7 @@
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 36
+            "line": 51
           },
           "readiness": {
             "status": "ready",
@@ -158,7 +158,7 @@
           "node_type": "step",
           "sequence": 65,
           "action_type": "execution_gate",
-          "execution_route": "core.data-loader",
+          "execution_route": "local",
           "transitions": {
             "approved_preview": "SUCCESS.DONE",
             "not_ready": "PAYTERM.EXECUTION_BLOCKED"
@@ -170,7 +170,8 @@
           "applies_when": "A governed execution request exists",
           "source": {
             "file": "ora_error_handling.md",
-            "anchor": "task-nodes"
+            "anchor": "task-nodes",
+            "line": 60
           },
           "readiness": {
             "status": "ready",
@@ -190,7 +191,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 27
+            "line": 61
           },
           "readiness": {
             "status": "ready",
@@ -202,14 +203,15 @@
           "node_type": "terminal",
           "sequence": 75,
           "action_type": "terminal",
-          "execution_route": "core.data-loader",
+          "execution_route": "local",
           "transitions": {},
           "prerequisites": [],
           "on_failure": "stop",
           "applies_when": "Execution approval or preview is absent",
           "source": {
             "file": "ora_error_handling.md",
-            "anchor": "task-nodes"
+            "anchor": "task-nodes",
+            "line": 62
           },
           "readiness": {
             "status": "ready",
@@ -231,7 +233,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 28
+            "line": 63
           },
           "readiness": {
             "status": "ready",

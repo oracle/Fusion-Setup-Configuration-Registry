@@ -1,0 +1,24 @@
+# Reference Lookups
+
+These are read-only checks for the selected Fusion pod. Use the core skill named in each row; do not use an effective session value as evidence of a configured site-level profile value.
+
+## Live Lookups
+
+| Resolver | Runs When | Source Values | Request Path or URL | Requested Fields | Match Rule | Values to Fill | If No Match or Many Matches |
+|---|---|---|---|---|---|---|---|
+| find_site_recall_ingest_start_date | Before registration import or credential validation | Selected project Fusion environment; exact profile code ORA_SCH_RECALL_INGEST_START_DATE | Through core.fusion-api.apps-common.profile-options, GET /fscmRestApi/resources/11.13.18.05/profileOptions/ORA_SCH_RECALL_INGEST_START_DATE to confirm the definition, then GET /fscmRestApi/resources/11.13.18.05/profileOptions/ORA_SCH_RECALL_INGEST_START_DATE/child/siteProfileOptionValues | ProfileOptionName, SiteLevelEnabled, site child key SITE, ProfileOptionValue | Require the exact profile definition and one populated SITE child value. Accept only a real calendar date written as four-digit year, hyphen, two-digit month, hyphen, two-digit day; reject an effective session value or a value configured only at product or user level | Site-level presence and valid yyyy-MM-dd date; retain sanitized evidence for this run | Missing definition, no SITE child, blank value, invalid date, or multiple SITE records: stop and ask the user to set or correct Start Date for Oracle Curated Recall Ingestion at Site level in yyyy-MM-dd format using the profile-options workflow. Do not invent a fallback date. |
+| verify_curated_recall_feature_optin | Before registration import or credential validation | Selected project Fusion environment; exact feature name Capture Recall Notices from the U.S. Food and Drug Administration Curated and Communicated by Oracle; offering Manufacturing and Supply Chain Materials Management | Through core.fusion-api.fsm-rest-client and core.fusion-api.rest-api-client, GET /fscmRestApi/resources/11.13.18.05/features with q=FeatureType='FEATURE';FeatureName='<exact feature name>' and fields=FeatureName,FeatureCode,FeatureType,EnabledFlag,SelectedChoices | FeatureName, FeatureCode, FeatureType, EnabledFlag, SelectedChoices | Page to completion, require one exact FeatureName and FeatureType FEATURE; resolve the offering through the core FSM feature hierarchy if the name is ambiguous. EnabledFlag Y means enabled; N means disabled. Do not infer status from the existence of a feature or from available choices | Exact FeatureCode, enabled status, selected choices, and sanitized target evidence | Zero or multiple exact matches, missing EnabledFlag, or uncertain offering ownership: stop and resolve the feature identity. EnabledFlag N: route to shared.implementation-planning.fsm-set-optin.fsm-set-optin-features to enable the exact feature using its dry-run, approval, PATCH, refresh, and verification workflow; then repeat this read check. |
+
+## Authoritative Sources
+
+- [Internal TSA: Filtering Oracle Curated Recall Notices by Start Date Interval to Prevent Ingestion of Old Recalls](https://confluence.oraclecorp.com/confluence/display/HCSCM/TSA%3A+Filtering+Oracle+Curated+Recall+Notices+by+Start+Date+Interval+to+Prevent+Ingestion+of+Old+Recalls) identifies ORA_SCH_RECALL_INGEST_START_DATE and yyyy-MM-dd. Its proposed ingestion fallback is unresolved and is not used as a setup default.
+- [Oracle: Enable Oracle Content Curation Service](https://docs.oracle.com/en/cloud/saas/supply-chain-and-manufacturing/26c/faims/enable-oracle-content-curation-service.html) instructs enabling the named opt-in task and setting the start date at Site level.
+- [Oracle: Get all features](https://docs.oracle.com/en/cloud/saas/applications-common/26b/farca/op-fscmrestapi-resources-11.13.18.05-features-get.html) defines EnabledFlag Y and N.
+- [Core Apps Common profile-options guidance](../../../../../../core/fusion-api/apps-common/profile-options/references/profile-options.md) defines the configured site-level child resource and distinguishes it from effective profileValues.
+
+## Task Nodes
+
+| Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
+|---|---|---|---|---|---|---|---|
+| RECALL.REGISTRATION.LOOKUP-SITE-START-DATE | decision | 15 | reference_lookup | valid->RECALL.REGISTRATION.LOOKUP-FEATURE-OPTIN;missing_or_invalid->RECALL.REGISTRATION.HANDLE-ISSUE;lookup_failed->RECALL.REGISTRATION.HANDLE-ISSUE | RECALL.REGISTRATION.VALIDATE-INPUT | stop | A registration import or explicit credential-validation request is made |
+| RECALL.REGISTRATION.LOOKUP-FEATURE-OPTIN | decision | 17 | reference_lookup | enabled->RECALL.REGISTRATION.ENFORCE-DESIGN;disabled->RECALL.REGISTRATION.HANDLE-ISSUE;ambiguous_or_failed->RECALL.REGISTRATION.HANDLE-ISSUE | RECALL.REGISTRATION.LOOKUP-SITE-START-DATE | stop | A registration import or explicit credential-validation request is made |

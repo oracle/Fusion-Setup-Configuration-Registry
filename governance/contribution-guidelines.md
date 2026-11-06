@@ -2,6 +2,10 @@
 
 ## Purpose
 
+These guidelines describe the workflow for authorized project contributors.
+Public feedback and external contribution policies are defined in
+[`CONTRIBUTING.md`](../CONTRIBUTING.md).
+
 These guidelines define how FSCR contributors add, review, and merge reusable
 Oracle Fusion implementation skills, catalogs, schemas, governance, and project
 workspace templates. Contributions should preserve the repository layer

@@ -7,9 +7,8 @@ Failures remain distinct, actionable, and safe to resume. A read failure is neve
 | Situation | What Should Happen |
 |---|---|
 | Required or conditional input is missing | Stop before preview and name the exact business field and trigger. |
-| AccountingMethodName is omitted or names Standard Accrual | Continue without a method question and author STANDARD_ACCRUAL, S, and blank language. |
-| AccountingMethodName explicitly names another method | Keep Standard Accrual in the FSCR package, record the manual secondary-options change, and require same-scope re-export before Review and Submit. |
-| User supplies physical accounting-method fields | Reject the unsupported direct tuple intake and retain the controlled Standard Accrual create policy. |
+| An explicit applicable AccountingMethodName cannot be resolved | Preserve the requested method and block until resolve_accounting_method_evidence succeeds; do not substitute Standard Accrual. |
+| User supplies physical accounting-method fields | Reject direct tuple intake; resolve the applicable user-selected method through resolve_accounting_method_evidence. |
 | Exact lookup returns zero or many eligible rows | Report not found or ambiguous with the exact supplied raw business key, eligibility rules, and a safe correction. |
 | GL-781333 duplicate-name or relationship-namespace rejection | Show the exact raw SecondaryLedgerName, the broader ledger/data-access-set/relationship namespace rule, scoped conflict evidence, and require a new unique name; ledgersLOV zero alone is not sufficient. |
 | Lookup returns 401 or 403 | Refresh an existing cached token once when allowed and retry the identical GET once; if still failing, report auth or authz and stop. |
@@ -17,6 +16,7 @@ Failures remain distinct, actionable, and safe to resume. A read failure is neve
 | HTTP 400 or Oracle 29140 | Classify a resolver-contract or input-validation failure from the actual response, persist the sanitized q and error, and stop. Invalid attributes and malformed expressions are not value-not-found outcomes; never retry the identical invalid q. |
 | Client, paging, serialization, or other HTTP failure | Preserve the failure class and sanitized response details; never report value not found. |
 | Package scope, member, header, alias, or manifest differs | Stop as catalog mismatch or input validation and acquire a fresh same-task export. |
+| Scoped export has no secondary at the requested conversion level | Continue normal validation using the documented baseline. An absent example is not a catalog mismatch or a reason to require a donor or override; identify any actual schema or unsupported-design issue separately. |
 | Source primary creation or primary options is incomplete or unverified | Allow secondary package preparation to remain a draft, but block preview approval and live import. Complete and verify primary-context GL_SPECIFY_LEDGER_OPTIONS, then regenerate the secondary preview; a prior approval is stale. |
 | Fusion returns GL_ASM_PL_OPTNS_NOT_COMPL | Classify as a dependency-readiness/process failure, prove whether any secondary or relationship row was partially created by exact read-only reconciliation, complete and verify the primary options, rebuild from a fresh export, and require a new preview and approval. Never replay the failed or uncertain package. |
 | Preview reveals an unintended row or field change | Reject the package and rebuild the smallest delta from the validated baseline. |
@@ -25,6 +25,7 @@ Failures remain distinct, actionable, and safe to resume. A read failure is neve
 | Import status is unknown | Reconcile by read-only status and re-export before considering another submission. |
 | Polling times out | Stop and report environment, operation, task code, process or request identity, last status, elapsed wait, and next-check path. |
 | Fusion process fails | Retrieve and preserve available ProcessLog and status payload, report partial successes and an errors array with nonzero status, then stop. |
+| Ledger exists but relationship import fails | Re-export the identical scope before retrying: physical creation can already be committed. Verify the existing target category and identity, repair the missing or invalid relationship keys and matching rule parents against that target, and obtain a new approved preview. Do not create a duplicate or fabricate generated short names. |
 | Re-export does not prove the intended semantic delta | Classify process failed or verification failure and do not claim completion. |
 | Diagnostic persistence fails | Return artifact persistence failure with intended safe destination and keep secrets and sensitive payloads redacted. |
 
@@ -73,7 +74,7 @@ Failures remain distinct, actionable, and safe to resume. A read failure is neve
 | Authorization or client call fails | Do not say the value was not found. |
 | Optional ledger options were not requested | Do not turn them into baseline intake or enable them. |
 | Different currency or COA | Do not invent Corporate, a mapping name, or conversion rules. |
-| Accounting method is omitted or another method is desired | Do not leave the new secondary tuple blank, copy the primary method, directly author the alternative tuple, or request its technical fields. |
+| Accounting method is omitted or another method is desired | Do not populate methods for BALANCE/JOURNAL, leave the required SUBLEDGER tuple blank, overwrite an explicit applicable method with Standard Accrual, or copy the primary method implicitly. |
 | Package or preview is unapproved | Do not import, overwrite, activate, or enable a relationship. |
 | Primary options are pending, failed, or unverified | Do not infer readiness from a primary-ledger LOV match, submit the secondary concurrently, or reuse an approval created before the dependency became ready. |
 | Live import or process outcome is uncertain | Do not automatically retry or submit a second process. |

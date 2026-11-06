@@ -4,7 +4,7 @@
 
 | Sequence | Source | Use |
 |---|---|---|
-| 1 | Current same-task FSM task-CSV export and ASM_SETUP_CSV_METADATA.xml | Exact CSV filenames, headers, parent-child paths, import ZIP shape, and account-rule contract |
+| 1 | Current target FSM template/spec ZIP, ASM_SETUP_CSV_METADATA.xml, and the Reviewed FSM Schema and Reviewed FSM Field Semantics sections in ora-resource/ora_reference_lookups.md | Exact CSV structure plus verified field and S/C/R method semantics; no populated full-task export required |
 | 2 | Current Oracle FBDI XLSM and generated metadata | Exact FBDI worksheets, columns, required values, import codes, field limits, CSV files, and ZIP shape |
 | 3 | Supported read-only Fusion metadata | Environment-specific identifiers, existing definitions, technical values, hierarchy versions, and accepted value forms |
 | 4 | Oracle functional documentation | Supported methods, precedence, sequencing, and import behavior |
@@ -24,7 +24,7 @@
 | Standard mapping execution route | FSM task-CSV package submitted through core.data-loader | The design contains only a header, segment rules, single-source rollup rules, or account rules | No; a direct FSM import endpoint is not permitted |
 | Multiple-source execution route | Data Loader-authorized FBDI adapter | Exactly two source segments map to one target segment | No; stop when no approved Data Loader adapter supports the FBDI package |
 | Source COA, target COA, mapping name, and account-rule decisions | No default | Always | No |
-| Segment mapping method | No default except the two-source restriction | Always | No; use only S, C, R, or U when current template or export evidence proves the technical code |
+| Segment mapping method | No default except the two-source restriction | Always | No; use S=Assign single value, C=Copy value from source, R=Use rollup rules only for a compatible FSM contract; resolve FBDI codes independently. U is not a normal create method |
 | FBDI technical codes and required values | Value proved by the current template, same-task export, or supported metadata | A technical field is required | No |
 | Value-set REST item key and child-values URI | Returned by the exact valueSets match | A value-set values lookup is required | No; follow the returned item link and never synthesize the path from ValueSetCode or ValueSetId |
 | Object-version metadata | Read-only concurrency evidence | Existing mapping or rule is compared | No; never populate import artifacts unless the current template explicitly requires it |
@@ -38,4 +38,4 @@ For every generated, defaulted, or derived value, record the output field, resol
 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|
-| COAMAP.DEFAULT | step | 7 | apply_default | complete->COAMAP.ENFORCE | COAMAP.DEPENDENCIES | stop | New mapping or approved update |
+| COAMAP.DEFAULT | step | 8 | apply_default | complete->COAMAP.ENFORCE | COAMAP.DEPENDENCIES | stop | New mapping, approved update, or local preparation with pending comparison |

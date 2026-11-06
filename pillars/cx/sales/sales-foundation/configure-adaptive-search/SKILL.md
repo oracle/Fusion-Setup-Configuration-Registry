@@ -19,14 +19,19 @@ source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 type: "planning"
 execution_mode: "hybrid"
 owner_team: "CX sales pillar team"
-version: "0.2.3"
+version: "0.4.0"
 inputs:
+  - "abo_initialization_request"
+  - "abo_initialization_preparation_permission"
   - "project_id"
   - "environment"
   - "entities"
   - "authentication_reference"
   - "execution_mode"
 outputs:
+  - "abo_generated_workbook_access"
+  - "abo_initialization_submission"
+  - "abo_initialization_status"
   - "publish_plan"
   - "current_active_entities"
   - "confirmed_requested_entities"
@@ -43,7 +48,7 @@ uses_core:
   - "core.fusion-api.rest-api-client"
   - "core.fusion-api.api-error-handler"
   - "core.data-loader"
-  - "core.data-loader.task-hook"
+  - "core.runbook"
   - "core.diagnostics.environment-health-check"
   - "core.diagnostics.role-access-check"
   - "core.project-mgmt.artifact-version-manager"
@@ -121,6 +126,7 @@ applicability:
   fusion_releases:
     - "Current Oracle Fusion Cloud release after internal API contract validation"
 side_effects:
+  - "The ABO-only initial Full Publish companion uses a separately approved fixed nine-object scope and distinct receipt. It never changes standalone approval behavior or authorizes ESS."
   - "Enables the approved Adaptive Search business objects together with Fusion-mandated internal objects."
   - "Creates or updates a sandbox metamodel version when required by Fusion."
   - "Submits an ESS-backed full Adaptive Search publish and can temporarily block conflicting search-configuration changes."
@@ -167,18 +173,80 @@ or block on a separate Adaptive Search-specific adapter. Both routes use
 `core/auth/fusionEnv.properties`. Do not substitute a browser or an ad hoc HTTP
 client.
 
+## Companion Invocation and Return Contract
+
+This skill has two deliberately different interaction modes.
+
+### Standalone Adaptive Search
+
+A direct request such as `Partially publish Consolidated Asset and Serialized
+Asset` follows the normal entity lookup, immutable-source, Data Loader approval,
+and submission flow. It displays its own single confirmation, returns the Data
+Loader receipt, and performs a status lookup only when the user later asks for
+it. Standalone behavior must remain unchanged: it does not automatically poll
+or start ESS.
+
+### Fusion ABO dependent invocation
+
+The ABO-only initial Full Publish companion is separately governed by
+`ora-resource/ora_abo_initialization.md`. Only exact missing-metamodel/null/empty
+Entities conditions select this branch. Obtain separate parent preparation
+permission and independent Core approval, verify its exact load/job/catalog,
+then require fresh normal Partial Publish approvals. Initialization never
+authorizes ESS and cannot use the normal selective operation identity.
+The numbered flow below applies to normal Partial Publish.
+
+The ABO companion handover is version 2.0. It accepts the fixed ordered pair
+ConsolidatedAsset, SerializedAsset, exact project/target, verified CPQ predecessor
+and non-executable parent workflow identity. Parent provenance is not approval.
+Configure Adaptive Search owns canonical workbook values and private correlation.
+Core Data Loader owns workbook generation, persisted preflight, Task Hook,
+approval and submission on this 26.10 route.
+
+1. After exact CPQ load success and fresh readbacks, obtain the parent's separate
+   preparation permission. Only then invoke `prepare_publish_load` through
+   `prepare-adaptive-load`. Validate target, pair, contract and concurrency.
+2. Prepare the complete fixed row: `RestAction=POST`, canonical `entities`,
+   `publishType=selective`, `Content-Type=application/json`,
+   `REST-Framework-Version=9`, `Preference=transient`. Headers/operation are
+   workbook columns, not extra REST-body fields. Return the versioned Core
+   workbook handoff, accept its confirmed path, then follow the Core preflight
+   handoff for that path and exact Run Book task. Core validates and freezes the
+   archive through its existing route; no upload occurs.
+3. Evaluate returned Task Hook resources in order against the validated source
+   and exact current-stage evidence. Missing/incorrect fields block approval.
+   Core creates the exact bound preview. Return its structured preflight and
+   Task Hook result through `build-load-preview --load-stage adaptive
+   --core-handoff-result <result.json>`.
+   Show the optional generated XLSX link once before Core's unchanged Markdown.
+   Viewing is not approval; edits do not change the validated archive.
+4. After independent contextual load approval, `submit-data-load --load-stage
+   adaptive --approve-load --load-preview-sha256 <digest>` reserves intent and
+   returns a Core submit handoff. Follow Core approval and archive verification,
+   upload the saved bytes once and return its correlated result through
+   `complete-data-load --load-stage adaptive`. No retained process is required.
+5. Pause for an explicit load-status request. Follow the Core status handoff and
+   return its bound result. Pending/failed/unknown stops.
+   Store exact successful load evidence; subsequent job ticks never query the
+   loader again. Discover/pin the new job and require matching job IDs.
+6. The parent checks once, offers 15-second monitoring or check later if pending,
+   and repeats only on current consent. Final readiness requires both enabled
+   entities. The companion never submits ESS or repeats a possibly-sent load.
+
+
 ## Read Order
 
 1. Read `ora-resource/ora_input_intake.md` and `ora_input_validation.md`.
 2. Read `ora_dependency_readiness.md`, `ora_reference_lookups.md`, and `ora_defaulting_rules.md`.
 3. Read `ora_design_advisory.md` and `ora_design_enforcement.md`.
-4. Read `ora_error_handling.md` before preview or a live call.
-5. Read `ora_rest_execution.md` and use its compiled `ora_rule_registry.json` task graph.
+4. Read `ora_publish_source_serialization.json` before preparing a Data Loader source. It is the sole approved conversion from the REST entities array to the registered string source field.
+5. Read `ora_error_handling.md` before preview or a live call.
+6. Read `ora_rest_execution.md` and use its compiled `ora_rule_registry.json` task graph.
 
-## Workflow
+## Standalone Workflow
 
 1. Start every new publish request by collecting the target environment, requested publish mode, and object display names. Do not lead with, summarize, or reuse a prior submission record from project state. If objects are missing, ask exactly: `Which business objects do you want to publish? Provide the object display names.` Do not substitute another intake prompt. After inputs are available, compare the environment, endpoint, publish mode, normalized object selection, headers, and validated contract binding with any current mapped-request metadata and invalidate stale mappings internally without displaying historical job details.
-2. Reject an empty list. Recognize these case-insensitive CPQ aliases before validation: `Quote`, `Quotes`, `Standard Quotes`, `Standard Quote Process`, `oraclecpqo`, `oraclecpqo_transaction`, and `oraclecpqo_transactionLine`. Each recognized alias resolves directly and atomically to both payload entities `oraclecpqo_transaction` and `oraclecpqo_transactionLine`; do not validate either entity against the Entities response. For explicit Full Publish, validate any remaining requested objects exactly as for Partial Publish, but construct the Full Publish payload without `publishType`.
+2. Reject an empty list. Recognize these case-insensitive CPQ aliases before validation: `Quote`, `Quotes`, `Standard Quotes`, `Standard Quote Process`, `oraclecpqo`, `oraclecpqo_transaction`, and `oraclecpqo_transactionLine`. Each recognized alias resolves directly and atomically to both payload entities `oraclecpqo_transaction` and `oraclecpqo_transactionLine`; do not validate either entity against the Entities response. Only for the exact current Fusion ABO companion authorization, also recognize `Consolidated Asset`, `Consolidated Assets`, `ConsolidatedAsset`, `Serialized Asset`, `Serialized Assets`, and `SerializedAsset`; resolve them to the fixed `ConsolidatedAsset`, `SerializedAsset` pair after confirming those exact entity names are document entities in the current Entities response. These ABO aliases do not alter standalone alias handling. For explicit Full Publish, validate any remaining requested objects exactly as for Partial Publish, but construct the Full Publish payload without `publishType`.
 3. Always call `/crmRestApi/searchResources/latest/entities?language=en&limit=-1&isDocument=true` once to detect a new environment. Use `isDocument=true` as the only object-validation filter; do not apply an `isEnabled` query filter. HTTP 400 `Could not find active meta model`, a null response, null `items`, or empty `items` selects the existing OOTB Full Publish path even for a CPQ-only request. When the response is nonempty, skip validation only for the direct CPQ entities and validate any remaining requested objects.
 4. For Partial Publish, on HTTP 200 with a nonempty `items` array, build the internal valid-choice set from every nonempty `localizedName` in `items`, regardless of its `isEnabled` flag. Compare only the remaining requested object display names with that set using exact matching. Do not display the full document-object catalog. Combine their mapped `entityName` values with the two direct CPQ entities when a CPQ alias was supplied, deduplicate while preserving first-seen order, and add `publishType: selective`. For each direct CPQ entity, use a matching Entities item's `localizedName` and `isEnabled` only for presentation: show matching enabled names in Current active objects and show the remaining direct CPQ entity names in Additional Objects Added. If an entity is absent from the response, display its exact direct entity name in the final selection and Additional Objects Added; never display `Not inferred`. The final CPQ selection always contains both direct payload entities and has an object count of two. Hide internal names normally, except when needed to distinguish duplicate localized names or an entity absent from the response. For each invalid remaining requested label, show up to three nearest display-name matches and ask whether one is the required entity. For an explicit Full Publish with a nonempty response, show `Current active objects` and `Newly Requested Objects to enable`, then ask exactly: `Should the current enabled objects be retained and combined together with the requested objects for a new publish ?` This is a selection decision, not live approval. On Yes, deduplicate and preserve first-seen order with current active objects first, followed by the requested objects, and use that union as the final Full Publish selection. On No, use only the validated requested objects. A valid resolved list then proceeds to publish preflight. If the response itself is null, `items` is null, or `items` is empty, classify the environment as new and present the OOTB confirmation below. Do not validate the OOTB list. If the user declines it, collect a replacement full list, call Entities again for any non-CPQ aliases, and use Full Publish with its mapped and direct internal entities and no `publishType`.
 5. If the user declines the single final approval confirmation, do not submit. For a partial publish, collect a revised nonempty list and repeat the object-review iteration. For an explicit Full Publish, retain the already chosen selection only if the user supplies a fresh final approval; otherwise collect a revised list or stop.
@@ -190,12 +258,23 @@ client.
 11. Before presenting confirmation, prepare and validate the immutable Data Loader source from the mapped request using the live registered `publish` metadata. Present one combined confirmation table containing Current active objects, Additional Objects Added, Final publish selection, environment, publish type, object list, object count, action, expected response, and the fact that the confirmed source is the exact Data Loader source to be submitted. For a partial publish, ask exactly: `Please provide your confirmation to proceed with partial publish of the requested objects.` For an explicit Full Publish, ask exactly: `Please provide your confirmation to proceed with full publish of the requested objects.` For a null or empty Entities result, show `Accounts, Contacts, Leads, Opportunities, Revenue Lines, Activities, Assets, Items, Product Group` and ask exactly: `No Prior publish was performed, Please provide your confirmation to proceed with full publish of these OOTB objects`. Bind the response internally to the immutable Data Loader source, environment, endpoint, headers, entities, mapped payload, and validated contract binding. This is the one and only live approval confirmation; the earlier explicit-Full-Publish retain decision only selects the object list. Do not render a subsequent Data Loader approval prompt. A valid registered `publish` BO must proceed through `core.data-loader`; do not block on an additional adapter-registration check.
 12. Submit exactly one approved Data Loader REST import. Never retry the live import automatically.
 13. On accepted Data Loader initiation, display `Data Loader Content ID` and `Data Loader Request ID` using those exact labels. State that the Data Loader Request ID is not the Adaptive Search Publish Job ID and that no Adaptive Search job details are available yet. Do not infer, invent, or display a Publish Job ID at submission time, and do not automatically poll.
-14. Only when the user explicitly asks for the current publish status, first use the accepted Data Loader Request ID with `core/data-loader/scripts/get_data_load_info.py <request-id> --status-only`. If the Data Loader status is successful, make one read-only latest-status GET to `/crmRestApi/searchResources/latest/publishStatus` and display its `jobId`, `publishSource`, `mmuuid`, and status as the Adaptive Search publish result. If the Data Loader status is not successful, display the Data Loader status and safe returned error details, do not call Adaptive Search publishStatus, and do not retry or poll automatically.
+14. Only when the user explicitly asks for the current publish status, use the accepted Data Loader Request ID in a Core status handoff and apply its bound structured result. If the Data Loader status is successful, make one read-only latest-status GET to `/crmRestApi/searchResources/latest/publishStatus` and display its `jobId`, `publishSource`, `mmuuid`, and status as the Adaptive Search publish result. If the Data Loader status is not successful, display the Data Loader status and safe returned error details, do not call Adaptive Search publishStatus, and do not retry or poll automatically.
 15. Persist a redacted submission result, validation result, report, skill run, and token-usage record.
 
 ## Golden Scenario
 
 Input object display names are `Accounts` and `Contacts`. Entities GET returns HTTP 200 with items, maps them internally to `Account` and `Contact`, and provides a filtered current-active display. After the concurrency check and payload mapping, one combined confirmation table shows current active objects, Additional Objects Added, final publish selection, environment, publish type, object count, action, and expected response. The user confirms once. The payload includes `entities` and `publishType: selective`. Submission displays the Data Loader Content ID and Data Loader Request ID, clearly identifies them as Data Loader identifiers rather than an Adaptive Search Publish Job ID, and ends without polling. On an explicit later status request, a successful Data Loader status permits one latest Adaptive Search publish-status GET, which displays the returned jobId, mmuuid, status, and source.
+
+In the Fusion ABO dependent path, a Core persisted preflight supplies the
+separate approval preview only after CPQ verification. The accepted
+publish_operation_id is not job completion. Data Loader content and request IDs
+are internal to the companion checkpoint; Core's authoritative receipt is relayed
+unchanged. Pause for the explicit user load-status request. After successful
+Data Loader processing, discover/pin the new job and check it once; the parent
+offers 15-second monitoring or checking later if pending. Repeated job-only
+monitoring requires the current explicit choice; later status requests check once.
+The final result includes final_entity_readiness for the fixed pair and returns
+control to the primary's saved stage for its separate ESS approval.
 
 In the new-environment fallback, the Entities response is null or has null or empty `items`. The single combined confirmation table displays `Accounts, Contacts, Leads, Opportunities, Revenue Lines, Activities, Assets, Items, Product Group`, then asks exactly: `No Prior publish was performed, Please provide your confirmation to proceed with full publish of these OOTB objects`. The preview states that the requested selection cannot be validated. A Yes submits `{"entities":["Account","Contact","Lead","Opportunity","Revenue","Activity","Asset","Product","CRMProductGroup"]}` without `publishType`; do not validate these OOTB objects. A No collects a replacement full list, calls Entities again for validation, and then submits the mapped internal-entity array without `publishType` after the final Full Publish confirmation.
 
@@ -206,11 +285,19 @@ For an explicit Full Publish with a nonempty entity catalog, suppose Current act
 - Approval is mandatory and becomes invalid if environment, endpoint, headers, entities, mapped payload, or validated contract binding changes.
 - A changed or unverified mapping input invalidates the prior mapped request immediately. Never leave its payload under an executable `current` filename or show its body as the current proposal. Preserve it only as a versioned historical artifact when supported, and leave a non-executable invalidation record containing safe fingerprints and the reason.
 - There is one confirmation only. It is shown after validation, concurrency preflight, payload mapping, and immutable Data Loader source validation; it accepts the final object list and approves that exact source for submission.
+- In the Fusion ABO dependent path, exact parent project/target/fixed-pair
+  provenance and verified CPQ evidence are required. They are not approval.
+  Obtain separate approval of Core's current persisted Task Hook preview;
+  a saved preview, source digest or approval envelope alone does not authorize submission; require explicit approval of the current bound Core preview.
 - Invalid object correction is not approval. Never continue with a partially valid list: show all invalid display names and up to three nearest matching display names for each invalid value, then collect and validate a complete corrected list. Do not restrict display-name validity by `isEnabled` or disclose the full catalog.
 - Do not submit while the latest status is `WAIT`, `RUNNING`, or `PAUSED`. HTTP 404 with exactly `{"Error":"Cannot parse null string"}` is a no-prior-publish concurrency pass; any other status response fails closed.
 - Do not retry POST after timeout, connection loss, or ambiguous submission. Perform only a safe status lookup and ask before another mutation.
 - A submission status such as `WAIT` or `RUNNING` is reported as returned and is not treated as a reason to poll automatically.
-- Keep administrator-facing responses functional and concise. Do not show contract-validation details, contract IDs, internal artifact paths, execution-node IDs, or binding metadata in normal flows. Persist those details internally for stale-payload detection, approval binding, audit, and diagnostics.
+- In the Fusion ABO dependent path, the user explicitly requests Data Loader
+  status. After that check verifies success, the parent checks the pinned job
+  once and offers monitoring or checking later. Repeated 15-second monitoring
+  requires current explicit consent; no loader reads on those ticks.
+- Keep administrator-facing responses functional and concise. Do not show contract-validation details, SHA-256 values, contract fingerprints, contract IDs, internal artifact paths, execution-node IDs, or binding metadata in normal flows. Persist those details internally for stale-payload detection, approval binding, audit, and diagnostics.
 - Treat project run records as historical audit data, not opening-message content. Do not announce a prior job at the start of a new publish flow. Mention an earlier job only when a fresh concurrency lookup proves it is currently nonterminal and blocking.
 - Never print or persist passwords, Authorization headers, OAuth tokens, cookies, or token-cache content.
 - Treat Basic authentication as a secure runtime profile reference, never as a stored Base64 value.
@@ -224,7 +311,10 @@ artifact-persistence, and approval failures using the repository error-handling
 taxonomy. Complete environment, privilege, input, mapping, contract, and
 concurrency preflight before side effects. Do not retry a live publish POST
 automatically; after an ambiguous outcome, make only the documented read-only
-status check and require fresh approval before any new submission. On timeout
+status check and require fresh approval before any new submission. The Fusion
+ABO dependent path resumes only from its persisted exact-operation checkpoint
+with GET-only status calls; it never recreates an operation or re-submits an
+ambiguous publish. On timeout
 or terminal failure, persist redacted diagnostics and the last known job status
 under the project workspace, report the safe functional error and next action,
 and never persist credentials, tokens, Authorization headers, or sensitive

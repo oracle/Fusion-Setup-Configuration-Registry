@@ -77,6 +77,7 @@ workspace_outputs:
     versioning_policy: "append-only"
 required_setup_tasks:
   - "ORA_RCS_MANAGE_SCMCOM_VALUE_SETS"
+  - "ORA_MSC_CONFIGURE_REMAINING_SHELF_LIFE_RULE"
 applicability:
   industries:
     - "All"
@@ -107,6 +108,7 @@ Use this functional-area skill after Manufacturing and Supply Chain Materials Ma
 ## Setup Tasks
 
 1. [Manage SCM Common Value Sets](manage-scm-common-value-sets.md) (`ORA_RCS_MANAGE_SCMCOM_VALUE_SETS`)
+2. [Configure Remaining Shelf Life Rule](configure-remaining-shelf-life-rule/SKILL.md) (`ORA_MSC_CONFIGURE_REMAINING_SHELF_LIFE_RULE`)
 
 ## Inputs
 

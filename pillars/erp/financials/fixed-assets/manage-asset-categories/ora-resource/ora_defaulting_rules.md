@@ -11,14 +11,13 @@
 | Resolved CAT# structure and component mapping | Fill structure, delimiter, exported KFF segment order, component mapping, and unused package-position blanks only from the System Controls-selected current CAT# metadata. |
 | Existing category or category-book read-back | Preserve values only for an explicitly requested update of that same target row. |
 | Selected book fiscal-year calendar | Default From Date Placed in Service from the first available start date for the selected book's fiscal-year calendar. |
-| Book ledger and natural-account lookups | When no complete customer account selection is supplied, derive category-book account combinations from the selected book's ledger, COA, and account skeleton through `resolve_category_book_accounts`; validate a complete customer selection unchanged. |
+| Book ledger and natural-account lookups | When no complete customer account selection is supplied, derive category-book account combinations from the selected book's ledger, COA, and account skeleton through `resolve_category_book_accounts`; preserve a complete customer selection unchanged under Category-Book Account Preparation in ora_reference_lookups.md. |
 
 For a category-header create, use customer-supplied business choices and only the explicit
 defaults or derivations listed below. Category-book account proposals use
-resolve_category_book_accounts; a unique, full-combination-valid ledger-derived
-result is accepted without a separate account-mapping or shared-account approval;
-From Date Placed in Service uses Manage System Controls. Do not borrow business
-values or account segments from another category or donor export row.
+resolve_category_book_accounts; a unique ledger-derived vector with resolved Natural Account and valid COA format is accepted without a separate account-mapping or shared-account approval;
+Category Active From uses System Controls; From Date Placed in Service uses the selected book's fiscal-year calendar.
+Do not borrow business values or account segments from another category or donor export row.
 
 ## Standard Defaults
 
@@ -52,9 +51,9 @@ competing defaults.
 | Book assignment removal action | Blank or `N` for category-book assignment create/update | Removal value only when customer requests removal | resolve_asset_book_for_category |
 | Category-book flags | Blank/unchecked unless supplied or same-book evidence proves them | Target-supported checkbox values; commonly `Y`, `N`, or blank as exported | resolve_category_book_accounts |
 | Default depreciation expense combination (`DefaultExpenseCcidFlag`) | Blank/unchecked unless supplied | UI Yes → stored `Y`; UI No → stored `N` | resolve_category_book_accounts |
-| Category-book account combinations | When no complete customer selection is supplied, automatically derive every required role through the account resolver. Preserve and validate an explicit complete customer selection as an override. | Category/book/role result from the account resolver; no generic fallback | resolve_category_book_accounts |
-| Bonus Depreciation Expense | Use the validated Depreciation Expense complete combination when no complete Bonus Depreciation Expense selection is supplied. | Validated Depreciation Expense combination | resolve_category_book_accounts |
-| Bonus Depreciation Reserve | Use the validated Depreciation Reserve complete combination when no complete Bonus Depreciation Reserve selection is supplied. | Validated Depreciation Reserve combination | resolve_category_book_accounts |
+| Category-book account combinations | When no complete customer selection is supplied, automatically derive every required role through the account resolver. Preserve an explicit complete customer selection under Category-Book Account Preparation in ora_reference_lookups.md without full-combination search or existence verification. | Category/book/role result from the account resolver; no generic fallback | resolve_category_book_accounts |
+| Bonus Depreciation Expense | Use the resolved Depreciation Expense segment vector when no complete Bonus Depreciation Expense selection is supplied. | Resolved Depreciation Expense segment vector | resolve_category_book_accounts |
+| Bonus Depreciation Reserve | Use the resolved Depreciation Reserve segment vector when no complete Bonus Depreciation Reserve selection is supplied. | Resolved Depreciation Reserve segment vector | resolve_category_book_accounts |
 | CIP Cost, CIP Clearing, and Unplanned Depreciation Expense | Derive each populated or required role from the selected book ledger. | Role-specific ledger-derived complete combination | resolve_category_book_accounts |
 | Impairment Expense and Impairment Reserve | No default; require resolved complete combinations. | The selected book enables `AllowImpairmentFlag`. | resolve_category_book_accounts |
 | Revaluation Reserve Amortization, Revaluation Reserve, and Revaluation Loss Expense | Blank unless the selected book enables revaluation; when enabled, derive each required role from the selected book ledger. | Selected-book revaluation enablement and role-specific ledger-derived complete combination | resolve_category_book_accounts |
@@ -117,7 +116,7 @@ No, never as selected/cleared or as their stored values alone.
 | A client supplies a business value | Preserve it. A default may fill only a blank field unless the client explicitly approves a correction. |
 | A category value is missing, disabled, ambiguous, expired, or parent-unmapped | Pause category package work and ask whether to create or enable the exact value through Manage Fixed Assets Flexfield Value Sets first. |
 | A required customer value is absent or conflicting | Stop before package generation and ask the customer for the exact value. |
-| A mandatory header/default-rule value remains blank after defaulting | Stop before package generation and identify the exact missing field. Mandatory values are Category Combination, Category Type, Ownership, Capitalized, Enabled, Summary Category, Asset Book, From Date Placed in Service, Depreciate Flag, Use Straight-Line Retirements, Depreciation Method, Prorate Convention, and Retirement Convention. |
+| A mandatory header/default-rule value remains blank after defaulting | Stop before package generation and identify the exact missing field within the requested scope. Category-header creation or changes require Category Combination, Category Type, Ownership, Capitalized, Enabled, and Summary Category after applicable defaults or preservation. Category-book work requires Asset Book. Creating or changing a default-rule row additionally requires From Date Placed in Service, Depreciate Flag, Use Straight-Line Retirements, Depreciation Method, Prorate Convention, and Retirement Convention. Do not require book or default-rule fields for category-header-only work, or header changes for category-book-only work. |
 | A default-rule reference-set check fails | Do not substitute a convention or method. Stop until the supplied value resolves to the required book-level or Common Set reference set. |
 | Selected book fiscal-year calendar has no available start date | Stop before package generation. Resolve the book fiscal-year/calendar setup first. |
 | An account role is absent from the request | Run resolve_category_book_accounts before asking the customer; the absence alone does not block package preparation. |

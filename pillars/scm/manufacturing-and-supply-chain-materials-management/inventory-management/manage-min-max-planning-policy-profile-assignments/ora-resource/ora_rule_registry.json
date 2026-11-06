@@ -1,0 +1,107 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "ORA_MANAGE_MIN_MAX_PLANNING_POLICY_PROFILE_ASSIGNMENTS",
+      "task_name": "Manage Min-Max Planning Policy Profile Assignments",
+      "start_node": "MIN_MAX_POLICY_ASSIGNMENTS.VALIDATE_INCLUDE_IN_CAL",
+      "nodes": [
+        {
+          "id": "MIN_MAX_POLICY_ASSIGNMENTS.VALIDATE_INCLUDE_IN_CAL",
+          "node_type": "step",
+          "sequence": 10,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "MIN_MAX_POLICY_ASSIGNMENTS.PREFLIGHT_DATALOADER_METADATA",
+            "invalid": "RETURN_ISSUES"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "IncludeInCal is supplied for a REST/Data Loader request.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 19
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MIN_MAX_POLICY_ASSIGNMENTS.PREFLIGHT_DATALOADER_METADATA",
+          "node_type": "step",
+          "sequence": 20,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "RETURN_SUCCESS",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MIN_MAX_POLICY_ASSIGNMENTS.VALIDATE_INCLUDE_IN_CAL"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Before every REST/Data Loader handoff.",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 26
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RETURN_SUCCESS",
+          "node_type": "terminal",
+          "sequence": 30,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "MIN_MAX_POLICY_ASSIGNMENTS.PREFLIGHT_DATALOADER_METADATA"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Input validation and the current-run metadata preflight succeeded.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 29
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RETURN_ISSUES",
+          "node_type": "terminal",
+          "sequence": 40,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "continue",
+          "applies_when": "Input validation or metadata preflight did not succeed.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 30
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

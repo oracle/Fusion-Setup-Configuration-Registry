@@ -120,9 +120,13 @@ def validate_openapi_response_schemas(document: Any) -> int:
                 else:
                     produces = operation.get("produces", document.get("produces", []))
                     json_response = any(_is_json_media_type(media_type) for media_type in produces) if isinstance(produces, list) else True
-                    if not json_response or "schema" not in response:
+                    if not json_response:
                         continue
+                    if "schema" not in response:
+                        raise ValueError(f"{method.upper()} {path} {status} JSON response has no schema.")
                     leaf_count += _leaf_count(document, response["schema"], f"{method.upper()} {path} {status}")
+    if leaf_count == 0:
+        raise ValueError("Specification has no eligible successful JSON extraction response with derivable leaves.")
     return leaf_count
 
 

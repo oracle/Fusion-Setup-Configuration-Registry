@@ -2300,6 +2300,8 @@
         "producer": "reconcile",
         "requiredFields": [
           "status",
+          "comparisonStatus",
+          "persistenceVerified",
           "task",
           "candidateSha256",
           "exportSha256",

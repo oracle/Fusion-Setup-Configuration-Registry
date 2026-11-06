@@ -166,7 +166,7 @@
       "Preserve the unchanged customer request outside the business blueprint.",
       "Use the selected task skill and compiled ora_rule_registry.json to resolve task semantics and blockers.",
       "For target context, honor an explicit EnterpriseId; otherwise use the matched update-row ID, then the single distinct nonblank export ID without confirmation. Ask only when none resolves it. A row override never replaces or invalidates the export default; retain defaults only in the current design/preflight. SOBName still requires ERP BU/primary-ledger receipts and cannot be overridden.",
-      "Write only explicit operations, target keys, requested values, resolved scope, defaults, prerequisites, preservation assertions, and warnings into the normalized design input.",
+      "Write only explicit operations, target keys, requested values, resolved scope, defaults, prerequisites, referenceContext, preservation assertions, and warnings into the normalized design input.",
       "For each create, report the source-backed first-time UI default plan without adding Reference Integration account values or inferring UserConversionRateType or UserDefaultPmtExchangeRateType.",
       "Run the normalize command to validate the design and emit the portable blueprint, complete preview, and stable requirements list."
     ],
@@ -1374,6 +1374,7 @@
           "firstTimeUiDefaulting",
           "preservedValues",
           "prerequisites",
+          "referenceContext",
           "warnings"
         ]
       },
@@ -1407,6 +1408,7 @@
           "firstTimeUiDefaulting",
           "preservedValues",
           "prerequisites",
+          "referenceContext",
           "warnings",
           "designSha256"
         ]
@@ -1416,6 +1418,8 @@
         "producer": "reconcile",
         "requiredFields": [
           "status",
+          "comparisonStatus",
+          "persistenceVerified",
           "task",
           "candidateSha256",
           "exportSha256",
@@ -1548,7 +1552,8 @@
           "blueprint-output",
           "requirements-output",
           "output",
-          "prerequisites"
+          "prerequisites",
+          "reference-context"
         ]
       },
       "validate": {

@@ -41,7 +41,7 @@ Controlled existing-row blank imports established required-attribute failures fo
 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|
-| EXMCR.EXECUTION_GATE | decision | 7 | execution_gate | ready->EXMCR.STATIC_HANDOFF;blocked->EXMCR.BLOCKED | EXMCR.CHECK_DESIGN | stop | Supported complete-row create/update candidate, verified references, preservation and core preflight; return validation only before core approval |
+| EXMCR.EXECUTION_GATE | decision | 7 | execution_gate | ready->EXMCR.STATIC_HANDOFF;blocked->EXMCR.BLOCKED | EXMCR.CHECK_DESIGN | stop | Supported create/update candidate with source-required fields and nullable percentages, verified references, preservation and core preflight; return validation only before core approval |
 | EXMCR.BLOCKED | terminal | 8 | terminal | none | none | stop | Return unresolved source-backed blockers without Fusion mutation |
 | EXMCR.STATIC_HANDOFF | terminal | 9 | terminal | none | EXMCR.EXECUTION_GATE | stop | Return a task-local static handoff only after all declared gates are complete |
 

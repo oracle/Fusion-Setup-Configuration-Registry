@@ -36,4 +36,35 @@
 | CPA.LEVEL_ATTRIBUTES_COMPLETE | terminal | 132 | terminal | none | CPA.SELECT_LEVEL_ATTRIBUTE_NAMES | stop | Return existing attributes without creation validation or a write |
 | CPA.DIMENSION_DELETION_CHECKED | terminal | 133 | terminal | none | CPA.ENFORCE_CATALOG_DELETION | stop | Return dimension-catalog deletion eligibility; no deletion or approval |
 | CPA.MEASURE_DELETION_CHECKED | terminal | 134 | terminal | none | CPA.ENFORCE_MEASURE_CATALOG_DELETION | stop | Return measure-catalog deletion eligibility; no deletion or approval |
-| CPA.LOOKUP_FAILURE | terminal | 999 | terminal | none | none | stop | Return missing, unsupported, invalid, ambiguous, failed or blocked details and the corrective action; no write |
+| CPA.LOOKUP_FAILURE | terminal | 999 | terminal | none | none | stop | Classify and persist the failure using Error Classifications and Disclosure Rules; return missing, unsupported, invalid, ambiguous, failed or blocked details and the corrective action; no write |
+
+## Error Classifications
+
+| Result Category | When Used | Next Action |
+|---|---|---|
+| input_validation | Missing identity, unsupported level, invalid attribute/datatype, no exact match or conflicting returned identity | Stop; identify the invalid or missing field and correction. |
+| catalog_or_metadata_mismatch | Ambiguous identity or unsupported task metadata | Stop; request an exact identity or resolve catalog metadata. |
+| auth_expired_or_invalid | Cached token rejected with 401/403 | Delegate one refresh retry to the REST client; never replace an explicitly supplied token. |
+| authorization_or_privilege | Missing privilege or 403 after refresh | Stop; recommend role/access diagnostics. |
+| transport_or_environment | Connection failure, request timeout or incomplete page retrieval | Stop; report the selected environment and safe next check. |
+| fusion_api_error | Other HTTP error or malformed response | Stop; retain sanitized HTTP status, endpoint and ECID when available. |
+| artifact_persistence | Diagnostic or validation artifact cannot be saved | Stop; report the failed destination without claiming persistence. |
+| approval_blocker | Deletion gate blocked or execution approval absent | Stop; report the blocker; eligibility never authorizes a write. |
+
+## Disclosure Rules
+
+| Gate | What Must Be Shown |
+|---|---|
+| Failure handoff | status, stage, failure_class, message, recommended_action, selected environment alias, task code, skill_id, current Rule ID, endpoint path, HTTP status/ECID when available, artifact_refs and safe resume stage. Preserve completed checks and an errors array for partial failures. |
+| Durable evidence | With project context, save diagnostics.json and a schema-valid validation-result.json under the manifest's task artifact directory using its versioning policy. Register both through core.project-mgmt.artifact-registry-manager; record a failed run through core.project-mgmt.project-state-manager under project/{project_id}/state/runs/ and log token usage. |
+| Schema and redaction | Keep failure_class and diagnostic details in the separate diagnostic artifact; validation findings link it through artifact, and skill runs through artifact_refs. Follow schemas/validation-result.schema.json and schemas/skill-run.schema.json. Omit credentials, tokens, headers, tenant URLs, sensitive payloads and customer values. |
+
+## Refusal Rules
+
+| Situation | What Must Not Happen |
+|---|---|
+| Before live lookup | Do not call Fusion until the active workflow selects the declared GET, confirms environment/privileges and supplies finite request timeout and pagination limits. Use core.fusion-api.rest-api-client; do not implement transport here. |
+| Retry or retrieval failure | Do not retry transport failures automatically, exceed pagination limits, or treat incomplete retrieval as absence. After the client's single cached-token retry, stop on failure. Resume only after correction through the invoking workflow. |
+| Failure or blocked deletion | Do not import, delete, substitute endpoints or replay a mutation. Data Loader owns mutation validation and approval. If persistence fails, retain sanitized failure details in the handoff and stop. |
+
+These rules follow governance/error-handling-guidelines.md and apply at CPA.LOOKUP_FAILURE and preflight failures before graph entry. Without project context, return the same sanitized diagnostic handoff and state that it was not persisted; obtain project context before durable implementation work continues.

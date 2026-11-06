@@ -6,7 +6,7 @@ import json
 from typing import Any, Dict, Iterable, List, Optional, Sequence
 from urllib.parse import urljoin
 
-from runbook_client import ApiError, DEFAULT_PAGE_SIZE, RunbookClient
+from runbook_client import ApiError, RunbookClient
 from runbook_values import positive_int64
 from status_catalog import (
     STATUS_DEFINITIONS,
@@ -250,6 +250,7 @@ def build_create_payload(
             "notes": task["notes"],
             "required": "N",
             "allowComments": "Y",
+            "AllowMultipleCommentsFlag": "Y",
             "allowAttachments": "Y",
             "dependentOn": task["dependentOn"],
             "embeddedApplicationTaskCode": ",".join(task["businessObjects"]),
@@ -323,7 +324,10 @@ def summarize_payload(payload: Any) -> Dict[str, Any]:
     """Return both structured counts and the concise summary sentence."""
 
     counts = status_counts(task_items(payload))
-    return {"counts": counts, "summary": summary_sentence(counts)}
+    result = {"counts": counts, "summary": summary_sentence(counts)}
+    if isinstance(payload, dict) and "hasMore" in payload:
+        result["pagination"] = {k: v for k, v in payload.items() if k != "items"}
+    return result
 
 
 def _required(value: Any) -> bool:
@@ -765,7 +769,6 @@ def build_task_model(
         if task_type == "ORA_CHK_VIDEO"
         else None
     )
-    dependency = _optional_text(detail.get("DependentTaskName"), "DependentTaskName")
     external_url = None
     external_label = None
     video_url = None
@@ -804,7 +807,6 @@ def build_task_model(
         ),
         "complete": is_complete(detail.get("Status")),
         "required": _required(detail.get("RequiredFlag")),
-        "dependency": dependency,
         "comments": list(task_comments or []),
         "attachments": list(attachments or []),
         "notesHtml": notes_html(detail.get("Notes")),
@@ -832,27 +834,30 @@ class RunbookService:
         self,
         journey_id: str,
         *,
-        page_size: int = DEFAULT_PAGE_SIZE,
         include_indexes: Optional[Sequence[int]] = None,
+        offset: int = 0,
     ) -> Dict[str, Any]:
-        tasks_payload = self.client.list_tasks(journey_id, page_size)
+        tasks_payload = self.client.list_tasks(journey_id, **({"offset": offset} if offset else {}))
         try:
             journey = self.client.get_journey(journey_id)
         except Exception:
             journey = None
-        return build_dashboard_result(
+        result = build_dashboard_result(
             journey,
             tasks_payload,
             include_indexes=include_indexes,
         )
+        if "hasMore" in tasks_payload:
+            result["pagination"] = {k: v for k, v in tasks_payload.items() if k != "items"}
+        return result
 
     def get_summary(
         self,
         journey_id: str,
         *,
-        page_size: int = DEFAULT_PAGE_SIZE,
+        offset: int = 0,
     ) -> Dict[str, Any]:
-        return summarize_payload(self.client.list_tasks(journey_id, page_size))
+        return summarize_payload(self.client.list_tasks(journey_id, **({"offset": offset} if offset else {})))
 
     def get_task_model(
         self,
@@ -860,6 +865,9 @@ class RunbookService:
         worker_journey_task_id: str,
         *,
         worker_journey_id: Optional[str] = None,
+        attachments_offset: int = 0,
+        comments_offset: int = 0,
+        documents_offset: int = 0,
     ) -> Dict[str, Any]:
         """Retrieve one allowlisted task-detail model."""
 
@@ -867,13 +875,16 @@ class RunbookService:
             parent_worker_journey_id,
             worker_journey_task_id,
         )
+        pagination = {}
         attachments: List[Dict[str, str]] = []
         try:
+            attachment_payload = self.client.get_attachments(
+                parent_worker_journey_id, worker_journey_task_id,
+                **({"offset": attachments_offset} if attachments_offset else {}))
+            if "hasMore" in attachment_payload:
+                pagination["attachments"] = {k: v for k, v in attachment_payload.items() if k != "items"}
             attachments = build_task_attachments(
-                self.client.get_attachments(
-                    parent_worker_journey_id,
-                    worker_journey_task_id,
-                ),
+                attachment_payload,
                 server_url=getattr(
                     self.client,
                     "server_url",
@@ -887,6 +898,7 @@ class RunbookService:
             documents = self.client.get_documents(
                 parent_worker_journey_id,
                 worker_journey_task_id,
+                **({"offset": documents_offset} if documents_offset else {}),
             )
         data_load_status_rows = None
         if detail.get("Type") == CREATE_DATA_LOADER_TASK_TYPE:
@@ -907,15 +919,21 @@ class RunbookService:
                         data_load_status_rows = []
         task_comments: List[Dict[str, str]] = []
         try:
-            task_comments = build_task_comments(
-                self.client.get_task_comments(worker_journey_task_id)
-            )
+            comment_payload = self.client.get_task_comments(worker_journey_task_id, **({"offset": comments_offset} if comments_offset else {}))
+            if "hasMore" in comment_payload:
+                pagination["comments"] = {k: v for k, v in comment_payload.items() if k != "items"}
+            task_comments = build_task_comments(comment_payload)
         except (ApiError, OSError, ValueError):
             task_comments = []
-        return build_task_model(
+        if isinstance(documents, dict) and "hasMore" in documents:
+            pagination["documents"] = {k: v for k, v in documents.items() if k != "items"}
+        result = build_task_model(
             detail,
             documents_payload=documents,
             data_load_status_rows=data_load_status_rows,
             task_comments=task_comments,
             attachments=attachments,
         )
+        if pagination:
+            result["pagination"] = pagination
+        return result

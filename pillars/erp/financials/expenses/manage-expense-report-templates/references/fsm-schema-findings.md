@@ -35,10 +35,12 @@ attributes from matching reference rows in the fresh export. Mapping Edit retain
 the existing relationship; changing an identity requires a separate Create.
 
 The expense-type CSV exposes ItemizationOnlyFlag, so the builder can handle
-Itemization Only Type Yes/No. It also exposes Segment1, but the current v1.4
-workbook/import contract does not collect or resolve account data. The builder
-writes account-related fields as blank/null rather than equating a natural
-account with Segment1. It also writes TaxClassificationCode and
+Itemization Only Type Yes/No. It also exposes Segment1. The current workbook
+accepts Expense Type Account as account_number and derives LedgerName from the
+BU primary ledger; omitted edit accounts preserve existing values.
+The import VO and EO expose Segment1 and the import hook resolves LedgerName
+to ChartOfAccountsId (see destination-reference-contract.md).
+It also writes TaxClassificationCode and
 TaxProductCategoryCode as blank/null because the current workbook does not
 collect either tax value.
 

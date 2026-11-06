@@ -23,10 +23,11 @@ import sys
 import tempfile
 import zipfile
 from dataclasses import dataclass
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from decimal import Decimal, InvalidOperation
 from pathlib import Path, PurePosixPath
 from typing import Any
+from urllib.parse import urlsplit
 from xml.etree import ElementTree
 
 
@@ -34,11 +35,30 @@ SCHEMA_VERSION = "fscr-fsm-task-adapter-v1"
 MAX_MEMBER_BYTES = 10 * 1024 * 1024
 MAX_TOTAL_BYTES = 100 * 1024 * 1024
 MAX_COMPRESSION_RATIO = 100
-SUCCESS_STATUS = re.compile(r"COMPLETE|SUCCESS|SUCCEED", re.IGNORECASE)
+SUCCESS_STATUSES = frozenset({"COMPLETED", "SUCCEEDED", "SUCCESS"})
 
 
 class AdapterError(ValueError):
     """A safe, user-correctable adapter failure."""
+
+
+def _https_origin(value: Any) -> str:
+    if not isinstance(value, str) or not value or any(c.isspace() for c in value):
+        raise AdapterError("INVALID_ORIGIN: baseUrl must be an HTTPS origin.")
+    try:
+        parsed = urlsplit(value)
+        host, port = parsed.hostname, parsed.port
+    except ValueError as exc:
+        raise AdapterError("INVALID_ORIGIN: invalid HTTPS origin.") from exc
+    if (parsed.scheme.lower() != "https" or not host
+            or len(host) > 253 or any(re.fullmatch(r"[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?", label) is None for label in host.split("."))
+            or parsed.netloc.endswith(":") or port == 0
+            or parsed.username is not None or parsed.password is not None
+            or parsed.path not in ("", "/") or parsed.query or parsed.fragment
+            or "?" in value or "#" in value):
+        raise AdapterError("INVALID_ORIGIN: baseUrl must contain only an HTTPS host and optional port.")
+    return "https://" + host.lower() + (f":{port}" if port not in (None, 443) else "")
+
 
 
 def _sha256_bytes(value: bytes) -> str:
@@ -68,6 +88,26 @@ def _write_json(path: Path, value: Any) -> None:
         json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n",
         encoding="utf-8",
     )
+
+
+def _write_new_json(path: Path, value: Any) -> None:
+    """Publish a new CLI artifact without replacing an existing file or link."""
+    rendered = json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("x", encoding="utf-8") as stream:
+            stream.write(rendered)
+    except OSError as exc:
+        raise AdapterError(f"Cannot write new JSON output {path}: {exc}") from exc
+
+
+def _preflight_cli_outputs(args: argparse.Namespace) -> None:
+    """Check every declared CLI destination against all inputs before side effects."""
+    output_names = {"report", "output", "blueprint_output", "preview_output", "requirements_output"}
+    paths = {name: value for name, value in vars(args).items() if isinstance(value, Path)}
+    outputs = [path for name, path in paths.items() if name in output_names]
+    inputs = [path for name, path in paths.items() if name not in output_names]
+    _validate_new_outputs(outputs, inputs)
 
 
 def _default_contract_path() -> Path:
@@ -276,7 +316,7 @@ def _read_package(path: Path, contract: dict[str, Any]) -> PackageData:
             "Package ObjectShortName does not match the adapter task identity: "
             f"{metadata['ObjectShortName']!r}."
         )
-    if not SUCCESS_STATUS.search(metadata["ProcessStatus"]):
+    if metadata["ProcessStatus"].upper() not in SUCCESS_STATUSES:
         raise AdapterError(
             f"Package process status is not successful: {metadata['ProcessStatus']!r}."
         )
@@ -293,22 +333,13 @@ def _read_package(path: Path, contract: dict[str, Any]) -> PackageData:
             raise AdapterError(
                 f"Metadata node path for {entity['name']} is {actual['nodePath']!r}, expected {entity['nodePath']!r}."
             )
-        expected_node_sequence = str(entity["nodeSequence"]).strip()
+        # Fusion exports can vary sequence numbering. Identify each object
+        # by its name and validated node path, as Payment Terms does.
         actual_node_sequence = str(actual["nodeSequence"]).strip()
-        if not re.fullmatch(r"[1-9][0-9]*", expected_node_sequence):
-            raise AdapterError(
-                f"Adapter node sequence for {entity['name']} must be a positive integer; "
-                f"found {expected_node_sequence!r}."
-            )
         if not re.fullmatch(r"[1-9][0-9]*", actual_node_sequence):
             raise AdapterError(
                 f"Metadata node sequence for {entity['name']} must be a positive integer; "
                 f"found {actual_node_sequence!r}."
-            )
-        if actual_node_sequence != expected_node_sequence:
-            raise AdapterError(
-                f"Metadata node sequence for {entity['name']} is {actual_node_sequence!r}, "
-                f"expected {expected_node_sequence!r} from e2e-adapter.json."
             )
         for field, actual_type in actual["types"].items():
             if field not in entity["headers"]:
@@ -357,8 +388,14 @@ def _schema_fingerprint(contract: dict[str, Any], package: PackageData) -> str:
 
 
 def _validate_new_outputs(outputs: list[Path], inputs: list[Path]) -> None:
-    resolved_outputs = [path.resolve() for path in outputs]
-    resolved_inputs = {path.resolve() for path in inputs}
+    for path in outputs:
+        if path.is_symlink():
+            raise AdapterError(f"Refusing to overwrite existing output link: {path}.")
+    try:
+        resolved_outputs = [path.resolve() for path in outputs]
+        resolved_inputs = {path.resolve() for path in inputs}
+    except (OSError, RuntimeError) as exc:
+        raise AdapterError(f"Cannot resolve artifact paths: {exc}") from exc
     if len(resolved_outputs) != len(set(resolved_outputs)):
         raise AdapterError("Output paths must be distinct.")
     for path in resolved_outputs:
@@ -366,6 +403,10 @@ def _validate_new_outputs(outputs: list[Path], inputs: list[Path]) -> None:
             raise AdapterError(f"Output path overlaps an input: {path}.")
         if path.exists():
             raise AdapterError(f"Refusing to overwrite existing output: {path}.")
+        if any(other != path and other in path.parents for other in resolved_outputs):
+            raise AdapterError("Output paths must not contain one another.")
+        if any(parent.exists() and not parent.is_dir() for parent in path.parents):
+            raise AdapterError(f"Output parent is not a directory: {path}.")
 
 
 def _validate_source_pair(
@@ -696,30 +737,8 @@ def _validate_period_semantics(
         raise AdapterError(
             f"Operation {operation_id} DueDate must be on or after EndDate."
         )
-    for other_key, other in baseline_rows.items():
-        if other_key == target:
-            continue
-        if (
-            other["CalendarName"] == merged["CalendarName"]
-            and other["CalendarType"] == merged["CalendarType"]
-            and other["PeriodYear"] == merged["PeriodYear"]
-            and other["PeriodNum"] == merged["PeriodNum"]
-        ):
-            raise AdapterError(
-                f"Operation {operation_id} PeriodNum must remain unique within "
-                f"PeriodYear {merged['PeriodYear']}."
-            )
-        if (
-            other["CalendarName"] == merged["CalendarName"]
-            and other["CalendarType"] == merged["CalendarType"]
-        ):
-            other_start = _source_calendar_date(other["StartDate"], operation_id, "StartDate")
-            other_end = _source_calendar_date(other["EndDate"], operation_id, "EndDate")
-            if start <= other_end and other_start <= end:
-                raise AdapterError(
-                    f"Operation {operation_id} period range overlaps retained period "
-                    f"{other_key!r}."
-                )
+    # Before import, check for duplicate period numbers and overlapping dates
+    # using the final values from all requested creates and updates in memory.
 
 
 def _validate_calendar_type_semantics(
@@ -789,8 +808,10 @@ def _validate_period_parent_context(
             )
 
 
-def _validate_period_parent_row_operations(operations: list[dict[str, Any]]) -> None:
-    """Require a same-archive parent row for every child create or update.
+def _validate_period_parent_row_operations(
+    operations: list[dict[str, Any]], baseline: PackageData | None = None
+) -> None:
+    """Require an explicit parent or a fresh-baseline parent the builder can carry.
 
     Fusion FSM skips a period row when its CSV parent reference cannot be
     resolved to an AP_OTHER_PERIOD_TYPE row in that same archive.  The dotted
@@ -805,6 +826,11 @@ def _validate_period_parent_row_operations(operations: list[dict[str, Any]]) -> 
         if operation["entity"] == "AP_OTHER_PERIOD_TYPE"
         and operation["action"] in {"create", "update"}
     }
+    if baseline is not None:
+        parent_targets.update(
+            (row["CalendarName"], row["CalendarType"])
+            for row in baseline.rows["AP_OTHER_PERIOD_TYPE"]
+        )
     for operation in operations:
         if (
             operation["entity"] != "AP_OTHER_PERIOD_PERIOD"
@@ -821,42 +847,82 @@ def _validate_period_parent_row_operations(operations: list[dict[str, Any]]) -> 
             )
 
 
-def _validate_requested_period_create_overlaps(operations: list[dict[str, Any]]) -> None:
-    """Reject overlapping child-period creates within one candidate archive."""
-    creates = [
-        operation
-        for operation in operations
-        if operation["entity"] == "AP_OTHER_PERIOD_PERIOD"
-        and operation["action"] == "create"
-    ]
-    for index, operation in enumerate(creates):
-        target = operation["targetKey"]
-        values = operation["values"]
-        start_text = str(values.get("StartDate", "")).strip()
-        end_text = str(values.get("EndDate", "")).strip()
-        if not start_text or not end_text:
+def _validate_period_number_uniqueness(
+    contract: dict[str, Any], operations: list[dict[str, Any]], baseline: PackageData | None,
+) -> None:
+    """Check year/number pairs across retained periods and the requested batch."""
+    entity = _entity_map(contract)["AP_OTHER_PERIOD_PERIOD"]
+    effective = {
+        key: (row, None) for key, row in
+        (_row_index(baseline, entity).items() if baseline is not None else [])
+    }
+    for operation in operations:
+        if operation["entity"] != entity["name"]:
             continue
-        start = _source_calendar_date(start_text, operation["id"], "StartDate")
-        end = _source_calendar_date(end_text, operation["id"], "EndDate")
-        for other in creates[index + 1:]:
-            other_target = other["targetKey"]
-            if (
-                str(target["CalendarName"]) != str(other_target["CalendarName"])
-                or str(target["CalendarType"]) != str(other_target["CalendarType"])
-            ):
+        key = _target_tuple(entity, operation["targetKey"])
+        row = dict(effective.get(key, ({}, None))[0])
+        row.update(operation["targetKey"])
+        row.update(operation["values"])
+        effective[key] = (row, operation["id"])
+    seen = {}
+    for row, operation_id in effective.values():
+        if any(str(row.get(field, "")).strip() == "" for field in ("PeriodYear", "PeriodNum")):
+            continue  # Required-field validation reports incomplete creates.
+        pair = (str(row["CalendarName"]), str(row["CalendarType"]),
+                int(row["PeriodYear"]), int(row["PeriodNum"]))
+        if pair in seen and (operation_id is not None or seen[pair] is not None):
+            owner = operation_id if operation_id is not None else seen[pair]
+            raise AdapterError(
+                f"Operation {owner} PeriodNum must remain unique within PeriodYear "
+                f"{pair[2]} for calendar {pair[0]!r} and type {pair[1]!r}; "
+                f"period number {pair[3]} is used more than once."
+            )
+        seen[pair] = operation_id
+
+
+def _validate_period_batch_overlaps(
+    operations: list[dict[str, Any]], baseline: PackageData | None = None,
+) -> None:
+    """Check final period ranges after applying every create and update."""
+    key_fields = ("CalendarName", "CalendarType", "PeriodName")
+    effective = {
+        tuple(str(row[field]) for field in key_fields): (dict(row), None)
+        for row in (baseline.rows.get("AP_OTHER_PERIOD_PERIOD", [])
+                    if baseline is not None else [])
+    }
+    for operation in operations:
+        if operation["entity"] != "AP_OTHER_PERIOD_PERIOD":
+            continue
+        key = tuple(str(operation["targetKey"][field]) for field in key_fields)
+        row = dict(effective.get(key, ({}, None))[0])
+        row.update(operation["targetKey"])
+        row.update(operation["values"])
+        effective[key] = (row, operation["id"])
+    periods = []
+    for key, (row, operation_id) in effective.items():
+        if not str(row.get("StartDate", "")).strip() or not str(row.get("EndDate", "")).strip():
+            continue  # Required-field validation reports incomplete rows.
+        owner = operation_id or repr(key)
+        periods.append((key, operation_id,
+                        _source_calendar_date(str(row["StartDate"]), owner, "StartDate"),
+                        _source_calendar_date(str(row["EndDate"]), owner, "EndDate")))
+    for index, (key, operation_id, start, end) in enumerate(periods):
+        for other_key, other_id, other_start, other_end in periods[index + 1:]:
+            if key[:2] != other_key[:2] or (operation_id is None and other_id is None):
                 continue
-            other_values = other["values"]
-            other_start_text = str(other_values.get("StartDate", "")).strip()
-            other_end_text = str(other_values.get("EndDate", "")).strip()
-            if not other_start_text or not other_end_text:
-                continue
-            other_start = _source_calendar_date(other_start_text, other["id"], "StartDate")
-            other_end = _source_calendar_date(other_end_text, other["id"], "EndDate")
             if start <= other_end and other_start <= end:
-                raise AdapterError(
-                    f"Operation {operation['id']} period range overlaps requested period "
-                    f"{other['id']}."
-                )
+                owner = operation_id or other_id
+                other = (f"requested period {other_id}" if operation_id and other_id
+                         else f"retained period {other_key if operation_id else key!r}")
+                raise AdapterError(f"Operation {owner} period range overlaps {other}.")
+
+
+def _validate_requested_period_create_overlaps(operations: list[dict[str, Any]]) -> None:
+    """Check create-only batches without a baseline."""
+    _validate_period_batch_overlaps([
+        operation for operation in operations
+        if operation["entity"] == "AP_OTHER_PERIOD_PERIOD" and operation["action"] == "create"
+    ])
 
 
 def _normalize_field_value(
@@ -1051,6 +1117,7 @@ def _validate_blueprint(
     contract: dict[str, Any],
     blueprint: dict[str, Any],
     baseline: PackageData | None = None,
+    *, validate_period_batch: bool = True,
 ) -> None:
     if "evidenceUnresolvedUpdateOverrides" in blueprint:
         raise AdapterError("Payables Calendars does not support governed update overrides.")
@@ -1120,7 +1187,18 @@ def _validate_blueprint(
             )
         seen_targets.add(target_identity)
         values = operation.get("values")
-        if not isinstance(values, dict) or not values:
+        supporting_parent = (
+            entity_name == "AP_OTHER_PERIOD_TYPE" and action == "update"
+            and baseline is not None
+            and any(
+                child["entity"] == "AP_OTHER_PERIOD_PERIOD"
+                and child["action"] in {"create", "update"}
+                and (str(child["targetKey"]["CalendarName"]),
+                     str(child["targetKey"]["CalendarType"])) == target_tuple
+                for child in operations
+            )
+        )
+        if not isinstance(values, dict) or (not values and not supporting_parent):
             raise AdapterError(f"Operation {operation_id} must supply values.")
         prohibited = set(entity["keyFields"]) | set(entity["auditFields"])
         unknown = set(values) - set(entity["headers"])
@@ -1197,8 +1275,10 @@ def _validate_blueprint(
                     f"Operation {operation_id} create target {target_tuple!r} already "
                     "exists in the fresh current export."
                 )
-    _validate_period_parent_row_operations(operations)
-    _validate_requested_period_create_overlaps(operations)
+    if validate_period_batch:
+        _validate_period_number_uniqueness(contract, operations, baseline)
+        _validate_period_batch_overlaps(operations, baseline)
+    _validate_period_parent_row_operations(operations, baseline)
 
 
 def _uploaded_operation_values(
@@ -1226,12 +1306,10 @@ def _uploaded_operation_values(
         field: row[field]
         for field in entity["headers"]
         if field not in excluded
-        and row[field] != ""
         and (
-            action == "create"
-            or baseline_row is None
-            or not _field_values_equal(entity, field, row[field], baseline_row[field])
-            or field in preserved_context
+            (row[field] != "" if action == "create" or baseline_row is None
+             else not _field_values_equal(entity, field, row[field], baseline_row[field]))
+            or (field in preserved_context and row[field] != "")
         )
     }
 
@@ -1241,6 +1319,13 @@ def _uploaded_validation_operations(
 ) -> list[dict[str, Any]]:
     """Include the same-archive parent when validating an uploaded period row."""
     if operation["entity"] != "AP_OTHER_PERIOD_PERIOD":
+        if operation["entity"] == "AP_OTHER_PERIOD_TYPE" and not operation.get("values"):
+            target = operation["targetKey"]
+            children = [child for child in operations
+                        if child["entity"] == "AP_OTHER_PERIOD_PERIOD"
+                        and child["targetKey"]["CalendarName"] == target["CalendarName"]
+                        and child["targetKey"]["CalendarType"] == target["CalendarType"]]
+            return [operation, *children]
         return [operation]
     target = operation["targetKey"]
     parents = [
@@ -1256,12 +1341,36 @@ def _uploaded_validation_operations(
     return [*parents, operation]
 
 
+def _validate_uploaded_compatibility(
+    baseline: PackageData, uploaded: PackageData, target_context: Any,
+) -> None:
+    """Require the workflow-selected target, not schema equality, to establish compatibility."""
+    if not isinstance(target_context, dict):
+        raise AdapterError("UPLOAD_TARGET_REQUIRED: supply independently selected environment and release in --target-context.")
+    expected = {}
+    for key, metadata_field in (("environment", "ProcessEnv"), ("release", "ProcessRelease")):
+        value = target_context.get(key)
+        if not isinstance(value, str) or not value.strip() or value != value.strip():
+            raise AdapterError(f"UPLOAD_TARGET_REQUIRED: target {key} must be a nonblank string without surrounding whitespace.")
+        expected[metadata_field] = value
+    for label, package in (("baseline", baseline), ("uploaded package", uploaded)):
+        for field, value in expected.items():
+            if package.metadata.get(field) != value:
+                raise AdapterError(
+                    f"UPLOAD_TARGET_MISMATCH: {label} {field} {package.metadata.get(field)!r} "
+                    f"does not match selected target {value!r}. Cross-environment or cross-release "
+                    "migration requires a governed compatibility check and is not accepted by this validator."
+                )
+
+
 def validate_uploaded_package(
     contract: dict[str, Any], baseline_path: Path, package_path: Path,
+    target_context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Validate an exact-task uploaded FSM ZIP without creating or importing it."""
     baseline = _read_package(baseline_path, contract)
     uploaded = _read_package(package_path, contract)
+    _validate_uploaded_compatibility(baseline, uploaded, target_context)
     if _schema_fingerprint(contract, baseline) != _schema_fingerprint(contract, uploaded):
         raise AdapterError("Uploaded package schema fingerprint differs from the fresh baseline.")
     operations, descriptions, raw_errors = [], [], []
@@ -1278,6 +1387,14 @@ def validate_uploaded_package(
                 action,
             )
             operation_id = f"UPLOAD-{entity['name']}-{number:03d}"
+            if entity["name"] == "AP_OTHER_PERIOD_TYPE" and action == "update" and not values:
+                # Only an unchanged header is supporting data. Explicit clears
+                # are included in values and follow normal update validation.
+                changed = [field for field in entity["headers"]
+                           if field not in entity["auditFields"]
+                           and not _field_values_equal(entity, field, row[field], baseline_rows[key][field])]
+                if changed:
+                    raw_errors.append(f"Operation {operation_id} changed supporting parent fields: {changed}.")
             keys.setdefault(key, []).append((number, operation_id))
             audits = [field for field in entity["auditFields"] if row.get(field, "").strip()]
             if audits: raw_errors.append(f"Operation {operation_id} uploaded row must leave audit fields blank: {audits}.")
@@ -1295,9 +1412,22 @@ def validate_uploaded_package(
         isolated["operations"] = _uploaded_validation_operations(
             blueprint["operations"], operation
         )
-        try: _validate_blueprint(contract, isolated, baseline)
+        try:
+            # An uploaded ZIP is immutable: baseline presence cannot repair it.
+            _validate_period_parent_row_operations(isolated["operations"])
+            # Validate each row's own fields here; cross-period checks below
+            # use the full batch rather than a row with stale sibling dates.
+            _validate_blueprint(contract, isolated, baseline, validate_period_batch=False)
         except AdapterError as exc:
             if str(exc) not in errors: errors.append(str(exc))
+    # Per-row checks cannot see conflicts between separately valid child rows.
+    # Validate the complete immutable upload as well as each row's context.
+    try:
+        _validate_period_parent_row_operations(blueprint["operations"])
+        _validate_blueprint(contract, blueprint, baseline)
+    except AdapterError as exc:
+        if str(exc) not in errors:
+            errors.append(str(exc))
     for item in descriptions:
         item["errors"] = [error for error in errors if item["operationId"] in error]
         item["status"] = "FAIL" if item["errors"] else "PASS"
@@ -1436,6 +1566,26 @@ def normalize_design(
     return blueprint, preview, requirements
 
 
+def _supporting_parent_keys(
+    contract: dict[str, Any], blueprint: dict[str, Any]
+) -> set[tuple[str, ...]]:
+    """Parents needed by children but not supplied by explicit header operations."""
+    parent = _entity_map(contract)['AP_OTHER_PERIOD_TYPE']
+    explicit = {
+        _target_tuple(parent, operation["targetKey"])
+        for operation in blueprint["operations"]
+        if operation["entity"] == parent["name"]
+        and operation["action"] in {"create", "update"}
+    }
+    required = {
+        tuple(str(operation["targetKey"][field]) for field in ('CalendarName', 'CalendarType'))
+        for operation in blueprint["operations"]
+        if operation["entity"] == 'AP_OTHER_PERIOD_PERIOD'
+        and operation["action"] in {"create", "update"}
+    }
+    return required - explicit
+
+
 def _candidate_rows(
     contract: dict[str, Any],
     baseline: PackageData,
@@ -1469,6 +1619,26 @@ def _candidate_rows(
         for field in entity["auditFields"]:
             row[field] = ""
         output[entity["name"]].append(row)
+    # Carry same-archive parent context without changing its business values.
+    parent_entity = entities['AP_OTHER_PERIOD_TYPE']
+    baseline_parents = _row_index(baseline, parent_entity)
+    for key in sorted(_supporting_parent_keys(contract, blueprint)):
+        if key not in baseline_parents:
+            raise AdapterError(
+                f"Child create/update parent {parent_entity['name']} {key!r} "
+                "does not exist in the fresh current export."
+            )
+        row = dict(baseline_parents[key])
+        # Preserve dates while converting the export encoding to import ISO dates.
+        for field in parent_entity["headers"]:
+            if (str(parent_entity.get("types", {}).get(field, "")).casefold() == "date"
+                    and str(row.get(field, "")).strip()):
+                row[field] = _source_calendar_date(
+                    row[field], "supporting parent serialization", field
+                ).isoformat()
+        for field in parent_entity["auditFields"]:
+            row[field] = ""
+        output[parent_entity["name"]].append(row)
     for entity_name, rows in output.items():
         entity = entities[entity_name]
         rows.sort(key=lambda row: _row_key(entity, row))
@@ -1487,7 +1657,7 @@ def _write_candidate(
     }
     metadata_member = contract["package"]["metadataMember"]
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    with zipfile.ZipFile(output_path, "w") as archive:
+    with zipfile.ZipFile(output_path, "x") as archive:
         for member in template.member_names:
             if member in entity_by_member:
                 entity = entity_by_member[member]
@@ -1512,6 +1682,8 @@ def _semantic_issues(
     issues: list[dict[str, str]] = []
     entities = _entity_map(contract)
     expected_targets: set[tuple[str, tuple[str, ...]]] = set()
+    supporting_parents = _supporting_parent_keys(contract, blueprint)
+    parent_entity = entities['AP_OTHER_PERIOD_TYPE']
     for operation in blueprint["operations"]:
         entity = entities[operation["entity"]]
         key = _target_tuple(entity, operation["targetKey"])
@@ -1545,10 +1717,33 @@ def _semantic_issues(
     for entity in contract["package"]["entities"]:
         for row in candidate.rows[entity["name"]]:
             identity = (entity["name"], _row_key(entity, row))
-            if identity not in expected_targets:
+            if identity not in expected_targets and not (
+                entity["name"] == parent_entity["name"]
+                and identity[1] in supporting_parents
+            ):
                 issues.append(
                     {"code": "UNEXPECTED_ROW", "message": f"Candidate contains unrequested {entity['name']} row {identity[1]!r}."}
                 )
+    candidate_parents = _row_index(candidate, parent_entity)
+    baseline_parents = _row_index(baseline, parent_entity)
+    for key in sorted(supporting_parents):
+        row, before = candidate_parents.get(key), baseline_parents.get(key)
+        if row is None:
+            issues.append({"code": "MISSING_PARENT", "message":
+                           f"Candidate lacks required parent {parent_entity['name']} {key!r}."})
+            continue
+        if before is None:
+            issues.append({"code": "MISSING_PARENT_BASELINE", "message":
+                           f"Fresh baseline lacks parent {parent_entity['name']} {key!r}."})
+            continue
+        for field in parent_entity["headers"]:
+            if field in parent_entity["auditFields"]:
+                if row[field] != "":
+                    issues.append({"code": "AUDIT_FIELD_POPULATED", "message":
+                                   f"Supporting parent {key!r} audit field {field} is not blank."})
+            elif not _field_values_equal(parent_entity, field, row[field], before[field]):
+                issues.append({"code": "PARENT_ROW_CHANGED", "message":
+                               f"Supporting parent {key!r} changed {field}."})
     if {item["id"] for item in requirements} != {
         item["id"] for item in _requirements(contract, blueprint)
     }:
@@ -1742,7 +1937,146 @@ def _requested_value_equivalence(
     }
 
 
+def _read_verification_evidence(path: Path | None) -> dict[str, Any] | None:
+    """Unreadable workflow evidence cannot prove persistence."""
+    if path is None:
+        return None
+    try:
+        return _read_json(path)
+    except (AdapterError, OSError):
+        return None
+
+
+def _readback_provenance(
+    contract: dict[str, Any], baseline: PackageData, candidate: PackageData,
+    blueprint_path: Path, readback: PackageData, context: Any, evidence: Any,
+    requirements_path: Path,
+) -> str | None:
+    """Check the governed import/export observation before claiming persistence.
+
+    The routed workflow supplies observations from Data Loader and Task Level
+    Export, separately from its selected target and import request. ZIP contents
+    alone cannot establish when or where an export was observed.
+    """
+    if readback.archive_sha256 in {baseline.archive_sha256, candidate.archive_sha256}:
+        return "The baseline or candidate ZIP cannot serve as post-import proof."
+    if readback.metadata.get("ProcessStatus", "").upper() not in SUCCESS_STATUSES:
+        return "The supplied export metadata does not declare a completed process."
+    if not isinstance(context, dict) or not isinstance(evidence, dict):
+        return "Governed import/export evidence and the selected verification context are required."
+    if evidence.get("schemaVersion") != "fsm-post-import-readback-v1":
+        return "Unsupported post-import readback evidence."
+    environment, base_url = context.get("environment"), context.get("baseUrl")
+    request_id = context.get("importRequestId")
+    if (not isinstance(environment, str) or not environment.strip()
+            or environment != environment.strip()
+            or any(ord(c) < 32 or ord(c) == 127 for c in environment)
+            or not isinstance(request_id, str) or not re.fullmatch(r"[1-9][0-9]*", request_id)):
+        return "Selected target environment and positive import request ID are required."
+    try:
+        base_url = _https_origin(base_url)
+    except AdapterError as exc:
+        return f"Selected target must provide a credential-free HTTPS origin: {exc}"
+    imported, exported = evidence.get("importObservation"), evidence.get("exportObservation")
+    if not isinstance(imported, dict) or not isinstance(exported, dict):
+        return "Completed import and export observations are required."
+    for observation in (imported, exported):
+        try:
+            observation_origin = _https_origin(observation.get("baseUrl"))
+        except AdapterError as exc:
+            return f"Import/export evidence must provide a credential-free HTTPS origin: {exc}"
+        if (observation.get("environment") != environment
+                or observation_origin != base_url
+                or observation.get("taskCode") != contract["task"]["code"]):
+            return "Import/export evidence does not match the selected environment, URL and task."
+    if any(package.metadata.get("ProcessEnv") != environment for package in (baseline, candidate, readback)):
+        return "A package environment does not match the selected verification environment."
+    if (imported.get("source") != "core.data-loader"
+            or imported.get("status") != "SUCCEEDED"
+            or imported.get("requestId") != request_id
+            or not re.fullmatch(r"UCMFA[0-9]+", str(imported.get("ucmContentId", "")))
+            or type(imported.get("loadedObjects")) is not int or imported["loadedObjects"] < 1
+            or type(imported.get("failedObjects")) is not int or imported["failedObjects"] != 0):
+        return "A successful Data Loader observation for the selected import request is required."
+    if (imported.get("candidateSha256") != candidate.archive_sha256
+            or imported.get("baselineSha256") != baseline.archive_sha256
+            or imported.get("blueprintSha256") != _sha256_path(blueprint_path)):
+        return "Import evidence is not bound to this candidate, baseline and request blueprint."
+    if imported.get("requirementsSha256") != _sha256_path(requirements_path):
+        return "Import evidence is not bound to these verification requirements."
+    if (exported.get("source") != "shared.setup-export.task-level-export"
+            or exported.get("status") != "COMPLETED"
+            or exported.get("processCompletedFlag") is not True
+            or not isinstance(exported.get("processId"), str)
+            or not re.fullmatch(r"[1-9][0-9]*", exported["processId"])
+            or not isinstance(exported.get("requestId"), str)
+            or not re.fullmatch(r"[1-9][0-9]*", exported["requestId"])
+            or exported["requestId"] != readback.metadata.get("ESSRequestId")
+            or exported.get("artifactSha256") != readback.archive_sha256):
+        return "A completed Task Level Export observation bound to this export process, request and ZIP is required."
+
+    def observed_time(observation: dict[str, Any], field: str) -> datetime:
+        value = observation.get(field)
+        if not isinstance(value, str):
+            raise ValueError("Missing timestamp")
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        if parsed.utcoffset() is None:
+            raise ValueError("Timestamp needs a timezone")
+        return parsed
+
+    try:
+        import_end = observed_time(imported, "completedAt")
+        import_seen = observed_time(imported, "observedAt")
+        export_start = observed_time(exported, "startedAt")
+        export_end = observed_time(exported, "completedAt")
+        export_seen = observed_time(exported, "observedAt")
+        valid_order = (import_end <= import_seen <= export_start <= export_end <= export_seen
+                       and import_end < export_start
+                       and export_seen <= datetime.now(timezone.utc) + timedelta(seconds=60))
+    except (ValueError, TypeError, OverflowError):
+        return "Import/export observations need valid timestamps with timezones."
+    if not valid_order:
+        return "Export evidence is stale or its observation times do not follow this completed import."
+    return None
+
+
 def reconcile(
+    contract: dict[str, Any], baseline_path: Path, candidate_path: Path,
+    blueprint_path: Path, requirements_path: Path, export_path: Path,
+    verification_evidence: dict[str, Any] | None = None,
+    verification_context: dict[str, Any] | None = None,
+    *, compare_only: bool = False,
+) -> dict[str, Any]:
+    """Compare files, or verify persistence using observed import/export evidence."""
+    if compare_only:
+        result = _compare_package_contents(contract, baseline_path, candidate_path,
+                                          blueprint_path, requirements_path, export_path)
+        result["status"] = "MATCH" if result["status"] == "PASS" else "DIFFERENT"
+        result["persistenceVerification"] = "NOT_PERFORMED"
+        result["reason"] = "Offline file comparison only; this does not prove changes were saved in Fusion."
+        return result
+    baseline = _read_package(baseline_path, contract)
+    candidate = _read_package(candidate_path, contract)
+    try:
+        readback = _read_package(export_path, contract)
+        reason = _readback_provenance(contract, baseline, candidate, blueprint_path,
+                                     readback, verification_context, verification_evidence,
+                                     requirements_path)
+    except (AdapterError, OSError):
+        reason = "Post-import export or evidence files could not be read."
+    if reason:
+        return {"schemaVersion": SCHEMA_VERSION, "task": contract["task"],
+                "status": "PENDING", "persistenceVerification": "PENDING", "reason": reason,
+                "baselineSha256": baseline.archive_sha256, "candidateSha256": candidate.archive_sha256,
+                "exportSha256": _sha256_path(export_path) if export_path.is_file() else None,
+                "requirementMatrix": [], "mismatchCount": None}
+    result = _compare_package_contents(contract, baseline_path, candidate_path,
+                                      blueprint_path, requirements_path, export_path)
+    result["persistenceVerification"] = result["status"]
+    return result
+
+
+def _compare_package_contents(
     contract: dict[str, Any],
     baseline_path: Path,
     candidate_path: Path,
@@ -1969,8 +2303,8 @@ def make_rollback(
     rollback = _normalized_blueprint(contract, design)
     _validate_blueprint(contract, rollback, current)
     requirements = _requirements(contract, rollback)
-    _write_json(rollback_blueprint_path, rollback)
-    _write_json(rollback_requirements_path, requirements)
+    _write_new_json(rollback_blueprint_path, rollback)
+    _write_new_json(rollback_requirements_path, requirements)
     report = build_candidate(
         contract,
         template_path,
@@ -1992,13 +2326,23 @@ def normalized_manifest(
     template_only: bool,
 ) -> dict[str, Any]:
     package = _read_package(package_path, contract)
+    if (not isinstance(environment, str) or not environment.strip()
+            or any(ord(c) < 32 or ord(c) == 127 for c in environment)):
+        raise AdapterError("MANIFEST_SOURCE_MISMATCH: a nonblank source environment label is required.")
+    if environment.strip() != package.metadata["ProcessEnv"]:
+        raise AdapterError("MANIFEST_SOURCE_MISMATCH: source environment label differs from package ProcessEnv; keep migration target metadata separate.")
+    base_url = _https_origin(base_url)
+    if type(template_only) is not bool:
+        raise AdapterError("MANIFEST_TEMPLATE_MISMATCH: templateOnly must be a boolean.")
     populated = [
         entity["member"]
         for entity in contract["package"]["entities"]
         if package.rows[entity["name"]]
     ]
+    if template_only and populated:
+        raise AdapterError("MANIFEST_TEMPLATE_MISMATCH: template-only packages must contain no data rows.")
     return {
-        "environment": environment,
+        "environment": package.metadata["ProcessEnv"],
         "baseUrl": base_url,
         "taskName": contract["task"]["name"],
         "taskCode": contract["task"]["code"],
@@ -2068,6 +2412,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     validate_upload = sub.add_parser("validate-upload", help="Validate an uploaded FSM ZIP without import.")
     _add_common(validate_upload)
     validate_upload.add_argument("--baseline", type=Path, required=True)
+    validate_upload.add_argument("--target-context", type=Path, help="Independently selected environment and release JSON; required for uploaded validation.")
     validate_upload.add_argument("--package", type=Path, required=True)
 
     rollback = sub.add_parser("rollback", help="Build a narrow rollback for a validated update.")
@@ -2087,18 +2432,31 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     reconcile_parser.add_argument("--blueprint", type=Path, required=True)
     reconcile_parser.add_argument("--requirements", type=Path, required=True)
     reconcile_parser.add_argument("--export", type=Path, required=True)
+    reconcile_parser.add_argument("--compare-only", action="store_true",
+                                  help="Compare file contents only; never claim Fusion persistence.")
+    reconcile_parser.add_argument("--verification-evidence", type=Path,
+                                  help="Governed successful import and later export observations.")
+    reconcile_parser.add_argument("--environment", help="Selected target environment.")
+    reconcile_parser.add_argument("--base-url", help="Selected target HTTPS origin.")
+    reconcile_parser.add_argument("--import-request-id", help="Selected completed Data Loader request.")
     return parser.parse_args(argv)
 
 
 def _command_succeeded(command: str, result: dict[str, Any]) -> bool:
+    if command == "reconcile":
+        return result.get("status") in {"PASS", "MATCH"}
     if command == "manifest":
-        return result.get("status") == "COMPLETED"
+        status = result.get("status")
+        return isinstance(status, str) and status.strip().upper() in SUCCESS_STATUSES
     return result.get("status", "PASS") == "PASS"
 
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
+    report_safe = False
     try:
+        _preflight_cli_outputs(args)
+        report_safe = True
         contract = _load_contract(args.contract)
         if args.command == "manifest":
             result = normalized_manifest(
@@ -2112,9 +2470,9 @@ def main(argv: list[str] | None = None) -> int:
             blueprint, preview, requirements = normalize_design(
                 contract, args.baseline, args.request, args.design
             )
-            _write_json(args.blueprint_output, blueprint)
-            _write_json(args.preview_output, preview)
-            _write_json(args.requirements_output, requirements)
+            _write_new_json(args.blueprint_output, blueprint)
+            _write_new_json(args.preview_output, preview)
+            _write_new_json(args.requirements_output, requirements)
             result = preview
         elif args.command == "build":
             result = build_candidate(
@@ -2135,7 +2493,10 @@ def main(argv: list[str] | None = None) -> int:
                 args.package,
             )
         elif args.command == "validate-upload":
-            result = validate_uploaded_package(contract, args.baseline, args.package)
+            result = validate_uploaded_package(
+                contract, args.baseline, args.package,
+                target_context=_read_json(args.target_context) if args.target_context else None,
+            )
         elif args.command == "determinism":
             result = determinism_check(
                 contract,
@@ -2163,21 +2524,28 @@ def main(argv: list[str] | None = None) -> int:
                 args.blueprint,
                 args.requirements,
                 args.export,
+                _read_verification_evidence(args.verification_evidence),
+                {"environment": args.environment, "baseUrl": args.base_url,
+                 "importRequestId": args.import_request_id},
+                compare_only=args.compare_only,
             )
         else:
             raise AdapterError(f"Unknown command {args.command!r}.")
         if args.report:
-            _write_json(args.report, result)
+            _write_new_json(args.report, result)
         print(json.dumps(result, indent=2, sort_keys=True, ensure_ascii=False))
         return 0 if _command_succeeded(args.command, result) else 2
-    except AdapterError as exc:
+    except (AdapterError, OSError) as exc:
         failure = {
             "schemaVersion": SCHEMA_VERSION,
             "status": "FAIL",
             "errors": [{"code": "ADAPTER_ERROR", "message": str(exc)}],
         }
-        if getattr(args, "report", None):
-            _write_json(args.report, failure)
+        if report_safe and getattr(args, "report", None):
+            try:
+                _write_new_json(args.report, failure)
+            except AdapterError as report_error:
+                failure["errors"].append({"code": "REPORT_ERROR", "message": str(report_error)})
         print(json.dumps(failure, indent=2, sort_keys=True), file=sys.stderr)
         return 2
 

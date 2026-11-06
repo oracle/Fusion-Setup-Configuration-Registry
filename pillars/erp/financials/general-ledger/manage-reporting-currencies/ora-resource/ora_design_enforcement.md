@@ -7,7 +7,7 @@ The gate enforces one closed non-EMU create baseline for Balance, Journal, or Su
 | Sequence | Step | What Must Happen |
 |---|---|---|
 | 1 | Confirm business intent | Show source, target name, level, currency, behavior flags, rules, advisories, initialization intent, and explicit user confirmations. |
-| 2 | Resolve ledger REST identity | Resolve the exact source through ledgersLOV; for a primary source retain its validated numeric LedgerId for PRIMARY_LEDGER_ID scope. |
+| 2 | Resolve ledger REST identity | Resolve the actual source and its owning primary separately through resolve_source_ledger; retain the owning-primary numeric LedgerId for PRIMARY_LEDGER_ID scope. |
 | 3 | Acquire exact scoped export | Serialize the approved GL_MANAGE_REPORTING_CURRENCIES request root in the exact order TaskCode, SetupTaskCSVExportCriteria, SetupTaskCSVExportProcess; verify that order before submitting once through core.fusion-api.rest-api-client, then poll and download only by its ProcessId through shared.setup-export.fsm-csv-export. |
 | 4 | Freeze scoped template | Require exact task and numeric PRIMARY_LEDGER_ID metadata scope, then preserve the eleven-member contract, exact headers, exact source roots, and metadata XML from the returned current-environment package. |
 | 5 | Confirm level semantics | Balance is relationship-only; Journal and Subledger have one physical ALC target in both aliases; Subledger uses a method-ready primary source. |
@@ -32,14 +32,14 @@ The gate enforces one closed non-EMU create baseline for Balance, Journal, or Su
 | Journal or Subledger is selected | Warning |  | The need for converted journal or full subledger detail has not been stated | Prefer Balance for translated financial statements without detailed alternate-currency journals; confirm the added processing, reconciliation, and period-ordering cost | User confirmation only |
 | Balance | Error | derive_minimum_target_graph | Either physical alias contains a new ALC target row | Remove both target rows; Balance is relationship-only | Yes before package freeze |
 | Journal or Subledger | Error | read_source_physical_template | Either physical alias lacks the one new target, contains multiple targets, or differs semantically | Rebuild both target rows from the same exact source map | Yes before package freeze |
-| Any create | Error | derive_minimum_target_graph | GL_LEDGER.csv or ORA_GL_PRIMARY_LEDGER_CONFIG.csv is missing its single exact root or contains unrelated roots | Retain exactly the scoped source root in each | Yes before package freeze |
-| Any create | Error | derive_minimum_target_graph | Relationship count is not exactly one or its business keys do not match the target | Rebuild the one relationship from validated inputs | Yes before package freeze |
+| Any create | Error | derive_minimum_target_graph | Either root member lacks its one owning-primary root, or either physical alias lacks the required primary or actual source context | Retain the owning-primary root and both required physical identities, once when source equals primary | Yes before package freeze |
+| Any create | Error | derive_minimum_target_graph | Relationship count is not one; any of Name, Name1, Name2, Name3 is blank, unresolved, or mapped to the wrong role; or any rule-parent key differs | Apply the Relationship Row Population Contract and resolve every ledger reference before import | Yes before package freeze |
 | Any create | Error | inspect_scoped_reporting_currency_export | Package member, header, order, width, or metadata differs from the current scoped template | Obtain or restore exact current package evidence | No guessed fix |
 | FIND_RATE | Error |  | AlcMaxDaysRollRate is absent or is not an integer from 1 through 999 | Request an explicit valid day count | No automatic default |
 | REPORT_ERROR | Error |  | AlcMaxDaysRollRate is nonblank | Clear the field and show the correction | Yes before package freeze |
 | Initialization is enabled | Error | resolve_balance_initialization_period | Any atomic member is missing, period is ineligible, AlcInitDate is not period start, rate date is invalid, or rate type is unresolved | Complete the non-EMU atomic group from exact period evidence | Only deterministic date derivation |
 | Initialization is disabled | Error |  | Any initialization field is nonblank | Clear the entire group | Yes before package freeze |
-| Journal or Subledger | Error | resolve_first_opened_period | FirstLedgerPeriodName was requested as mandatory user intake, guessed, chosen from response order, copied from another ledger, left blank, or populated without one exact non-adjustment EnteredPeriodName match in the exported PeriodSetName and AccountedPeriodType scope | Derive it from the exact scoped source physical row, validate it through the complete accountingPeriodsLOV result, and show the evidence in preview | Deterministic derivation only |
+| Journal or Subledger | Error | resolve_first_opened_period | FirstLedgerPeriodName was requested as mandatory user intake, guessed, chosen from response order, copied from another ledger, left blank, or populated without one exact non-adjustment PeriodNameId match in the exported PeriodSetName and AccountedPeriodType scope | Derive it from the exact scoped source physical row, validate it through the complete accountingPeriodsLOV result, and show the evidence in preview | Deterministic derivation only |
 | Derived FirstLedgerPeriodName or a supplied FirstOpenedPeriod is used as initialization evidence | Error | resolve_first_opened_period | The distinct balance-initialization predicate was not evaluated | Resolve each period under its own eligibility predicate | No automatic substitution |
 | Current Balance, Journal, or Subledger baseline rules | Error | resolve_journal_category | The Other and Other and Y and Y row is absent, duplicated, unconfirmed, or joined to the wrong parent | Emit one exact confirmed baseline row | Yes before package freeze |
 | Broad Other and Other and Y and Y policy | Warning | resolve_journal_category | The user has not accepted conversion of every unmatched GL journal | Explain the catch-all effect and require an explicit design decision | User confirmation only |
@@ -87,8 +87,8 @@ The gate enforces one closed non-EMU create baseline for Balance, Journal, or Su
 | User intent | Required user fields, explicit confirmations, optional selections, derived First Opened Period when applicable, same-currency warning when applicable, and all out-of-baseline exclusions. |
 | Source evidence | Ledger resolver identity, approved exact scoped-export request tuple, serialized root-key order TaskCode then SetupTaskCSVExportCriteria then SetupTaskCSVExportProcess, ProcessId, scoped export identity and checksum, exact task and numeric scope metadata, metadata checksum, exact eleven-member set, source physical parity result, and First Opened Period LOV evidence when applicable. |
 | Row impact | Before and candidate data-row counts for all ten CSV members, with the exact kept source roots and exact new target keys. |
-| Field impact | Every transformed relationship, physical, and rule field; all inherited families; derived values; intentional blanks; independent generated identifiers. |
-| Safety | No unrelated existing PL, SL, or reporting-currency row; no lifecycle action; no experiment-specific operational mechanic represented as product logic. |
+| Field impact | Every transformed relationship, physical, and rule field; all four resolved relationship ledger aliases and repeated rule parents; inherited families including the actual source accounting-method tuple; derived values; intentional blanks; independent generated identifiers. |
+| Safety | No unrelated existing rows authored and no lifecycle action. Disclose that importing source context can invoke Oracle option propagation to existing Journal/Subledger RCs; preserve a before snapshot and report every resulting delta. |
 | Artifact | Immutable candidate ZIP checksum and a machine-readable errors array, even when empty. |
 
 ## Out-of-Baseline Branches
@@ -104,14 +104,14 @@ The gate enforces one closed non-EMU create baseline for Balance, Journal, or Su
 
 | Check | Acceptance Rule |
 |---|---|
-| Target identity | Exactly one new relationship matches source, target name, level, and currency. |
+| Target identity | Exactly one new relationship matches the actual source, owning primary, target name, level, currency, and all four resolved ledger aliases. |
 | Balance shape | No new physical ALC row exists in either alias. |
-| Journal or Subledger shape | Exactly one matching physical ALC and TARGET row exists in both aliases and the alias rows are semantically equal. |
+| Journal or Subledger shape | Exactly one matching physical ALC and TARGET row exists in both aliases; the alias rows are semantically equal and preserve the actual source accounting-method code, type, and language. |
 | Generated short names | Physical ShortName and relationship TargetLedgerShortName are captured separately and never required to be equal. |
 | Rate policy | Missing-rate action, max days, rate types, translation rules, and initialization values equal the approved preview. |
 | Source role | AlcLedgerTypeCode remains SOURCE or shows only the approved transition from NONE or blank to SOURCE when the physical target was created. |
-| Rules | Only approved target rule rows exist; no display-only Closing Journal row appeared through authoring. |
-| Scope integrity | No unrelated source or target setup changed within the re-export scope. |
+| Rules | Only approved target rule rows exist, with exact relationship-parent keys; no display-only Closing Journal row appeared through authoring. |
+| Scope integrity | Compare every existing row within the scope. Report source-option propagation separately, including its exact before/after values and evidence; unexplained or unapproved deltas keep verification unresolved. |
 | Evidence | Process status and log, approved package checksum, re-export checksum, semantic diff, and validation result are persisted under the project workflow. |
 
 ## Functional Closure Register

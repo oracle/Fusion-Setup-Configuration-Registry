@@ -25,14 +25,17 @@ inputs:
   - "project_context"
   - "setup_task_scope"
   - "setup_data_artifacts"
+  - "post_import_export_observation"
 outputs:
   - "setup_task_plan"
   - "setup_data_routing"
   - "validation_checkpoints"
+  - "persistence_verification"
   - "skill_run_record"
   - "token_usage_record"
 depends_on:
   - "shared.setup-export.task-level-export"
+  - "shared.setup-export.fsm-csv-export"
   - "shared.validation.setup-data-validator"
   - "shared.validation.reference-data-validator"
   - "core.data-loader"
@@ -94,6 +97,7 @@ side_effects:
   - "Writes local preparation artifacts, validation receipts and execution evidence."
   - "Selected read-only GL validation sends one SOAP request using installed core OAuth and byte transport."
   - "Selected GL creation can create one account combination after context-specific workflow approval using installed core OAuth and byte transport."
+  - "Approved post-import verification queries Core import status and starts/downloads a fresh task data export through Shared, recording local evidence."
 required_privileges:
   - "Fusion privileges and OAuth scope authorizing the selected GL AccountCombinationService operation and ledger."
   - "Separately qualified setup export/import privileges for workflows delegated to shared export and core.data-loader."
@@ -162,7 +166,7 @@ Use this task metadata when invoking those skills:
 - For a first-time UI setup of a selected BU, report the source-backed defaulting outcome before preparing an FSM candidate: fixed entity defaults are `GaplessInvNumFlag=N`, `ExpenseAccrualCode=RECEIPT`, `DefaultExchangeRateType=Corporate`, `LiabilityPostLookupCode=NONE`, `MakeRateMandatoryFlag=Y`, `DefaultPmtExchangeRateType=Corporate`, and `MakeRateMandatoryPmtFlag=Y`. The two `Corporate` values are internal entity attributes, not direct CSV headers; do not infer `UserConversionRateType` or `UserDefaultPmtExchangeRateType` from them. Also report the eight conditional Reference Integration account attempts, but never auto-populate their segment fields. The UI only makes those attempts after MOAC access, Payables Invoicing eligibility, and confirmation that no options row exists. The create preview must distinguish these UI defaults from the seven account-segment values that remain explicit, separately validated FSM inputs. See `ora-resource/ora_defaulting_rules.md#standard-defaults`.
 - Source establishes the CSV transport identity: the importer uses `BuName` + `EnterpriseId` to derive the persisted primary key `OrgId`. A candidate still requires a fresh current-data export to prove that this derived target is absent for a create, or present exactly once for an update. Synthetic offline regression values exercise the preparation contract only; they are not proof of environment-valid values or persisted behavior.
 - For an explicitly supplied account-segment string, use `scripts/account_combination_preflight.py` to validate one through 30 supplied segments in the selected ledger. Record its receipt as validation evidence only; it does not prove a portable key or authorize the FSM import. See [SOAP execution delegation](#soap-execution-delegation) for execution and approval requirements.
-- Require a resolver receipt for each supplied import-path reference: `SetCode`, `InternalLocationCode`, the two user conversion-rate type fields, `VatCountryCode`, and every account-segment field. Each receipt binds the operation, field, exact requested value, and resolver context. Do not let a generic receipt validate a different request.
+- Require a resolver receipt for each supplied import-path reference: `SetCode`, `InternalLocationCode`, the two user conversion-rate type fields, `VatCountryCode`, and every account-segment field. Each successful receipt binds the operation, field, exact requested value and the design's `referenceContext` (environment, HTTPS origin, current export SHA-256, run ID and start time), retaining the actual response's `observedAt`. Select context before lookup; current preparation requires a run started within 24 hours. Follow the [receipt binding contract](ora-resource/ora_reference_lookups.md#receipt-binding-contract); never refresh a timestamp or rebind old evidence to make it pass.
 - Validate supplied `ExpenseAccrualCode` and `LiabilityPostLookupCode` against the user-approved fixed choices in `ora_reference_lookups.md#user-approved-fixed-choices`. Normalize a listed UI label or exact code to the CSV code; reject unlisted or blank inputs. These two fields require no live LOV/REST lookup or resolver receipt. Omission preserves the existing update value; first-time UI defaults remain report-only, not automatically inserted into the CSV.
 - Keep `GaplessInvNumFlag` and `MakeRateMandatoryFlag` closed to `Y`/`N`. A nonblank `BuyingCompanyIdentifier` (maximum 10 characters) requires effective `GaplessInvNumFlag=Y`, confirmed by normalized requested values or the fresh current export; blank, missing, or unknown flags do not qualify. This user-required preparation guardrail must not silently enable gapless numbering; clearing the identifier remains allowed. Keep the explicit-clear requirement when switching gapless to `N` and the automatic-offset derived-field prohibition.
 - Treat fields without a task-specific import validator as transport-sanity-only. For those values, enforce the declared CSV type, maximum length, numeric precision, and date syntax, but do not require a current LOV, normalize a label to an unproven code, assume a Boolean encoding, or block on missing DFF metadata. This includes payment method/currency fields, ordinary flags, vendor-number and date-basis fields, tax/bank/match fields, both transaction-effective dates, and Global Attribute Category plus Global Attributes 1–20. Retain the limitation in the preview/reconciliation record: Fusion remains authoritative for deployed DFF, database, and downstream rules.
@@ -172,7 +176,10 @@ Use this task metadata when invoking those skills:
 - The task-owned adapter is offline and non-mutating. It can normalize, build, and validate create and update candidates under the documented preparation contract; fields without product validation receive documented transport sanity only.
 - A successful reference-set receipt must contain the resolved non-null, nonblank `SetId` from the same record as the exact `returnedSetCode`; zero is a valid supplied ID. When a supplemental REST check is inaccessible, use the availability handling below; never invent `SetId` or label the set verified.
 - Package validation accepts only exact terminal success statuses: `COMPLETE`, `COMPLETED`, `SUCCESS`, or `SUCCEEDED` (case-insensitive). Unknown, incomplete, warning, or error statuses stop preparation. Reconciliation requires candidate and persisted export `ProcessEnv` and `ProcessRelease` to equal the baseline before comparing row values.
-- Offline rollback requires a separate `--prerequisites` JSON array. Bind fresh receipts to `RB-OP-001` (and subsequent rollback operation IDs), each restored reference value, and the current export's BU/ledger context. Never reuse or automatically rebind the forward receipts. Stop if current values no longer match the forward requested change. A locally built rollback ZIP is not permission to submit it.
+- Preserve unrequested values and rows in every update; `preserveOtherValues` and `preserveUnspecifiedRows` cannot be disabled. Supply each intended field change explicitly.
+- Use new, distinct paths for reports and generated artifacts; outputs must not overwrite inputs or existing files. A package manifest's environment must match its `ProcessEnv`, and its base URL must be a valid HTTPS origin without a path, query, credentials, or fragment.
+- Reconciliation without a governed export observation reports `PENDING`, even when `comparisonStatus` is `PASS`. Declare saved values verified only when `persistenceVerified` is true. Follow [post-import verification](references/readback-verification.md) to collect and bind the observation to the current target, import request and exact files.
+- Offline rollback requires a separate `--prerequisites` JSON array and `--reference-context` JSON file for the fresh current run and export. Bind fresh receipts to `RB-OP-001` (and subsequent rollback operation IDs), each restored reference value, and the current export's BU/ledger context. Never reuse or automatically rebind the forward receipts. Historical checks of the original forward plan retain identity checks without the 24-hour preparation limit; new rollback preparation still requires fresh evidence. Stop if current values no longer match the forward requested change. A locally built rollback ZIP is not permission to submit it.
 
 ### Unavailable Additional REST Checks
 

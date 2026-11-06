@@ -53,8 +53,11 @@ For existing mappings, defer retained values/relationships to the fresh
 baseline rather than requiring the implementor to re-enter them. No baseline
 check can be skipped merely because local parsing passed.
 
-The workbook deliberately captures no account, tax, or project data. Normalize
-its current contract to v1.5: account references, `TaxClassificationCode`, and
+The workbook accepts optional Expense Type Account (`account_number`) as text.
+Resolve LedgerName automatically from the BU primary ledger; serialize the
+account number as Segment1. Blank Edit accounts preserve existing values.
+The workbook captures no tax or project data. Normalize
+its current contract to v1.5: `TaxClassificationCode` and
 `TaxProductCategoryCode` are null; `EnableProjectsFlag` is `N`,
 `RcptRequiredProjFlag` is `N`, and `ExpenditureTypeName` is blank for each
 imported expense type. Do not accept a Project Expenditure Mappings sheet,
@@ -115,7 +118,8 @@ each identity. For existing identities omit blank keys and convert permitted
 Clear to null. Normalize a selected field-behavior `Blank` to the same omitted
 key before this check. For new identities, require every create-required value.
 Map
-dotted receipt/behavior keys into nested objects, and map the account/tax/project
+dotted receipt/behavior keys into nested objects, retain supplied account_number,
+and map the tax/project
 defaults described above into the v1.5 execution design. Persist the derived
 operation outside the workbook rows. Separate target-resolved create-template
 and edit-template batches as required by the builder. Retain issue/source

@@ -1,0 +1,546 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "ORA_MSC_CONFIGURE_REMAINING_SHELF_LIFE_RULE",
+      "task_name": "Configure Remaining Shelf Life Rule",
+      "start_node": "MRSL.DEFAULT_DATALOADER_REQUEST_FIELDS",
+      "nodes": [
+        {
+          "id": "MRSL.DEFAULT_DATALOADER_REQUEST_FIELDS",
+          "node_type": "decision",
+          "sequence": 1,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "defaulted": "MRSL.DEFAULT_DEMAND_ANCHOR_DATE_TYPE",
+            "unchanged": "MRSL.DEFAULT_DEMAND_ANCHOR_DATE_TYPE",
+            "blocked": "MRSL.HANDLE_FAILURE"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "For every declared header or detail mutation, require the owning skill to generate exactly one RemainingShelfLifeRuleId per complete request in the existing Data Loader schema required format during preparation and propagate that same retained request value across all sheets and populated parent/child records before capture. Do not ask the user for it or generate separate per-sheet, component, file, parent, or record values. For captured sources, validate prior preparation and the retained canonical generation context without generating, propagating, or changing any captured value; missing context or incomplete/conflicting preparation returns blocked for corrected preparation, a fresh validation session, and fresh approval. Require POST RestAction in every populated component and POST mutation HTTP method. For the selected creation flow, also require the populated remainingShelfLifeRest parent and its Content-Type and REST-Framework-Version defaults.",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 28
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MRSL.DEFAULT_DEMAND_ANCHOR_DATE_TYPE",
+          "node_type": "decision",
+          "sequence": 5,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "defaulted": "MRSL.RESOLVE_RULE_HEADER",
+            "unchanged": "MRSL.RESOLVE_RULE_HEADER",
+            "blocked": "MRSL.HANDLE_FAILURE"
+          },
+          "prerequisites": [
+            "MRSL.DEFAULT_DATALOADER_REQUEST_FIELDS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Evaluate the create-only anchor-date default after request-field defaulting and before input validation; use Arrival only for a confirmed rule-header create flow with missing or blank DemandAnchorDateType. Return unchanged for every header update without defaulting any omitted business header attribute, including a description-only or catalog-only update.",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 29
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MRSL.RESOLVE_RULE_HEADER",
+          "node_type": "decision",
+          "sequence": 6,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "MRSL.LIST_RULE_DETAILS",
+            "not_applicable": "MRSL.LIST_RULE_DETAILS",
+            "missing": "MRSL.HANDLE_FAILURE",
+            "blocked": "MRSL.HANDLE_FAILURE",
+            "failure": "MRSL.HANDLE_FAILURE"
+          },
+          "prerequisites": [
+            "MRSL.DEFAULT_DEMAND_ANCHOR_DATE_TYPE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Use resolve_mrsl_rule_header when existing header information is requested by MRSLRuleName or existing named-rule context is needed by the owning workflow. Require unique header identity and consistency before retrieving children. Otherwise return not_applicable; a create-only name does not require an existing header. Apply Controlled query recovery in Lookup Execution Rules only to eligible GET syntax/type errors before choosing the existing resolver outcome; retain original failure and validation evidence.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 75
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MRSL.LIST_RULE_DETAILS",
+          "node_type": "decision",
+          "sequence": 7,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "listed": "MRSL.VALIDATE_INPUT",
+            "not_applicable": "MRSL.VALIDATE_INPUT",
+            "missing": "MRSL.HANDLE_FAILURE",
+            "blocked": "MRSL.HANDLE_FAILURE",
+            "failure": "MRSL.HANDLE_FAILURE"
+          },
+          "prerequisites": [
+            "MRSL.RESOLVE_RULE_HEADER"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Use list_mrsl_rule_details when detail information or existing-detail context is required. Require the resolved or independently validated parent identity, with successful name resolution whenever a name was supplied. Return all pages, including a valid empty collection; do not select a mutation target from the first result. Otherwise return not_applicable without a child request. Apply Controlled query recovery in Lookup Execution Rules only to eligible GET syntax/type errors before choosing the existing resolver outcome; retain original failure and validation evidence.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 76
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MRSL.VALIDATE_INPUT",
+          "node_type": "decision",
+          "sequence": 10,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "pass": "MRSL.RESOLVE_DEMAND_ANCHOR_DATE_TYPE",
+            "missing": "MRSL.HANDLE_FAILURE",
+            "invalid": "MRSL.HANDLE_FAILURE",
+            "blocked": "MRSL.HANDLE_FAILURE"
+          },
+          "prerequisites": [
+            "MRSL.LIST_RULE_DETAILS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "For every declared header or detail mutation, require the retained canonical RemainingShelfLifeRuleId generated once by the owning skill for the complete request before capture. Require its schema-valid format and exact equality in every populated parent and child record across all sheets and source files within the request, together with valid parent-child linkage. Missing generation context, missing/blank values, any different value, invalid format, or failed/ambiguous linkage blocks preview and submission for create, update, delete, and detail-only flows. Do not ask the user for this skill-generated field or generate/repair it during captured-source validation. Validate POST RestAction in every populated component and POST mutation HTTP method against the owning executor's declared request contract and any method setting it actually captures. For header updates, require an unambiguous existing target and explicit requested-field set; validate requested values without requiring omitted header attributes. Require the target-header catalog for every Category-level assignment, regardless of direct CategoryId input or category-name lookup applicability; block the request if that catalog is missing or a requested detail's assignment scope is unresolved. Apply header-creation request fields and other concrete field checks only when their stated scope applies, after preparation and any eligible create-only anchor default. For effective AssignmentType 7, 8, 17, or 18, apply the Region assignment location alternatives presence check per affected detail before lookup: require geography or zone details and accept either alone without requiring the other. Other assignment scopes retain their required-input contracts. For customer-site code inputs, require validated CustomerId input for the same detail; direct CustomerId satisfies the prerequisite without CustomerName, while a supplied name must resolve to the same ID. Any prepared source must already have passed owning Data Loader schema and relationship checks.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 114
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MRSL.RESOLVE_DEMAND_ANCHOR_DATE_TYPE",
+          "node_type": "decision",
+          "sequence": 15,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "MRSL.RESOLVE_DEMAND_CLASS",
+            "not_applicable": "MRSL.RESOLVE_DEMAND_CLASS",
+            "missing": "MRSL.HANDLE_FAILURE",
+            "blocked": "MRSL.HANDLE_FAILURE",
+            "failure": "MRSL.HANDLE_FAILURE"
+          },
+          "prerequisites": [
+            "MRSL.VALIDATE_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Require resolve_mrsl_demand_anchor_date_type for header creation or an explicitly requested anchor-date header update and compare the captured requested value with its resolved code. For header updates omitting this attribute, including description-only or catalog-only updates, and other inapplicable operations, return not_applicable without a request; retained current values do not trigger lookup or defaulting. Apply Controlled query recovery in Lookup Execution Rules only to eligible GET syntax/type errors before choosing the existing resolver outcome; retain original failure and validation evidence.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 77
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MRSL.RESOLVE_DEMAND_CLASS",
+          "node_type": "decision",
+          "sequence": 16,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "MRSL.RESOLVE_CATEGORY_SET",
+            "not_applicable": "MRSL.RESOLVE_CATEGORY_SET",
+            "missing": "MRSL.HANDLE_FAILURE",
+            "blocked": "MRSL.HANDLE_FAILURE",
+            "failure": "MRSL.HANDLE_FAILURE"
+          },
+          "prerequisites": [
+            "MRSL.RESOLVE_DEMAND_ANCHOR_DATE_TYPE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Require the exact Meaning q filter from resolve_mrsl_demand_class and preserve its finder scope on every request; rejected, ignored or incomplete filtering blocks. Use resolve_mrsl_demand_class whenever the user provides Meaning for Demand Class for a supported detail operation; require the corresponding prepared or captured DemandClass to contain the resolved code. Use one response without offset or pagination. When no meaning is supplied, return not_applicable without a lookup and retain existing required-input checks. Apply Controlled query recovery in Lookup Execution Rules only to eligible GET syntax/type errors before choosing the existing resolver outcome; retain original failure and validation evidence.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 78
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MRSL.RESOLVE_CATEGORY_SET",
+          "node_type": "decision",
+          "sequence": 17,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "MRSL.RESOLVE_INVENTORY_ITEM",
+            "not_applicable": "MRSL.RESOLVE_INVENTORY_ITEM",
+            "missing": "MRSL.HANDLE_FAILURE",
+            "blocked": "MRSL.HANDLE_FAILURE",
+            "failure": "MRSL.HANDLE_FAILURE"
+          },
+          "prerequisites": [
+            "MRSL.RESOLVE_DEMAND_CLASS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Require the exact CategorySetName q filter from resolve_mrsl_category_set and preserve its finder scope on every request; rejected, ignored or incomplete filtering blocks. Use resolve_mrsl_category_set when Catalog or CategorySetName is supplied as applicable input for a supported operation. For header updates, run only for an explicitly requested catalog change; retained current catalog names do not trigger this lookup. For authorized header creation or an explicitly requested catalog update, require the resolved requested ID to match the corresponding authorized prepared or captured rule.CategorySetId. For detail-only operations, require that resolved ID to match CategorySetId in the selected validated existing header, retained as read-only lookup context; block missing, invalid, ambiguous, or mismatching header catalog evidence without requiring a rule record or changing the header. Otherwise return not_applicable while retaining the independent Category-level header catalog validation from MRSL.VALIDATE_INPUT and existing optional-field rules for other scopes. Apply Controlled query recovery in Lookup Execution Rules only to eligible GET syntax/type errors before choosing the existing resolver outcome; retain original failure and validation evidence.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 79
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MRSL.RESOLVE_INVENTORY_ITEM",
+          "node_type": "decision",
+          "sequence": 18,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "MRSL.RESOLVE_ORGANIZATION",
+            "not_applicable": "MRSL.RESOLVE_ORGANIZATION",
+            "missing": "MRSL.HANDLE_FAILURE",
+            "blocked": "MRSL.HANDLE_FAILURE",
+            "failure": "MRSL.HANDLE_FAILURE"
+          },
+          "prerequisites": [
+            "MRSL.RESOLVE_CATEGORY_SET"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Use resolve_mrsl_inventory_item when the user supplies Item or ItemName as an item name for a supported detail operation. Send the supplied trimmed ItemName as the exact q=ItemName='<ItemName>' filter through resolve_mrsl_inventory_item, preserving query-literal escaping and shared-client URL encoding. Require one complete matching item response and returned InventoryItemId to match the corresponding prepared or captured InventoryItemId. Rejected, ignored or incomplete filtering blocks. For an Item/Organization assignment with supplied OrganizationCode or Organization Code, require ItemName and successful item-endpoint resolution before organization lookup; missing ItemName blocks even when a direct InventoryItemId was supplied. Otherwise, if no item name is supplied, return not_applicable without a lookup and preserve existing Item requiredness and explicit ID inputs. Apply Controlled query recovery in Lookup Execution Rules only to eligible GET syntax/type errors before choosing the existing resolver outcome; retain original failure and validation evidence.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 80
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MRSL.RESOLVE_ORGANIZATION",
+          "node_type": "decision",
+          "sequence": 19,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "MRSL.RESOLVE_CATEGORY",
+            "not_applicable": "MRSL.RESOLVE_CATEGORY",
+            "missing": "MRSL.HANDLE_FAILURE",
+            "blocked": "MRSL.HANDLE_FAILURE",
+            "failure": "MRSL.HANDLE_FAILURE"
+          },
+          "prerequisites": [
+            "MRSL.RESOLVE_INVENTORY_ITEM"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Require the exact OrganizationCode q filter from resolve_mrsl_inventory_organization and preserve its finder scope on every request; rejected, ignored or incomplete filtering blocks. Use resolve_mrsl_inventory_organization when the user supplies Organization Code or OrganizationCode for a supported detail operation. For Item/Organization assignments use the InventoryItemId freshly returned by resolve_mrsl_inventory_item for that detail as bItemId; for Category/Organization assignments use null, serialized as an empty bItemId bind. Block unresolved scope or missing/conflicting item evidence before the request. Require the returned ID to match the corresponding prepared or captured OrganizationId. If no organization code is supplied, return not_applicable without a lookup and preserve existing organization-required scopes and explicit ID inputs. Apply Controlled query recovery in Lookup Execution Rules only to eligible GET syntax/type errors before choosing the existing resolver outcome; retain original failure and validation evidence.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 81
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MRSL.RESOLVE_CATEGORY",
+          "node_type": "decision",
+          "sequence": 20,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "MRSL.RESOLVE_CUSTOMER",
+            "not_applicable": "MRSL.RESOLVE_CUSTOMER",
+            "missing": "MRSL.HANDLE_FAILURE",
+            "blocked": "MRSL.HANDLE_FAILURE",
+            "failure": "MRSL.HANDLE_FAILURE"
+          },
+          "prerequisites": [
+            "MRSL.RESOLVE_ORGANIZATION"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Require the exact CategoryName q filter from resolve_mrsl_item_category and preserve its finder scope on every request; rejected, ignored or incomplete filtering blocks. Use resolve_mrsl_item_category when the user supplies Category or CategoryName as a category name for a supported detail operation. Require the selected target header and its CategorySetId before the scoped category request, retain header evidence, and compare returned CategoryId with the corresponding prepared or captured detail. If no category name is supplied, return not_applicable without this lookup, preserve explicit ID inputs, and retain the independently required Category-level header catalog validation from MRSL.VALIDATE_INPUT. Apply Controlled query recovery in Lookup Execution Rules only to eligible GET syntax/type errors before choosing the existing resolver outcome; retain original failure and validation evidence.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 82
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MRSL.RESOLVE_CUSTOMER",
+          "node_type": "decision",
+          "sequence": 21,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "MRSL.RESOLVE_CUSTOMER_SITE",
+            "not_applicable": "MRSL.RESOLVE_CUSTOMER_SITE",
+            "missing": "MRSL.HANDLE_FAILURE",
+            "blocked": "MRSL.HANDLE_FAILURE",
+            "failure": "MRSL.HANDLE_FAILURE"
+          },
+          "prerequisites": [
+            "MRSL.RESOLVE_CATEGORY"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Require the exact CustomerName q filter and preserved finder scope through resolve_mrsl_customer. Fetch and display only the first 25 matches initially. With hasMore=true, offer Next 25 and await the user's explicit navigation request; do not prefetch, fetch all pages, or show a cumulative unbounded candidate list. Resolve from an explicit uniquely identified displayed record without requiring unseen pages; retain stable page, option and selected-identity evidence and compare with prepared or captured CustomerId. Auto-resolve only one matching initial-page record with hasMore=false. Revalidate the selected page and identity, not the entire collection. Missing selection, requested-page failure, invalid metadata, ignored filtering or changed selected identity blocks; unread pages alone do not. With no name return not_applicable and preserve direct-ID input. Never use PartyNumber as CustomerId.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 83
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MRSL.RESOLVE_CUSTOMER_SITE",
+          "node_type": "decision",
+          "sequence": 22,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "MRSL.RESOLVE_GEOGRAPHY",
+            "not_applicable": "MRSL.RESOLVE_GEOGRAPHY",
+            "missing": "MRSL.HANDLE_FAILURE",
+            "blocked": "MRSL.HANDLE_FAILURE",
+            "failure": "MRSL.HANDLE_FAILURE"
+          },
+          "prerequisites": [
+            "MRSL.RESOLVE_CUSTOMER"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Require the exact CustomerSiteCode q filter from resolve_mrsl_customer_site and preserve its finder scope on every request; rejected, ignored or incomplete filtering blocks. Use resolve_mrsl_customer_site when CustomerSiteCode or Customer Site Code is supplied. Require validated input CustomerId for the same detail, supplied directly or resolved from CustomerName, and matching prepared or captured CustomerId. Bind it as bCustomerId and compare the single-response output to detail.CustomerSiteId. CustomerName is optional when CustomerId is supplied. Missing/invalid/conflicting customer input blocks before the site request. With no site code return not_applicable and retain existing site requiredness and explicit ID inputs. Do not paginate.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 84
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MRSL.RESOLVE_GEOGRAPHY",
+          "node_type": "decision",
+          "sequence": 23,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "MRSL.RESOLVE_ZONE",
+            "not_applicable": "MRSL.RESOLVE_ZONE",
+            "missing": "MRSL.HANDLE_FAILURE",
+            "blocked": "MRSL.HANDLE_FAILURE",
+            "failure": "MRSL.HANDLE_FAILURE"
+          },
+          "prerequisites": [
+            "MRSL.RESOLVE_CUSTOMER_SITE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Use resolve_mrsl_geography for a supplied Region name, retaining the addressGeographies exact name filter and GeographyLevel5Value projection. Initially fetch/display only 25 records at offset=0. When hasMore=true offer Next 25 and wait for explicit navigation before another request; never prefetch or display an unbounded cumulative list. Accept an explicit uniquely identified displayed hierarchy record without requiring unseen pages. Preserve same-ID hierarchy variants, stable option mapping and selected-page identity. Auto-resolve only the sole initial-page match with hasMore=false. Revalidate the selected page and full hierarchy identity and compare GeographyIdentifierId with the registered prepared/captured region field. Failed requested pages, ignored filters, invalid metadata, ambiguous choice or changed selected hierarchy blocks; unread pages alone do not. Zone-only details for types 7, 8, 17 and 18 skip this lookup.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 85
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MRSL.RESOLVE_ZONE",
+          "node_type": "decision",
+          "sequence": 24,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "MRSL.ENFORCE_DETAIL_OBJECT",
+            "not_applicable": "MRSL.ENFORCE_DETAIL_OBJECT",
+            "missing": "MRSL.HANDLE_FAILURE",
+            "blocked": "MRSL.HANDLE_FAILURE",
+            "failure": "MRSL.HANDLE_FAILURE"
+          },
+          "prerequisites": [
+            "MRSL.RESOLVE_GEOGRAPHY"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Use resolve_mrsl_zone for a supplied Zone name, retaining the exact geoZones name filter and ZoneId/ZoneName/ZoneCode/ZoneType/ZoneCategory projection. Initially fetch/display at most 25 matches at offset=0. If hasMore=true offer Next 25 and await explicit navigation before fetching another page; never prefetch or display an unbounded cumulative list. A valid explicit displayed-record choice resolves without unseen pages. Auto-resolve only a sole initial-page match with hasMore=false; a sole later-page record requires choice. Retain stable option/page mapping and selected ZoneId/code/type/category identity, revalidate that selected page and compare ZoneId with the registered prepared/captured field. Failed requested pages, invalid metadata, ignored filtering, ambiguous choice or changed identity blocks; unread pages alone do not. Region-only details for types 7, 8, 17 and 18 skip this lookup. Only a valid empty initial page with hasMore=false returns INVALID ZONE.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 86
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MRSL.ENFORCE_DETAIL_OBJECT",
+          "node_type": "decision",
+          "sequence": 25,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "pass": "MRSL.CHECK_EXECUTION_READINESS",
+            "blocked": "MRSL.HANDLE_FAILURE"
+          },
+          "prerequisites": [
+            "MRSL.RESOLVE_ZONE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Enforce the Zone selection identity rule whenever the zone resolver applies and require its sole complete initial-page or explicit displayed-record ZoneId selection evidence before preview; unread pages do not block a valid explicit choice. Enforce at most one new rule header across the complete request and prepared sources, the rule-object header-create/update restriction, and every requested detail operation's required object. For an existing header update, allow any explicitly requested nonempty subset of Description, DemandAnchorDateType, and CategorySetId and require proven omission or exact verified unchanged values for every unrequested transmitted header attribute. Block unauthorized changes, ambiguous blank/null serialization, missing or stale preservation evidence, and captured-source edits before preview and submission. Pass without a detail-object requirement for header-only creation or update. Use the selected existing execution contract.",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 42
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MRSL.CHECK_EXECUTION_READINESS",
+          "node_type": "decision",
+          "sequence": 30,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "MRSL.VALIDATION_COMPLETE",
+            "blocked": "MRSL.HANDLE_FAILURE"
+          },
+          "prerequisites": [
+            "MRSL.ENFORCE_DETAIL_OBJECT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Require passed object-selection and header-preservation enforcement and all applicable input checks, including the retained canonical RemainingShelfLifeRuleId automatically generated once per complete request before capture, its existing Data Loader schema format, exact equality in every populated parent and child record across all request sheets and source files, and valid corresponding-parent linkage for every supported operation. Missing generation context, missing/blank values, invalid format, any different value, or failed linkage prevents preview and submission; Task Hook must not generate or modify captured values. For header updates, require the validated existing target, explicit requested-field set, and proven omission or verified unchanged-value evidence for every unrequested transmitted header attribute. Require the POST RestAction and mutation HTTP method checks for every declared mutation and the input-validation header catalog check for every Category-level assignment, even with direct CategoryId input or skipped catalog/category-name lookups. Require uniquely resolved anchor-date output only for header creation or explicitly requested anchor-date updates, resolved Demand Class code output matching the prepared detail when the user supplies a meaning, resolved category-set ID when the catalog-name resolver applies, matching the corresponding authorized prepared rule.CategorySetId for header creation or an explicitly requested catalog update, or matching CategorySetId in the selected validated existing header for detail-only operations without requiring a rule record or changing the header; missing, invalid, ambiguous, or mismatching detail-only header catalog evidence blocks readiness, resolved item ID when an item name is supplied matching the corresponding prepared detail.InventoryItemId, resolved organization ID when an organization code is supplied matching the corresponding prepared detail.OrganizationId, resolved customer ID when a customer name is supplied matching the corresponding prepared detail.CustomerId using the declared CustomerName-filtered on-demand pages, with a valid explicit displayed-record selection or a sole initial-page match with hasMore=false; retain selected-page identity and option evidence. Unread pages do not block an explicit selection, while failed requested pages, invalid metadata or changed selected identity do block, resolved customer-site ID when a site code is supplied matching the corresponding prepared detail.CustomerSiteId and scoped by validated input CustomerId matching detail.CustomerId; a direct CustomerId is sufficient without CustomerName, and resolved category ID when a category name is supplied matching the corresponding prepared detail.CategoryId with the resolver's target-header catalog evidence satisfied. Retained existing anchor or catalog context does not require those lookups for a description-only update. Require uniquely resolved geography/region ID output from resolve_mrsl_geography when a geography or region name is supplied, matching the corresponding prepared or captured registered detail ID field. Require valid Region displayed-page selection evidence, including page context and hierarchy through GeographyLevel5Value; only a sole initial-page record with hasMore=false may auto-resolve. Unread pages do not block an explicit displayed-record choice. Missing/ambiguous selection, failed requested Region pages, invalid metadata, changed selected hierarchy, unclear Region/Zone branch, supplied-ID conflict or unavailable registered field mapping blocks readiness. Require uniquely resolved eligible zone_id output from resolve_mrsl_zone whenever a zone name is supplied, matching the corresponding prepared or captured registered detail zone ID field and satisfying the Zone selection identity rule with a valid explicit displayed-record choice or a sole initial-page record with hasMore=false. Retain page context and selected ZoneId/code/type/category identity. Unread pages do not block explicit selection; INVALID ZONE, failed requested pages, invalid metadata, unresolved choice, changed identity, supplied-ID conflict or unavailable field mapping blocks readiness. For effective AssignmentType 7, 8, 17, or 18 only, require the Region assignment location alternatives validation and successful ID derivation for each supplied branch: geography details require the geography resolver output; zone details require the zone resolver output. Either branch alone satisfies the location requirement; do not require output from an absent branch. If both are supplied, both applicable resolver validations must pass. Missing or unresolved location details block readiness. Require unique consistent existing header context from resolve_mrsl_rule_header when applicable and complete parent-scoped detail retrieval from list_mrsl_rule_details when applicable. Missing or ambiguous existing targets and incomplete reads block readiness; a complete empty detail collection is not itself a failed read. Require passed Data Loader source validation when preparing a load, a matching active project/runbook binding, and the owning Data Loader preview/approval workflow. Return validation readiness only; current approval is required separately before submission.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 52
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MRSL.VALIDATION_COMPLETE",
+          "node_type": "terminal",
+          "sequence": 40,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "MRSL.CHECK_EXECUTION_READINESS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return validated task-rule results to the caller; this terminal neither submits data nor marks the Run Book task completed",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 53
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MRSL.HANDLE_FAILURE",
+          "node_type": "step",
+          "sequence": 90,
+          "action_type": "error_handler",
+          "execution_route": "local",
+          "transitions": {
+            "reported": "MRSL.RETURN_ISSUES"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "An upstream validation, enforcement, or readiness node reports a failure or blocking gap",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 54
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MRSL.RETURN_ISSUES",
+          "node_type": "terminal",
+          "sequence": 100,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "MRSL.HANDLE_FAILURE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return unresolved inputs, authoring blockers, or failure diagnostics without a write",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 55
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

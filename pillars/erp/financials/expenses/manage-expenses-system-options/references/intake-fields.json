@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "workbook_sheets": ["User Options", "Corporate Options", "Processing Options", "Field Guide"],
   "global_business_unit": "All Business Units",
   "inherit_all": "Use setup from all business units",
@@ -14,7 +14,7 @@
         {"key":"enable_payment_method","header":"Enable Payment Method","kind":"yes_no","source":"EXM_SETUP_OPTION","code":"ENABLE_PAYMENT_METHOD","mapping":"confirmed"},
         {"key":"allow_reimbursement_currency_selection","header":"Allow Reimbursement Currency Selection","kind":"yes_no","source":"EXM_SETUP_OPTION","code":"ENABLE_REIMB_CURRENCY","mapping":"confirmed"},
         {"key":"allowed_currencies","header":"Allowed Currencies","kind":"currency_list","source":null,"code":null,"mapping":"unmapped"},
-        {"key":"enable_attachments","header":"Enable Attachments","kind":"enum","source":"EXM_SETUP_OPTION","code":"ENABLE_ATTACHMENTS","mapping":"confirmed","choices":[{"label":"Both Header and Lines","code":"B"},{"label":"Header Only","code":null},{"label":"Lines required","code":null},{"label":"No","code":null}],"observed_codes":["B","N"],"options_complete":true},
+        {"key":"enable_attachments","header":"Enable Attachments","kind":"enum","source":"EXM_SETUP_OPTION","code":"ENABLE_ATTACHMENTS","mapping":"confirmed","lookup_type":"EXM_ENABLE_ATTACHMENTS","choices":[{"label":"Both Header and Lines","code":"B"},{"label":"Header Only","code":"H"},{"label":"Lines required","code":"L"},{"label":"No","code":"N"}],"options_complete":true},
         {"key":"allow_overriding_approver","header":"Allow Overriding Approver","kind":"yes_no","source":"EXM_SETUP_OPTION","code":"ENABLE_OVERRIDE_APPROVER","mapping":"confirmed"},
         {"key":"enable_travel","header":"Enable Travel","kind":"yes_no","source":"EXM_SETUP_OPTION","code":"ENABLE_TRAVEL","mapping":"confirmed"},
         {"key":"enable_recurring_expenses","header":"Enable Recurring Expenses","kind":"yes_no","source":"EXM_SETUP_OPTION","code":"ENABLE_RECUR_EXP","mapping":"confirmed"},
@@ -27,7 +27,7 @@
       "sheet": "Corporate Options",
       "fields": [
         {"key":"default_report_owner_as_attendee","header":"Enable Default the Report Owner as Attendee","kind":"yes_no","source":"EXM_SETUP_OPTION","code":"ENABLE_DFLT_RPT_OWNER","mapping":"confirmed"},
-        {"key":"expense_location_level","header":"Enable Expense Location Level","kind":"enum","source":"EXM_SETUP_OPTION","code":"ENABLE_LOCATION_LEVELS","mapping":"confirmed","choices":[{"label":"All Locations","code":"ORA_EXM_ALL"},{"label":"Country","code":null},{"label":"Country and State or Province","code":null}],"observed_codes":["ORA_EXM_ALL","ORA_EXM_ONE","ORA_EXM_TWO"],"options_complete":true},
+        {"key":"expense_location_level","header":"Enable Expense Location Level","kind":"enum","source":"EXM_SETUP_OPTION","code":"ENABLE_LOCATION_LEVELS","mapping":"confirmed","lookup_type":"ORA_EXM_ENABLE_LOCATION_LEVELS","choices":[{"label":"All Locations","code":"ORA_EXM_ALL"},{"label":"Country","code":"ORA_EXM_ONE"},{"label":"Country and State or Province","code":"ORA_EXM_TWO"}],"options_complete":true},
         {"key":"display_bar_code","header":"Display Bar Code","kind":"yes_no","source":"EXM_SETUP_OPTION","code":"ENABLE_BAR_CODE","mapping":"confirmed"},
         {"key":"require_project_fields","header":"Require Project Fields for Project Users","kind":"yes_no","source":"EXM_SETUP_OPTION","code":"ENABLE_PROJECT_FIELDS","mapping":"confirmed"},
         {"key":"enable_descriptive_flexfields","header":"Enable Descriptive Flexfields","kind":"yes_no","source":"EXM_SETUP_OPTION","code":"ENABLE_DFF","mapping":"confirmed"},
@@ -49,11 +49,11 @@
     {
       "sheet": "Processing Options",
       "fields": [
-        {"key":"payment_notification_to_employee","header":"Enable Payment Notification to Employee","kind":"enum","source":"EXM_SETUP_OPTION","code":"ENABLE_PMT_NOTIFICATION","mapping":"confirmed","choices":[{"label":"Card issuer and employee are paid","code":null},{"label":"Card issuer is paid","code":null},{"label":"Employee is paid","code":null},{"label":"No","code":"N"}],"observed_codes":["N","BOTH"],"options_complete":true},
+        {"key":"payment_notification_to_employee","header":"Enable Payment Notification to Employee","kind":"enum","source":"EXM_SETUP_OPTION","code":"ENABLE_PMT_NOTIFICATION","mapping":"confirmed","lookup_type":"EXM_ENABLE_PMT_NOTIFICATION","choices":[{"label":"Card issuer and employee are paid","code":"BOTH"},{"label":"Card issuer is paid","code":"CARDPROVIDER"},{"label":"Employee is paid","code":"EMPLOYEE"},{"label":"No","code":"N"}],"options_complete":true},
         {"key":"automatic_travel_report_creation","header":"Enable Automatic Travel Expense Report Creation","kind":"yes_no","source":"EXM_SETUP_OPTION","code":"ENABLE_AUTO_CREATION","mapping":"confirmed"},
-        {"key":"expense_report_audit_approval","header":"Expense Report Audit Approval","kind":"enum","source":"EXM_SETUP_OPTION","code":"ENABLE_AUDIT_APPROVAL","mapping":"confirmed","choices":[{"label":"After manager approval","code":null},{"label":"In parallel with manager approval","code":"BEFORE_MGR_APPROVAL"}],"observed_codes":["BEFORE_MGR_APPROVAL","AFTER_MGR_APPROVAL"],"options_complete":true},
+        {"key":"expense_report_audit_approval","header":"Expense Report Audit Approval","kind":"enum","source":"EXM_SETUP_OPTION","code":"ENABLE_AUDIT_APPROVAL","mapping":"confirmed","lookup_type":"EXM_ENABLE_AUDIT_APPROVAL","choices":[{"label":"After manager approval","code":"AFTER_MGR_APPROVAL"},{"label":"In parallel with manager approval","code":"BEFORE_MGR_APPROVAL"}],"options_complete":true},
         {"key":"processing_days_after_termination","header":"Processing Days Allowed After Termination","kind":"nonnegative_integer","source":"EXM_ORG_SETTING","code":"DAYS_ALLOWED_AFTER_TERMIN","mapping":"confirmed"},
-        {"key":"pay_expense_reports_through","header":"Pay Expense Reports Through","kind":"enum","scope":"global","source":"EXM_SETUP_OPTION","code":"ENABLE_REIMB_OPTION","mapping":"confirmed","choices":[{"label":"Payables","code":"ORACLE_FUSION_PAYABLES"},{"label":"Third Party","code":null}],"observed_codes":["ORACLE_FUSION_PAYABLES"],"options_complete":true},
+        {"key":"pay_expense_reports_through","header":"Pay Expense Reports Through","kind":"enum","scope":"global","source":"EXM_SETUP_OPTION","code":"ENABLE_REIMB_OPTION","mapping":"confirmed","lookup_type":"EXM_ENABLE_REIMB_OPTION","choices":[{"label":"Payables","code":"ORACLE_FUSION_PAYABLES"},{"label":"Third Party","code":"THIRD_PARTY_APPLICATION"}],"options_complete":true},
         {"key":"employee_liability_account","header":"Employee Liability Account","kind":"account_reference","scope":"specific","source":"EXM_ORG_SETTING","code":"EMPLOYEE_LIABILITY_ACCT","mapping":"confirmed"},
         {"key":"inactive_employee_grace_days","header":"Inactive Employee Grace Period in Days","kind":"nonnegative_integer","source":"EXM_ORG_SETTING","code":"INACTIVE_EMPLOYEE_GRACE_PERIOD","mapping":"confirmed"},
         {"key":"negative_report_pay_group","header":"Pay Group for Negative Expense Reports","kind":"reference","source":"EXM_SETUP_OPTION","code":"ENABLE_PAYGROUP","mapping":"candidate"}

@@ -23,7 +23,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 15
+            "line": 23
           }
         },
         {
@@ -44,7 +44,7 @@
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 13
+            "line": 19
           }
         },
         {
@@ -61,11 +61,11 @@
             "MJR.DEPENDENCY"
           ],
           "on_failure": "stop",
-          "applies_when": "Before building the immutable Data Loader import preview.",
+          "applies_when": "After archive validation; resolve the optional checkup choice and outcome before the Data Loader handoff.",
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 14
+            "line": 32
           }
         },
         {
@@ -86,7 +86,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 15
+            "line": 20
           }
         },
         {
@@ -104,7 +104,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 16
+            "line": 21
           }
         },
         {
@@ -120,7 +120,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 17
+            "line": 22
           }
         }
       ],

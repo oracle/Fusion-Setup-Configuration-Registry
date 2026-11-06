@@ -1,0 +1,562 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fdos.oracle.example/schemas/implementation-validation-run.schema.json",
+  "title": "Implementation Validation Run",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "project_id",
+    "run_id",
+    "stage",
+    "environment",
+    "started_at",
+    "request",
+    "scope",
+    "scope_ref",
+    "requirement_version",
+    "redaction_reviewed",
+    "requirements",
+    "tasks",
+    "checks",
+    "decisions",
+    "recommendations",
+    "limitations",
+    "errors"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "project_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,119}$"
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,119}$"
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "implementation-review",
+        "transactional-validation"
+      ]
+    },
+    "environment": {
+      "type": "string",
+      "minLength": 1
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "request": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scope": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scope_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "requirement_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "redaction_reviewed": {
+      "const": true
+    },
+    "requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requirement_id",
+          "description",
+          "source_ref",
+          "expected_setup",
+          "task_refs",
+          "check_ids",
+          "owner",
+          "required"
+        ],
+        "properties": {
+          "requirement_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9._-]{0,119}$"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expected_setup": {
+            "type": "string",
+            "minLength": 1
+          },
+          "task_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "check_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "owner": {
+            "type": "string",
+            "minLength": 1
+          },
+          "required": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "task_id",
+          "title",
+          "status",
+          "source_ref",
+          "captured_at",
+          "environment",
+          "evidence_current",
+          "details",
+          "owner"
+        ],
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "completed",
+              "partial",
+              "failed",
+              "pending",
+              "unknown",
+              "not-applicable"
+            ]
+          },
+          "source_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "captured_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "environment": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence_current": {
+            "type": "boolean"
+          },
+          "details": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string",
+            "minLength": 1
+          },
+          "completed_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Source-recorded completion timestamp for the current completed task state, including timezone. Null or omitted when unavailable; never substitute captured_at."
+          }
+        }
+      }
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "result_id",
+          "check_id",
+          "check_version",
+          "title",
+          "owner",
+          "required",
+          "blocking",
+          "requirement_refs",
+          "task_refs",
+          "source_ref",
+          "status",
+          "method",
+          "environment",
+          "observed_at",
+          "evidence_current",
+          "reason",
+          "assertions",
+          "evidence_refs",
+          "performed_by",
+          "next_action"
+        ],
+        "properties": {
+          "result_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9._-]{0,119}$"
+          },
+          "check_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9._-]{0,119}$"
+          },
+          "check_version": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "owner": {
+            "type": "string",
+            "minLength": 1
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "blocking": {
+            "type": "boolean"
+          },
+          "requirement_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "task_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "source_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PASS",
+              "FAIL",
+              "BLOCKED",
+              "INDETERMINATE",
+              "SKIPPED",
+              "NOT_RUN",
+              "NOT_APPLICABLE"
+            ]
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "api",
+              "manual-evidence",
+              "user-attestation",
+              "artifact",
+              "none"
+            ]
+          },
+          "environment": {
+            "type": "string",
+            "minLength": 1
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "evidence_current": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "assertions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "assertion_id",
+                "expected",
+                "observed",
+                "status",
+                "evidence_refs"
+              ],
+              "properties": {
+                "assertion_id": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9][a-z0-9._-]{0,119}$"
+                },
+                "expected": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "observed": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "PASS",
+                    "FAIL",
+                    "NOT_OBSERVED"
+                  ]
+                },
+                "evidence_refs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            }
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "performed_by": {
+            "type": "string"
+          },
+          "next_action": {
+            "type": "string"
+          },
+          "transaction": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "test_key",
+              "record_id",
+              "request_id",
+              "new_primary_count",
+              "reused",
+              "approval_ref",
+              "side_effects",
+              "cleanup_status",
+              "cleanup_evidence_refs",
+              "cleanup_owner",
+              "cleanup_next_action"
+            ],
+            "properties": {
+              "test_key": {
+                "type": "string",
+                "minLength": 1
+              },
+              "record_id": {
+                "type": "string"
+              },
+              "request_id": {
+                "type": "string"
+              },
+              "new_primary_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 1
+              },
+              "reused": {
+                "type": "boolean"
+              },
+              "approval_ref": {
+                "type": "string"
+              },
+              "side_effects": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "cleanup_status": {
+                "type": "string",
+                "enum": [
+                  "not-needed",
+                  "removed-verified",
+                  "retained",
+                  "pending",
+                  "failed",
+                  "unknown"
+                ]
+              },
+              "cleanup_evidence_refs": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "cleanup_owner": {
+                "type": "string",
+                "minLength": 1
+              },
+              "cleanup_next_action": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "decision_id",
+          "summary",
+          "owner",
+          "source_ref"
+        ],
+        "properties": {
+          "decision_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9._-]{0,119}$"
+          },
+          "summary": {
+            "type": "string",
+            "minLength": 1
+          },
+          "owner": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "message",
+          "owner",
+          "source_ref"
+        ],
+        "properties": {
+          "message": {
+            "type": "string",
+            "minLength": 1
+          },
+          "owner": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "stage",
+          "failure_class",
+          "message",
+          "recommended_action",
+          "artifact_refs",
+          "external_ids"
+        ],
+        "properties": {
+          "stage": {
+            "type": "string",
+            "minLength": 1
+          },
+          "failure_class": {
+            "type": "string",
+            "enum": [
+              "input_validation",
+              "catalog_or_metadata_mismatch",
+              "auth_expired_or_invalid",
+              "authorization_or_privilege",
+              "transport_or_environment",
+              "fusion_api_error",
+              "process_timeout",
+              "process_failed",
+              "artifact_persistence",
+              "approval_blocker"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1
+          },
+          "recommended_action": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "external_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    }
+  }
+}

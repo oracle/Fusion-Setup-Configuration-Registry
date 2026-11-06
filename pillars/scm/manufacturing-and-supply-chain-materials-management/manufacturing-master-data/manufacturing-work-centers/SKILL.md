@@ -13,7 +13,7 @@ parent_skill_id: "scm.manufacturing-and-supply-chain-materials-management.manufa
 available_flag: "Y"
 export_import_supported_flag: "Y"
 csv_export_import_supported_flag: "Y"
-dataloader_import_mode: "REST"
+dataloader_import_mode: "FSM"
 businessObject: "workCenters"
 source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 type: "planning"
@@ -37,7 +37,6 @@ depends_on:
   - "shared.validation.reference-data-validator"
   - "core.data-loader"
 uses_core:
-  - "core.fusion-api.rest-api-client"
   - "core.project-mgmt.artifact-version-manager"
   - "core.project-mgmt.artifact-registry-manager"
   - "core.project-mgmt.project-state-manager"
@@ -107,7 +106,7 @@ Provides task-specific setup planning, routing, export, import, and validation g
 - available_flag: `Y`
 - export_import_supported_flag: `Y`
 - csv_export_import_supported_flag: `Y`
-- dataloader_import_mode: `REST`
+- dataloader_import_mode: use the manifest frontmatter value.
 - businessObject: `workCenters`
 - source_catalog: `knowledge/setup-task-catalog/effective/setupTasksAll.json`
 
@@ -128,7 +127,7 @@ Use this workflow when `dataloader_import_mode: "REST"` and a Fusion Data Loader
    - editable sample
    - attribute-details workbook
    - key-fields workbook
-4. Review the generated headers and key fields before preparing source data. The operation uses read-only Fusion metadata and does not upload or import data.
+4. Review the generated headers and key fields before preparing source data. Sample generation does not upload or import data, but the delegated `core.data-loader` workflow may refresh business-object attributes through `findBusinessObjectsForFSCR` when that finder is advertised. This requires the metadata-update privilege declared by [Data Loader](../../../../../core/data-loader/SKILL.md). The finder request is never automatically retried, including after an authentication failure; a failed refresh blocks sample generation.
 5. Use the generated editable workbook as the starting point for the later Data Loader preparation and approval workflow.
 
 ## Usage
@@ -143,20 +142,41 @@ Use this skill when planning, sequencing, exporting, importing, or validating se
 - Export/import supported: `Y`
 - CSV export/import supported: `Y`
 - CSV export/import routing: `supported`
-- Data Loader import mode: `REST`
+- Data Loader import mode: follow `dataloader_import_mode` in frontmatter.
 - Business Object: `workCenters`
+
+## Import Mode Selection
+
+Use the manifest's `dataloader_import_mode` as the default unless the active
+workflow records an explicit supported mode override. Both modes use `core.data-loader` validation, immutable-artifact approval,
+and execution; selecting FSM does not bypass the central workflow.
+
+- For `FSM`, use the selected task's target-exported CSV package and
+  `ASM_SETUP_CSV_METADATA.xml`. Preserve required members, exported column names,
+  parent-child keys, and native Y/N flags. Keep unrequested child CSVs header-only
+  and exclude unrelated baseline records. Validate mappings before preparation;
+  do not convert native FSM CSVs to a REST DAT or require REST BO registration.
+- For `REST` (the HCM Data Loader route), retain `workCenters` as the
+  `businessObject`, require its corrected live registration, and use the existing
+  sample, metadata, operation, and task rules. REST field encodings and child
+  contracts still apply; native FSM exceptions do not apply to REST sources.
+- To restore the REST default after the BO configuration is fixed, update
+  `dataloader_import_mode` to `REST`,
+  retaining the declared business object. Revalidate new sources through the
+  selected route; never reuse an approval for a different mode or artifact.
+- FSM selection alone does not authorize deletion. Stop on a requested operation
+  unsupported by the selected route; never turn a delete into a merge or silently
+  switch routes after a failed or uncertain write.
 
 ## CSV Export, Import, and Validation Workflow
 
 `CSVExportImportSupportedFlag` is `Y` for this task, so route task setup data work through the relevant skills:
 
-REST Data Loader is the primary import route. Because `CSVExportImportSupportedFlag` is `Y`, FSM Import/Export is available only as an optional alternative when its task-level package satisfies the use case.
-
 
 1. Export setup task data with `shared.setup-export.task-level-export`.
 2. Validate setup task data with `shared.validation.setup-data-validator`.
 3. Validate reference data with `shared.validation.reference-data-validator`.
-4. Import setup task data with `core.data-loader` using workCenters as the BusinessObject.
+4. Import setup task data with `core.data-loader` using the selected `dataloader_import_mode` and its matching artifact contract.
 
 Use this task metadata when invoking those skills:
 

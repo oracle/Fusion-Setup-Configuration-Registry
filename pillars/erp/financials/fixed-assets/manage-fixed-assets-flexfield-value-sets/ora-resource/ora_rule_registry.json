@@ -15,6 +15,7 @@
           "execution_route": "local",
           "transitions": {
             "valid": "VSET.RESOLVE_DEPENDENCIES",
+            "missing_required_input": "VSET.REQUEST_REQUIRED_INPUT",
             "invalid": "VSET.HANDLE_INPUT"
           },
           "prerequisites": [],
@@ -23,7 +24,31 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 120
+            "line": 136
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "VSET.REQUEST_REQUIRED_INPUT",
+          "node_type": "step",
+          "sequence": 15,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "stopped": "VSET.ISSUES"
+          },
+          "prerequisites": [
+            "VSET.VALIDATE_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Render the Definition Proposal Preview with `new value set` when the Value Set Code is missing and `Required` for every unresolved required field. Request only the missing inputs. Do not perform lookup, package, or import work.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 137
           },
           "readiness": {
             "status": "ready",
@@ -48,7 +73,7 @@
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 64
+            "line": 81
           },
           "readiness": {
             "status": "ready",
@@ -74,7 +99,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 165
+            "line": 189
           },
           "readiness": {
             "status": "ready",
@@ -101,7 +126,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 166
+            "line": 190
           },
           "readiness": {
             "status": "ready",
@@ -125,7 +150,7 @@
           "source": {
             "file": "ora_defaulting_rules.md",
             "anchor": "task-nodes",
-            "line": 130
+            "line": 139
           },
           "readiness": {
             "status": "ready",
@@ -136,7 +161,7 @@
           "id": "VSET.SELECT_PACKAGE_SOURCE",
           "node_type": "decision",
           "sequence": 45,
-          "action_type": "select_package_source",
+          "action_type": "resolve_dependency",
           "execution_route": "local",
           "transitions": {
             "export_contract": "VSET.ENFORCE_DESIGN",
@@ -147,11 +172,11 @@
             "VSET.APPLY_DEFAULTS"
           ],
           "on_failure": "stop",
-          "applies_when": "A package is required; use the current export contract, including valid header-only evidence, for a first-time definition. Select bootstrap only for values added to an existing resolved definition when its populated export is unusable and every bootstrap precondition is met",
+          "applies_when": "A package is required. Use the current export contract, including valid header-only evidence, for a first-time definition. Select bootstrap only for values added to an existing resolved definition when its populated export is unusable and every bootstrap precondition is met.",
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 65
+            "line": 82
           },
           "readiness": {
             "status": "ready",
@@ -176,7 +201,7 @@
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 28
+            "line": 32
           },
           "readiness": {
             "status": "ready",
@@ -201,7 +226,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 61
+            "line": 65
           },
           "readiness": {
             "status": "ready",
@@ -225,7 +250,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 62
+            "line": 66
           },
           "readiness": {
             "status": "ready",
@@ -249,7 +274,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 63
+            "line": 67
           },
           "readiness": {
             "status": "ready",
@@ -273,7 +298,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 64
+            "line": 68
           },
           "readiness": {
             "status": "ready",
@@ -297,7 +322,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 65
+            "line": 69
           },
           "readiness": {
             "status": "ready",
@@ -321,7 +346,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 66
+            "line": 70
           },
           "readiness": {
             "status": "ready",
@@ -345,7 +370,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 67
+            "line": 71
           },
           "readiness": {
             "status": "ready",
@@ -363,11 +388,11 @@
             "VSET.IMPORT_GATE"
           ],
           "on_failure": "continue",
-          "applies_when": "Value Sets import is accepted — pending parent verification. core.data-loader owns terminal polling, process-log review, and fresh target read-back. A dependent task may reuse only the parent-verified ValueSetCode and approved value scope; it must not create or infer context from this accepted request.",
+          "applies_when": "Accepted \u2014 pending parent verification. The Fixed Assets parent applies fresh target-state verification and controls dependent-task progression; core.data-loader retrieves terminal status and ProcessLog.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 70
+            "line": 72
           },
           "readiness": {
             "status": "ready",
@@ -389,7 +414,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 70
+            "line": 73
           },
           "readiness": {
             "status": "ready",
@@ -411,7 +436,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 71
+            "line": 74
           },
           "readiness": {
             "status": "ready",
@@ -431,7 +456,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 72
+            "line": 75
           },
           "readiness": {
             "status": "ready",

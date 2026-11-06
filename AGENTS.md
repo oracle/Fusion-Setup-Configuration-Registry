@@ -10,6 +10,11 @@
 - For any implementation user request to start, begin, or work on an Oracle Fusion implementation in FSCR, begin with `router/implementation-router/SKILL.md`.
 - Treat `router/implementation-router/SKILL.md` as the canonical implementation-workflow entry point. It classifies the objective and routes work to the appropriate `shared`, `core`, and `pillars` skills.
 
+## Validation Questions and Guidance
+- For questions about FSCR validation, prevalidation/environment readiness, implementation review, transactional tests/SVF, validation reports, evidence, ownership, prompts, skipping or reruns, begin with `knowledge/validation-rules/README.md` and the relevant sections of `knowledge/validation-rules/fscr-validation-faq.md`.
+- Use the FAQ as explanatory guidance and cite the relevant section. Verify claims about current capabilities against the referenced skill manifests, contracts and scripts; distinguish implemented behavior, proposed work, limitations and illustrative examples. If they differ, explain the discrepancy rather than treating the FAQ as proof of executable support.
+- A question about validation does not authorize a validation run, project creation or external calls. For an actual execution request, use the canonical implementation router and the selected skill's prerequisites and approval gates. Authentication-specific diagnosis still begins with onboarding.
+
 ## Product and Best-Practice Guidance
 - For best-practice or product-guidance questions about specific Oracle Fusion pillars or offerings, consult the relevant content under `knowledge/product-guidance/` as the first reference source.
 - After reviewing that guidance, use official Oracle Fusion documentation to research specifics, fill gaps, and verify release-dependent details. For every Oracle Fusion documentation lookup, verify and use the latest available Fusion release documentation for the relevant product and topic; do not assume a repository link, search result, or previously used release is current. If the topic is unavailable in the latest release documentation, explicitly identify the older release used and the gap. Distinguish repository guidance, Oracle-documented behavior, and implementation recommendations in the response.

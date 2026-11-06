@@ -1,0 +1,148 @@
+{
+  "status": "source_encoding_reviewed_operation_pending",
+  "label": "261013.0000.S",
+  "fields": {
+    "ORA_EXM_MEALS_POLICY": {
+      "RateIncludeMealsFlag": {
+        "list_binding": "LOV_RateIncludeMealsFlag",
+        "lookup_type": "EXM_YES_NO",
+        "csv_entity_attribute": "RateIncludeMealsFlag",
+        "value_mapping": {
+          "No": "N",
+          "Yes": "Y"
+        },
+        "source_ids": [
+          "UI-MealsPolicy-Boolean",
+          "SEED-EXM-YES-NO",
+          "EO-MealsPolicy"
+        ]
+      },
+      "RateIncludeOtherFlag": {
+        "list_binding": "LOV_RateIncludeOtherFlag",
+        "lookup_type": "EXM_YES_NO",
+        "csv_entity_attribute": "RateIncludeOtherFlag",
+        "value_mapping": {
+          "No": "N",
+          "Yes": "Y"
+        },
+        "source_ids": [
+          "UI-MealsPolicy-Boolean",
+          "SEED-EXM-YES-NO",
+          "EO-MealsPolicy"
+        ]
+      },
+      "SingleInstanceLimitFlag": {
+        "list_binding": "LOV_SingleInstanceLimitFlag",
+        "lookup_type": "EXM_YES_NO",
+        "csv_entity_attribute": "SingleInstanceLimitFlag",
+        "value_mapping": {
+          "No": "N",
+          "Yes": "Y"
+        },
+        "source_ids": [
+          "UI-MealsPolicy-Boolean",
+          "SEED-EXM-YES-NO",
+          "EO-MealsPolicy"
+        ]
+      },
+      "DailyLimitFlag": {
+        "list_binding": "LOV_DailyLimitFlag",
+        "lookup_type": "EXM_YES_NO",
+        "csv_entity_attribute": "DailyLimitFlag",
+        "value_mapping": {
+          "No": "N",
+          "Yes": "Y"
+        },
+        "source_ids": [
+          "UI-MealsPolicy-Boolean",
+          "SEED-EXM-YES-NO",
+          "EO-MealsPolicy"
+        ]
+      },
+      "EnabledRoleFlag": {
+        "list_binding": "LOV_EnabledRoleFlag",
+        "lookup_type": "EXM_YES_NO",
+        "csv_entity_attribute": "EnabledRoleFlag",
+        "value_mapping": {
+          "No": "N",
+          "Yes": "Y"
+        },
+        "source_ids": [
+          "UI-MealsPolicy-Boolean",
+          "SEED-EXM-YES-NO",
+          "EO-MealsPolicy"
+        ]
+      },
+      "EnabledLocationFlag": {
+        "list_binding": "LOV_EnabledLocationFlag",
+        "lookup_type": "EXM_YES_NO",
+        "csv_entity_attribute": "EnabledLocationFlag",
+        "value_mapping": {
+          "No": "N",
+          "Yes": "Y"
+        },
+        "source_ids": [
+          "UI-MealsPolicy-Boolean",
+          "SEED-EXM-YES-NO",
+          "EO-MealsPolicy"
+        ]
+      },
+      "PolicyViolationFlag": {
+        "list_binding": "LOV_PolicyViolationFlag",
+        "lookup_type": "EXM_YES_NO",
+        "csv_entity_attribute": "PolicyViolationFlag",
+        "value_mapping": {
+          "No": "N",
+          "Yes": "Y"
+        },
+        "source_ids": [
+          "UI-MealsPolicy-Boolean",
+          "SEED-EXM-YES-NO",
+          "EO-MealsPolicy"
+        ]
+      },
+      "DispWarningToUserFlag": {
+        "list_binding": "LOV_DispWarningToUserFlag",
+        "lookup_type": "EXM_YES_NO",
+        "csv_entity_attribute": "DispWarningToUserFlag",
+        "value_mapping": {
+          "No": "N",
+          "Yes": "Y"
+        },
+        "source_ids": [
+          "UI-MealsPolicy-Boolean",
+          "SEED-EXM-YES-NO",
+          "EO-MealsPolicy"
+        ]
+      },
+      "PreventSubmissionFlag": {
+        "list_binding": "LOV_PreventSubmissionFlag",
+        "lookup_type": "EXM_YES_NO",
+        "csv_entity_attribute": "PreventSubmissionFlag",
+        "value_mapping": {
+          "No": "N",
+          "Yes": "Y"
+        },
+        "source_ids": [
+          "UI-MealsPolicy-Boolean",
+          "SEED-EXM-YES-NO",
+          "EO-MealsPolicy"
+        ]
+      }
+    }
+  },
+  "source_claims": {
+    "SEED-EXM-YES-NO": {
+      "path": "fusionapps/fin/exm/noship/cdrautoapply/db/data/StandardLookupTypeSD.xml",
+      "sha256": "d24881704d048a4e6f3a67d7115abe6c7cbbe3c5fabe3a69bae543b18340f162",
+      "label": "261013.0000.S",
+      "claim_scope": "Pinned seed code/meaning mapping only; not current target lookup or CSV operation acceptance"
+    },
+    "UI-MealsPolicy-Boolean": {
+      "path": "fusionapps/fin/components/payables/exm/policy/meals/model/src/oracle/apps/financials/expenses/policy/meals/uiModel/view/MealsPolicyVO.xml",
+      "sha256": "47615c42cfe287fafad6aa6980b5feb2ec497b72d8357b5d30f3ff40d1cdc6bf",
+      "label": "261013.0000.S",
+      "claim_scope": "Explicit field to EXM_YES_NO binding only; no target-release or operation promotion"
+    }
+  }
+}

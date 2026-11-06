@@ -10,10 +10,12 @@
 
 ## Calendar Export Contract
 
-When a Calendar package is required, request **one current populated**
+When a Calendar package is required, request **one current, unfiltered data**
 `FA_MANAGE_CALENDAR` setup-data export after Fiscal Year validation and before
 package generation. Do not request a template/spec export first and then a
-second populated export because a template has header-only contents.
+second data export because a template has header-only contents. A successful
+data export may legitimately contain zero Calendar parent and period rows;
+validate it under Reference Lookups and accept it as empty Calendar setup.
 
 Treat this export as an authorized prerequisite lookup, not as a separate
 customer approval gate. When the active workflow has authorized the target
@@ -34,12 +36,17 @@ file links, and summary tables do not satisfy either chat gate. If a preview
 was omitted or shortened, render the missing complete preview before asking
 for approval or preparing a package.
 
-When BOSS returns `hasMore: true` on the initial collection page, stop BOSS
-pagination and use a fresh populated Calendar export as the complete
+When BOSS returns 403 or `hasMore: true` on the initial collection page, use
+a fresh Calendar data export as the complete
 existing-state snapshot under [Complete Lookup Source
 Selection](ora_reference_lookups.md#complete-lookup-source-selection). This
 bulk-read use requires the Calendar parent and period members and does not
 replace a separately required Fiscal Year export.
+For a validated empty snapshot, mark the existing-calendar dependency satisfied
+and retain the export process ID, target, archive SHA-256, successful status,
+unfiltered data-export scope, validated headers, and parent/period row counts
+(both zero). No override or seeded Calendar rows are required. Retain every
+existing preview, ZIP creation, import approval, and post-import verification gate.
 
 ## Fiscal Year Creation Handoff
 
@@ -65,9 +72,10 @@ process blocks Calendar ZIP preparation and import.
 
 | Dependency ID | Dependency | Mandatory | Applies When | Status | Value Source | Resolver | Why | User Guidance | Values to Fill |
 |---|---|---|---|---|---|---|---|---|---|
-| fiscal_year | Fiscal year and Start Fiscal Year | Yes | Before calendar creation | Lookup | [Verified BOSS Request Contract](ora_reference_lookups.md#verified-boss-request-contract) | resolve_equivalent_fiscal_years_for_ledger + resolve_calendar_date_basis_from_fiscal_year | Reuse a valid user-selected fiscal year unchanged. Without a user selection, show every qualifying equivalent, including a sole candidate, and require the customer to select one exact Fiscal Year Name or provide another. The selected Start Fiscal Year must be an exact available row. If no fiscal year exists, create or extend it through `FA_MANAGE_FISCAL_YEAR`. | Validate and retain user selections. Present every qualifying equivalent with coverage and stop for the selection. Block an unavailable Start Fiscal Year row and request a valid row or fiscal-year extension. | Fiscal Year Name, Start Fiscal Year, selection source, equivalence result, exists/not-exists result, Calendar Start Basis, Calendar End Basis, and complete selected date rows |
-| import_metadata | FSM import metadata | Yes | Before package generation | Lookup | One current populated Manage Asset Calendars setup-data export | resolve_asset_calendar_export_metadata | Technical defaults must be proven before the first import attempt | Use the active workflow's authorized current setup-data export; do not request a template export or a separate customer approval | CSV members, columns, internal codes, date format, reserved fields |
-| existing_calendar | Existing calendar and periods | Yes | Before design approval and create | Lookup | Complete BOSS `assetCalendarsView` and `assetCalendarPeriodsView`, or a validated current `FA_MANAGE_CALENDAR` FSM snapshot when BOSS first reports `hasMore: true` | resolve_existing_asset_calendar | Prevent an unnecessary duplicate when another calendar already has the same fiscal year, period count, and complete period set | Reuse an equivalent exact named calendar, or explicitly choose to create the requested duplicate before ZIP preparation | Selected source, exact-name result, equivalent calendar names, complete period-set comparison, and reuse-or-create-duplicate decision |
+| fiscal_year | Fiscal year and Start Fiscal Year | Yes | Before calendar creation | Lookup | [Verified BOSS Request Contract](ora_reference_lookups.md#verified-boss-request-contract) | resolve_calendar_date_basis_from_fiscal_year | Reuse a valid user-selected fiscal year unchanged. Without a user selection, show every qualifying equivalent, including a sole candidate, and require the customer to select one exact Fiscal Year Name or provide another. The selected Start Fiscal Year must be an exact available row. If no fiscal year exists, create or extend it through `FA_MANAGE_FISCAL_YEAR`. | Validate and retain user selections. Present every qualifying equivalent with coverage and stop for the selection. Block an unavailable Start Fiscal Year row and request a valid row or fiscal-year extension. | Fiscal Year Name, Start Fiscal Year, selection source, equivalence result, exists/not-exists result, Calendar Start Basis, Calendar End Basis, and complete selected date rows |
+| ledger_equivalent_fiscal_year | Equivalent ledger fiscal years | Conditional | Ledger-derived setup without a selected fiscal year | Lookup | Complete regular GL fiscal-year ranges and complete Fixed Assets fiscal-year rows | resolve_equivalent_fiscal_years_for_ledger | Establish every equivalent before customer selection. | Show all qualifying names with coverage; require customer selection even for one candidate. | Equivalent fiscal-year names and date rows |
+| import_metadata | FSM import metadata | Yes | Before package generation | Lookup | One current unfiltered Manage Asset Calendars setup-data export, including a validated header-only data result | resolve_asset_calendar_export_metadata | Technical defaults must be proven before the first import attempt | Use the active workflow's authorized current setup-data export; do not request a template export or a separate customer approval | CSV members, columns, internal codes, date format, reserved fields |
+| existing_calendar | Existing calendar and periods | Yes | Before design approval and create | Lookup | Complete BOSS result, or validated current unfiltered FA_MANAGE_CALENDAR data export when BOSS returns 403 or first reports hasMore=true | resolve_existing_asset_calendar | Prevent an unnecessary duplicate using complete existing-state evidence | A validated export with zero parent and period rows satisfies this check as empty Calendar setup. Otherwise compare exact-name and equivalent calendars and obtain any reuse-or-create decision. | Selected source, export process ID, target, SHA-256, status/scope, validated headers, parent/period row counts, exact-name and equivalence results, and any reuse-or-create decision |
 
 ## Dependency Classification
 
@@ -139,3 +147,9 @@ the full parent and period-row review as a durable tabular artifact, link it
 from the summary, and use the preview row limit above. Apply the submission
 approval separately to each immutable archive; approval for one batch does not
 approve another.
+
+## Task Nodes
+
+| Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
+|---|---|---|---|---|---|---|---|
+| CAL.RESOLVE_DEPENDENCIES | decision | 20 | resolve_dependency | ready->CAL.LOOKUP_EXISTING;blocked->CAL.HANDLE_DEPENDENCY | CAL.VALIDATE_INPUT | stop | Valid input |

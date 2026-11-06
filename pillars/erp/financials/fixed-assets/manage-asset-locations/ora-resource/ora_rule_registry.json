@@ -62,13 +62,6 @@
           "sequence": 25,
           "action_type": "reference_lookup",
           "execution_route": "fusion-rest",
-          "required_skill_routes": [
-            {
-              "resolver": "resolve_location_segment_values",
-              "skill_id": "erp.financials.fixed-assets.manage-fixed-assets-flexfield-value-sets",
-              "purpose": "Validate all LOC# segment values and dependent-parent mappings."
-            }
-          ],
           "transitions": {
             "resolved": "MAL.CHECK_DEPENDENCIES",
             "missing_confirmed": "MAL.CHECK_DEPENDENCIES",
@@ -131,9 +124,9 @@
           "on_failure": "stop",
           "applies_when": "Compare requested operation with exact existing-location evidence.",
           "source": {
-            "file": "ora_design_enforcement.md",
+            "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 50
+            "line": 131
           },
           "readiness": {
             "status": "ready",
@@ -182,7 +175,7 @@
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 51
+            "line": 57
           },
           "readiness": {
             "status": "ready",
@@ -193,7 +186,7 @@
           "id": "MAL.PREPARE_ARCHIVE",
           "node_type": "step",
           "sequence": 60,
-          "action_type": "archive_preparation",
+          "action_type": "execution_gate",
           "execution_route": "local",
           "transitions": {
             "prepared": "MAL.IMPORT_GATE",
@@ -206,8 +199,8 @@
           "applies_when": "Verify the completed validation sequence and batch-current DFF-definition evidence, then obtain and inspect the template/spec package for the immutable artifact.",
           "source": {
             "file": "ora_error_handling.md",
-            "anchor": "validation-and-execution-boundary",
-            "line": 82
+            "anchor": "task-nodes",
+            "line": 86
           },
           "readiness": {
             "status": "ready",
@@ -232,7 +225,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 83
+            "line": 87
           },
           "readiness": {
             "status": "ready",
@@ -256,7 +249,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 84
+            "line": 88
           },
           "readiness": {
             "status": "ready",
@@ -280,7 +273,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 85
+            "line": 89
           },
           "readiness": {
             "status": "ready",
@@ -304,7 +297,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 86
+            "line": 90
           },
           "readiness": {
             "status": "ready",
@@ -328,7 +321,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 87
+            "line": 91
           },
           "readiness": {
             "status": "ready",
@@ -352,7 +345,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 88
+            "line": 92
           },
           "readiness": {
             "status": "ready",
@@ -369,14 +362,14 @@
             "handled": "MAL.ISSUES"
           },
           "prerequisites": [
-            "MAL.IMPORT_GATE"
+            "MAL.ENFORCE_DESIGN"
           ],
           "on_failure": "stop",
-          "applies_when": "Validation evidence or the artifact required at this stage is incomplete.",
+          "applies_when": "Validation evidence, DFF-definition evidence, template package, or immutable artifact required at this stage is incomplete.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 89
+            "line": 93
           },
           "readiness": {
             "status": "ready",
@@ -398,7 +391,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 90
+            "line": 94
           },
           "readiness": {
             "status": "ready",
@@ -418,7 +411,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 91
+            "line": 95
           },
           "readiness": {
             "status": "ready",
@@ -438,7 +431,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 92
+            "line": 96
           },
           "readiness": {
             "status": "ready",

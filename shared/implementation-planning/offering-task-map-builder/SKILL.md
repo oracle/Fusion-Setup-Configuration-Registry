@@ -7,7 +7,7 @@ pillar: "Common"
 type: "planning"
 execution_mode: "assisted"
 owner_team: "Shared enablement team with pillar review"
-version: "0.1.2"
+version: "0.1.3"
 inputs: 
   - "implementation_objective"
   - "project_context"
@@ -98,6 +98,25 @@ Use this shared skill when the implementation activity applies across multiple p
 Keep outputs reusable by pillar skills. Where the guidance depends on a specific offering, country, or release, capture that condition in the work product rather than hardcoding it in the generic shared method.
 
 ## Task sequencing
+
+### Local bootstrap for new-project prevalidation
+
+When `shared.validation.prevalidation` prepares any new implementation project,
+from a plain-language request, selected tasks or an artifact, there is no
+initialized workspace yet. Prepare intake, classification,
+the resolver's ordered sequence and the resulting mapping in a private temporary
+staging directory using local catalogs/graphs only. For this bootstrap only,
+the persisted staged sequence satisfies step 1 below. All identity, completeness,
+sequence and ambiguity gates still apply; this is not a default-sequence approval
+or permission to discover tasks through Fusion before workspace initialization.
+Pass the staged mapping to the initializer with `--no-create-runbook`. Immediately
+persist and register the intake, scope, sequence, diagnostics and mapping under
+the new project's normal artifact paths before generating its Run Book plan or
+starting live validation. Remove staging after successful persistence; if
+initialization fails, report the blocker and retain only safe recovery evidence.
+Staging is not the durable project destination and must contain no Fusion exports,
+credentials or tokens. Do not use `--force` or overwrite an existing project to
+resolve a bootstrap conflict.
 
 After validating the selected offering and functional-area contexts, invoke
 `shared.implementation-planning.task-dependency-resolver` before persisting a

@@ -13,9 +13,8 @@ import zipfile
 
 from input_contract import InputError, TASK_CODE, normalize, split_verified_noops
 
-PROFILE_ID = 'org-settings-11.13.27.01-v1'
-OPTION_CANDIDATE_ID = 'identical-option-aliases-11.13.27.01-candidate-v1'
-RELEASE = '11.13.27.01.0'
+PROFILE_ID = 'org-settings-schema-v1'
+OPTION_CANDIDATE_ID = 'identical-option-aliases-schema-candidate-v1'
 ORG = 'EXM_ORG_SETTING.csv'
 OPTION_MEMBERS = ('EXM_SETUP_OPTION.csv', 'EXM_CASH_ADV_SETUP_AND_POLICY.csv')
 ORG_HEADER = ('BuName', 'SettingCode', 'CreationDate', 'CreatedBy', 'LastUpdateDate',
@@ -127,8 +126,11 @@ def qualify_template(metadata_xml, headers):
     root = ET.fromstring(metadata_xml)
     local = lambda element: element.tag.rsplit('}', 1)[-1]
     values = lambda name: [e.text or '' for e in root.iter() if local(e) == name]
-    for tag, expected in [('ObjectShortName', TASK_CODE), ('ObjectType', 'TASK'),
-                          ('ProcessRelease', RELEASE)]:
+    releases = values('ProcessRelease')
+    if len(releases) != 1 or not releases[0].strip():
+        raise InputError('FSM_SCHEMA_MISMATCH: ProcessRelease must have one nonempty diagnostic value.')
+    release = releases[0]
+    for tag, expected in [('ObjectShortName', TASK_CODE), ('ObjectType', 'TASK')]:
         if values(tag) != [expected]:
             raise InputError(f'FSM_SCHEMA_MISMATCH: {tag} needs a maintained transport-profile refresh.')
     expected_headers = {ORG: ORG_HEADER, **dict.fromkeys(OPTION_MEMBERS, OPTION_HEADER)}
@@ -157,8 +159,9 @@ def qualify_template(metadata_xml, headers):
             raise InputError('FSM_SCHEMA_MISMATCH: XML mapping, type, sequence or batch changed.')
     if found != set(expected_headers):
         raise InputError('FSM_SCHEMA_MISMATCH: missing metadata object.')
-    return {'profile': PROFILE_ID, 'qualification': 'source-backed-with-successful-fsm-import',
-            'profile_live_import_verified': True, 'live_result_verified': False}
+    return {'profile': PROFILE_ID, 'option_candidate': OPTION_CANDIDATE_ID,
+            'release': release, 'qualification': 'schema-compatible-live-import-unverified',
+            'profile_live_import_verified': False, 'live_result_verified': False}
 
 
 def compose_org_changes(metadata_xml, headers, changes):

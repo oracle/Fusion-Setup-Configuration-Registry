@@ -1291,6 +1291,15 @@ def build_candidate(
     if not isinstance(requirements, list):
         raise AdapterError("Requirements file must contain a JSON array.")
     _requirement_contract(contract, blueprint, requirements)
+    if _all_updates_already_satisfied(contract, baseline, blueprint):
+        return {
+            "schemaVersion": SCHEMA_VERSION,
+            "status": "NO_OP",
+            "task": contract["task"],
+            "baselineSha256": baseline.archive_sha256,
+            "designSha256": _sha256_bytes(_canonical_bytes(blueprint)),
+            "reason": "All requested update values already match the current-data baseline; no candidate ZIP was written.",
+        }
     rows = _candidate_rows(contract, baseline, blueprint)
     _write_candidate(template, baseline, contract, rows, output_path)
     result = validate_candidate(
@@ -1824,6 +1833,26 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(failure, indent=2, sort_keys=True), file=sys.stderr)
         return 2
 
+
+def _all_updates_already_satisfied(
+    contract: dict[str, Any],
+    baseline: PackageData,
+    blueprint: dict[str, Any],
+) -> bool:
+    """Suppress a whole request only when every requested value already persists."""
+    entities = _entity_map(contract)
+    for operation in blueprint["operations"]:
+        if operation["action"] != "update":
+            return False
+        entity = entities[operation["entity"]]
+        key = _target_tuple(entity, operation["targetKey"])
+        before = _row_index(baseline, entity).get(key)
+        if before is None or any(
+            before[field] != str(value)
+            for field, value in operation["values"].items()
+        ):
+            return False
+    return True
 
 if __name__ == "__main__":
     raise SystemExit(main())

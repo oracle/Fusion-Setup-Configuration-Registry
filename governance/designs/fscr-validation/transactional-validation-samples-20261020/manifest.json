@@ -1,0 +1,302 @@
+{
+  "sample_only": true,
+  "no_live_execution": true,
+  "date": "2026-10-20",
+  "cases": [
+    {
+      "slug": "01-pass-cleanup-verified",
+      "title": "Passed · cleanup verified",
+      "status": "PASS",
+      "cleanup": "removed-verified",
+      "readiness": "READY_WITHIN_VERIFIED_SCOPE",
+      "description": "The narrow transaction assertions pass and removal is evidenced.",
+      "new_primary_count": 1
+    },
+    {
+      "slug": "02-pass-cleanup-pending",
+      "title": "Passed · cleanup pending",
+      "status": "PASS",
+      "cleanup": "pending",
+      "readiness": "NEEDS_REVIEW",
+      "description": "The transaction passes; a named owner must still handle cleanup.",
+      "new_primary_count": 1
+    },
+    {
+      "slug": "03-blocked-prerequisite",
+      "title": "Blocked before execution",
+      "status": "BLOCKED",
+      "cleanup": "not-needed",
+      "readiness": "BLOCKED",
+      "description": "A required reference is unavailable. No transaction is attempted.",
+      "new_primary_count": 0
+    },
+    {
+      "slug": "04-business-assertion-failed",
+      "title": "Created · business assertion failed",
+      "status": "FAIL",
+      "cleanup": "removed-verified",
+      "readiness": "BLOCKED",
+      "description": "Creation succeeds, but a stored value differs from the approved expectation.",
+      "new_primary_count": 1
+    },
+    {
+      "slug": "05-user-skipped",
+      "title": "User skipped the check",
+      "status": "SKIPPED",
+      "cleanup": "not-needed",
+      "readiness": "NEEDS_REVIEW",
+      "description": "The user bypasses this check. Its scope remains unverified.",
+      "new_primary_count": 0
+    },
+    {
+      "slug": "06-unknown-outcome",
+      "title": "Unknown creation outcome",
+      "status": "INDETERMINATE",
+      "cleanup": "unknown",
+      "readiness": "BLOCKED",
+      "description": "A timeout leaves creation uncertain. Reconcile before another attempt.",
+      "new_primary_count": null
+    }
+  ],
+  "story_check_counts": {
+    "PASS": 10,
+    "FAIL": 1,
+    "BLOCKED": 0,
+    "INDETERMINATE": 0,
+    "SKIPPED": 0,
+    "NOT_RUN": 1,
+    "NOT_APPLICABLE": 1
+  },
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 4897,
+      "sha256": "d3a57b447818558ce7e119eabd4d49d9b1e8b7f367ce06f894a679bd05c36a46"
+    },
+    {
+      "path": "build_samples.py",
+      "bytes": 41513,
+      "sha256": "4c4693f31b6456ba60b11dfb680462bf78c66b8e1f20a1141b9fa174457d4b4e"
+    },
+    {
+      "path": "cases/01-pass-cleanup-verified/evidence.html",
+      "bytes": 4572,
+      "sha256": "d064653ee01e8b484f45dc09e1dc9b22e84269a8e84072b22e90986d13f83e09"
+    },
+    {
+      "path": "cases/01-pass-cleanup-verified/transactional-validation.html",
+      "bytes": 15283,
+      "sha256": "72c24642d85370844deb6d5654b0b59e9d0c0aa45e0ffee2a3c4ced32b903f44"
+    },
+    {
+      "path": "cases/01-pass-cleanup-verified/transactional-validation.input.json",
+      "bytes": 6436,
+      "sha256": "76e32a30fc4c90a83f4b84f092729d8c3d74af6973b41898e833686a474557dd"
+    },
+    {
+      "path": "cases/01-pass-cleanup-verified/transactional-validation.json",
+      "bytes": 7183,
+      "sha256": "b3eddd65a1dbf6287930ad7e27fef6e2d62cc14f4e70388172db92d42fda7b00"
+    },
+    {
+      "path": "cases/02-pass-cleanup-pending/evidence.html",
+      "bytes": 4572,
+      "sha256": "c4de2bb7b544241196ccdec8ece0ab2ec6b17a7fb2fda65100eaf0e2fd017cbe"
+    },
+    {
+      "path": "cases/02-pass-cleanup-pending/transactional-validation.html",
+      "bytes": 16277,
+      "sha256": "20cfb7958c5bfe60eec0975f40029065905528b0106c2b25c38ed1aca26772aa"
+    },
+    {
+      "path": "cases/02-pass-cleanup-pending/transactional-validation.input.json",
+      "bytes": 6415,
+      "sha256": "e65df1bc1397257c28be54d4e5a367a6a4340a3ca8c06c4041747bac940c8ccc"
+    },
+    {
+      "path": "cases/02-pass-cleanup-pending/transactional-validation.json",
+      "bytes": 7374,
+      "sha256": "3097f3270afad2735711947052aa6c0570ce2c9e64f14dde6a9bb1bddce40434"
+    },
+    {
+      "path": "cases/03-blocked-prerequisite/evidence.html",
+      "bytes": 4461,
+      "sha256": "6ddd5414bae91828a6b7c213f8c152499b1f872e16abc54e8dbe19c4ca651aa0"
+    },
+    {
+      "path": "cases/03-blocked-prerequisite/transactional-validation.html",
+      "bytes": 15423,
+      "sha256": "bded7979c47922811cbc856c33203302a46bb18cd3d145c66d29b929df8ceb31"
+    },
+    {
+      "path": "cases/03-blocked-prerequisite/transactional-validation.input.json",
+      "bytes": 5550,
+      "sha256": "abd6dffc233c0dce8914e0b296e5497e1eed0b06f79f38b18304206d868da356"
+    },
+    {
+      "path": "cases/03-blocked-prerequisite/transactional-validation.json",
+      "bytes": 6621,
+      "sha256": "bb25737b37927a88c4bb9d4bb2b043debda20ae29c90146457c127171073629a"
+    },
+    {
+      "path": "cases/04-business-assertion-failed/evidence.html",
+      "bytes": 4602,
+      "sha256": "d44f44308879ed12acf602e2bc2af853725bdd031be096efe68788f422e785d8"
+    },
+    {
+      "path": "cases/04-business-assertion-failed/transactional-validation.html",
+      "bytes": 16596,
+      "sha256": "22dec9c262198fcfac4db9f29aa369d0645a53e9685d2b51810e3552db616b65"
+    },
+    {
+      "path": "cases/04-business-assertion-failed/transactional-validation.input.json",
+      "bytes": 6886,
+      "sha256": "b9a426fd7ae4889d9f558858f290d822ce86333df79721a00e348aa953542acc"
+    },
+    {
+      "path": "cases/04-business-assertion-failed/transactional-validation.json",
+      "bytes": 8057,
+      "sha256": "2a2df4fd813b64e8984543b2ce8b1489ada401dbb2b68f11da572848a5356f8d"
+    },
+    {
+      "path": "cases/05-user-skipped/evidence.html",
+      "bytes": 4439,
+      "sha256": "b7a6d675903579a6b48ca2ff20b797600964c24232ffe5e534791e9ebc25e022"
+    },
+    {
+      "path": "cases/05-user-skipped/transactional-validation.html",
+      "bytes": 15597,
+      "sha256": "45a18836a9673f103eb77ec9ae4a72f866bd1baee18daffe8766d0435d974cb0"
+    },
+    {
+      "path": "cases/05-user-skipped/transactional-validation.input.json",
+      "bytes": 5746,
+      "sha256": "f8f0d9d6b36e124001e19c10e161222ceb0460eb6b22a509e86b092e654877aa"
+    },
+    {
+      "path": "cases/05-user-skipped/transactional-validation.json",
+      "bytes": 6769,
+      "sha256": "2a934e9948393caadcf353caeadca3746f261edf39bc0c4d2a5b88e2ca3a31f9"
+    },
+    {
+      "path": "cases/06-unknown-outcome/evidence.html",
+      "bytes": 4520,
+      "sha256": "4f9717810942eb3082a3b062bec66cee8da2bb67ca2eb437f806dec76751c767"
+    },
+    {
+      "path": "cases/06-unknown-outcome/transactional-validation.html",
+      "bytes": 16860,
+      "sha256": "759518eea239491ae1da837ea504897b81d8a7ddbb3b1a0db3c1ac33b76fcbea"
+    },
+    {
+      "path": "cases/06-unknown-outcome/transactional-validation.input.json",
+      "bytes": 6472,
+      "sha256": "58225f2fff005ff4b3d39ec379c788c2fd069d786549415a5c9e8a73a97de635"
+    },
+    {
+      "path": "cases/06-unknown-outcome/transactional-validation.json",
+      "bytes": 7723,
+      "sha256": "e2d6fd26b9c62d63de0eba648448473035230311eed30113408a8eb4c4f4e996"
+    },
+    {
+      "path": "executive-story/artifacts/shared/validation/demo-executive-summary/index.html",
+      "bytes": 16191,
+      "sha256": "0c5fbf20ff9f9cf277f937f1e1d9d6616073b01308dbd83d4aab0b4699d3ae6d"
+    },
+    {
+      "path": "executive-story/artifacts/shared/validation/demo-executive-summary/index.json",
+      "bytes": 12769,
+      "sha256": "d27e24ae4efc3b683489207674a5ca40ce01548ab8434784ad5d8b3ddca0d537"
+    },
+    {
+      "path": "executive-story/artifacts/shared/validation/demo-implementation-review-20261020/implementation-review.html",
+      "bytes": 23917,
+      "sha256": "b14beab5cca03c253f561665232cec1dd0e655e289b2260da1222cba91ccf58b"
+    },
+    {
+      "path": "executive-story/artifacts/shared/validation/demo-implementation-review-20261020/implementation-review.json",
+      "bytes": 13625,
+      "sha256": "771931ac1f62ed6d34ea40dbabf96d219b63f470add19dd9cc5a8d33dfb53b77"
+    },
+    {
+      "path": "executive-story/artifacts/shared/validation/demo-implementation-review-20261020/sample-evidence.html",
+      "bytes": 119891,
+      "sha256": "7f802e3b16a2308365b1467ffa204720e8d4c252983901adbaefbee4341e34c0"
+    },
+    {
+      "path": "executive-story/artifacts/shared/validation/demo-procurement-validation-prevalidation-20261020T080000Z/readiness.html",
+      "bytes": 19851,
+      "sha256": "eda5a54c4ac3ad854685178f9d6a3c2e320ecb55038b5b799c35232a6dee17d6"
+    },
+    {
+      "path": "executive-story/artifacts/shared/validation/demo-procurement-validation-prevalidation-20261020T080000Z/readiness.json",
+      "bytes": 11187,
+      "sha256": "05ae011487a6a7fb5368e62f7f7c885d7ac4559f9fc749a72ed2ad2bdddc12b7"
+    },
+    {
+      "path": "executive-story/artifacts/shared/validation/demo-procurement-validation-prevalidation-20261020T080000Z/sample-evidence.html",
+      "bytes": 119891,
+      "sha256": "7f802e3b16a2308365b1467ffa204720e8d4c252983901adbaefbee4341e34c0"
+    },
+    {
+      "path": "executive-story/artifacts/shared/validation/demo-transaction-20261020-120000/sample-evidence.html",
+      "bytes": 119891,
+      "sha256": "7f802e3b16a2308365b1467ffa204720e8d4c252983901adbaefbee4341e34c0"
+    },
+    {
+      "path": "executive-story/artifacts/shared/validation/demo-transaction-20261020-120000/transactional-validation.html",
+      "bytes": 20081,
+      "sha256": "384a62085f0957fa121d0e7b20f14fa20095dae26eddd74a0096887912eb13fe"
+    },
+    {
+      "path": "executive-story/artifacts/shared/validation/demo-transaction-20261020-120000/transactional-validation.json",
+      "bytes": 12685,
+      "sha256": "7e0bd60ab99d6a48cc6359dbe34024f91024ffecc522762be77bb45d5a92dc97"
+    },
+    {
+      "path": "executive-story/summary-manifest.json",
+      "bytes": 1673,
+      "sha256": "23331a76d38ba13bc378a852b3d8cf68888a73365d3a725598bf419d2aab5771"
+    },
+    {
+      "path": "fixtures/implementation-review.input.json",
+      "bytes": 11726,
+      "sha256": "1b3046a699b89a6f191260581a2ee034b7d4028a43668d4f1ea1ffb6e1173235"
+    },
+    {
+      "path": "fixtures/prevalidation.input.json",
+      "bytes": 11187,
+      "sha256": "05ae011487a6a7fb5368e62f7f7c885d7ac4559f9fc749a72ed2ad2bdddc12b7"
+    },
+    {
+      "path": "fixtures/story-evidence.html",
+      "bytes": 119879,
+      "sha256": "5f457a83e79696accbf83b61f34ab491bb2a4aeac33de8932691e7e913ebb5ea"
+    },
+    {
+      "path": "fixtures/transactional-validation.input.json",
+      "bytes": 11780,
+      "sha256": "a1639b8ce1991c1a7ef52758b7060d3c01f62e4f495f313745b01c1e749b1e46"
+    },
+    {
+      "path": "index.html",
+      "bytes": 9763,
+      "sha256": "12ea92da60a9358abec0e36b9402c3b402ba06d9fc01223d66f17624aee62e91"
+    },
+    {
+      "path": "sample-conversations.md",
+      "bytes": 3132,
+      "sha256": "a73207206b4212bd22215a70ec3363cc1a9effe1affe8ecba87e28fa026283a7"
+    },
+    {
+      "path": "transaction-examples.html",
+      "bytes": 8654,
+      "sha256": "9b953c494982e306726a95be54fdb74cecf340c797fb9f8866373decc27adecc"
+    }
+  ],
+  "renderer_sources": {
+    "core/validation/reporting/scripts/validation_report.py": "6590458fad1b0ff5076f97cdfa25a72fa98f186881ac0d72abc64da92c100611",
+    "core/validation/reporting/scripts/executive_summary.py": "961c213b72c51109deef2d8fd5c2c2630fe441c7f2b99a070d757d1332320974",
+    "shared/validation/prevalidation/scripts/render_readiness_report.py": "525f830ff01a858eb4766cbab571713ebcd5de14964ed7e7ad2b6a5ab93c19e1"
+  }
+}

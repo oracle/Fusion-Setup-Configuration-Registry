@@ -1,0 +1,269 @@
+{
+  "run": {
+    "schema_version": "1.0",
+    "project_id": "demo-procurement-validation",
+    "run_id": "demo-transaction-20261020-120000",
+    "stage": "transactional-validation",
+    "environment": "DEMO-TEST",
+    "started_at": "2026-10-20T12:00:00Z",
+    "request": "SYNTHETIC DEMONSTRATION: after reviewing the corrected prerequisites, create and verify one draft purchase requisition with quantity 1 in DEMO-TEST; retain evidence, do not submit it, and handle deletion under a separate explicit authorization.",
+    "scope": "One fictional manual check of saving a draft purchase requisition and retaining the intended business-unit, item and supplier/site references. No submission, approval workflow, purchase order, receipt, or wider implementation certification.",
+    "scope_ref": "sample-evidence.html#tx-scope",
+    "requirement_version": "DEMO-1.0",
+    "redaction_reviewed": true,
+    "requirements": [
+      {
+        "requirement_id": "demo-r1",
+        "description": "Use the intended business unit for the draft requisition",
+        "source_ref": "sample-evidence.html#tx-requirements",
+        "expected_setup": "Fictional business unit DEMO-BU is available and its reference is retained on the saved draft.",
+        "task_refs": [
+          "DEMO-T1"
+        ],
+        "check_ids": [
+          "demo-draft-requisition-check"
+        ],
+        "owner": "Demo procurement SME (fictional)",
+        "required": true
+      },
+      {
+        "requirement_id": "demo-r2",
+        "description": "Use the corrected supplier and active site",
+        "source_ref": "sample-evidence.html#tx-requirements",
+        "expected_setup": "Fictional supplier DEMO-SUP and corrected active site DEMO-SITE are available and retained on the saved draft.",
+        "task_refs": [
+          "DEMO-T2"
+        ],
+        "check_ids": [
+          "demo-draft-requisition-check"
+        ],
+        "owner": "Demo procurement SME (fictional)",
+        "required": true
+      },
+      {
+        "requirement_id": "demo-r3",
+        "description": "Use the intended purchasable item with a quantity of one",
+        "source_ref": "sample-evidence.html#tx-requirements",
+        "expected_setup": "Fictional item DEMO-ITEM is available for the draft and the quantity remains 1.",
+        "task_refs": [
+          "DEMO-T3"
+        ],
+        "check_ids": [
+          "demo-draft-requisition-check"
+        ],
+        "owner": "Demo procurement SME (fictional)",
+        "required": true
+      },
+      {
+        "requirement_id": "demo-r4",
+        "description": "Require approval-rule setup to be complete before the bounded draft check",
+        "source_ref": "sample-evidence.html#tx-requirements",
+        "expected_setup": "The previously pending rule is completed and reviewed as prerequisite evidence; this draft-only check does not exercise an approval workflow.",
+        "task_refs": [
+          "DEMO-T4"
+        ],
+        "check_ids": [
+          "demo-draft-requisition-check"
+        ],
+        "owner": "Demo procurement SME (fictional)",
+        "required": true
+      }
+    ],
+    "tasks": [
+      {
+        "task_id": "DEMO-T1",
+        "title": "Business unit",
+        "status": "completed",
+        "source_ref": "sample-evidence.html#tx-prerequisites",
+        "captured_at": "2026-10-20T11:30:00Z",
+        "environment": "DEMO-TEST",
+        "evidence_current": true,
+        "details": "Fictional business unit DEMO-BU available; completed at 09:00 UTC.",
+        "owner": "Demo implementer (fictional)",
+        "completed_at": "2026-10-20T09:00:00Z"
+      },
+      {
+        "task_id": "DEMO-T2",
+        "title": "Supplier/site",
+        "status": "completed",
+        "source_ref": "sample-evidence.html#tx-prerequisites",
+        "captured_at": "2026-10-20T11:30:00Z",
+        "environment": "DEMO-TEST",
+        "evidence_current": true,
+        "details": "Earlier inactive-site blocker corrected at 11:10 UTC; fictional site DEMO-SITE is now active, supported by the later prerequisite evidence.",
+        "owner": "Demo implementer (fictional)",
+        "completed_at": "2026-10-20T11:10:00Z"
+      },
+      {
+        "task_id": "DEMO-T3",
+        "title": "Purchasable item",
+        "status": "completed",
+        "source_ref": "sample-evidence.html#tx-prerequisites",
+        "captured_at": "2026-10-20T11:30:00Z",
+        "environment": "DEMO-TEST",
+        "evidence_current": true,
+        "details": "Fictional item DEMO-ITEM available; completed at 09:20 UTC.",
+        "owner": "Demo implementer (fictional)",
+        "completed_at": "2026-10-20T09:20:00Z"
+      },
+      {
+        "task_id": "DEMO-T4",
+        "title": "Approval rule",
+        "status": "completed",
+        "source_ref": "sample-evidence.html#tx-prerequisites",
+        "captured_at": "2026-10-20T11:30:00Z",
+        "environment": "DEMO-TEST",
+        "evidence_current": true,
+        "details": "Earlier pending setup completed at 11:20 UTC and reviewed at 11:30 UTC. No approval transaction was executed.",
+        "owner": "Demo implementer (fictional)",
+        "completed_at": "2026-10-20T11:20:00Z"
+      }
+    ],
+    "checks": [
+      {
+        "result_id": "demo-tx-result-001",
+        "check_id": "demo-draft-requisition-check",
+        "check_version": "DEMO-1.0",
+        "title": "Create and verify one draft purchase requisition",
+        "owner": "Demo procurement SME (fictional)",
+        "required": true,
+        "blocking": true,
+        "requirement_refs": [
+          "demo-r1",
+          "demo-r2",
+          "demo-r3",
+          "demo-r4"
+        ],
+        "task_refs": [
+          "DEMO-T1",
+          "DEMO-T2",
+          "DEMO-T3",
+          "DEMO-T4"
+        ],
+        "source_ref": "sample-evidence.html#tx-manual-scenario",
+        "status": "PASS",
+        "method": "manual-evidence",
+        "environment": "DEMO-TEST",
+        "observed_at": "2026-10-20T12:05:00Z",
+        "evidence_current": true,
+        "reason": "Synthetic manual observations satisfy the selected draft-only assertions after separate prerequisite correction and review.",
+        "assertions": [
+          {
+            "assertion_id": "corrected-prerequisites-reviewed",
+            "expected": "Before this separate invocation, confirm the previously inactive supplier site was corrected and the previously pending approval-rule setup was completed.",
+            "observed": "Synthetic review at 11:30 UTC records site correction at 11:10 UTC and approval-rule completion at 11:20 UTC; all four prerequisite task records are complete.",
+            "status": "PASS",
+            "evidence_refs": [
+              "sample-evidence.html#tx-prerequisites"
+            ]
+          },
+          {
+            "assertion_id": "draft-saved",
+            "expected": "One primary requisition record is saved in draft status with one line of quantity 1, without submission.",
+            "observed": "Fictional record DEMO-REQ-001 was saved at 12:04 UTC; the 12:05 UTC manual evidence shows draft status, one line and quantity 1.",
+            "status": "PASS",
+            "evidence_refs": [
+              "sample-evidence.html#tx-draft-saved",
+              "sample-evidence.html#tx-before-cleanup"
+            ]
+          },
+          {
+            "assertion_id": "configured-references-retained",
+            "expected": "The saved draft retains DEMO-BU, DEMO-ITEM, DEMO-SUP and DEMO-SITE.",
+            "observed": "Synthetic manual read-back at 12:05 UTC shows the intended fictional business-unit, item, supplier and active-site references retained on DEMO-REQ-001.",
+            "status": "PASS",
+            "evidence_refs": [
+              "sample-evidence.html#tx-reference-readback",
+              "sample-evidence.html#tx-before-cleanup"
+            ]
+          }
+        ],
+        "evidence_refs": [
+          "sample-evidence.html#tx-prerequisites",
+          "sample-evidence.html#tx-execution-authorization",
+          "sample-evidence.html#tx-draft-saved",
+          "sample-evidence.html#tx-reference-readback",
+          "sample-evidence.html#tx-before-cleanup"
+        ],
+        "performed_by": "Demo implementer (fictional)",
+        "next_action": "",
+        "transaction": {
+          "test_key": "DEMO-DRAFT-REQ-001",
+          "record_id": "DEMO-REQ-001",
+          "request_id": "DEMO-MANUAL-REQUEST-001",
+          "new_primary_count": 1,
+          "reused": false,
+          "approval_ref": "sample-evidence.html#tx-execution-authorization",
+          "side_effects": [
+            "Synthetic scenario: one primary draft requisition DEMO-REQ-001 with one intrinsic line and quantity 1; no other independent records created.",
+            "No submission, approval request, purchase order, receipt or downstream processing is included in the scenario.",
+            "Evidence captured at 12:05 UTC before separately authorized deletion of DEMO-REQ-001 at 12:08 UTC."
+          ],
+          "cleanup_status": "removed-verified",
+          "cleanup_evidence_refs": [
+            "sample-evidence.html#tx-before-cleanup",
+            "sample-evidence.html#tx-cleanup-authorization",
+            "sample-evidence.html#tx-cleanup-record",
+            "sample-evidence.html#tx-cleanup-verification"
+          ],
+          "cleanup_owner": "Demo implementer (fictional)",
+          "cleanup_next_action": ""
+        }
+      }
+    ],
+    "decisions": [
+      {
+        "decision_id": "demo-tx-prerequisite-gate",
+        "summary": "Synthetic prerequisite review at 11:30 UTC confirmed the site and approval-rule corrections before starting this separate 12:00 UTC invocation; the earlier BLOCKED report remains unchanged.",
+        "owner": "Demo procurement SME (fictional)",
+        "source_ref": "sample-evidence.html#tx-prerequisites"
+      },
+      {
+        "decision_id": "demo-tx-exact-request",
+        "summary": "Synthetic exact user request at 12:00 UTC authorizes one draft requisition with DEMO-BU, DEMO-ITEM, DEMO-SUP, DEMO-SITE and quantity 1; retain evidence and do not submit it. This is not real authorization.",
+        "owner": "Demo project owner (fictional)",
+        "source_ref": "sample-evidence.html#tx-execution-authorization"
+      },
+      {
+        "decision_id": "demo-tx-cleanup-authorization",
+        "summary": "After inspecting the 12:05 UTC pre-deletion evidence, a separate synthetic user authorization at 12:07 UTC requests deletion of only DEMO-REQ-001. No deletion is implied by the original test request.",
+        "owner": "Demo project owner (fictional)",
+        "source_ref": "sample-evidence.html#tx-cleanup-authorization"
+      },
+      {
+        "decision_id": "demo-tx-cleanup-completed",
+        "summary": "Synthetic cleanup record documents deletion of DEMO-REQ-001 at 12:08 UTC and manual absence verification at 12:09 UTC; the evidence captured before deletion is retained for this sample.",
+        "owner": "Demo implementer (fictional)",
+        "source_ref": "sample-evidence.html#tx-cleanup-record"
+      }
+    ],
+    "recommendations": [],
+    "limitations": [
+      "SYNTHETIC SAMPLE ONLY: every identity, task, timestamp, observation, approval and cleanup record is invented for demonstration; no Fusion system was accessed and no transaction was actually created or deleted.",
+      "This is a manual scenario illustration, not validated Oracle feature, screen, privilege, deletion-behavior or API documentation. A real pillar check must establish those contracts before execution.",
+      "The separate 10:00 UTC implementation-review sample remains BLOCKED. This later invocation explicitly records correction and prerequisite-review evidence at 11:30 UTC; it does not bypass the earlier blockers or rewrite that report.",
+      "READY_WITHIN_VERIFIED_SCOPE applies only to the single demonstrated draft-saving check. The approval-rule prerequisite was reviewed but no approval workflow was executed; end-to-end purchasing, downstream accounting and performance are outside scope.",
+      "Passing schema and assessment checks validate the internal consistency of this sample, not the truth of its invented evidence.",
+      "Pre-deletion evidence is a fictional capture note in the sample evidence catalog; no screenshot file is claimed to exist."
+    ],
+    "errors": []
+  },
+  "assessment": {
+    "readiness": "READY_WITHIN_VERIFIED_SCOPE",
+    "readiness_scope": "transactional-validation",
+    "counts": {
+      "PASS": 1,
+      "FAIL": 0,
+      "BLOCKED": 0,
+      "INDETERMINATE": 0,
+      "SKIPPED": 0,
+      "NOT_RUN": 0,
+      "NOT_APPLICABLE": 0
+    },
+    "requirement_count": 4,
+    "task_count": 4,
+    "gaps": [],
+    "blockers": [],
+    "followups": []
+  }
+}

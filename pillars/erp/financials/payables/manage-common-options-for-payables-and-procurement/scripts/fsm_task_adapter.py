@@ -18,7 +18,7 @@ import sys
 import tempfile
 import zipfile
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import date, datetime, timedelta, timezone
 from decimal import Decimal, InvalidOperation
 from pathlib import Path, PurePosixPath
 from typing import Any
@@ -59,12 +59,10 @@ def _read_json(path: Path) -> Any:
         raise AdapterError(f"Cannot read valid JSON from {path}: {exc}") from exc
 
 
-def _write_json(path: Path, value: Any) -> None:
+def _write_json(path: Path, value: Any, *, exclusive: bool = False) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(
-        json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n",
-        encoding="utf-8",
-    )
+    with path.open("x" if exclusive else "w", encoding="utf-8") as stream:
+        stream.write(json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n")
 
 
 def _default_contract_path() -> Path:
@@ -204,13 +202,12 @@ def _metadata_object_contracts(root: ElementTree.Element) -> dict[str, dict[str,
             continue
         name = _first_xml_text(node, "BusinessObjectShortName")
         if not name:
-            continue
+            raise AdapterError("Metadata contains an unnamed business object.")
         if name in result:
             raise AdapterError(f"Metadata contains duplicate business object {name}.")
         attributes = [
             value.strip()
             for value in _first_xml_text(node, "XmlAttributeList").split(",")
-            if value.strip()
         ]
         types = [
             value.strip()
@@ -220,6 +217,8 @@ def _metadata_object_contracts(root: ElementTree.Element) -> dict[str, dict[str,
             raise AdapterError(
                 f"Metadata object {name} has {len(attributes)} attributes and {len(types)} types."
             )
+        if not all(attributes) or len(attributes) != len(set(attributes)):
+            raise AdapterError(f"Metadata object {name} has blank or duplicate attributes.")
         result[name] = {
             "nodePath": _first_xml_text(node, "XmlNodePath"),
             "nodeSequence": _first_xml_text(node, "NodeSequence"),
@@ -307,6 +306,8 @@ def _read_package(path: Path, contract: dict[str, Any]) -> PackageData:
     if not metadata["ProcessEnv"] or not metadata["ProcessRelease"]:
         raise AdapterError("Package metadata must declare ProcessEnv and ProcessRelease.")
     object_contracts = _metadata_object_contracts(root)
+    if set(object_contracts) != {entity["name"] for entity in contract["package"]["entities"]}:
+        raise AdapterError("Metadata business objects differ from the exact task contract.")
     observed_node_sequences: list[str] = []
     for entity in contract["package"]["entities"]:
         actual = object_contracts.get(entity["name"])
@@ -319,6 +320,9 @@ def _read_package(path: Path, contract: dict[str, Any]) -> PackageData:
                 f"Metadata node path for {entity['name']} is {actual['nodePath']!r}, expected {entity['nodePath']!r}."
             )
         observed_node_sequences.append(actual["nodeSequence"])
+        native_fields = {field for field in entity["headers"] if "." not in field}
+        if set(actual["types"]) != native_fields:
+            raise AdapterError(f"Metadata attributes for {entity['name']} differ from its native CSV fields.")
         for field, actual_type in actual["types"].items():
             if field not in entity["headers"]:
                 raise AdapterError(
@@ -379,10 +383,10 @@ def _validate_new_outputs(outputs: list[Path], inputs: list[Path]) -> None:
     resolved_inputs = {path.resolve() for path in inputs}
     if len(resolved_outputs) != len(set(resolved_outputs)):
         raise AdapterError("Output paths must be distinct.")
-    for path in resolved_outputs:
+    for original, path in zip(outputs, resolved_outputs):
         if path in resolved_inputs:
             raise AdapterError(f"Output path overlaps an input: {path}.")
-        if path.exists():
+        if original.is_symlink() or path.exists():
             raise AdapterError(f"Refusing to overwrite existing output: {path}.")
 
 
@@ -659,6 +663,60 @@ def _satisfied_prerequisites(
         ):
             satisfied.append(item)
     return satisfied
+
+
+def _reference_time(value: Any, field: str) -> datetime:
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        if parsed.tzinfo is None or parsed.utcoffset() is None:
+            raise ValueError("Timezone required")
+        return parsed.astimezone(timezone.utc)
+    except (AttributeError, TypeError, ValueError) as exc:
+        raise AdapterError(f"Reference evidence {field} must be a timezone-qualified ISO timestamp.") from exc
+
+
+def _validate_reference_provenance(
+    blueprint: dict[str, Any], baseline: PackageData,
+    satisfied: list[dict[str, Any]], *, require_fresh: bool,
+) -> None:
+    """Bind successful resolver evidence to the selected run and actual export.
+
+    The workflow supplies referenceContext before acquiring receipts. This
+    local check never invents provenance or rebinds an earlier receipt. Offline
+    structural checks without a baseline do not constitute preparation.
+    """
+    if not satisfied:
+        return
+    context = blueprint.get("referenceContext")
+    fields = {"environment", "baseUrl", "baselineSha256", "runId", "startedAt"}
+    if not isinstance(context, dict) or set(context) != fields:
+        raise AdapterError("Successful reference receipts require a complete referenceContext for the selected run.")
+    from readback_evidence import _host
+
+    try:
+        origin = _host(context["baseUrl"])
+    except (TypeError, ValueError) as exc:
+        raise AdapterError("Reference context baseUrl must be a complete HTTPS origin.") from exc
+    if (context["baseUrl"] != origin
+            or not baseline.metadata.get("ProcessEnv")
+            or context["environment"] != baseline.metadata["ProcessEnv"]
+            or context["baselineSha256"] != baseline.archive_sha256
+            or not isinstance(context["runId"], str)
+            or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}", context["runId"])):
+        raise AdapterError("Reference context must bind the current environment, HTTPS origin, export SHA and run ID.")
+    now = datetime.now(timezone.utc)
+    started = _reference_time(context["startedAt"], "startedAt")
+    if started > now or (require_fresh and now - started > timedelta(hours=24)):
+        raise AdapterError("Reference run must have started within the last 24 hours and not in the future.")
+    for receipt in satisfied:
+        if receipt.get("requestContext") != context:
+            raise AdapterError("Successful reference receipt must bind the exact current referenceContext; never reuse or rebind earlier evidence.")
+        if any(name in receipt and receipt[name] != context[name]
+               for name in ("environment", "baseUrl", "baselineSha256")):
+            raise AdapterError("Reference receipt contains conflicting environment, origin or export provenance.")
+        observed = _reference_time(receipt.get("observedAt"), "observedAt")
+        if observed < started or observed > now:
+            raise AdapterError("Reference receipt observedAt must be within the selected run and not in the future.")
 
 
 def _effective_operation_value(
@@ -1169,6 +1227,12 @@ def _validate_field_rules(
             raise AdapterError(
                 f"Adapter contract has invalid conditional blank rule for {entity['name']}."
             )
+        if (
+            operation["action"] == "update"
+            and condition_field not in values
+            and dependent_field not in values
+        ):
+            continue
         condition_value = _effective_operation_value(
             values, baseline_row, condition_field
         )
@@ -1226,6 +1290,12 @@ def _validate_field_rules(
             )
 
 
+def _require_preservation(operation: dict[str, Any]) -> None:
+    for field in ("preserveOtherValues", "preserveUnspecifiedRows"):
+        if operation.get(field, True) is not True:
+            raise AdapterError(f"{field} must be true; unrequested changes are not supported.")
+
+
 def _normalized_blueprint(
     contract: dict[str, Any], design: dict[str, Any]
 ) -> dict[str, Any]:
@@ -1244,6 +1314,7 @@ def _normalized_blueprint(
         operation.setdefault("action", "update")
         operation.setdefault("preserveOtherValues", True)
         operation.setdefault("preserveUnspecifiedRows", True)
+        _require_preservation(operation)
         entity = entities.get(operation.get("entity"))
         if entity is not None:
             target = dict(operation.get("targetKey") or {})
@@ -1275,6 +1346,8 @@ def _normalized_blueprint(
         "prerequisites": design.get("prerequisites", []),
         "warnings": design.get("warnings", []),
     }
+    if "referenceContext" in design:
+        blueprint["referenceContext"] = design["referenceContext"]
     blueprint["firstTimeUiDefaulting"] = _first_time_ui_defaulting(
         contract, normalized_ops
     )
@@ -1358,6 +1431,7 @@ def _validate_blueprint(
     contract: dict[str, Any],
     blueprint: dict[str, Any],
     baseline: PackageData | None = None,
+    *, require_fresh_references: bool = True,
 ) -> None:
     task = blueprint.get("task")
     if task != {"name": contract["task"]["name"], "code": contract["task"]["code"]}:
@@ -1368,6 +1442,10 @@ def _validate_blueprint(
     entities = _entity_map(contract)
     allowed = set(contract["normalization"]["supportedOperations"])
     satisfied = _satisfied_prerequisites(blueprint, contract)
+    if baseline is not None:
+        _validate_reference_provenance(
+            blueprint, baseline, satisfied, require_fresh=require_fresh_references
+        )
     resolved_bu_contexts = (
         _derive_and_verify_erp_bu_context(contract, blueprint, baseline, satisfied)
         if baseline is not None
@@ -1392,6 +1470,7 @@ def _validate_blueprint(
     for position, operation in enumerate(operations, start=1):
         if not isinstance(operation, dict):
             raise AdapterError(f"Operation {position} must be an object.")
+        _require_preservation(operation)
         operation_id = operation.get("id")
         if not isinstance(operation_id, str) or not operation_id:
             raise AdapterError(f"Operation {position} has no stable id.")
@@ -1613,10 +1692,7 @@ def _requirements(
         # A create has no pre-existing target row whose values can be preserved.
         # Unspecified fields are governed by the explicit create values and the
         # package schema; only updates need a target-level preservation check.
-        if (
-            operation["action"] == "update"
-            and operation.get("preserveOtherValues", True)
-        ):
+        if operation["action"] == "update":
             result.append(
                 {
                     "id": f"REQ-{number:03d}",
@@ -1626,16 +1702,15 @@ def _requirements(
                 }
             )
             number += 1
-        if operation.get("preserveUnspecifiedRows", True):
-            result.append(
-                {
-                    "id": f"REQ-{number:03d}",
-                    "kind": "preserve_rows",
-                    "requirement": "Preserve every unspecified record and non-audit value",
-                    **base,
-                }
-            )
-            number += 1
+        result.append(
+            {
+                "id": f"REQ-{number:03d}",
+                "kind": "preserve_rows",
+                "requirement": "Preserve every unspecified record and non-audit value",
+                **base,
+            }
+        )
+        number += 1
     return result
 
 
@@ -1685,6 +1760,7 @@ def normalize_design(
         "firstTimeUiDefaulting": blueprint["firstTimeUiDefaulting"],
         "preservedValues": blueprint["preservedValues"],
         "prerequisites": blueprint["prerequisites"],
+        "referenceContext": blueprint.get("referenceContext"),
         "warnings": blueprint["warnings"],
         "referenceValidationWarnings": blueprint.get("referenceValidationWarnings", []),
         "requirementCount": len(requirements),
@@ -1731,7 +1807,7 @@ def _write_candidate(
     }
     metadata_member = contract["package"]["metadataMember"]
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    with zipfile.ZipFile(output_path, "w") as archive:
+    with zipfile.ZipFile(output_path, "x") as archive:
         for member in template.member_names:
             if member in entity_by_member:
                 entity = entity_by_member[member]
@@ -1774,12 +1850,20 @@ def _semantic_issues(
                 issues.append(
                     {"code": "VALUE_MISMATCH", "message": f"{entity['name']} {key!r} {field} is {row[field]!r}, expected {str(value)!r}."}
                 )
-        if operation.get("preserveOtherValues", True) and operation["action"] == "update":
+        if operation["action"] == "update":
             allowed = set(operation["values"]) | set(entity["auditFields"])
             for field in entity["headers"]:
                 if field not in allowed and row[field] != before[field]:
                     issues.append(
                         {"code": "UNEXPECTED_CHANGE", "message": f"{entity['name']} {key!r} changed preserved field {field}."}
+                    )
+        elif operation["action"] == "create":
+            expected = _candidate_rows(contract, baseline, {"operations": [operation]})[entity["name"]][0]
+            checked = set(operation["values"]) | set(entity["auditFields"])
+            for field in entity["headers"]:
+                if field not in checked and row[field] != expected[field]:
+                    issues.append(
+                        {"code": "UNEXPECTED_CHANGE", "message": f"{entity['name']} {key!r} populated unrequested create field {field}."}
                     )
         for field in entity["auditFields"]:
             if row[field] != "":
@@ -1962,7 +2046,13 @@ def reconcile(
     blueprint_path: Path,
     requirements_path: Path,
     export_path: Path,
+    *,
+    readback_evidence: dict[str, Any] | None = None,
+    import_request_id: str | None = None,
+    target_url: str | None = None,
 ) -> dict[str, Any]:
+    from readback_evidence import bind_readback_result
+
     baseline = _read_package(baseline_path, contract)
     candidate = _read_package(candidate_path, contract)
     persisted = _read_package(export_path, contract)
@@ -1975,7 +2065,7 @@ def reconcile(
                 )
     blueprint = _read_json(blueprint_path)
     requirements = _read_json(requirements_path)
-    _validate_blueprint(contract, blueprint, baseline)
+    _validate_blueprint(contract, blueprint, baseline, require_fresh_references=False)
     if not isinstance(requirements, list):
         raise AdapterError("Requirements file must contain a JSON array.")
     _requirement_contract(contract, blueprint, requirements)
@@ -2068,7 +2158,7 @@ def reconcile(
                 "detail": detail,
             }
         )
-    return {
+    comparison = {
         "schemaVersion": SCHEMA_VERSION,
         "status": "PASS" if all(row["passed"] for row in matrix) else "FAIL",
         "task": contract["task"],
@@ -2078,6 +2168,16 @@ def reconcile(
         "requirementMatrix": matrix,
         "mismatchCount": sum(not row["passed"] for row in matrix),
     }
+    return bind_readback_result(
+        comparison, readback_evidence,
+        task_code=contract["task"]["code"],
+        environment=baseline.metadata["ProcessEnv"],
+        baseline_sha256=baseline.archive_sha256,
+        candidate_sha256=candidate.archive_sha256,
+        export_sha256=persisted.archive_sha256,
+        import_request_id=import_request_id,
+        target_url=target_url,
+    )
 
 
 def make_rollback(
@@ -2090,11 +2190,13 @@ def make_rollback(
     rollback_requirements_path: Path,
     output_path: Path,
     prerequisites_path: Path | None = None,
+    reference_context_path: Path | None = None,
 ) -> dict[str, Any]:
     _validate_new_outputs(
         [rollback_blueprint_path, rollback_requirements_path, output_path],
         [template_path, before_path, current_path, forward_blueprint_path]
-        + ([prerequisites_path] if prerequisites_path is not None else []),
+        + ([prerequisites_path] if prerequisites_path is not None else [])
+        + ([reference_context_path] if reference_context_path is not None else []),
     )
     before = _read_package(before_path, contract)
     current = _read_package(current_path, contract)
@@ -2103,7 +2205,7 @@ def make_rollback(
     if before.metadata["ProcessRelease"] != current.metadata["ProcessRelease"]:
         raise AdapterError("Before and current rollback exports come from different releases.")
     forward = _read_json(forward_blueprint_path)
-    _validate_blueprint(contract, forward, before)
+    _validate_blueprint(contract, forward, before, require_fresh_references=False)
     if prerequisites_path is None:
         raise AdapterError(
             "Rollback requires --prerequisites: fresh validation receipts for the "
@@ -2113,6 +2215,12 @@ def make_rollback(
     rollback_prerequisites = _read_json(prerequisites_path)
     if not isinstance(rollback_prerequisites, list):
         raise AdapterError("Rollback prerequisites must be a JSON array of bound receipts.")
+    if reference_context_path is None:
+        raise AdapterError("Rollback requires --reference-context for a fresh run bound to the current export.")
+    rollback_context = _read_json(reference_context_path)
+    if (isinstance(rollback_context, dict)
+            and rollback_context.get("runId") == forward.get("referenceContext", {}).get("runId")):
+        raise AdapterError("Rollback must use a new reference run; forward context cannot be reused.")
     entities = _entity_map(contract)
     operations = []
     for index, operation in enumerate(forward["operations"], start=1):
@@ -2148,13 +2256,14 @@ def make_rollback(
         "explicitDefaults": [],
         "preservedValues": [],
         "prerequisites": rollback_prerequisites,
+        "referenceContext": rollback_context,
         "warnings": [],
     }
     rollback = _normalized_blueprint(contract, design)
     _validate_blueprint(contract, rollback, current)
     requirements = _requirements(contract, rollback)
-    _write_json(rollback_blueprint_path, rollback)
-    _write_json(rollback_requirements_path, requirements)
+    _write_json(rollback_blueprint_path, rollback, exclusive=True)
+    _write_json(rollback_requirements_path, requirements, exclusive=True)
     report = build_candidate(
         contract,
         template_path,
@@ -2176,14 +2285,22 @@ def normalized_manifest(
     template_only: bool,
 ) -> dict[str, Any]:
     package = _read_package(package_path, contract)
+    if not isinstance(environment, str) or environment.strip() != package.metadata["ProcessEnv"]:
+        raise AdapterError("Manifest environment must match the package ProcessEnv.")
+    from readback_evidence import _host
+
+    try:
+        origin = _host(base_url)
+    except ValueError as exc:
+        raise AdapterError("Manifest base URL must be a complete HTTPS origin without a path.") from exc
     populated = [
         entity["member"]
         for entity in contract["package"]["entities"]
         if package.rows[entity["name"]]
     ]
     return {
-        "environment": environment,
-        "baseUrl": base_url,
+        "environment": environment.strip(),
+        "baseUrl": origin,
         "taskName": contract["task"]["name"],
         "taskCode": contract["task"]["code"],
         "status": package.metadata["ProcessStatus"],
@@ -2256,6 +2373,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     rollback.add_argument("--current", type=Path, required=True)
     rollback.add_argument("--forward-blueprint", type=Path, required=True)
     rollback.add_argument("--prerequisites", type=Path, required=True, help="JSON array of fresh RB-OP/value/current-export-bound receipts.")
+    rollback.add_argument("--reference-context", type=Path, required=True, help="JSON context for the fresh rollback reference run and current export.")
     rollback.add_argument("--blueprint-output", type=Path, required=True)
     rollback.add_argument("--requirements-output", type=Path, required=True)
     rollback.add_argument("--output", type=Path, required=True)
@@ -2267,18 +2385,32 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     reconcile_parser.add_argument("--blueprint", type=Path, required=True)
     reconcile_parser.add_argument("--requirements", type=Path, required=True)
     reconcile_parser.add_argument("--export", type=Path, required=True)
+    reconcile_parser.add_argument("--readback-evidence", type=Path,
+                                  help="Observation from the governed post-import export.")
+    reconcile_parser.add_argument("--import-request-id",
+                                  help="Current Core Data Loader initiation request ID.")
+    reconcile_parser.add_argument("--target-url",
+                                  help="Explicit target Fusion URL for persisted verification.")
     return parser.parse_args(argv)
 
 
 def _command_succeeded(command: str, result: dict[str, Any]) -> bool:
     if command == "manifest":
-        return result.get("status") == "COMPLETED"
+        return str(result.get("status", "")).strip().upper() in SUCCESS_STATUSES
     return result.get("status", "PASS") == "PASS"
 
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
+    outputs_checked = False
     try:
+        output_names = {"report", "output", "blueprint_output", "preview_output", "requirements_output"}
+        path_arguments = {name: value for name, value in vars(args).items() if isinstance(value, Path)}
+        _validate_new_outputs(
+            [path for name, path in path_arguments.items() if name in output_names],
+            [path for name, path in path_arguments.items() if name not in output_names],
+        )
+        outputs_checked = True
         contract = _load_contract(args.contract)
         if args.command == "manifest":
             result = normalized_manifest(
@@ -2292,9 +2424,9 @@ def main(argv: list[str] | None = None) -> int:
             blueprint, preview, requirements = normalize_design(
                 contract, args.baseline, args.request, args.design
             )
-            _write_json(args.blueprint_output, blueprint)
-            _write_json(args.preview_output, preview)
-            _write_json(args.requirements_output, requirements)
+            _write_json(args.blueprint_output, blueprint, exclusive=True)
+            _write_json(args.preview_output, preview, exclusive=True)
+            _write_json(args.requirements_output, requirements, exclusive=True)
             result = preview
         elif args.command == "build":
             result = build_candidate(
@@ -2333,8 +2465,11 @@ def main(argv: list[str] | None = None) -> int:
                 args.requirements_output,
                 args.output,
                 args.prerequisites,
+                args.reference_context,
             )
         elif args.command == "reconcile":
+            from readback_evidence import read_observation
+
             result = reconcile(
                 contract,
                 args.baseline,
@@ -2342,21 +2477,27 @@ def main(argv: list[str] | None = None) -> int:
                 args.blueprint,
                 args.requirements,
                 args.export,
+                readback_evidence=read_observation(args.readback_evidence),
+                import_request_id=args.import_request_id,
+                target_url=args.target_url,
             )
         else:
             raise AdapterError(f"Unknown command {args.command!r}.")
         if args.report:
-            _write_json(args.report, result)
+            _write_json(args.report, result, exclusive=True)
         print(json.dumps(result, indent=2, sort_keys=True, ensure_ascii=False))
         return 0 if _command_succeeded(args.command, result) else 2
-    except AdapterError as exc:
+    except (AdapterError, OSError, ValueError) as exc:
         failure = {
             "schemaVersion": SCHEMA_VERSION,
             "status": "FAIL",
             "errors": [{"code": "ADAPTER_ERROR", "message": str(exc)}],
         }
-        if getattr(args, "report", None):
-            _write_json(args.report, failure)
+        if outputs_checked and getattr(args, "report", None):
+            try:
+                _write_json(args.report, failure, exclusive=True)
+            except OSError as report_exc:
+                failure["errors"].append({"code": "REPORT_WRITE_ERROR", "message": str(report_exc)})
         print(json.dumps(failure, indent=2, sort_keys=True), file=sys.stderr)
         return 2
 

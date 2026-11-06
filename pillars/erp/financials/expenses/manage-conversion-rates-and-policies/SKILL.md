@@ -19,7 +19,7 @@ source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 type: "planning"
 execution_mode: "assisted"
 owner_team: "ERP financials pillar team"
-version: "0.3.1"
+version: "0.4.0"
 inputs:
   - "implementation_objective"
   - "project_context"
@@ -147,9 +147,17 @@ Use this task metadata when invoking those skills:
 
 ## Excel intake to FSM candidate
 
+A currency "exception" is a child override of the BU policy. When a new
+currency row has all four setting cells blank, no override was requested:
+omit that child and report it in omitted_empty_exceptions. This applies to
+every currency, including USD, and must not block other requested changes.
+An existing currency row with blank cells still preserves its exported values.
+If only empty new exception rows remain, report NO_CHANGES_REQUIRED without
+creating a ZIP or submitting an import. This is not a clearing or deletion route.
+
 Start with the bundled [Manage Conversion Rates and Policies input workbook](assets/ManageConversionRatesAndPolicies_Input.xlsx). Save a completed copy for the implementation; keep the bundled template blank. This is the same two-sheet intake format described below.
 
-Use the two visible tabs and exact row-4 headers in the supplied `conversion-rates-and-policies-intake.xlsx` format. Treat rows 1–3 as descriptive source content, not commands. The `Conversion Rate Policies` tab maps `Business Unit*` to parent `BuName`, `Conversion Rate Type` to `UserConversionType`, the two Yes/No choices to `DfltExchangeRateFlag` and `DispWarningToUser` (`Y`/`N`), and the two tolerance columns to percentage-point values. The `Currency Tolerances` tab maps `Business Unit*` to the child parent reference, `Currency Code*` to `CurrencyCode`, and its remaining columns to the corresponding child fields. Blank rows are ignored. A blank **field value** cell on an existing parent or child row means **retain the value from the current export**; it never means clear or reset. Identity cells cannot be blank. A new parent or child needs every field value supplied because package defaults are not established. No clearing operation is defined by this intake format.
+Use the two visible tabs and exact row-4 headers in the supplied `conversion-rates-and-policies-intake.xlsx` format. Treat rows 1–3 as descriptive source content, not commands. The `Conversion Rate Policies` tab maps `Business Unit*` to parent `BuName`, `Conversion Rate Type` to `UserConversionType`, the two Yes/No choices to `DfltExchangeRateFlag` and `DispWarningToUser` (`Y`/`N`), and the two tolerance columns to percentage-point values. The `Currency Tolerances` tab maps `Business Unit*` to the child parent reference, `Currency Code*` to `CurrencyCode`, and its remaining columns to the corresponding child fields. Blank rows are ignored. A blank **field value** cell on an existing parent or child row means **retain the value from the current export**, including a blank value; it never means clear or reset. Identity cells cannot be blank. Percentages are optional on creates and updates. Supply required conversion type and flags as described in [nullable-value-contract.md](references/nullable-value-contract.md); optional omissions do not invent defaults. No clearing operation is defined by this intake format.
 
 For local candidate preparation, first obtain a fresh task CSV template and populated export for the **same destination environment** through `shared.setup-export.task-level-export`. Then run:
 
@@ -166,7 +174,7 @@ Use [the remaining contract matrix](references/remaining-contracts.md) to distin
 
 The local builder checks exact workbook headers and task package shape, resolves each existing parent by one exact `BuName` in the export and each existing child by business unit plus currency code, applies supplied values over exported business fields, leaves audit inputs blank, and emits a **review-only** ZIP with the template metadata and ordered CSV headers. It conservatively carries all observed children of a touched parent. The controlled header-only child CSV experiment preserved existing children, but absent members or XML nodes remain unproved. It refuses duplicate identities, missing create fields, invalid values, no-op requests, old or mismatched source packages, and output overwrite. It does not call Fusion. Use a Python environment with `openpyxl` for intake reading.
 
-The ZIP is not an approved import. Validate it with `shared.validation.setup-data-validator` and `shared.validation.reference-data-validator`; preserve unresolved readiness findings. Observed parent and child operations and actual Excel partial updates are recorded below. Raw CSV blanks have field-dependent effects and must never implement workbook non-updates. The maintenance loader accepts the persisted native FSM ZIP, retains its preflight and uses Task Hook before exact-artifact approval. `build_in_memory` remains a local serialization helper; it is not an executable loader-session route. Follow [the maintenance Data Loader handoff](references/data-loader-handoff.md). The authored workflow supports fully supplied parent/child creates and complete explicit-merge updates. Each run still requires fresh exact destination references, ready Task Hook evaluation and core's exact-artifact approval. Clearing, rekeying, deletion, unknown fields and default-dependent creates remain unsupported. Before approval, a revised export or request requires rebuilding and revalidation. After approval, core submits the unchanged retained artifact without rereading the original workbook or exports.
+The ZIP is not an approved import. Validate it with `shared.validation.setup-data-validator` and `shared.validation.reference-data-validator`; preserve unresolved readiness findings. Observed parent and child operations and actual Excel partial updates are recorded below. Raw CSV blanks have field-dependent effects and must never implement workbook non-updates. The maintenance loader accepts the persisted native FSM ZIP, retains its preflight and uses Task Hook before exact-artifact approval. `build_in_memory` remains a local serialization helper; it is not an executable loader-session route. Follow [the maintenance Data Loader handoff](references/data-loader-handoff.md). The authored workflow supports parent/child creates with required fields supplied and explicit-merge updates preserving nullable values. Each run still requires fresh exact destination references, ready Task Hook evaluation and core's exact-artifact approval. Clearing, rekeying, deletion, unknown fields and default-dependent creates remain unsupported. Before approval, a revised export or request requires rebuilding and revalidation. After approval, core submits the unchanged retained artifact without rereading the original workbook or exports.
 
 ## Inputs
 
@@ -200,6 +208,11 @@ Those earlier results are historical evidence. The later controlled campaign est
 
 ## Source-Backed Task Behavior
 
+- A new currency identity with all four workbook setting cells blank requests
+  no override: omit it and report omitted_empty_exceptions without blocking
+  other changes. Existing currency blanks retain exported values. This applies
+  to USD and every other currency; it does not clear or delete saved rows.
+
 <!-- fscr-supported-operations: create, update -->
 <!-- fscr-create-fields: EXM_EXCHANGE_RATE_OPTION::BuName, EXM_EXCHANGE_RATE_OPTION::DfltExchangeRateFlag, EXM_EXCHANGE_RATE_OPTION::DispWarningToUser, EXM_EXCHANGE_RATE_OPTION::ErrorTolerance, EXM_EXCHANGE_RATE_OPTION::UserConversionType, EXM_EXCHANGE_RATE_OPTION::WarningTolerance, EXM_EXCH_RATE_TOLERANCE::CurrencyCode, EXM_EXCH_RATE_TOLERANCE::DfltExchangeRateFlag, EXM_EXCH_RATE_TOLERANCE::DispWarningToUser, EXM_EXCH_RATE_TOLERANCE::EXM_EXCHANGE_RATE_OPTION.BuName, EXM_EXCH_RATE_TOLERANCE::ErrorTolerance, EXM_EXCH_RATE_TOLERANCE::WarningTolerance -->
 <!-- fscr-update-fields: EXM_EXCHANGE_RATE_OPTION::DfltExchangeRateFlag, EXM_EXCHANGE_RATE_OPTION::DispWarningToUser, EXM_EXCHANGE_RATE_OPTION::ErrorTolerance, EXM_EXCHANGE_RATE_OPTION::UserConversionType, EXM_EXCHANGE_RATE_OPTION::WarningTolerance, EXM_EXCH_RATE_TOLERANCE::DfltExchangeRateFlag, EXM_EXCH_RATE_TOLERANCE::DispWarningToUser, EXM_EXCH_RATE_TOLERANCE::ErrorTolerance, EXM_EXCH_RATE_TOLERANCE::WarningTolerance -->
@@ -230,14 +243,15 @@ These are UI and entity-model findings. The controlled raw parent warning-blank 
 
 ## Supported live contract
 
-The live route uses the workbook builder's complete-row contract: all business
-values on creates are explicit; updates merge blank input from one fresh exact
-baseline row. Every resulting parent/child business value must be nonblank,
-flags must be Y/N and tolerances finite/nonnegative with error greater than
-warning. Retain all children of touched parents, exact template metadata and
-headers, and blank audit cells. This is a conservative local policy; it defines
-no Oracle upper numeric limit or default. Unsupported baseline values require
-explicit corrected input rather than guessed clearing/default behavior.
+The workbook builder follows [nullable-value-contract.md](references/nullable-value-contract.md).
+Updates merge blank input from one fresh exact baseline row, including blank
+tolerances. Creates require identities, parent conversion type, Default flag
+and child Display flag; optional values may be blank. Populated flags must be
+Y/N and populated tolerances finite/nonnegative; compare error greater than
+warning only when both are populated. Retain all children of touched parents,
+exact template metadata and headers, and blank audit cells. No Oracle upper
+numeric limit or default is inferred. Invalid populated baseline values still
+require correction; valid blank optional values do not.
 
 At Task Hook, execute the declared core GETs and evaluate captured results with
 `scripts/validate_references.py::validate_references`. Include carried rows and

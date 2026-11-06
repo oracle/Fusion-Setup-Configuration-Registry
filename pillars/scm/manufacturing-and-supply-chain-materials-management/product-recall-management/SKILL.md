@@ -77,6 +77,7 @@ workspace_outputs:
     versioning_policy: "append-only"
 required_setup_tasks:
   - "ORA_MANAGE_PRODUCT_RECALL_PARAMETERS"
+  - "ORA_MANAGE_REGISTRATION_TO_RECEIVE_RECALL_ALERTS"
 applicability:
   industries:
     - "All"
@@ -107,6 +108,7 @@ Use this functional-area skill after Manufacturing and Supply Chain Materials Ma
 ## Setup Tasks
 
 1. [Manage Product Recall Parameters](manage-product-recall-parameters/SKILL.md) (`ORA_MANAGE_PRODUCT_RECALL_PARAMETERS`)
+2. [Manage Registration to Receive Recall Alerts](manage-registration-to-receive-recall-alerts/SKILL.md) (`ORA_MANAGE_REGISTRATION_TO_RECEIVE_RECALL_ALERTS`)
 
 ## Inputs
 

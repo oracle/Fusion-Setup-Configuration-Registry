@@ -1,8 +1,9 @@
 # Maintenance Data Loader handoff
 
 The task builds a review-only native FSM ZIP. It does not authenticate, submit,
-approve, or establish live readiness. The compiled registry is ready for the bounded fully supplied-create and
-complete merged-update contract. Evaluate every runtime gate; ready authoring
+approve, or establish live readiness. The compiled registry describes creates
+with source-required fields and merged updates preserving nullable percentages.
+Evaluate every runtime gate; ready authoring
 is not passed preflight or mutation approval. Unsupported operations remain
 blocked. Never import directly, select another executor or fabricate passed
 Task Hook results.

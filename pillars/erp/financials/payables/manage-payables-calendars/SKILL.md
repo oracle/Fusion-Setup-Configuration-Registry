@@ -207,3 +207,64 @@ Use this task metadata when invoking those skills:
 ## Implementation Notes
 
 Use the parent functional-area skill `erp.financials.payables` for functional-area sequencing and scope decisions. Track token usage for any generated project artifact or skill-run record using the manifest policy.
+
+## Supporting Parent Headers
+
+For every period create or update, include its matching calendar header once
+in the same FSM archive. Match both CalendarName and CalendarType.
+
+- Existing calendar, no requested header change: copy its header from the fresh
+  current-data baseline without changing any business value.
+- Existing calendar, requested header change: use that baseline header and apply
+  only the permitted changes the user requested.
+- New calendar: include the explicitly requested calendar create row with the
+  required values. Do not invent a calendar to satisfy a period request.
+- Calendar absent from the baseline and no explicit calendar create: stop and
+  ask the user to identify an existing calendar or request a new calendar.
+
+Leave audit fields blank in all import rows. Preserve calendar dates when
+converting the export date format to the import date format. Reject missing
+parents, unrequested changes to supporting headers, and populated audit fields.
+Other existing periods do not need to be copied into the candidate. For an
+uploaded ZIP, require the header inside that ZIP; validation does not add it.
+Validate all uploaded rows together so overlapping period creates and duplicate
+year/period-number pairs are rejected when the header is unchanged, updated, or
+newly created. For both user requests and uploaded ZIPs, compare requested
+periods with each other and with retained baseline periods. Within the same
+Calendar Name and Calendar Type, two periods cannot use the same year and
+period number, even when their dates do not overlap.
+
+## Verifying Changes After Import
+
+`reconcile` can report `PASS` only after the workflow has observed a successful
+import and a later completed export from the same task and environment. Supply
+`--verification-evidence <observations.json> --environment <selected-environment>
+--base-url <selected-https-origin> --import-request-id <completed-import-request>`
+along with the baseline, approved candidate, blueprint, requirements and export.
+Missing, stale or mismatched evidence leaves verification `PENDING`; say that
+saved changes have not yet been verified.
+
+For an offline file comparison, use `reconcile --compare-only`. Its result is
+`MATCH` or `DIFFERENT`, with `persistenceVerification=NOT_PERFORMED`. A file match
+does not prove that an import occurred. Package building and import approval
+are unchanged. See [Error Handling](ora-resource/ora_error_handling.md#reconciliation-evidence)
+for the required observations.
+
+
+## Uploaded Package Compatibility
+
+Before reporting an uploaded ZIP as valid, supply `validate-upload` with
+`--target-context <selected-target.json>` from the independently selected
+workflow target. Both baseline and uploaded metadata must match its environment
+and release. Read [Uploaded package compatibility](references/uploaded-package-compatibility.md)
+for the contract and migration boundary. Matching schemas alone do not establish
+source/target compatibility.
+
+
+## Source Manifest Labels and Origins
+
+When producing a source manifest or verifying post-import observations, follow
+[Manifest labels and HTTPS origins](references/manifest-labels-and-origins.md).
+A source manifest's environment must match its ZIP metadata; keep migration
+destination information separate. Use a credential-free HTTPS origin without
+an API path, query or fragment. A template-only label requires an empty package.

@@ -156,7 +156,7 @@ target as a fallback.
    undocumented setup values. Preview may write only review artifacts; it must
    not call Fusion.
 5. Before execution, confirm a clear, contextual user approval exists for the
-   exact persisted artifact. Recalculate the payload digest and require the
+   exact persisted artifact. Recalculate the approval-envelope digest and require the
    target, method, endpoint, and payload to match the approval artifact.
 6. Before execution, require `restBaseUrl` in the supplied properties file to
    equal the approval-bound target after URL normalization. The runner fails
@@ -217,7 +217,7 @@ a Data Loader business object or Data Loader upload/initiation.
 5. Validate the complete credential-free payload, target environment, and
    endpoint before any write. Reject credentials, `authenticationDetails`,
    bearer tokens, refresh tokens, private keys, and undocumented setup keys.
-   Persist the exact payload, target, method, and SHA-256 digest as an
+   Persist the exact payload, canonical target URL, method, endpoint, resolved project workspace, approval version, and approval-envelope SHA-256 digest as an
    approval-bound project artifact. Do not POST during preview:
 
    ```bash
@@ -236,6 +236,7 @@ a Data Loader business object or Data Loader upload/initiation.
    python3 scripts/run_connector_definition.py execute \
      --approval-state <approval-state> \
      --approve-digest <approved-digest> \
+     --project-root <project-root> \
      --properties <fusion-properties-file>
    ```
 
@@ -248,61 +249,85 @@ a Data Loader business object or Data Loader upload/initiation.
    ```
 
    Never retry an uncertain POST. Instead, use the exact read-only BOSS
-   verification query below before deciding whether a new preview and approval
-   are needed.
+   registration recovery query below to reconcile the original attempt.
 
-### Connector Registration Verification and Recovery
+### Predefined Data Source Readiness
 
-Use this read-only path after an uncertain connector-definition POST, or after
-the user completes the connector setup page and explicitly asks for a status
-check. Query the supported source-type field through
-`core.fusion-api.rest-api-client/scripts/boss-rest_client.py`:
+Use the following GET through the approved BOSS client for predefined-source
+readiness. Resolve `source_type_name` from the selected connector type in the
+central registry; only this value is dynamic. The existing OCI prerequisite
+applies to OCI; USER-DEFINED continues to skip that seeded-source prerequisite.
 
 ```text
-POST /api/boss/data/objects/ora/riskMgmtRisk/dataIntegration/v1/connectorDefinitions/$query
+GET /api/boss/data/objects/ora/riskMgmtRisk/dataIntegration/v1/connectorDefinitions?$filter=creationStatus='COMPLETED' and connectorStatus='ACTIVE' and sourceTypeName='<source_type_name>'&$includeTotalItems=true&$limit=1&$fields=id
 ```
-
-Build a body file using the centrally resolved `sourceTypeName`:
-
-```json
-{
-  "collection": {
-    "filter": "sourceTypeName='<source_type_name>' and connectorStatus='ACTIVE' and creationStatus='COMPLETED'"
-  }
-}
-```
-
-Run the existing BOSS client with explicit properties and an output file:
 
 ```bash
 python3 core/fusion-api/rest-api-client/scripts/boss-rest_client.py \
-  /api/boss/data/objects/ora/riskMgmtRisk/dataIntegration/v1/connectorDefinitions/$query \
-  --method POST \
-  --body-file <connector-verification-query.json> \
+  /api/boss/data/objects/ora/riskMgmtRisk/dataIntegration/v1/connectorDefinitions \
+  --method GET \
+  --query "\$filter=creationStatus='COMPLETED' and connectorStatus='ACTIVE' and sourceTypeName='${source_type_name}'" \
+  --query '$includeTotalItems=true' \
+  --query '$limit=1' \
+  --query '$fields=id' \
+  --properties <boss-properties-file> \
+  --output <seeded-query-response.json>
+```
+
+Use `boss_scope` and its separate local token cache. A successful response with
+at least one record containing an `id` confirms the selected predefined data
+source is set up. The server filter establishes readiness, so status fields
+need not appear in the projected record. This is an existence check: no
+pagination or unique-match requirement applies once a record is returned.
+
+An empty `items` array means no ready match was found. Stop downstream work and
+ask the user to complete setup in the Data Integration UI. It does not prove
+that a pending connector is absent. A failed request, missing or malformed
+`items`, or a record without an `id` blocks readiness. Neither `hasMore` nor a
+total count alone proves setup.
+
+### Connector Registration Verification and Recovery
+
+The predefined-source query above does not verify a newly registered connector:
+it can return an unrelated ready connector and it excludes unfinished records.
+Never use its result to authorize recreation or Run Book completion.
+
+After an uncertain POST or a user-requested post-setup status check, use the
+approved BOSS client for a separate GET collection read filtered only by the
+centrally resolved source type. Include unfinished records:
+
+```bash
+python3 core/fusion-api/rest-api-client/scripts/boss-rest_client.py \
+  /api/boss/data/objects/ora/riskMgmtRisk/dataIntegration/v1/connectorDefinitions \
+  --method GET \
+  --query "\$filter=sourceTypeName='${source_type_name}'" \
+  --query '$includeTotalItems=true' \
+  --query '$limit=100' \
+  --query '$fields=id,name,creationStatus,connectorStatus' \
   --properties <boss-properties-file> \
   --output <connector-verification-response.json>
 ```
 
-This is a read-only BOSS query using `boss_scope` and its separate local token
-cache. The BOSS resource does not support `name` in its server-side filter, so
-select an exact `name` match locally from the returned collection. Treat a
-missing name, multiple exact name matches, or `hasMore: true` as ambiguous.
-Sanitize the response and persist only the exact connector's ID,
-`creationStatus`, `connectorStatus`, HTTP status, target, and next safe action.
+The BOSS resource does not support `name` in its server-side filter; perform
+name matching locally. Match the retained registration ID when available; otherwise select an exact
+approved connector-name match locally. Require valid records and explicit
+Boolean `hasMore=false` before deciding from this collection. Missing identity,
+malformed results, `hasMore=true`, or multiple exact matches block recovery;
+do not select arbitrarily or replay the POST. If the required read contract is
+rejected by the service, report the contract gap and stop without a fallback.
 
-- Zero records: the approved POST did not produce a discoverable connector.
-  Do not retry automatically; rebuild the preview and obtain fresh approval
-  before another creation attempt.
-- More than one exact name match or `hasMore: true`: stop on the ambiguous
-  result and require user selection. Do not choose a connector or retry the
-  POST.
-- Exactly one record that is not both `creationStatus: COMPLETED` and
-  `connectorStatus: ACTIVE`: present its connector setup URL, keep the Run
-  Book task open, and wait for the user to complete UI setup and request a
-  later status check.
-- Exactly one record that is `COMPLETED` and `ACTIVE`: verification succeeds.
-  Continue to the Run Book completion handoff only when the originating
-  request includes configuration or task completion.
+- No exact match: the outcome remains unresolved. Keep the task open and retain
+  sanitized diagnostics for read-only reconciliation. Do not infer that the
+  original POST failed or rebuild a creation preview based on this result.
+- One exact match not both `COMPLETED` and `ACTIVE`: present the existing
+  connector's setup URL, keep the task open, and wait for setup and a later
+  user-requested status check. Do not submit another registration.
+- One exact match both `COMPLETED` and `ACTIVE`: verification succeeds; continue
+  to Run Book completion only when the originating request includes it.
+
+Persist only the exact connector ID, status fields, HTTP status, target and next
+safe action. Any subsequent creation requires independent reconciliation of the
+original attempt and fresh approval; neither query authorizes an automatic retry.
 
 ### Run Book Completion Handoff
 
@@ -350,3 +375,45 @@ request a second Data Loader approval or upload a loader artifact.
 ## Implementation Notes
 
 Use the parent functional-area skill `erp.risk-and-security.add-other-data-sources` for functional-area sequencing and scope decisions. Track token usage for any generated project artifact or skill-run record using the manifest policy.
+
+### Approval envelope integrity
+
+The runner hashes the canonical version-2 approval envelope: target URL
+(the environment identity), HTTP method, endpoint, resolved project workspace
+path, and complete credential-free payload. The digest field itself is excluded.
+Execution requires `--project-root <selected-project-root>` alongside
+`--approval-state`, `--approve-digest`, and `--properties`. The selected workspace
+must match the envelope, and the selected connection's `restBaseUrl` must match
+the approved target immediately before dispatch. Changed envelopes, mismatched
+connections, and legacy payload-only approvals fail closed. Regenerate the
+preview and obtain fresh approval; never upgrade an old approval in place.
+
+### Retained approval previews
+
+Each preview creates a new `current/approvals/preview-<unique-id>/` directory
+containing its approval JSON and Markdown summary (and the EPM OpenAPI file
+when applicable). Files are created exclusively and never replaced by another
+preview. Existing files at the old fixed paths are left intact.
+
+Only `current/latest-approval.json` is replaced atomically, after every file in
+the new preview has been written successfully. It points to the latest preview
+for discovery; it is not an approval artifact or an execution input. Link the
+versioned files returned by the runner, retain the exact `approvalState` path
+and digest that the user reviewed, and execute that path even if a later
+preview changes the pointer. A later preview does not grant approval, revoke
+an earlier approval, or authorize replay of a submitted operation.
+
+### Artifact path and overwrite protection
+
+Both connector runners use the functional-area `../scripts/connector_artifacts.py`
+helper. Preview and execution artifacts must remain inside the selected initialized
+project workspace. Symlinked artifact directories, approval files, payload files,
+and current pointers are rejected, including links that point inside the workspace.
+Directories are opened without following symlinks, and artifact files are created
+exclusively with mode `0600`. Only the regular current pointer is replaced atomically.
+
+Execution creates the derived `.payload.json` beside the approved versioned JSON.
+If that destination already exists, execution stops before dispatch and preserves
+the existing file. Do not delete it to retry a possibly submitted POST. Reconcile
+the prior result through the documented recovery route; obtain a new preview and
+approval only when a new submission has been established as appropriate.

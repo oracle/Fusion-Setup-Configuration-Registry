@@ -1,18 +1,26 @@
 # Adaptive Search Publish Input Validation
 
+ABO initialization uses [ora_abo_initialization.md](ora_abo_initialization.md),
+not the normal selective-pair row/status rules below. Require its nine-object
+Full scope, blank workbook `publishType`, four exact operation/header values,
+known catalog blocker, distinct receipt and independent Core Task Hook approval.
+Only presence of the ABO pair after successful initialization is needed to
+propose Partial Publish; ESS still requires the later pair enabled.
+
 ## Required Groups
 
 | Requirement Group | Accepted Fields | If Missing | How to Resolve |
 |---|---|---|---|
 | Target environment | environment | Stop | Ask for the non-production Fusion environment intended for the publish |
 | Publish selection | objects | Stop | Supply at least one exact Adaptive Search business object display name |
-| Live authorization | live_approval | Stop before POST | Present the final preview and obtain explicit approval |
+| Standalone live authorization | live_approval | Stop before POST | Present the final preview and obtain explicit approval |
+| Fusion ABO parent provenance | V2 workflow identity and verified CPQ predecessor | Stop before companion preflight | Match exact project/target/fixed pair; Core Task Hook approval is separate. |
 
 ## Dependency-Aware Validation
 
 | Applies When | Result | Next Action |
 |---|---|---|
-| Latest publish status is WAIT, RUNNING, or PAUSED | Blocked | Wait for or resolve the existing publish; do not submit another POST |
+| Latest publish status is WAIT, READY, RUNNING, or PAUSED | Blocked | Wait for or resolve the existing publish; do not submit another POST |
 | Entities response is null, `items` is null, or `items` is empty | New environment | Continue to preflight and payload mapping, then display the defined OOTB object list in the single combined full-publish confirmation |
 | Fusion reports a sandbox conflict from the publish POST | Fusion API error | Report the response and require sandbox resolution; do not retry automatically |
 | Entities HTTP 200 response is unavailable or malformed | Blocked for object-name comparison | Follow the documented HTTP branch; never invent a valid-choice list |
@@ -33,6 +41,10 @@
 | Current-active display entries must satisfy isEnabled=true | The request already limits results to isDocument=true; apply isEnabled only to the active display and never to object-name validation |
 | Every requested object is a recognized CPQ alias and Entities is nonempty | Skip catalog validation for the CPQ entities, construct the payload from `oraclecpqo_transaction` and `oraclecpqo_transactionLine`, then continue to publish-status preflight |
 | Every requested object is a recognized CPQ alias and Entities is null or empty | Classify the target as a new environment and follow the existing OOTB Full Publish confirmation and payload path |
+| A current exact Fusion ABO `workflow_authorization` accompanies `Consolidated Asset(s)` / `ConsolidatedAsset` and `Serialized Asset(s)` / `SerializedAsset` | Resolve only that fixed pair to `ConsolidatedAsset` and `SerializedAsset` after the Entities response confirms both are current document entities; do not treat these aliases as a general bypass of entity validation |
+| A Fusion ABO dependent submit lacks exact v2 identity, verified CPQ predecessor or current Core load approval | Block before submission; require the current bound Core preview, ordered task results, and explicit load approval; never prepare a replacement automatically. |
+| Fusion ABO companion input or Core validated row lacks exact `RestAction=POST`, canonical approval-bound `entities`, `publishType=selective`, `Content-Type=application/json`, `REST-Framework-Version=9`, or `Preference=transient` | Input validation blocker before approval. Operation/header fields belong to the Data Loader row, not the REST body. Correct source generation and validate a fresh preflight without reloading verified CPQ; after possible submission use reconciliation only. |
+| A Fusion ABO dependent status request lacks the same opaque `publish_operation_id` identity | Return indeterminate; never accept a caller-supplied Data Loader Request ID or submit again. The child alone performs the approved post-loader discovery and later exact-job status reads. |
 
 ## Object Name Correction
 

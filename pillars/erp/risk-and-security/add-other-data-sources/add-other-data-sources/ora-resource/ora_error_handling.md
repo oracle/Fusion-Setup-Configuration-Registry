@@ -29,6 +29,7 @@
 
 | Situation | What Must Not Happen |
 |---|---|
+| Registration outcome is uncertain or the predefined-source query is empty | Do not infer absence of pending registrations, rebuild a creation preview, replay POST, or complete the task from this evidence; reconcile the exact registration through the separate read-only recovery contract. |
 | REST contract is unverified or payload validation is incomplete | Do not claim the task is ready for downstream execution. |
 | OpenAPI response validation fails | Do not create, register, or update a connector definition from the incomplete contract. |
 

@@ -25,7 +25,9 @@
       "variantIds": [
         "RT-02-A",
         "SM-02-A",
-        "SM-02-B"
+        "SM-02-B",
+        "SM-02-C",
+        "SM-02-D"
       ]
     },
     {
@@ -75,8 +77,10 @@
         "BR-FIELD-EXM_EXCHANGE_RATE_OPTION-BuName-VALID",
         "BR-FIELD-EXM_EXCHANGE_RATE_OPTION-CreatedBy-AUDIT",
         "BR-FIELD-EXM_EXCHANGE_RATE_OPTION-CreationDate-AUDIT",
-        "BR-FIELD-EXM_EXCHANGE_RATE_OPTION-DfltExchangeRateFlag-BLOCKED",
-        "BR-FIELD-EXM_EXCHANGE_RATE_OPTION-DispWarningToUser-BLOCKED",
+        "BR-FIELD-EXM_EXCHANGE_RATE_OPTION-DfltExchangeRateFlag-INVALID",
+        "BR-FIELD-EXM_EXCHANGE_RATE_OPTION-DfltExchangeRateFlag-VALID",
+        "BR-FIELD-EXM_EXCHANGE_RATE_OPTION-DispWarningToUser-INVALID",
+        "BR-FIELD-EXM_EXCHANGE_RATE_OPTION-DispWarningToUser-VALID",
         "BR-FIELD-EXM_EXCHANGE_RATE_OPTION-ErrorTolerance-INVALID",
         "BR-FIELD-EXM_EXCHANGE_RATE_OPTION-ErrorTolerance-VALID",
         "BR-FIELD-EXM_EXCHANGE_RATE_OPTION-LastUpdateDate-AUDIT",
@@ -90,8 +94,10 @@
         "BR-FIELD-EXM_EXCH_RATE_TOLERANCE-CurrencyCode-INVALID",
         "BR-FIELD-EXM_EXCH_RATE_TOLERANCE-CurrencyCode-KEY-MUTATION",
         "BR-FIELD-EXM_EXCH_RATE_TOLERANCE-CurrencyCode-VALID",
-        "BR-FIELD-EXM_EXCH_RATE_TOLERANCE-DfltExchangeRateFlag-BLOCKED",
-        "BR-FIELD-EXM_EXCH_RATE_TOLERANCE-DispWarningToUser-BLOCKED",
+        "BR-FIELD-EXM_EXCH_RATE_TOLERANCE-DfltExchangeRateFlag-INVALID",
+        "BR-FIELD-EXM_EXCH_RATE_TOLERANCE-DfltExchangeRateFlag-VALID",
+        "BR-FIELD-EXM_EXCH_RATE_TOLERANCE-DispWarningToUser-INVALID",
+        "BR-FIELD-EXM_EXCH_RATE_TOLERANCE-DispWarningToUser-VALID",
         "BR-FIELD-EXM_EXCH_RATE_TOLERANCE-EXM_EXCHANGE_RATE_OPTION.BuName-INVALID",
         "BR-FIELD-EXM_EXCH_RATE_TOLERANCE-EXM_EXCHANGE_RATE_OPTION.BuName-KEY-MUTATION",
         "BR-FIELD-EXM_EXCH_RATE_TOLERANCE-EXM_EXCHANGE_RATE_OPTION.BuName-VALID",
@@ -113,12 +119,8 @@
       "reason": "Mapped to generated or task-supplied executable catalog variants.",
       "variantIds": [
         "RD-EXM_EXCHANGE_RATE_OPTION-BuName",
-        "RD-EXM_EXCHANGE_RATE_OPTION-DfltExchangeRateFlag",
-        "RD-EXM_EXCHANGE_RATE_OPTION-DispWarningToUser",
         "RD-EXM_EXCHANGE_RATE_OPTION-UserConversionType",
         "RD-EXM_EXCH_RATE_TOLERANCE-CurrencyCode",
-        "RD-EXM_EXCH_RATE_TOLERANCE-DfltExchangeRateFlag",
-        "RD-EXM_EXCH_RATE_TOLERANCE-DispWarningToUser",
         "RD-EXM_EXCH_RATE_TOLERANCE-EXM_EXCHANGE_RATE_OPTION.BuName"
       ]
     },
@@ -212,6 +214,8 @@
       "variantIds": [
         "IM-01-A",
         "IM-01-B",
+        "IM-01-C",
+        "IM-01-D",
         "IM-02-A",
         "IM-02-B",
         "RT-05-D"
@@ -224,6 +228,8 @@
       "variantIds": [
         "IM-01-A",
         "IM-01-B",
+        "IM-01-C",
+        "IM-01-D",
         "IM-03-A",
         "IM-03-B",
         "IM-03-C",
@@ -246,6 +252,8 @@
       "variantIds": [
         "IM-01-A",
         "IM-01-B",
+        "IM-01-C",
+        "IM-01-D",
         "RT-05-C"
       ]
     },
@@ -417,14 +425,14 @@
           "followUpScript": [],
           "freshBaselineRequired": false,
           "id": "RT-02-B",
-          "input": "For Manage Conversion Rates and Policies, change EXM_EXCHANGE_RATE_OPTION.ErrorTolerance from 1 to 2 for the existing record identified by BuName=SYNTHETIC_BUNAME. In the same request, also configure Manage Auto Submission and Matching Options for the rollout. Preserve all unrelated setup.",
+          "input": "For Manage Conversion Rates and Policies, change EXM_EXCHANGE_RATE_OPTION.ErrorTolerance from 1 to 2 for the existing record identified by BuName=SYNTHETIC_BUNAME. In the same request, also configure a second, different FSM setup task for the rollout. Preserve all unrelated setup.",
           "inputMode": "customer_prompt",
           "liveSequenceGroup": "default",
           "mutation": false,
           "preconditions": [],
           "promptId": "C-RT-02-B",
           "promptSource": "builder_generated",
-          "realisticPromptTemplate": "For Manage Conversion Rates and Policies, change EXM_EXCHANGE_RATE_OPTION.ErrorTolerance from 1 to 2 for the existing record identified by BuName=SYNTHETIC_BUNAME. In the same request, also configure Manage Auto Submission and Matching Options for the rollout. Preserve all unrelated setup.",
+          "realisticPromptTemplate": "For Manage Conversion Rates and Policies, change EXM_EXCHANGE_RATE_OPTION.ErrorTolerance from 1 to 2 for the existing record identified by BuName=SYNTHETIC_BUNAME. In the same request, also configure a second, different FSM setup task for the rollout. Preserve all unrelated setup.",
           "requestedOperations": [],
           "requiredEvidence": [],
           "rollbackRequired": false,
@@ -587,14 +595,14 @@
           "followUpScript": [],
           "freshBaselineRequired": false,
           "id": "RT-04-A",
-          "input": "Financials rollout note:\n\n1. For Manage Conversion Rates and Policies, change EXM_EXCHANGE_RATE_OPTION.ErrorTolerance from 1 to 2 for the existing record identified by BuName=SYNTHETIC_BUNAME. Preserve every other non-audit value and every unrelated record.\n2. Training materials and access reviews are handled by the rollout team.\n3. Manage Auto Submission and Matching Options is out of scope for this request.\n\nProcess only item 1 and list the excluded material.",
+          "input": "Financials rollout note:\n\n1. For Manage Conversion Rates and Policies, change EXM_EXCHANGE_RATE_OPTION.ErrorTolerance from 1 to 2 for the existing record identified by BuName=SYNTHETIC_BUNAME. Preserve every other non-audit value and every unrelated record.\n2. Training materials and access reviews are handled by the rollout team.\n3. a second, different FSM setup task is out of scope for this request.\n\nProcess only item 1 and list the excluded material.",
           "inputMode": "customer_prompt",
           "liveSequenceGroup": "default",
           "mutation": false,
           "preconditions": [],
           "promptId": "P-RT-04-A",
           "promptSource": "builder_generated",
-          "realisticPromptTemplate": "Financials rollout note:\n\n1. For Manage Conversion Rates and Policies, change EXM_EXCHANGE_RATE_OPTION.ErrorTolerance from 1 to 2 for the existing record identified by BuName=SYNTHETIC_BUNAME. Preserve every other non-audit value and every unrelated record.\n2. Training materials and access reviews are handled by the rollout team.\n3. Manage Auto Submission and Matching Options is out of scope for this request.\n\nProcess only item 1 and list the excluded material.",
+          "realisticPromptTemplate": "Financials rollout note:\n\n1. For Manage Conversion Rates and Policies, change EXM_EXCHANGE_RATE_OPTION.ErrorTolerance from 1 to 2 for the existing record identified by BuName=SYNTHETIC_BUNAME. Preserve every other non-audit value and every unrelated record.\n2. Training materials and access reviews are handled by the rollout team.\n3. a second, different FSM setup task is out of scope for this request.\n\nProcess only item 1 and list the excluded material.",
           "requestedOperations": [],
           "requiredEvidence": [],
           "rollbackRequired": false,
@@ -1016,31 +1024,76 @@
             "offline"
           ],
           "dependsOn": [],
-          "driverId": "driver.fixture.descriptor-conditional-blocker",
+          "driverId": "driver.fixture.fresh-export-plus-adapter-field-contract",
           "executionClass": "offline",
-          "expectedBehavior": "Stop before package generation and report the exact resolver evidence gap.",
+          "expectedBehavior": "Normalize the business label or synonym to its canonical package code and accept only the source-backed domain. Preserve unrelated values.",
           "expectedCandidateAssertions": [
             "candidate matches the normalized design and contains no unrelated target changes"
           ],
           "expectedPersistedStateAssertions": [],
           "expectedStoppingRule": "Stop only after all declared assertions and required evidence pass.",
-          "fixtureStrategy": "descriptor-conditional-blocker",
+          "fixtureStrategy": "fresh-export-plus-adapter-field-contract",
           "followUpScript": [],
           "freshBaselineRequired": true,
-          "id": "BR-FIELD-EXM_EXCHANGE_RATE_OPTION-DfltExchangeRateFlag-BLOCKED",
-          "input": "Request a change to EXM_EXCHANGE_RATE_OPTION.DfltExchangeRateFlag without a confirmed resolver contract.",
+          "id": "BR-FIELD-EXM_EXCHANGE_RATE_OPTION-DfltExchangeRateFlag-VALID",
+          "input": "Use the supported business choice 'Yes' for EXM_EXCHANGE_RATE_OPTION.DfltExchangeRateFlag in an otherwise valid request.",
           "inputMode": "fixture_instruction",
           "liveSequenceGroup": "default",
           "mutation": false,
           "preconditions": [],
-          "realisticPromptTemplate": "Request a change to EXM_EXCHANGE_RATE_OPTION.DfltExchangeRateFlag without a confirmed resolver contract.",
+          "realisticPromptTemplate": "Use the supported business choice 'Yes' for EXM_EXCHANGE_RATE_OPTION.DfltExchangeRateFlag in an otherwise valid request.",
           "requestedOperations": [],
           "requiredEvidence": [
-            "normalization diagnostic",
+            "normalization result",
+            "semantic validation report"
+          ],
+          "rollbackRequired": false,
+          "title": "Accept source-backed source-backed update field EXM_EXCHANGE_RATE_OPTION.DfltExchangeRateFlag"
+        },
+        {
+          "automation": {
+            "blockers": [],
+            "status": "ready"
+          },
+          "baselinePatternIds": [
+            "FIELD-CONTRACT"
+          ],
+          "cleanup": {
+            "evidence": [],
+            "required": false,
+            "strategy": "none",
+            "supported": true
+          },
+          "coverageTags": [
+            "non-mutation",
+            "offline"
+          ],
+          "dependsOn": [],
+          "driverId": "driver.fixture.generated-invalid-field-fixture",
+          "executionClass": "offline",
+          "expectedBehavior": "Reject with an exact entity/field diagnostic and create no usable candidate.",
+          "expectedCandidateAssertions": [
+            "candidate matches the normalized design and contains no unrelated target changes"
+          ],
+          "expectedPersistedStateAssertions": [],
+          "expectedStoppingRule": "Stop only after all declared assertions and required evidence pass.",
+          "fixtureStrategy": "generated-invalid-field-fixture",
+          "followUpScript": [],
+          "freshBaselineRequired": true,
+          "id": "BR-FIELD-EXM_EXCHANGE_RATE_OPTION-DfltExchangeRateFlag-INVALID",
+          "input": "Use a business choice outside the source-backed allowed-value domain for EXM_EXCHANGE_RATE_OPTION.DfltExchangeRateFlag.",
+          "inputMode": "fixture_instruction",
+          "liveSequenceGroup": "default",
+          "mutation": false,
+          "preconditions": [],
+          "realisticPromptTemplate": "Use a business choice outside the source-backed allowed-value domain for EXM_EXCHANGE_RATE_OPTION.DfltExchangeRateFlag.",
+          "requestedOperations": [],
+          "requiredEvidence": [
+            "field-level diagnostic",
             "zero-candidate proof"
           ],
           "rollbackRequired": false,
-          "title": "Block unresolved reference field EXM_EXCHANGE_RATE_OPTION.DfltExchangeRateFlag"
+          "title": "Reject invalid EXM_EXCHANGE_RATE_OPTION.DfltExchangeRateFlag"
         },
         {
           "automation": {
@@ -1241,31 +1294,76 @@
             "offline"
           ],
           "dependsOn": [],
-          "driverId": "driver.fixture.descriptor-conditional-blocker",
+          "driverId": "driver.fixture.fresh-export-plus-adapter-field-contract",
           "executionClass": "offline",
-          "expectedBehavior": "Stop before package generation and report the exact resolver evidence gap.",
+          "expectedBehavior": "Normalize the business label or synonym to its canonical package code and accept only the source-backed domain. Preserve unrelated values.",
           "expectedCandidateAssertions": [
             "candidate matches the normalized design and contains no unrelated target changes"
           ],
           "expectedPersistedStateAssertions": [],
           "expectedStoppingRule": "Stop only after all declared assertions and required evidence pass.",
-          "fixtureStrategy": "descriptor-conditional-blocker",
+          "fixtureStrategy": "fresh-export-plus-adapter-field-contract",
           "followUpScript": [],
           "freshBaselineRequired": true,
-          "id": "BR-FIELD-EXM_EXCHANGE_RATE_OPTION-DispWarningToUser-BLOCKED",
-          "input": "Request a change to EXM_EXCHANGE_RATE_OPTION.DispWarningToUser without a confirmed resolver contract.",
+          "id": "BR-FIELD-EXM_EXCHANGE_RATE_OPTION-DispWarningToUser-VALID",
+          "input": "Use the supported business choice 'Yes' for EXM_EXCHANGE_RATE_OPTION.DispWarningToUser in an otherwise valid request.",
           "inputMode": "fixture_instruction",
           "liveSequenceGroup": "default",
           "mutation": false,
           "preconditions": [],
-          "realisticPromptTemplate": "Request a change to EXM_EXCHANGE_RATE_OPTION.DispWarningToUser without a confirmed resolver contract.",
+          "realisticPromptTemplate": "Use the supported business choice 'Yes' for EXM_EXCHANGE_RATE_OPTION.DispWarningToUser in an otherwise valid request.",
           "requestedOperations": [],
           "requiredEvidence": [
-            "normalization diagnostic",
+            "normalization result",
+            "semantic validation report"
+          ],
+          "rollbackRequired": false,
+          "title": "Accept source-backed source-backed update field EXM_EXCHANGE_RATE_OPTION.DispWarningToUser"
+        },
+        {
+          "automation": {
+            "blockers": [],
+            "status": "ready"
+          },
+          "baselinePatternIds": [
+            "FIELD-CONTRACT"
+          ],
+          "cleanup": {
+            "evidence": [],
+            "required": false,
+            "strategy": "none",
+            "supported": true
+          },
+          "coverageTags": [
+            "non-mutation",
+            "offline"
+          ],
+          "dependsOn": [],
+          "driverId": "driver.fixture.generated-invalid-field-fixture",
+          "executionClass": "offline",
+          "expectedBehavior": "Reject with an exact entity/field diagnostic and create no usable candidate.",
+          "expectedCandidateAssertions": [
+            "candidate matches the normalized design and contains no unrelated target changes"
+          ],
+          "expectedPersistedStateAssertions": [],
+          "expectedStoppingRule": "Stop only after all declared assertions and required evidence pass.",
+          "fixtureStrategy": "generated-invalid-field-fixture",
+          "followUpScript": [],
+          "freshBaselineRequired": true,
+          "id": "BR-FIELD-EXM_EXCHANGE_RATE_OPTION-DispWarningToUser-INVALID",
+          "input": "Use a business choice outside the source-backed allowed-value domain for EXM_EXCHANGE_RATE_OPTION.DispWarningToUser.",
+          "inputMode": "fixture_instruction",
+          "liveSequenceGroup": "default",
+          "mutation": false,
+          "preconditions": [],
+          "realisticPromptTemplate": "Use a business choice outside the source-backed allowed-value domain for EXM_EXCHANGE_RATE_OPTION.DispWarningToUser.",
+          "requestedOperations": [],
+          "requiredEvidence": [
+            "field-level diagnostic",
             "zero-candidate proof"
           ],
           "rollbackRequired": false,
-          "title": "Block unresolved reference field EXM_EXCHANGE_RATE_OPTION.DispWarningToUser"
+          "title": "Reject invalid EXM_EXCHANGE_RATE_OPTION.DispWarningToUser"
         },
         {
           "automation": {
@@ -1826,31 +1924,76 @@
             "offline"
           ],
           "dependsOn": [],
-          "driverId": "driver.fixture.descriptor-conditional-blocker",
+          "driverId": "driver.fixture.fresh-export-plus-adapter-field-contract",
           "executionClass": "offline",
-          "expectedBehavior": "Stop before package generation and report the exact resolver evidence gap.",
+          "expectedBehavior": "Normalize the business label or synonym to its canonical package code and accept only the source-backed domain. Preserve unrelated values.",
           "expectedCandidateAssertions": [
             "candidate matches the normalized design and contains no unrelated target changes"
           ],
           "expectedPersistedStateAssertions": [],
           "expectedStoppingRule": "Stop only after all declared assertions and required evidence pass.",
-          "fixtureStrategy": "descriptor-conditional-blocker",
+          "fixtureStrategy": "fresh-export-plus-adapter-field-contract",
           "followUpScript": [],
           "freshBaselineRequired": true,
-          "id": "BR-FIELD-EXM_EXCH_RATE_TOLERANCE-DfltExchangeRateFlag-BLOCKED",
-          "input": "Request a change to EXM_EXCH_RATE_TOLERANCE.DfltExchangeRateFlag without a confirmed resolver contract.",
+          "id": "BR-FIELD-EXM_EXCH_RATE_TOLERANCE-DfltExchangeRateFlag-VALID",
+          "input": "Use the supported business choice 'Yes' for EXM_EXCH_RATE_TOLERANCE.DfltExchangeRateFlag in an otherwise valid request.",
           "inputMode": "fixture_instruction",
           "liveSequenceGroup": "default",
           "mutation": false,
           "preconditions": [],
-          "realisticPromptTemplate": "Request a change to EXM_EXCH_RATE_TOLERANCE.DfltExchangeRateFlag without a confirmed resolver contract.",
+          "realisticPromptTemplate": "Use the supported business choice 'Yes' for EXM_EXCH_RATE_TOLERANCE.DfltExchangeRateFlag in an otherwise valid request.",
           "requestedOperations": [],
           "requiredEvidence": [
-            "normalization diagnostic",
+            "normalization result",
+            "semantic validation report"
+          ],
+          "rollbackRequired": false,
+          "title": "Accept source-backed source-backed update field EXM_EXCH_RATE_TOLERANCE.DfltExchangeRateFlag"
+        },
+        {
+          "automation": {
+            "blockers": [],
+            "status": "ready"
+          },
+          "baselinePatternIds": [
+            "FIELD-CONTRACT"
+          ],
+          "cleanup": {
+            "evidence": [],
+            "required": false,
+            "strategy": "none",
+            "supported": true
+          },
+          "coverageTags": [
+            "non-mutation",
+            "offline"
+          ],
+          "dependsOn": [],
+          "driverId": "driver.fixture.generated-invalid-field-fixture",
+          "executionClass": "offline",
+          "expectedBehavior": "Reject with an exact entity/field diagnostic and create no usable candidate.",
+          "expectedCandidateAssertions": [
+            "candidate matches the normalized design and contains no unrelated target changes"
+          ],
+          "expectedPersistedStateAssertions": [],
+          "expectedStoppingRule": "Stop only after all declared assertions and required evidence pass.",
+          "fixtureStrategy": "generated-invalid-field-fixture",
+          "followUpScript": [],
+          "freshBaselineRequired": true,
+          "id": "BR-FIELD-EXM_EXCH_RATE_TOLERANCE-DfltExchangeRateFlag-INVALID",
+          "input": "Use a business choice outside the source-backed allowed-value domain for EXM_EXCH_RATE_TOLERANCE.DfltExchangeRateFlag.",
+          "inputMode": "fixture_instruction",
+          "liveSequenceGroup": "default",
+          "mutation": false,
+          "preconditions": [],
+          "realisticPromptTemplate": "Use a business choice outside the source-backed allowed-value domain for EXM_EXCH_RATE_TOLERANCE.DfltExchangeRateFlag.",
+          "requestedOperations": [],
+          "requiredEvidence": [
+            "field-level diagnostic",
             "zero-candidate proof"
           ],
           "rollbackRequired": false,
-          "title": "Block unresolved reference field EXM_EXCH_RATE_TOLERANCE.DfltExchangeRateFlag"
+          "title": "Reject invalid EXM_EXCH_RATE_TOLERANCE.DfltExchangeRateFlag"
         },
         {
           "automation": {
@@ -2051,31 +2194,76 @@
             "offline"
           ],
           "dependsOn": [],
-          "driverId": "driver.fixture.descriptor-conditional-blocker",
+          "driverId": "driver.fixture.fresh-export-plus-adapter-field-contract",
           "executionClass": "offline",
-          "expectedBehavior": "Stop before package generation and report the exact resolver evidence gap.",
+          "expectedBehavior": "Normalize the business label or synonym to its canonical package code and accept only the source-backed domain. Preserve unrelated values.",
           "expectedCandidateAssertions": [
             "candidate matches the normalized design and contains no unrelated target changes"
           ],
           "expectedPersistedStateAssertions": [],
           "expectedStoppingRule": "Stop only after all declared assertions and required evidence pass.",
-          "fixtureStrategy": "descriptor-conditional-blocker",
+          "fixtureStrategy": "fresh-export-plus-adapter-field-contract",
           "followUpScript": [],
           "freshBaselineRequired": true,
-          "id": "BR-FIELD-EXM_EXCH_RATE_TOLERANCE-DispWarningToUser-BLOCKED",
-          "input": "Request a change to EXM_EXCH_RATE_TOLERANCE.DispWarningToUser without a confirmed resolver contract.",
+          "id": "BR-FIELD-EXM_EXCH_RATE_TOLERANCE-DispWarningToUser-VALID",
+          "input": "Use the supported business choice 'Yes' for EXM_EXCH_RATE_TOLERANCE.DispWarningToUser in an otherwise valid request.",
           "inputMode": "fixture_instruction",
           "liveSequenceGroup": "default",
           "mutation": false,
           "preconditions": [],
-          "realisticPromptTemplate": "Request a change to EXM_EXCH_RATE_TOLERANCE.DispWarningToUser without a confirmed resolver contract.",
+          "realisticPromptTemplate": "Use the supported business choice 'Yes' for EXM_EXCH_RATE_TOLERANCE.DispWarningToUser in an otherwise valid request.",
           "requestedOperations": [],
           "requiredEvidence": [
-            "normalization diagnostic",
+            "normalization result",
+            "semantic validation report"
+          ],
+          "rollbackRequired": false,
+          "title": "Accept source-backed source-backed update field EXM_EXCH_RATE_TOLERANCE.DispWarningToUser"
+        },
+        {
+          "automation": {
+            "blockers": [],
+            "status": "ready"
+          },
+          "baselinePatternIds": [
+            "FIELD-CONTRACT"
+          ],
+          "cleanup": {
+            "evidence": [],
+            "required": false,
+            "strategy": "none",
+            "supported": true
+          },
+          "coverageTags": [
+            "non-mutation",
+            "offline"
+          ],
+          "dependsOn": [],
+          "driverId": "driver.fixture.generated-invalid-field-fixture",
+          "executionClass": "offline",
+          "expectedBehavior": "Reject with an exact entity/field diagnostic and create no usable candidate.",
+          "expectedCandidateAssertions": [
+            "candidate matches the normalized design and contains no unrelated target changes"
+          ],
+          "expectedPersistedStateAssertions": [],
+          "expectedStoppingRule": "Stop only after all declared assertions and required evidence pass.",
+          "fixtureStrategy": "generated-invalid-field-fixture",
+          "followUpScript": [],
+          "freshBaselineRequired": true,
+          "id": "BR-FIELD-EXM_EXCH_RATE_TOLERANCE-DispWarningToUser-INVALID",
+          "input": "Use a business choice outside the source-backed allowed-value domain for EXM_EXCH_RATE_TOLERANCE.DispWarningToUser.",
+          "inputMode": "fixture_instruction",
+          "liveSequenceGroup": "default",
+          "mutation": false,
+          "preconditions": [],
+          "realisticPromptTemplate": "Use a business choice outside the source-backed allowed-value domain for EXM_EXCH_RATE_TOLERANCE.DispWarningToUser.",
+          "requestedOperations": [],
+          "requiredEvidence": [
+            "field-level diagnostic",
             "zero-candidate proof"
           ],
           "rollbackRequired": false,
-          "title": "Block unresolved reference field EXM_EXCH_RATE_TOLERANCE.DispWarningToUser"
+          "title": "Reject invalid EXM_EXCH_RATE_TOLERANCE.DispWarningToUser"
         },
         {
           "automation": {
@@ -2307,7 +2495,7 @@
     {
       "applicability": {
         "reasons": [
-          "Applicable when the adapter declares conditional reference blockers."
+          "Evaluate each source-qualified reference contract or unresolved discovery prerequisite."
         ],
         "status": "conditional"
       },
@@ -2316,9 +2504,9 @@
       "scenarioType": "dependency matrix",
       "sourceIds": [
         "SRC-BUILDER-DEFAULT-TEST-STANDARD-V1",
+        "SRC-RULE-REGISTRY",
         "SRC-TASK-ADAPTER",
-        "SRC-TASK-EVIDENCE",
-        "SRC-RULE-REGISTRY"
+        "SRC-TASK-EVIDENCE"
       ],
       "title": "Reference resolver coverage",
       "validationFocus": "Every unresolved reference field and exact-match rule",
@@ -2326,7 +2514,7 @@
         {
           "automation": {
             "blockers": [
-              "No reviewed MigratorHelper implementation or controlled import result establishes zero/duplicate error text."
+              "Require fresh complete exact destination reference evidence bound to the candidate; Oracle error wording is not a prerequisite."
             ],
             "status": "blocked"
           },
@@ -2340,43 +2528,41 @@
             "supported": true
           },
           "coverageTags": [
-            "live-readonly",
-            "non-mutation"
+            "discovery",
+            "non-mutation",
+            "reference-contract",
+            "static"
           ],
           "dependsOn": [],
-          "driverId": "driver.fixture.supported-read-only-resolver-or-current-export",
-          "executionClass": "live-readonly",
-          "expectedBehavior": "Allow exactly one supported read-only match; block zero or many matches without package generation.",
+          "driverId": "driver.fixture.source-contract-discovery",
+          "executionClass": "static",
+          "expectedBehavior": "Remain blocked pending source-backed classification. Do not assume that the field requires a lookup or cardinality tests.",
           "expectedCandidateAssertions": [
-            "candidate matches the normalized design and contains no unrelated target changes"
+            "No Fusion mutation or candidate generation is authorized by this reference test."
           ],
           "expectedPersistedStateAssertions": [],
-          "expectedStoppingRule": "Stop only after all declared assertions and required evidence pass.",
-          "fixtureStrategy": "supported-read-only-resolver-or-current-export",
+          "expectedStoppingRule": "Stop after the declared outcome is evidenced; missing evidence remains blocked or conditional, never passed by assertion alone.",
+          "fixtureStrategy": "source-contract-discovery",
           "followUpScript": [],
-          "freshBaselineRequired": true,
+          "freshBaselineRequired": false,
           "id": "RD-EXM_EXCHANGE_RATE_OPTION-BuName",
-          "input": "Exercise zero, one, and multiple exact-match outcomes for BuName in the target scope.",
+          "input": "Inspect source contracts for EXM_EXCHANGE_RATE_OPTION.BuName and classify the field before selecting reference tests.",
           "inputMode": "fixture_instruction",
           "liveSequenceGroup": "default",
           "mutation": false,
-          "preconditions": [
-            "confirmed read-only resolver contract",
-            "No reviewed MigratorHelper implementation or controlled import result establishes zero/duplicate error text."
-          ],
-          "realisticPromptTemplate": "Exercise zero, one, and multiple exact-match outcomes for BuName in the target scope.",
+          "preconditions": [],
+          "realisticPromptTemplate": "Inspect source contracts for EXM_EXCHANGE_RATE_OPTION.BuName and classify the field before selecting reference tests.",
           "requestedOperations": [],
           "requiredEvidence": [
-            "resolver request/response or export evidence",
-            "match-count diagnostic"
+            "source discovery record and unresolved boundary"
           ],
           "rollbackRequired": false,
-          "title": "Resolve EXM_EXCHANGE_RATE_OPTION.BuName"
+          "title": "Discover field contract: EXM_EXCHANGE_RATE_OPTION.BuName"
         },
         {
           "automation": {
             "blockers": [
-              "Y/N storage is supported by UI code; direct FSM import enforcement is not established."
+              "Require fresh complete exact destination reference evidence bound to the candidate; Oracle error wording is not a prerequisite."
             ],
             "status": "blocked"
           },
@@ -2390,143 +2576,41 @@
             "supported": true
           },
           "coverageTags": [
-            "live-readonly",
-            "non-mutation"
+            "discovery",
+            "non-mutation",
+            "reference-contract",
+            "static"
           ],
           "dependsOn": [],
-          "driverId": "driver.fixture.supported-read-only-resolver-or-current-export",
-          "executionClass": "live-readonly",
-          "expectedBehavior": "Allow exactly one supported read-only match; block zero or many matches without package generation.",
+          "driverId": "driver.fixture.source-contract-discovery",
+          "executionClass": "static",
+          "expectedBehavior": "Remain blocked pending source-backed classification. Do not assume that the field requires a lookup or cardinality tests.",
           "expectedCandidateAssertions": [
-            "candidate matches the normalized design and contains no unrelated target changes"
+            "No Fusion mutation or candidate generation is authorized by this reference test."
           ],
           "expectedPersistedStateAssertions": [],
-          "expectedStoppingRule": "Stop only after all declared assertions and required evidence pass.",
-          "fixtureStrategy": "supported-read-only-resolver-or-current-export",
+          "expectedStoppingRule": "Stop after the declared outcome is evidenced; missing evidence remains blocked or conditional, never passed by assertion alone.",
+          "fixtureStrategy": "source-contract-discovery",
           "followUpScript": [],
-          "freshBaselineRequired": true,
-          "id": "RD-EXM_EXCHANGE_RATE_OPTION-DfltExchangeRateFlag",
-          "input": "Exercise zero, one, and multiple exact-match outcomes for DfltExchangeRateFlag in the target scope.",
-          "inputMode": "fixture_instruction",
-          "liveSequenceGroup": "default",
-          "mutation": false,
-          "preconditions": [
-            "confirmed read-only resolver contract",
-            "Y/N storage is supported by UI code; direct FSM import enforcement is not established."
-          ],
-          "realisticPromptTemplate": "Exercise zero, one, and multiple exact-match outcomes for DfltExchangeRateFlag in the target scope.",
-          "requestedOperations": [],
-          "requiredEvidence": [
-            "resolver request/response or export evidence",
-            "match-count diagnostic"
-          ],
-          "rollbackRequired": false,
-          "title": "Resolve EXM_EXCHANGE_RATE_OPTION.DfltExchangeRateFlag"
-        },
-        {
-          "automation": {
-            "blockers": [
-              "Y/N storage is supported by UI code; direct FSM import enforcement is not established."
-            ],
-            "status": "blocked"
-          },
-          "baselinePatternIds": [
-            "PREREQUISITE-RESOLVER"
-          ],
-          "cleanup": {
-            "evidence": [],
-            "required": false,
-            "strategy": "none",
-            "supported": true
-          },
-          "coverageTags": [
-            "live-readonly",
-            "non-mutation"
-          ],
-          "dependsOn": [],
-          "driverId": "driver.fixture.supported-read-only-resolver-or-current-export",
-          "executionClass": "live-readonly",
-          "expectedBehavior": "Allow exactly one supported read-only match; block zero or many matches without package generation.",
-          "expectedCandidateAssertions": [
-            "candidate matches the normalized design and contains no unrelated target changes"
-          ],
-          "expectedPersistedStateAssertions": [],
-          "expectedStoppingRule": "Stop only after all declared assertions and required evidence pass.",
-          "fixtureStrategy": "supported-read-only-resolver-or-current-export",
-          "followUpScript": [],
-          "freshBaselineRequired": true,
-          "id": "RD-EXM_EXCHANGE_RATE_OPTION-DispWarningToUser",
-          "input": "Exercise zero, one, and multiple exact-match outcomes for DispWarningToUser in the target scope.",
-          "inputMode": "fixture_instruction",
-          "liveSequenceGroup": "default",
-          "mutation": false,
-          "preconditions": [
-            "confirmed read-only resolver contract",
-            "Y/N storage is supported by UI code; direct FSM import enforcement is not established."
-          ],
-          "realisticPromptTemplate": "Exercise zero, one, and multiple exact-match outcomes for DispWarningToUser in the target scope.",
-          "requestedOperations": [],
-          "requiredEvidence": [
-            "resolver request/response or export evidence",
-            "match-count diagnostic"
-          ],
-          "rollbackRequired": false,
-          "title": "Resolve EXM_EXCHANGE_RATE_OPTION.DispWarningToUser"
-        },
-        {
-          "automation": {
-            "blockers": [
-              "Failure and duplicate behavior are not confirmed end to end."
-            ],
-            "status": "blocked"
-          },
-          "baselinePatternIds": [
-            "PREREQUISITE-RESOLVER"
-          ],
-          "cleanup": {
-            "evidence": [],
-            "required": false,
-            "strategy": "none",
-            "supported": true
-          },
-          "coverageTags": [
-            "live-readonly",
-            "non-mutation"
-          ],
-          "dependsOn": [],
-          "driverId": "driver.fixture.supported-read-only-resolver-or-current-export",
-          "executionClass": "live-readonly",
-          "expectedBehavior": "Allow exactly one supported read-only match; block zero or many matches without package generation.",
-          "expectedCandidateAssertions": [
-            "candidate matches the normalized design and contains no unrelated target changes"
-          ],
-          "expectedPersistedStateAssertions": [],
-          "expectedStoppingRule": "Stop only after all declared assertions and required evidence pass.",
-          "fixtureStrategy": "supported-read-only-resolver-or-current-export",
-          "followUpScript": [],
-          "freshBaselineRequired": true,
+          "freshBaselineRequired": false,
           "id": "RD-EXM_EXCHANGE_RATE_OPTION-UserConversionType",
-          "input": "Exercise zero, one, and multiple exact-match outcomes for UserConversionType in the target scope.",
+          "input": "Inspect source contracts for EXM_EXCHANGE_RATE_OPTION.UserConversionType and classify the field before selecting reference tests.",
           "inputMode": "fixture_instruction",
           "liveSequenceGroup": "default",
           "mutation": false,
-          "preconditions": [
-            "confirmed read-only resolver contract",
-            "Failure and duplicate behavior are not confirmed end to end."
-          ],
-          "realisticPromptTemplate": "Exercise zero, one, and multiple exact-match outcomes for UserConversionType in the target scope.",
+          "preconditions": [],
+          "realisticPromptTemplate": "Inspect source contracts for EXM_EXCHANGE_RATE_OPTION.UserConversionType and classify the field before selecting reference tests.",
           "requestedOperations": [],
           "requiredEvidence": [
-            "resolver request/response or export evidence",
-            "match-count diagnostic"
+            "source discovery record and unresolved boundary"
           ],
           "rollbackRequired": false,
-          "title": "Resolve EXM_EXCHANGE_RATE_OPTION.UserConversionType"
+          "title": "Discover field contract: EXM_EXCHANGE_RATE_OPTION.UserConversionType"
         },
         {
           "automation": {
             "blockers": [
-              "No reviewed MigratorHelper implementation or controlled import result establishes zero/duplicate error text."
+              "Require fresh complete exact destination reference evidence bound to the candidate; Oracle error wording is not a prerequisite."
             ],
             "status": "blocked"
           },
@@ -2540,93 +2624,41 @@
             "supported": true
           },
           "coverageTags": [
-            "live-readonly",
-            "non-mutation"
+            "discovery",
+            "non-mutation",
+            "reference-contract",
+            "static"
           ],
           "dependsOn": [],
-          "driverId": "driver.fixture.supported-read-only-resolver-or-current-export",
-          "executionClass": "live-readonly",
-          "expectedBehavior": "Allow exactly one supported read-only match; block zero or many matches without package generation.",
+          "driverId": "driver.fixture.source-contract-discovery",
+          "executionClass": "static",
+          "expectedBehavior": "Remain blocked pending source-backed classification. Do not assume that the field requires a lookup or cardinality tests.",
           "expectedCandidateAssertions": [
-            "candidate matches the normalized design and contains no unrelated target changes"
+            "No Fusion mutation or candidate generation is authorized by this reference test."
           ],
           "expectedPersistedStateAssertions": [],
-          "expectedStoppingRule": "Stop only after all declared assertions and required evidence pass.",
-          "fixtureStrategy": "supported-read-only-resolver-or-current-export",
+          "expectedStoppingRule": "Stop after the declared outcome is evidenced; missing evidence remains blocked or conditional, never passed by assertion alone.",
+          "fixtureStrategy": "source-contract-discovery",
           "followUpScript": [],
-          "freshBaselineRequired": true,
-          "id": "RD-EXM_EXCH_RATE_TOLERANCE-EXM_EXCHANGE_RATE_OPTION.BuName",
-          "input": "Exercise zero, one, and multiple exact-match outcomes for EXM_EXCHANGE_RATE_OPTION.BuName in the target scope.",
-          "inputMode": "fixture_instruction",
-          "liveSequenceGroup": "default",
-          "mutation": false,
-          "preconditions": [
-            "confirmed read-only resolver contract",
-            "No reviewed MigratorHelper implementation or controlled import result establishes zero/duplicate error text."
-          ],
-          "realisticPromptTemplate": "Exercise zero, one, and multiple exact-match outcomes for EXM_EXCHANGE_RATE_OPTION.BuName in the target scope.",
-          "requestedOperations": [],
-          "requiredEvidence": [
-            "resolver request/response or export evidence",
-            "match-count diagnostic"
-          ],
-          "rollbackRequired": false,
-          "title": "Resolve EXM_EXCH_RATE_TOLERANCE.EXM_EXCHANGE_RATE_OPTION.BuName"
-        },
-        {
-          "automation": {
-            "blockers": [
-              "UI LOV and public preferred-currency GET do not establish import-time enabled/currency validation."
-            ],
-            "status": "blocked"
-          },
-          "baselinePatternIds": [
-            "PREREQUISITE-RESOLVER"
-          ],
-          "cleanup": {
-            "evidence": [],
-            "required": false,
-            "strategy": "none",
-            "supported": true
-          },
-          "coverageTags": [
-            "live-readonly",
-            "non-mutation"
-          ],
-          "dependsOn": [],
-          "driverId": "driver.fixture.supported-read-only-resolver-or-current-export",
-          "executionClass": "live-readonly",
-          "expectedBehavior": "Allow exactly one supported read-only match; block zero or many matches without package generation.",
-          "expectedCandidateAssertions": [
-            "candidate matches the normalized design and contains no unrelated target changes"
-          ],
-          "expectedPersistedStateAssertions": [],
-          "expectedStoppingRule": "Stop only after all declared assertions and required evidence pass.",
-          "fixtureStrategy": "supported-read-only-resolver-or-current-export",
-          "followUpScript": [],
-          "freshBaselineRequired": true,
+          "freshBaselineRequired": false,
           "id": "RD-EXM_EXCH_RATE_TOLERANCE-CurrencyCode",
-          "input": "Exercise zero, one, and multiple exact-match outcomes for CurrencyCode in the target scope.",
+          "input": "Inspect source contracts for EXM_EXCH_RATE_TOLERANCE.CurrencyCode and classify the field before selecting reference tests.",
           "inputMode": "fixture_instruction",
           "liveSequenceGroup": "default",
           "mutation": false,
-          "preconditions": [
-            "confirmed read-only resolver contract",
-            "UI LOV and public preferred-currency GET do not establish import-time enabled/currency validation."
-          ],
-          "realisticPromptTemplate": "Exercise zero, one, and multiple exact-match outcomes for CurrencyCode in the target scope.",
+          "preconditions": [],
+          "realisticPromptTemplate": "Inspect source contracts for EXM_EXCH_RATE_TOLERANCE.CurrencyCode and classify the field before selecting reference tests.",
           "requestedOperations": [],
           "requiredEvidence": [
-            "resolver request/response or export evidence",
-            "match-count diagnostic"
+            "source discovery record and unresolved boundary"
           ],
           "rollbackRequired": false,
-          "title": "Resolve EXM_EXCH_RATE_TOLERANCE.CurrencyCode"
+          "title": "Discover field contract: EXM_EXCH_RATE_TOLERANCE.CurrencyCode"
         },
         {
           "automation": {
             "blockers": [
-              "Y/N storage is supported by UI code; direct FSM import enforcement is not established."
+              "Require fresh complete exact destination reference evidence bound to the candidate; Oracle error wording is not a prerequisite."
             ],
             "status": "blocked"
           },
@@ -2640,88 +2672,36 @@
             "supported": true
           },
           "coverageTags": [
-            "live-readonly",
-            "non-mutation"
+            "discovery",
+            "non-mutation",
+            "reference-contract",
+            "static"
           ],
           "dependsOn": [],
-          "driverId": "driver.fixture.supported-read-only-resolver-or-current-export",
-          "executionClass": "live-readonly",
-          "expectedBehavior": "Allow exactly one supported read-only match; block zero or many matches without package generation.",
+          "driverId": "driver.fixture.source-contract-discovery",
+          "executionClass": "static",
+          "expectedBehavior": "Remain blocked pending source-backed classification. Do not assume that the field requires a lookup or cardinality tests.",
           "expectedCandidateAssertions": [
-            "candidate matches the normalized design and contains no unrelated target changes"
+            "No Fusion mutation or candidate generation is authorized by this reference test."
           ],
           "expectedPersistedStateAssertions": [],
-          "expectedStoppingRule": "Stop only after all declared assertions and required evidence pass.",
-          "fixtureStrategy": "supported-read-only-resolver-or-current-export",
+          "expectedStoppingRule": "Stop after the declared outcome is evidenced; missing evidence remains blocked or conditional, never passed by assertion alone.",
+          "fixtureStrategy": "source-contract-discovery",
           "followUpScript": [],
-          "freshBaselineRequired": true,
-          "id": "RD-EXM_EXCH_RATE_TOLERANCE-DfltExchangeRateFlag",
-          "input": "Exercise zero, one, and multiple exact-match outcomes for DfltExchangeRateFlag in the target scope.",
+          "freshBaselineRequired": false,
+          "id": "RD-EXM_EXCH_RATE_TOLERANCE-EXM_EXCHANGE_RATE_OPTION.BuName",
+          "input": "Inspect source contracts for EXM_EXCH_RATE_TOLERANCE.EXM_EXCHANGE_RATE_OPTION.BuName and classify the field before selecting reference tests.",
           "inputMode": "fixture_instruction",
           "liveSequenceGroup": "default",
           "mutation": false,
-          "preconditions": [
-            "confirmed read-only resolver contract",
-            "Y/N storage is supported by UI code; direct FSM import enforcement is not established."
-          ],
-          "realisticPromptTemplate": "Exercise zero, one, and multiple exact-match outcomes for DfltExchangeRateFlag in the target scope.",
+          "preconditions": [],
+          "realisticPromptTemplate": "Inspect source contracts for EXM_EXCH_RATE_TOLERANCE.EXM_EXCHANGE_RATE_OPTION.BuName and classify the field before selecting reference tests.",
           "requestedOperations": [],
           "requiredEvidence": [
-            "resolver request/response or export evidence",
-            "match-count diagnostic"
+            "source discovery record and unresolved boundary"
           ],
           "rollbackRequired": false,
-          "title": "Resolve EXM_EXCH_RATE_TOLERANCE.DfltExchangeRateFlag"
-        },
-        {
-          "automation": {
-            "blockers": [
-              "Y/N storage is supported by UI code; direct FSM import enforcement is not established."
-            ],
-            "status": "blocked"
-          },
-          "baselinePatternIds": [
-            "PREREQUISITE-RESOLVER"
-          ],
-          "cleanup": {
-            "evidence": [],
-            "required": false,
-            "strategy": "none",
-            "supported": true
-          },
-          "coverageTags": [
-            "live-readonly",
-            "non-mutation"
-          ],
-          "dependsOn": [],
-          "driverId": "driver.fixture.supported-read-only-resolver-or-current-export",
-          "executionClass": "live-readonly",
-          "expectedBehavior": "Allow exactly one supported read-only match; block zero or many matches without package generation.",
-          "expectedCandidateAssertions": [
-            "candidate matches the normalized design and contains no unrelated target changes"
-          ],
-          "expectedPersistedStateAssertions": [],
-          "expectedStoppingRule": "Stop only after all declared assertions and required evidence pass.",
-          "fixtureStrategy": "supported-read-only-resolver-or-current-export",
-          "followUpScript": [],
-          "freshBaselineRequired": true,
-          "id": "RD-EXM_EXCH_RATE_TOLERANCE-DispWarningToUser",
-          "input": "Exercise zero, one, and multiple exact-match outcomes for DispWarningToUser in the target scope.",
-          "inputMode": "fixture_instruction",
-          "liveSequenceGroup": "default",
-          "mutation": false,
-          "preconditions": [
-            "confirmed read-only resolver contract",
-            "Y/N storage is supported by UI code; direct FSM import enforcement is not established."
-          ],
-          "realisticPromptTemplate": "Exercise zero, one, and multiple exact-match outcomes for DispWarningToUser in the target scope.",
-          "requestedOperations": [],
-          "requiredEvidence": [
-            "resolver request/response or export evidence",
-            "match-count diagnostic"
-          ],
-          "rollbackRequired": false,
-          "title": "Resolve EXM_EXCH_RATE_TOLERANCE.DispWarningToUser"
+          "title": "Discover field contract: EXM_EXCH_RATE_TOLERANCE.EXM_EXCHANGE_RATE_OPTION.BuName"
         }
       ]
     },
@@ -3435,13 +3415,15 @@
         "SRC-TASK-EVIDENCE",
         "SRC-RULE-REGISTRY"
       ],
-      "title": "Missing and invalid values are repaired conversationally",
+      "title": "Clarification safe-stop and completed-design coverage",
       "validationFocus": "One bounded question at a time, revalidation after every answer, and no premature ZIP",
       "variants": [
         {
           "automation": {
-            "blockers": [],
-            "status": "ready"
+            "blockers": [
+              "Requires an actual agent transcript; deterministic fixtures are not prompt evidence."
+            ],
+            "status": "conditional"
           },
           "baselinePatternIds": [
             "PROMPT-CLARIFICATION"
@@ -3454,24 +3436,18 @@
           },
           "coverageTags": [
             "customer-prompt",
-            "intentional-negative"
+            "agent-assisted",
+            "clarification-safe-stop"
           ],
           "dependsOn": [],
-          "driverId": "driver.deterministic-follow-up",
+          "driverId": "driver.agent-customer-prompt",
           "executionClass": "static",
-          "expectedBehavior": "Ask for the first missing mandatory business value, accept the scripted answer, revalidate, and continue until the design is complete without generating an early candidate.",
+          "expectedBehavior": "Ask a bounded clarification and produce no candidate. This case proves safe-stop only, not successful continuation.",
           "expectedCandidateAssertions": [],
           "expectedPersistedStateAssertions": [],
           "expectedStoppingRule": "Stop after the expected safe-block or clarification response; no candidate or Fusion activity.",
-          "fixtureStrategy": "deterministic-follow-up",
-          "followUpScript": [
-            {
-              "answer": "Use the unique synthetic campaign scope and name from the fresh baseline fixture.",
-              "intentionalNegative": true,
-              "purpose": "Resolve intentionally omitted mandatory identity values.",
-              "question": "Which exact owning scope and record name should I use?"
-            }
-          ],
+          "fixtureStrategy": "agent-customer-prompt",
+          "followUpScript": [],
           "freshBaselineRequired": false,
           "id": "SM-02-A",
           "input": "Update the required Manage Conversion Rates and Policies setup for our next rollout, but use the correct existing record and owning scope.",
@@ -3489,8 +3465,10 @@
         },
         {
           "automation": {
-            "blockers": [],
-            "status": "ready"
+            "blockers": [
+              "Qualify task-specific date applicability and concrete invalid chronology before execution; generic date semantics are not established."
+            ],
+            "status": "blocked"
           },
           "baselinePatternIds": [
             "PROMPT-CLARIFICATION"
@@ -3503,24 +3481,18 @@
           },
           "coverageTags": [
             "customer-prompt",
-            "intentional-negative"
+            "agent-assisted",
+            "clarification-safe-stop"
           ],
           "dependsOn": [],
-          "driverId": "driver.deterministic-follow-up",
+          "driverId": "driver.agent-customer-prompt",
           "executionClass": "static",
-          "expectedBehavior": "Explain the invalid chronology, ask for a valid date, revalidate the answer, and generate no candidate from the invalid request.",
+          "expectedBehavior": "Ask a bounded clarification and produce no candidate. This case proves safe-stop only, not successful continuation.",
           "expectedCandidateAssertions": [],
           "expectedPersistedStateAssertions": [],
           "expectedStoppingRule": "Stop after the expected safe-block or clarification response; no candidate or Fusion activity.",
-          "fixtureStrategy": "deterministic-follow-up",
-          "followUpScript": [
-            {
-              "answer": "Use the start date plus 30 days from the deterministic fixture.",
-              "intentionalNegative": true,
-              "purpose": "Repair an intentionally invalid date boundary.",
-              "question": "What valid end date on or after the effective start date should I use?"
-            }
-          ],
+          "fixtureStrategy": "agent-customer-prompt",
+          "followUpScript": [],
           "freshBaselineRequired": false,
           "id": "SM-02-B",
           "input": "For Manage Conversion Rates and Policies, apply the requested change with an end date before its start date.",
@@ -3535,6 +3507,102 @@
           "requiredEvidence": [],
           "rollbackRequired": false,
           "title": "Invalid effective date"
+        },
+        {
+          "automation": {
+            "blockers": [
+              "Requires agent execution through the router and task skill, including post-answer revalidation and design evidence.",
+              "Missing concrete, source-qualified clarification fixture; do not invent identity, date applicability or answer."
+            ],
+            "status": "blocked"
+          },
+          "baselinePatternIds": [
+            "PROMPT-CLARIFICATION"
+          ],
+          "cleanup": {
+            "evidence": [],
+            "required": false,
+            "strategy": "none",
+            "supported": true
+          },
+          "coverageTags": [
+            "agent-assisted",
+            "clarification-completion",
+            "customer-prompt"
+          ],
+          "dependsOn": [],
+          "driverId": "driver.agent-customer-prompt",
+          "executionClass": "static",
+          "expectedBehavior": "Ask the bounded question, submit the concrete answer to the same agent session, revalidate and compare the complete design with the qualified expectedDesign. A safe-stop alone cannot pass this case.",
+          "expectedCandidateAssertions": [],
+          "expectedPersistedStateAssertions": [],
+          "expectedStoppingRule": "Stop at the complete revalidated design before confirmation or candidate generation; capture the post-answer transcript. No import.",
+          "fixtureStrategy": "agent-customer-prompt",
+          "followUpScript": [],
+          "freshBaselineRequired": false,
+          "id": "SM-02-C",
+          "input": "Execute the qualified missing-value conversational fixture when available.",
+          "inputMode": "customer_prompt",
+          "liveSequenceGroup": "default",
+          "mutation": false,
+          "preconditions": [],
+          "promptId": "C-SM-02-C",
+          "promptSource": "builder_generated",
+          "realisticPromptTemplate": "Execute the qualified missing-value conversational fixture when available.",
+          "requestedOperations": [],
+          "requiredEvidence": [
+            "qualified fixture prerequisite"
+          ],
+          "rollbackRequired": false,
+          "title": "missing-value clarification through completed design"
+        },
+        {
+          "automation": {
+            "blockers": [
+              "Requires agent execution through the router and task skill, including post-answer revalidation and design evidence.",
+              "Missing concrete, source-qualified clarification fixture; do not invent identity, date applicability or answer."
+            ],
+            "status": "blocked"
+          },
+          "baselinePatternIds": [
+            "PROMPT-CLARIFICATION"
+          ],
+          "cleanup": {
+            "evidence": [],
+            "required": false,
+            "strategy": "none",
+            "supported": true
+          },
+          "coverageTags": [
+            "agent-assisted",
+            "clarification-completion",
+            "customer-prompt"
+          ],
+          "dependsOn": [],
+          "driverId": "driver.agent-customer-prompt",
+          "executionClass": "static",
+          "expectedBehavior": "Ask the bounded question, submit the concrete answer to the same agent session, revalidate and compare the complete design with the qualified expectedDesign. A safe-stop alone cannot pass this case.",
+          "expectedCandidateAssertions": [],
+          "expectedPersistedStateAssertions": [],
+          "expectedStoppingRule": "Stop at the complete revalidated design before confirmation or candidate generation; capture the post-answer transcript. No import.",
+          "fixtureStrategy": "agent-customer-prompt",
+          "followUpScript": [],
+          "freshBaselineRequired": false,
+          "id": "SM-02-D",
+          "input": "Execute the qualified invalid-value conversational fixture when available.",
+          "inputMode": "customer_prompt",
+          "liveSequenceGroup": "default",
+          "mutation": false,
+          "preconditions": [],
+          "promptId": "C-SM-02-D",
+          "promptSource": "builder_generated",
+          "realisticPromptTemplate": "Execute the qualified invalid-value conversational fixture when available.",
+          "requestedOperations": [],
+          "requiredEvidence": [
+            "qualified fixture prerequisite"
+          ],
+          "rollbackRequired": false,
+          "title": "invalid-value clarification through completed design"
         }
       ]
     },
@@ -4493,9 +4561,9 @@
       "scenarioType": "positive",
       "sourceIds": [
         "SRC-BUILDER-DEFAULT-TEST-STANDARD-V1",
+        "SRC-RULE-REGISTRY",
         "SRC-TASK-ADAPTER",
-        "SRC-TASK-EVIDENCE",
-        "SRC-RULE-REGISTRY"
+        "SRC-TASK-EVIDENCE"
       ],
       "title": "Approved import and persisted-state reconciliation",
       "validationFocus": "Candidate identity, process completion and fresh-export proof",
@@ -4562,8 +4630,11 @@
         },
         {
           "automation": {
-            "status": "ready",
-            "blockers": []
+            "blockers": [
+              "Missing source-qualified create fixture, dependency selections and physical-row inventory.",
+              "Requested physical create rows=1 exceeds approved maxRetainedRows=0."
+            ],
+            "status": "blocked"
           },
           "baselinePatternIds": [
             "ADF-TASK-SCOPED-UPLOAD",
@@ -4571,13 +4642,15 @@
             "PERSISTED-RECONCILIATION"
           ],
           "cleanup": {
-            "required": true,
-            "supported": true,
-            "strategy": "approved-retained-state",
             "evidence": [
-              "references/create-test-lifecycle.md"
+              "run-scoped explicit developer approval to retain the exact created rows",
+              "fresh pre-import absence proof for every exact record key",
+              "fresh post-import export and persisted-state requirement matrix",
+              "prominent residual-state inventory naming every retained record key"
             ],
-            "requiresExplicitConsent": true
+            "required": true,
+            "strategy": "approved-retained-state",
+            "supported": false
           },
           "coverageTags": [
             "live-mutation",
@@ -4586,18 +4659,18 @@
           "dependsOn": [],
           "driverId": "driver.fixture.adapter-create-candidate-plus-core-data-loader",
           "executionClass": "live-mutation",
-          "expectedBehavior": "After explicit pre-import retained-state consent for the exact nonproduction keys, owner, deadline and candidate, obtain separate import approval, submit once, verify by fresh export and reconcile all requested/preservation requirements; record retained_as_approved without a cleanup mutation.",
+          "expectedBehavior": "After confirm and candidate-specific approve, submit exactly once, monitor, fresh-export, and reconcile the exact created rows plus every preservation assertion. Record the rows as intentionally retained under the run-scoped nonproduction approval; do not call this cleanup or claim baseline restoration.",
           "expectedCandidateAssertions": [
-            "candidate contains exactly 1 create row(s) and no update operation",
-            "every create key is absent in the fresh baseline",
-            "candidate matches the normalized design and contains no unrelated target changes"
+            "candidate contains exactly 1 business root(s) and the fixture-qualified number of physical create rows across all entity CSVs",
+            "candidate keys and values equal the qualified fixture; no update operation",
+            "every physical create key is absent in the fresh baseline"
           ],
           "expectedPersistedStateAssertions": [
-            "fresh exact-task export contains exactly the 1 requested created row(s)",
-            "each requested value or source-backed default reconciles",
-            "all unrelated baseline rows remain unchanged"
+            "fresh export reconciles 1 business root(s) and the fixture-qualified number of physical rows, including all child and translation rows",
+            "each qualified value or source-backed default reconciles; unrelated rows remain unchanged",
+            "residual-state inventory includes every retained physical-row key"
           ],
-          "expectedStoppingRule": "Pass only after verified reconciliation and valid candidate-bound pre-import retention consent; otherwise stop with the actual blocker.",
+          "expectedStoppingRule": "Stop only after all declared assertions and required evidence pass.",
           "fixtureStrategy": "adapter-create-candidate-plus-core-data-loader",
           "followUpScript": [],
           "freshBaselineRequired": true,
@@ -4612,7 +4685,8 @@
             "fresh exact-task template/current exports",
             "fresh absence proof for every create key",
             "standalone design confirm and candidate-specific approve",
-            "explicit candidate-bound retained-state consent before import approval; accountable owner and deadline within 30 days"
+            "explicit approval to retain no more than None total rows",
+            "use existing eligible reference/master data; do not create prerequisites for the test"
           ],
           "realisticPromptTemplate": "Create one new uniquely keyed record using only the source-backed mandatory values; accept defaults only where the task contract proves them, and prove the identity is absent in the fresh baseline.",
           "requestedOperations": [
@@ -4622,12 +4696,168 @@
             "candidate SHA",
             "request/process result",
             "fresh verification export",
-            "1-row created-state requirement matrix",
-            "pre-import retained-state consent bound to target/keys/baseline/design/candidate",
-            "verified retained_as_approved disposition, exact keys, owner and deadline"
+            "run-scoped explicit developer approval to retain the exact created rows",
+            "fresh pre-import absence proof for every exact record key",
+            "fresh post-import export and persisted-state requirement matrix",
+            "prominent residual-state inventory naming every retained record key",
+            "business-root and per-entity physical-row requirement matrix; candidate inventory checked again before approval"
           ],
           "rollbackRequired": false,
           "title": "Minimum/default create"
+        },
+        {
+          "automation": {
+            "blockers": [
+              "Missing source-qualified create fixture, dependency selections and physical-row inventory.",
+              "Requested physical create rows=1 exceeds approved maxRetainedRows=0."
+            ],
+            "status": "blocked"
+          },
+          "baselinePatternIds": [
+            "ADF-TASK-SCOPED-UPLOAD",
+            "IMPORT-MONITORING",
+            "PERSISTED-RECONCILIATION"
+          ],
+          "cleanup": {
+            "evidence": [
+              "run-scoped explicit developer approval to retain the exact created rows",
+              "fresh pre-import absence proof for every exact record key",
+              "fresh post-import export and persisted-state requirement matrix",
+              "prominent residual-state inventory naming every retained record key"
+            ],
+            "required": true,
+            "strategy": "approved-retained-state",
+            "supported": false
+          },
+          "coverageTags": [
+            "live-mutation",
+            "mutation"
+          ],
+          "dependsOn": [],
+          "driverId": "driver.fixture.adapter-create-candidate-plus-core-data-loader",
+          "executionClass": "live-mutation",
+          "expectedBehavior": "After confirm and candidate-specific approve, submit exactly once, monitor, fresh-export, and reconcile the exact created rows plus every preservation assertion. Record the rows as intentionally retained under the run-scoped nonproduction approval; do not call this cleanup or claim baseline restoration.",
+          "expectedCandidateAssertions": [
+            "candidate contains exactly 1 business root(s) and the fixture-qualified number of physical create rows across all entity CSVs",
+            "candidate keys and values equal the qualified fixture; no update operation",
+            "every physical create key is absent in the fresh baseline"
+          ],
+          "expectedPersistedStateAssertions": [
+            "fresh export reconciles 1 business root(s) and the fixture-qualified number of physical rows, including all child and translation rows",
+            "each qualified value or source-backed default reconciles; unrelated rows remain unchanged",
+            "residual-state inventory includes every retained physical-row key"
+          ],
+          "expectedStoppingRule": "Stop only after all declared assertions and required evidence pass.",
+          "fixtureStrategy": "adapter-create-candidate-plus-core-data-loader",
+          "followUpScript": [],
+          "freshBaselineRequired": true,
+          "id": "IM-01-C",
+          "input": "Create one new uniquely keyed business record with independently qualified create values; prove the identity is absent in the fresh baseline.",
+          "inputMode": "fixture_instruction",
+          "liveSequenceGroup": "default",
+          "mutation": true,
+          "preconditions": [
+            "explicit nonproduction environment",
+            "authenticated session or Run Book",
+            "fresh exact-task template/current exports",
+            "fresh absence proof for every create key",
+            "standalone design confirm and candidate-specific approve",
+            "explicit approval to retain no more than None total rows",
+            "use existing eligible reference/master data; do not create prerequisites for the test"
+          ],
+          "realisticPromptTemplate": "Create one new uniquely keyed business record with independently qualified create values; prove the identity is absent in the fresh baseline.",
+          "requestedOperations": [
+            "create"
+          ],
+          "requiredEvidence": [
+            "candidate SHA",
+            "request/process result",
+            "fresh verification export",
+            "run-scoped explicit developer approval to retain the exact created rows",
+            "fresh pre-import absence proof for every exact record key",
+            "fresh post-import export and persisted-state requirement matrix",
+            "prominent residual-state inventory naming every retained record key",
+            "business-root and per-entity physical-row requirement matrix; candidate inventory checked again before approval"
+          ],
+          "rollbackRequired": false,
+          "title": "Explicit-value create"
+        },
+        {
+          "automation": {
+            "blockers": [
+              "Missing source-qualified create fixture, dependency selections and physical-row inventory.",
+              "Requested physical create rows=2 exceeds approved maxRetainedRows=0."
+            ],
+            "status": "blocked"
+          },
+          "baselinePatternIds": [
+            "ADF-TASK-SCOPED-UPLOAD",
+            "IMPORT-MONITORING",
+            "PERSISTED-RECONCILIATION"
+          ],
+          "cleanup": {
+            "evidence": [
+              "run-scoped explicit developer approval to retain the exact created rows",
+              "fresh pre-import absence proof for every exact record key",
+              "fresh post-import export and persisted-state requirement matrix",
+              "prominent residual-state inventory naming every retained record key"
+            ],
+            "required": true,
+            "strategy": "approved-retained-state",
+            "supported": false
+          },
+          "coverageTags": [
+            "live-mutation",
+            "mutation"
+          ],
+          "dependsOn": [],
+          "driverId": "driver.fixture.adapter-create-candidate-plus-core-data-loader",
+          "executionClass": "live-mutation",
+          "expectedBehavior": "After confirm and candidate-specific approve, submit exactly once, monitor, fresh-export, and reconcile the exact created rows plus every preservation assertion. Record the rows as intentionally retained under the run-scoped nonproduction approval; do not call this cleanup or claim baseline restoration.",
+          "expectedCandidateAssertions": [
+            "candidate contains exactly 2 business root(s) and the fixture-qualified number of physical create rows across all entity CSVs",
+            "candidate keys and values equal the qualified fixture; no update operation",
+            "every physical create key is absent in the fresh baseline"
+          ],
+          "expectedPersistedStateAssertions": [
+            "fresh export reconciles 2 business root(s) and the fixture-qualified number of physical rows, including all child and translation rows",
+            "each qualified value or source-backed default reconciles; unrelated rows remain unchanged",
+            "residual-state inventory includes every retained physical-row key"
+          ],
+          "expectedStoppingRule": "Stop only after all declared assertions and required evidence pass.",
+          "fixtureStrategy": "adapter-create-candidate-plus-core-data-loader",
+          "followUpScript": [],
+          "freshBaselineRequired": true,
+          "id": "IM-01-D",
+          "input": "Create exactly two records for two distinct source-backed keys that are both absent in the fresh baseline; verify both persist and every unrelated baseline row is preserved.",
+          "inputMode": "fixture_instruction",
+          "liveSequenceGroup": "default",
+          "mutation": true,
+          "preconditions": [
+            "explicit nonproduction environment",
+            "authenticated session or Run Book",
+            "fresh exact-task template/current exports",
+            "fresh absence proof for every create key",
+            "standalone design confirm and candidate-specific approve",
+            "explicit approval to retain no more than None total rows",
+            "use existing eligible reference/master data; do not create prerequisites for the test"
+          ],
+          "realisticPromptTemplate": "Create exactly two records for two distinct source-backed keys that are both absent in the fresh baseline; verify both persist and every unrelated baseline row is preserved.",
+          "requestedOperations": [
+            "create"
+          ],
+          "requiredEvidence": [
+            "candidate SHA",
+            "request/process result",
+            "fresh verification export",
+            "run-scoped explicit developer approval to retain the exact created rows",
+            "fresh pre-import absence proof for every exact record key",
+            "fresh post-import export and persisted-state requirement matrix",
+            "prominent residual-state inventory naming every retained record key",
+            "business-root and per-entity physical-row requirement matrix; candidate inventory checked again before approval"
+          ],
+          "rollbackRequired": false,
+          "title": "Two-record create batch"
         }
       ]
     },
@@ -4958,12 +5188,11 @@
     },
     "caseCount": 24,
     "executionClasses": {
-      "live-mutation": 3,
-      "live-readonly": 8,
-      "offline": 65,
-      "static": 17
+      "live-mutation": 5,
+      "offline": 69,
+      "static": 23
     },
-    "variantCount": 93
+    "variantCount": 97
   },
   "policies": {
     "allowedDispositions": [
@@ -4981,9 +5210,7 @@
     "importApprovalToken": "approve",
     "liveMutationRequiresApproval": true,
     "operationCompatibilityRequired": true,
-    "repairMaxAttempts": 3,
-    "createTestLifecycle": "approved-retained-state",
-    "createRetentionPolicy": "references/create-test-lifecycle.md"
+    "repairMaxAttempts": 3
   },
   "schemaVersion": "fscr-fsm-task-test-catalog-v1",
   "sources": [

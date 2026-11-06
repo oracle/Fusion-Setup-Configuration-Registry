@@ -25,7 +25,7 @@ source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 type: "planning"
 execution_mode: "assisted"
 owner_team: "SCM manufacturing and supply chain materials management pillar team"
-version: "0.1.0"
+version: "0.1.1"
 inputs:
   - "implementation_objective"
   - "project_context"
@@ -44,6 +44,8 @@ depends_on:
   - "shared.validation.reference-data-validator"
   - "core.data-loader"
 uses_core:
+  - "core.fusion-api.rest-api-client"
+  - "core.data-loader.task-hook"
   - "core.project-mgmt.artifact-version-manager"
   - "core.project-mgmt.artifact-registry-manager"
   - "core.project-mgmt.project-state-manager"
@@ -149,6 +151,16 @@ Use this task metadata when invoking those skills:
 - Setup task code: `ORA_MANAGE_PRODUCT_RECALL_PARAMETERS`
 
 
+## Task Preflight and Data Loader Handoff
+
+Use the current `core.data-loader` immutable-artifact workflow for imports. Complete source review, mapping, Business Object/API validation, conversion and final upload artifact preparation before invoking `core.data-loader.task-hook` through its `data-load` route. Require Data Loader's verified persisted preflight, with task routing, completed mapping and a digest matching the final artifact. Read the Task Hook's returned execution guide and evaluate this task's graph against that exact artifact and current declared read-only lookup evidence. Do not invoke Task Validator directly.
+
+`RECALL.PARAMETERS.DONE-READY-FOR-PREVIEW` means task rules passed; it does not approve or submit an import. Return ordered rule results to Task Hook and use its `build-data-load-preview` command with the final artifact digest. Core Data Loader owns the approval report and approval policy. After approval through that policy, use Task Hook's `approve-data-load-preview` and `verify-approved-data-load-archive` commands. Persist the returned `taskValidationEnvelope` unchanged and pass it to Data Loader with its approved preflight envelope. Never reconstruct previews, approvals, envelopes or digests.
+
+Keep the prepared artifact immutable through validation and approval. A correction to the artifact, mapping, environment or task rules requires fresh preparation, validation and approval. After approval, submit the exact persisted bytes through the approved-preflight route; do not reopen or reconvert original sources or repeat live validation. An edit to an original source alone does not alter an intact approved artifact. Missing or changed artifacts or mismatched context/envelopes block submission and require fresh validation and approval.
+
+Explicit sample deliverables use the separate sample workflow below. Task-authored durable plans and checkpoints contain sanitized summaries only, using the artifact contract. Core Data Loader and Task Hook retain their prescribed internal preflight, preview, approval and validation-envelope artifacts; do not copy that material into task planning artifacts. Task Hook owns its validation-result registration, run record and token-usage entry. Never persist credentials or worker identity details in task checkpoints.
+
 ## Download Fusion Data Loader Sample
 
 Use this workflow when `dataloader_import_mode: "REST"` and a Fusion Data Loader sample is needed for the task’s business objects.
@@ -196,5 +208,7 @@ Use this workflow when `dataloader_import_mode: "REST"` and a Fusion Data Loader
 Use [`ora-resource/ora_output_contract.json`](ora-resource/ora_output_contract.json) for the required JSON shapes of `setup_task_plan`, `setup_data_routing`, and `validation_checkpoints`. Persist those artifacts using the manifest's declared workspace output locations. The contract contains no customer values, environment identifiers, credentials, or executable payloads.
 
 ## Implementation Notes
+
+Review the synthetic [golden scenarios](references/golden-scenarios.md) before changing task gates or graph transitions.
 
 Use the parent functional-area skill `scm.manufacturing-and-supply-chain-materials-management.product-recall-management` for functional-area sequencing and scope decisions. Track token usage for any generated project artifact or skill-run record using the manifest policy.

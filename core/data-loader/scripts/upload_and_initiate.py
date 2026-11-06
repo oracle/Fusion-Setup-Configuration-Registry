@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import base64
 import csv
 import hashlib
 import io
@@ -36,6 +35,8 @@ DOCUMENT_UPLOAD_PATH = "/documents/files/data"
 INITIATE_PATH = "/hcmRestApi/resources/latest/dataLoaderDataSets/action/initiateDataLoad"
 DATA_LOADER_DATA_SETS_DESCRIBE_PATH = "/hcmRestApi/resources/latest/dataLoaderDataSets/describe"
 BUSINESS_OBJECTS_PATH = metadata.BUSINESS_OBJECTS_PATH
+FBDI_ACTION_RESOURCE_PATH = metadata.FSCR_BUSINESS_OBJECTS_PATH
+FBDI_FILENAME_ACTION = "findFbdiObjectsByFileName"
 DEFAULT_CONFIG = metadata.DEFAULT_CONFIG
 DEFAULT_RUN_CONFIG = metadata.DEFAULT_RUN_CONFIG
 FDOS_ROOT = metadata.FDOS_ROOT
@@ -892,6 +893,112 @@ def _validated_fbdi_load_adapter_interface_id(
     return value
 
 
+def _fbdi_filename_action_available(
+    config: dict[str, str], *, getter: Getter = get_json
+) -> bool:
+    """Detect the filename custom action on the business-object resource."""
+    describe = getter(
+        config["host"] + FBDI_ACTION_RESOURCE_PATH + "/describe",
+        config["auth"], stage="fbdi-metadata",
+    )
+    resources = describe.get("Resources", describe.get("resources")) if isinstance(describe, dict) else None
+    if isinstance(resources, dict):
+        resource = resources.get("dataLoaderBusinessObjects")
+    elif isinstance(resources, list):
+        matches = [item for item in resources if isinstance(item, dict) and any(
+            item.get(key) == "dataLoaderBusinessObjects"
+            for key in ("name", "resourceName", "collectionName")
+        )]
+        resource = matches[0] if len(matches) == 1 else None
+    else:
+        resource = None
+    if not isinstance(resource, dict):
+        raise DataLoadError(
+            "catalog-or-metadata-mismatch",
+            "FBDI describe did not identify dataLoaderBusinessObjects.",
+        )
+    collection = resource.get("collection")
+    # Fusion advertises collection actions here; retain older top-level layouts.
+    if isinstance(collection, dict) and (
+        "actions" in collection or "Actions" in collection
+    ):
+        actions = collection.get("actions", collection.get("Actions"))
+    else:
+        actions = resource.get("actions", resource.get("Actions", []))
+    if isinstance(actions, dict):
+        return FBDI_FILENAME_ACTION in actions
+    if isinstance(actions, list) and all(
+        isinstance(action, dict) and isinstance(action.get("name"), str)
+        for action in actions
+    ):
+        return any(action["name"] == FBDI_FILENAME_ACTION for action in actions)
+    raise DataLoadError(
+        "catalog-or-metadata-mismatch", "FBDI describe returned malformed action definitions."
+    )
+
+
+def _load_fbdi_filename_metadata(
+    config: dict[str, str], csv_members: list[zipfile.ZipInfo]
+) -> tuple[FbdiRoutingEntry, ...]:
+    """Adapt the filename action's flat rows to the existing routing entries."""
+    stems = [Path(member.filename).name[:-4] for member in csv_members]
+    if any(not stem.strip() or "," in stem for stem in stems):
+        raise DataLoadError(
+            "file-validation",
+            "FBDI filename action requires nonblank CSV basenames without commas.",
+        )
+    response = metadata.request_json(
+        config["host"] + FBDI_ACTION_RESOURCE_PATH + "/action/" + FBDI_FILENAME_ACTION,
+        config["auth"], stage="fbdi-metadata", method="POST",
+        data=json.dumps({"pFileName": ",".join(stems)}).encode("utf-8"),
+        content_type=MEDIA_TYPE, refresh_http_statuses=frozenset(),
+    )
+    # ADF custom actions wrap their return value in result, often as JSON text.
+    # Retain support for the bare-array response used by older integrations.
+    if isinstance(response, dict) and "result" in response:
+        response = response["result"]
+        if isinstance(response, str):
+            try:
+                response = json.loads(response)
+            except json.JSONDecodeError:
+                raise DataLoadError(
+                    "catalog-or-metadata-mismatch",
+                    "FBDI filename action result contains malformed JSON.",
+                ) from None
+    if not isinstance(response, list):
+        raise DataLoadError(
+            "catalog-or-metadata-mismatch",
+            "FBDI filename action must return an array, directly or in result.",
+        )
+    entries: list[FbdiRoutingEntry] = []
+    for row in response:
+        if not isinstance(row, dict):
+            raise DataLoadError(
+                "catalog-or-metadata-mismatch", "FBDI filename action returned a malformed row."
+            )
+        if row.get("ObjectType", FBDI_SOURCE_TYPE) != FBDI_SOURCE_TYPE:
+            continue
+        name = row.get("BusObjFileDiscriminator")
+        prefixes = row.get("DataFileNamePrefixes")
+        if not isinstance(name, str) or not name.strip():
+            raise DataLoadError(
+                "catalog-or-metadata-mismatch",
+                "FBDI filename action requires a nonblank BusObjFileDiscriminator.",
+            )
+        if not isinstance(prefixes, list) or not prefixes or any(
+            not isinstance(prefix, str) or not prefix.strip() for prefix in prefixes
+        ):
+            raise DataLoadError(
+                "catalog-or-metadata-mismatch",
+                "FBDI filename action requires nonblank DataFileNamePrefixes.",
+            )
+        entries.append(FbdiRoutingEntry(
+            name.strip(), row.get("UcmAccount"), tuple(prefix.strip() for prefix in prefixes),
+            row.get("LoadAdapterInterfaceId", row.get("loadAdapterInterfaceId")),
+        ))
+    return tuple(entries)
+
+
 def _load_fbdi_metadata(
     config: dict[str, str], *, getter: Getter = get_json
 ) -> tuple[FbdiRoutingEntry, ...]:
@@ -990,22 +1097,17 @@ def _load_fbdi_metadata(
                     )
                 if row.get("ObjectType", FBDI_SOURCE_TYPE) != FBDI_SOURCE_TYPE:
                     continue
-                name = (
-                    row.get("BusinessObject")
-                    or row.get("BusObjFileDiscriminator")
-                    or item.get("BusinessObject")
-                    or item.get("UIName")
-                )
-                prefix = row.get("DataFileNamePrefix")
-                if (
-                    not isinstance(name, str)
-                    or not name.strip()
-                    or not isinstance(prefix, str)
-                    or not prefix.strip()
-                ):
+                name = item.get("BusObjTopDiscriminator")
+                if not isinstance(name, str) or not name.strip():
                     raise DataLoadError(
                         "catalog-or-metadata-mismatch",
-                        "FBDI routing rows require a nonblank Business Object and DataFileNamePrefix.",
+                        "FBDI parent business object requires a nonblank BusObjTopDiscriminator.",
+                    )
+                prefix = row.get("DataFileNamePrefix")
+                if not isinstance(prefix, str) or not prefix.strip():
+                    raise DataLoadError(
+                        "catalog-or-metadata-mismatch",
+                        "FBDI routing rows require a filename prefix.",
                     )
                 entries.append(FbdiRoutingEntry(
                     name.strip(), row.get("UcmAccount"), (prefix.strip(),),
@@ -1116,10 +1218,17 @@ def resolve_fbdi_route(
     getter: Getter = get_json,
     business_object: str | None = None,
 ) -> FbdiRoute:
-    """Resolve an FBDI route from live expanded business-object metadata."""
+    """Prefer advertised filename discovery, retaining the existing ZIP matching."""
     try:
         with zipfile.ZipFile(path) as archive:
-            entries = _load_fbdi_metadata(config, getter=getter)
+            csv_members = [
+                member for member in _meaningful_archive_members(archive)
+                if Path(member.filename).name.casefold().endswith(".csv")
+            ]
+            if csv_members and _fbdi_filename_action_available(config, getter=getter):
+                entries = _load_fbdi_filename_metadata(config, csv_members)
+            else:
+                entries = _load_fbdi_metadata(config, getter=getter)
             return _fbdi_route_from_archive(archive, entries, business_object=business_object)
     except zipfile.BadZipFile as exc:
         raise DataLoadError("file-validation", f"Source file is not a valid ZIP archive: {path}") from exc
@@ -1459,41 +1568,8 @@ ByteGetter = Callable[..., bytes]
 MultipartUploader = Callable[..., Any]
 
 
-def _authenticated_username(auth: metadata.OAuthSession) -> str:
-    """Return the delegated Fusion username encoded in the current JWT."""
-    token = auth.token()
-    parts = token.split(".")
-    if len(parts) != 3:
-        raise DataLoadError(
-            "authentication",
-            "Authenticated access token does not contain a user identity claim for UCM upload.",
-        )
-    try:
-        payload = parts[1] + "=" * (-len(parts[1]) % 4)
-        claims = json.loads(base64.urlsafe_b64decode(payload).decode("utf-8"))
-    except (ValueError, UnicodeDecodeError, json.JSONDecodeError) as exc:
-        raise DataLoadError(
-            "authentication",
-            "Authenticated access token does not contain a user identity claim for UCM upload.",
-        ) from exc
-    if not isinstance(claims, dict):
-        raise DataLoadError(
-            "authentication",
-            "Authenticated access token does not contain a user identity claim for UCM upload.",
-        )
-    for claim_name in ("username", "preferred_username", "sub"):
-        value = claims.get(claim_name)
-        if isinstance(value, str) and value.strip():
-            return value.strip()
-    raise DataLoadError(
-        "authentication",
-        "Authenticated access token does not contain a user identity claim for UCM upload.",
-    )
-
-
 def _encode_multipart_upload(
     prepared: PreparedArchive,
-    author: str,
     *,
     document_account: str | None = None,
     security_group: str = "FAFusionImportExport",
@@ -1502,7 +1578,6 @@ def _encode_multipart_upload(
     """Encode the Fusion Documents upload form without altering ZIP bytes."""
     boundary = "----FDOSDataLoader" + uuid.uuid4().hex
     metadata_payload = {
-        "dDocAuthor": author,
         "dDocTitle": prepared.file_name,
         "dSecurityGroup": security_group,
         "dDocAccount": document_account or _ucm_document_account(prepared),
@@ -1556,10 +1631,8 @@ def post_ucm_multipart(
     primary_content_type: str = "application/zip",
 ) -> Any:
     """Upload the approved archive through the Fusion Documents REST API."""
-    author = _authenticated_username(auth)
     body, content_type = _encode_multipart_upload(
         prepared,
-        author,
         document_account=document_account,
         security_group=security_group,
         primary_content_type=primary_content_type,

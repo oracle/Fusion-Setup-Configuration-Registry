@@ -25,7 +25,7 @@ Before requesting import approval, render a Final ZIP Preview for the exact immu
 
 After the one execution approval for that immutable Fiscal Years package, submit it immediately. Submit without requesting any further user response before submission.
 
-After Fusion accepts initiation, report the request as `accepted — pending parent verification` and hand off its archive identity, target, and request ID to `core.data-loader`. `core.data-loader` owns terminal-status polling, process-log review, and fresh target read-back. This task does not poll automatically or report the fiscal year as created.
+After Fusion accepts initiation, report the request as `accepted — pending parent verification` and hand off its archive identity, target, request ID, and fiscal-year verification criteria to the Fixed Assets parent. The parent routes terminal-status and ProcessLog retrieval through `core.data-loader`, applies fresh target-state verification, shows the Post-Execution Verification Preview, and controls dependent-task progression. This task does not poll automatically or report the fiscal year as created.
 
 After the parent reports verified completion, any dependent task reuses the exact verified Fiscal Year Name and date-row coverage as context. It must not create, infer, or substitute fiscal-year context from an accepted-but-unverified request.
 ## Failure Classes
@@ -54,7 +54,7 @@ After the parent reports verified completion, any dependent task reuses the exac
 | Existing-state difference | The requested and existing business definitions, plus the update-or-new choice. |
 | Import result | Archive identity, target, process or request ID, terminal status, and submitted, created, skipped, warned, or failed counts when available. |
 | Lookup failure | Environment, read-only purpose, failure class, sanitized message, and next action. |
-| Post-import handoff | Owner: `core.data-loader`; state: `accepted — pending parent verification`; immutable archive fingerprint, target, requested fiscal-year name and scope, and request ID. |
+| Post-import handoff | Owner: Fixed Assets parent; state: `accepted — pending parent verification`; immutable archive fingerprint, target, requested fiscal-year name and scope, and request ID. |
 
 ## Refusal Rules
 

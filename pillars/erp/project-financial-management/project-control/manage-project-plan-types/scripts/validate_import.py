@@ -38,6 +38,53 @@ YES_NO.update(set(AMOUNT_FIELDS) - {'AmountSetTypeCode'})
 YES_NO.add('AutoPlanAsmtFlag')
 YES_NO.add('AsgnResInSingleCurrFlag')
 CONVERSION_PREFIXES = ('PcCost', 'PcRev', 'PfcCost', 'PfcRev', 'RateSchCost', 'RateSchRev')
+
+
+def shared_conversion_intent(source_input):
+    """Read the original control without inferring intent from matching rates."""
+    if source_input is None:
+        return None
+    if not isinstance(source_input, dict):
+        raise ValueError('SOURCE_INTENT_INVALID: sourceInput must be one business-input object.')
+    value = source_input.get('Curr_Set_Use_Conversion')
+    if value is None or value == '':
+        return None
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, str) and value.strip().lower() in {'true', 'false'}:
+        return value.strip().lower() == 'true'
+    raise ValueError('SOURCE_INTENT_INVALID: Curr_Set_Use_Conversion must be true or false.')
+
+
+def validate_source_intent(content, source_input):
+    """Reconcile the transient shared-copy intent against persistent ZIP values."""
+    if shared_conversion_intent(source_input) is not True:
+        return
+    with zipfile.ZipFile(io.BytesIO(content)) as archive:
+        if any(member not in archive.namelist() for member in (PARENT, CHILD)):
+            raise ValueError('SOURCE_INTENT_MISMATCH: Shared conversion requires parent and options rows.')
+        tables = {member: list(csv.DictReader(io.StringIO(archive.read(member).decode('utf-8-sig'))))
+                  for member in (PARENT, CHILD)}
+    if len(tables[PARENT]) != 1:
+        raise ValueError('SOURCE_INTENT_MISMATCH: Shared conversion requires one parent.')
+    if tables[PARENT][0].get('PlanOptionCode') != 'COST_ONLY':
+        raise ValueError('SOURCE_INTENT_MISMATCH: Shared conversion supports the evidenced COST_ONLY branch.')
+    options = [r for r in tables[CHILD] if r.get('PlannedForCode') == 'COST']
+    if len(options) != 1 or options[0].get('EnableCostsForProjPlan') != 'Y':
+        raise ValueError('SOURCE_INTENT_MISMATCH: Shared conversion requires cost-enabled options.')
+    row = options[0]
+    if row.get('PlanOptionLevelCode') != 'PLAN_TYPE' or row.get('PlanTypeCode') != 'PROJECT_PLAN':
+        raise ValueError('SOURCE_INTENT_MISMATCH: Shared conversion requires PROJECT_PLAN at PLAN_TYPE.')
+    source = 'Pc' if tables[PARENT][0].get('PlanInMultiCurrFlag') == 'Y' else 'Pfc'
+    if not all(row.get(source+'Cost'+suffix) for suffix in ('RateType', 'RateDateType')):
+        raise ValueError('SOURCE_INTENT_MISMATCH: Shared conversion source attributes are missing.')
+    for amount in ('Cost', 'Rev'):
+        for dest in (('Pfc', 'RateSch') if source == 'Pc' else ('RateSch',)):
+            for suffix in ('RateType', 'RateDateType', 'RateDate'):
+                if row.get(dest+amount+suffix, '') != row.get(source+amount+suffix, ''):
+                    raise ValueError('SOURCE_INTENT_MISMATCH: Shared conversion was not applied to '+dest+amount+suffix)
+        if source == 'Pc' and row.get('SpecPfc'+amount+'AtProjLevel', '') != row.get('SpecPc'+amount+'AtProjLevel', ''):
+            raise ValueError('SOURCE_INTENT_MISMATCH: Shared conversion override flags differ.')
 DOMAINS = {
     'PlanTypeCode': {'PROJECT_PLAN'}, 'PlanClassCode': {'BUDGET'},
     'PlanOptionLevelCode': {'PLAN_TYPE'},
@@ -251,8 +298,10 @@ def validate_archive(content: bytes, *, operation: str) -> dict:
                 if enabled and row.get(prefix+'RateDateType') == 'FIXED_DATE':
                     required(member, number, row, (prefix+'RateDate',), always=True)
             if row.get('SyncTaskTxnPlanDates') == 'Y':
-                if row.get('SyncTxnDateBuffer') and not re.fullmatch(r'-?[0-9]+', row['SyncTxnDateBuffer']):
-                    issue('INVALID_INTEGER', 'A supplied active date buffer must be an integer; the buffer is optional.', member, number, 'SyncTxnDateBuffer')
+                if not row.get('SyncTxnDateBuffer'):
+                    issue('UNMATERIALIZED_DEFAULT', 'Synchronization is enabled: preparation must materialize the 0-day save default when the effective buffer is empty. No additional business input is required.', member, number, 'SyncTxnDateBuffer')
+                elif not re.fullmatch(r'-?[0-9]+', row['SyncTxnDateBuffer']):
+                    issue('INVALID_INTEGER', 'A supplied active date buffer must be an integer; an empty input defaults to 0 during preparation.', member, number, 'SyncTxnDateBuffer')
             if row.get('PercentCompCalcMethod') == 'COST' and row.get('EnableCostsForProjPlan') == 'N':
                 issue('INCOMPATIBLE_CHOICE', 'Cost percent complete requires costs enabled.', member, number, 'PercentCompCalcMethod')
             if row.get('PercentCompRollupMethod') == 'COST' and row.get('EnableCostsForProjPlan') == row.get('EnableRevForProjPlan') == 'N':

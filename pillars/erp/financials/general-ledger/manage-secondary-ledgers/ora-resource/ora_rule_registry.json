@@ -23,7 +23,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 67
+            "line": 68
           },
           "readiness": {
             "status": "ready",
@@ -48,7 +48,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 50
+            "line": 48
           },
           "readiness": {
             "status": "ready",
@@ -98,7 +98,7 @@
           "source": {
             "file": "ora_defaulting_rules.md",
             "anchor": "task-nodes",
-            "line": 78
+            "line": 82
           },
           "readiness": {
             "status": "ready",
@@ -123,7 +123,7 @@
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 90
+            "line": 88
           },
           "readiness": {
             "status": "ready",
@@ -149,7 +149,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 86
+            "line": 87
           },
           "readiness": {
             "status": "ready",
@@ -171,7 +171,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 87
+            "line": 88
           },
           "readiness": {
             "status": "ready",
@@ -193,7 +193,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 88
+            "line": 89
           },
           "readiness": {
             "status": "ready",
@@ -215,7 +215,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 89
+            "line": 90
           },
           "readiness": {
             "status": "ready",

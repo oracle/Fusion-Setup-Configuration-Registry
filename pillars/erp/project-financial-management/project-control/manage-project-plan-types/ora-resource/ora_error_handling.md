@@ -24,6 +24,8 @@
 | Result Category | When Used | Next Action |
 |---|---|---|
 | INPUT_ISSUES | Input validation fails | Return the exact missing or invalid fields. |
+| SOURCE_INTENT_INVALID / SOURCE_INTENT_MISMATCH | The shared-conversion source control is invalid, contradicts the canonical action, or its persistent destinations differ | Reconcile the original request through preparation and rebuild the preview; do not drop intent or patch approved bytes. |
+| UNMATERIALIZED_DEFAULT | Submitted synchronized options have an empty buffer in the final ZIP | Reprepare through the task helper to apply the 0-day save default and rebuild the preview. Do not request extra business input or patch approved bytes. |
 | INACTIVE_OPTION | A requested activation is incompatible with the effective control state | Explain the prerequisite choice; do not change it silently. |
 | CONFLICTING_CONVERSION_ATTRIBUTES | Shared conversion copy disagrees with an explicitly supplied destination | Resolve the conflicting business choice before preparation. |
 | DESTRUCTIVE_CURRENCY_RESET_EXCLUDED | Disabling multicurrency would delete retained currency rows | Preserve the current setting; deletion is excluded even when implicit in another action. |
@@ -46,6 +48,14 @@
 | ALL_GOOD | The task-level FSM submission gate is satisfied | Submit only through the approved Data Loader route; a successful preview does not establish approval. |
 
 ## Disclosure Rules
+
+The task preview adds field-specific unresolved-reference warnings for supplied
+period profiles, budget targets and forecast targets. Preserve all three
+groups in the consultant-facing preview; a passing ZIP check cannot establish
+their target eligibility. Retain any independently acquired current evidence
+separately and state exactly what it proves. Missing copy destinations for an
+explicit shared-conversion source input return SOURCE_INTENT_MISMATCH before
+preview or approval; they cannot be waived by narrative rule results.
 
 | Gate | What Must Be Shown |
 |---|---|

@@ -1,0 +1,711 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "CUSTOM_ENABLE_FUSION_ASSET_BASED_ORDERING",
+      "task_name": "Enable Fusion Asset-Based Ordering",
+      "ownership": "primary_fusion_abo_staged_approval_orchestration",
+      "companion_skill": "cx.sales.sales-foundation.configure-adaptive-search",
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      },
+      "start_node": "ABO.VALIDATE_INPUT",
+      "nodes": [
+        {
+          "id": "ABO.VALIDATE_INPUT",
+          "node_type": "decision",
+          "sequence": 1,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "ABO.PREFLIGHT",
+            "invalid": "ABO.RETURN_ISSUES"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Validate project, exact CPQ/Fusion target, selected Standard Process, and the fixed Fusion ABO scope.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "input-validation",
+            "line": 1
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ABO.PREFLIGHT",
+          "node_type": "step",
+          "sequence": 2,
+          "action_type": "reference_lookup",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "ABO.CPQ_PREPARATION_APPROVAL",
+            "blocked": "ABO.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "ABO.VALIDATE_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Verify CPQ state, Standard Process, Library Function, and Fusion prerequisites without mutation.",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "dependency-readiness",
+            "line": 1
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ABO.CPQ_PREPARATION_APPROVAL",
+          "node_type": "decision",
+          "sequence": 3,
+          "action_type": "approval_gate",
+          "execution_route": "local",
+          "transitions": {
+            "approved": "ABO.CPQ_APPROVAL",
+            "declined_or_invalid": "ABO.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "ABO.PREFLIGHT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Show the full ABO template and exact normal/function-only CPQ proposal before workbook generation/Core startup. Require current preparation-only consent bound to project/workflow, target, original process choice, semantic preflight and two-hour validity; recheck and consume once. No upload is authorized.",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "required-sequence",
+            "line": 9
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ABO.CPQ_APPROVAL",
+          "node_type": "decision",
+          "sequence": 4,
+          "action_type": "approval_gate",
+          "execution_route": "local",
+          "transitions": {
+            "approved": "ABO.CPQ_EXECUTION",
+            "missing_or_stale": "ABO.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "ABO.CPQ_PREPARATION_APPROVAL"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only after preparation permission is validated and consumed, generate the fixed CPQ workbook; evaluate ordered persisted task rules and require a second, independent contextual approval of Core's exact current saved preview. Never reuse preparation consent as load approval.",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "required-sequence",
+            "line": 9
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ABO.CPQ_EXECUTION",
+          "node_type": "step",
+          "sequence": 5,
+          "action_type": "execution_gate",
+          "execution_route": "core.data-loader",
+          "transitions": {
+            "submitted": "ABO.WAIT_CPQ_STATUS",
+            "failed": "ABO.RETURN_ISSUES",
+            "indeterminate": "ABO.INDETERMINATE"
+          },
+          "prerequisites": [
+            "ABO.CPQ_APPROVAL"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Reserve once, verify the exact saved Core preview and immutable archive, submit through Core once, return its accepted receipt and stop without polling.",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "required-sequence",
+            "line": 9
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ABO.WAIT_CPQ_STATUS",
+          "node_type": "terminal",
+          "sequence": 6,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "ABO.CPQ_EXECUTION"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Accepted submission or pending status ends this invocation. Show the explicit next-check prompt. Only a later user request selects the matching LOAD_STATUS node.",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "required-sequence",
+            "line": 9
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ABO.CPQ_LOAD_STATUS",
+          "node_type": "decision",
+          "sequence": 7,
+          "action_type": "reference_lookup",
+          "execution_route": "core.data-loader",
+          "transitions": {
+            "succeeded": "ABO.CPQ_VERIFICATION",
+            "pending": "ABO.WAIT_CPQ_STATUS",
+            "failed": "ABO.RETURN_ISSUES",
+            "unknown": "ABO.INDETERMINATE"
+          },
+          "prerequisites": [
+            "ABO.CPQ_EXECUTION"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only on an explicit user CPQ load-status request, inspect the exact submitted request using Core's status helper. Pending reports a next-check prompt and ends this invocation; no automatic transition/poll.",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "dependency-readiness",
+            "line": 1
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ABO.CPQ_VERIFICATION",
+          "node_type": "decision",
+          "sequence": 8,
+          "action_type": "validate_result",
+          "execution_route": "local",
+          "transitions": {
+            "verified": "ABO.ADAPTIVE_PREPARATION_APPROVAL",
+            "not_verified": "ABO.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "ABO.CPQ_LOAD_STATUS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Require completed CPQ result and exact readbacks before the child publish submission.",
+          "source": {
+            "file": "ora_cpq_verification.md",
+            "anchor": "cpq-verification",
+            "line": 1
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ABO.ADAPTIVE_PREPARATION_APPROVAL",
+          "node_type": "decision",
+          "sequence": 9,
+          "action_type": "approval_gate",
+          "execution_route": "local",
+          "transitions": {
+            "approved": "ABO.PREPARE_ADAPTIVE_SEARCH",
+            "declined_or_invalid": "ABO.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "ABO.CPQ_VERIFICATION"
+          ],
+          "on_failure": "stop",
+          "applies_when": "After verified CPQ completion, show the full ABO template and fixed selective pair. Stop before workbook generation and Core preflight; require two-hour, one-use preparation permission bound to exact project/workflow/target/process/CPQ receipt. Resume shows the pending proposal or stopped state, never starts Core; decline/expiry retains CPQ completion. This permission cannot submit a load.",
+          "source": {
+            "file": "ora_adaptive_search_preparation.md",
+            "anchor": "adaptive-search-preparation",
+            "line": 1
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ABO.PREPARE_ADAPTIVE_SEARCH",
+          "node_type": "step",
+          "sequence": 10,
+          "action_type": "companion_handoff",
+          "execution_route": "local",
+          "transitions": {
+            "prepared": "ABO.ADAPTIVE_APPROVAL",
+            "missing_metamodel_or_empty_catalog": "ABO.INITIALIZATION_PREPARATION_APPROVAL",
+            "blocked": "ABO.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "ABO.ADAPTIVE_PREPARATION_APPROVAL"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only after current ABO preparation-only permission is validated, readiness rechecked and consumed, invoke the fixed Partial Publish companion. Retain cpq_completed. Exact Entities missing-metamodel HTTP 400/null/empty selects separate initialization preparation approval; other errors stop. Persist the Core archive and preview for separate exact load approval; preparation permission alone cannot upload.",
+          "source": {
+            "file": "ora_adaptive_search_preparation.md",
+            "anchor": "adaptive-search-preparation",
+            "line": 1
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ABO.INITIALIZATION_PREPARATION_APPROVAL",
+          "node_type": "decision",
+          "sequence": 11,
+          "action_type": "approval_gate",
+          "execution_route": "local",
+          "transitions": {
+            "approved": "ABO.INITIALIZATION_SESSION",
+            "declined_or_invalid": "ABO.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "ABO.CPQ_VERIFICATION"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Exact Entities missing-metamodel HTTP 400/null/empty only. Retain CPQ; show safe blocker/full ABO template and ordered nine-object Full proposal. Separate two-hour one-use preparation permission cannot authorize Core load.",
+          "source": {
+            "file": "ora_initial_full_publish.md",
+            "anchor": "task-nodes",
+            "line": 63
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ABO.INITIALIZATION_SESSION",
+          "node_type": "step",
+          "sequence": 12,
+          "action_type": "companion_handoff",
+          "execution_route": "local",
+          "transitions": {
+            "submitted": "ABO.INITIALIZATION_STATUS",
+            "not_required": "ABO.ADAPTIVE_PREPARATION_APPROVAL",
+            "failed_or_uncertain": "ABO.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "ABO.INITIALIZATION_PREPARATION_APPROVAL"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Recheck readiness, consume exact initialization preparation permission and use companion Full workbook/Core preflight. Ordered task validation, independent approval of the exact saved Core preview, and intent reservation precede the single submission. Either-stage intent/receipt prevents another submission.",
+          "source": {
+            "file": "ora_initial_full_publish.md",
+            "anchor": "task-nodes",
+            "line": 64
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ABO.INITIALIZATION_STATUS",
+          "node_type": "decision",
+          "sequence": 13,
+          "action_type": "validate_result",
+          "execution_route": "local",
+          "transitions": {
+            "pending": "ABO.INITIALIZATION_STATUS",
+            "verified": "ABO.ADAPTIVE_PREPARATION_APPROVAL",
+            "failed_or_uncertain": "ABO.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "ABO.INITIALIZATION_SESSION"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Explicit user-requested exact initialization status only; pending stops. Exact loader success, newly pinned job success and fresh ABO catalog presence permit a new Partial preparation proposal, never automatic submission or ESS. No resubmission on failure/uncertainty.",
+          "source": {
+            "file": "ora_initial_full_publish.md",
+            "anchor": "task-nodes",
+            "line": 65
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ABO.ADAPTIVE_APPROVAL",
+          "node_type": "decision",
+          "sequence": 14,
+          "action_type": "approval_gate",
+          "execution_route": "local",
+          "transitions": {
+            "approved": "ABO.SUBMIT_ADAPTIVE_SEARCH",
+            "missing_or_stale": "ABO.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "ABO.PREPARE_ADAPTIVE_SEARCH"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Require separate contextual approval of Core's current selective-publish preview on the exact saved Core preview, after concurrency and ordered task-rule checks.",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "required-sequence",
+            "line": 9
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ABO.SUBMIT_ADAPTIVE_SEARCH",
+          "node_type": "step",
+          "sequence": 15,
+          "action_type": "companion_handoff",
+          "execution_route": "local",
+          "transitions": {
+            "submitted": "ABO.WAIT_ADAPTIVE_STATUS",
+            "blocked": "ABO.RETURN_ISSUES",
+            "indeterminate": "ABO.INDETERMINATE"
+          },
+          "prerequisites": [
+            "ABO.ADAPTIVE_APPROVAL"
+          ],
+          "on_failure": "stop",
+          "applies_when": "After separate exact Adaptive Search Task Hook approval, submit one selective publish Data Loader import through the companion.",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "required-sequence",
+            "line": 9
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ABO.WAIT_ADAPTIVE_STATUS",
+          "node_type": "terminal",
+          "sequence": 16,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "ABO.SUBMIT_ADAPTIVE_SEARCH"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Accepted submission or pending status ends this invocation. Show the explicit next-check prompt. Only a later user request selects the matching LOAD_STATUS node.",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "required-sequence",
+            "line": 9
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ABO.ADAPTIVE_LOAD_STATUS",
+          "node_type": "decision",
+          "sequence": 17,
+          "action_type": "reference_lookup",
+          "execution_route": "core.data-loader",
+          "transitions": {
+            "succeeded": "ABO.MONITOR_ADAPTIVE_SEARCH",
+            "pending": "ABO.WAIT_ADAPTIVE_STATUS",
+            "failed": "ABO.RETURN_ISSUES",
+            "unknown": "ABO.INDETERMINATE"
+          },
+          "prerequisites": [
+            "ABO.SUBMIT_ADAPTIVE_SEARCH"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only on an explicit user Adaptive Search load-status request, inspect the exact submitted request using Core's status helper. Pending reports a next-check prompt and ends this invocation; no automatic transition/poll.",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "dependency-readiness",
+            "line": 1
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ABO.MONITOR_ADAPTIVE_SEARCH",
+          "node_type": "step",
+          "sequence": 18,
+          "action_type": "companion_handoff",
+          "execution_route": "local",
+          "transitions": {
+            "pending": "ABO.PUBLISH_MONITORING_CHOICE",
+            "succeeded": "ABO.ESS_APPROVAL",
+            "failed": "ABO.RETURN_ISSUES",
+            "timed_out": "ABO.TIMED_OUT",
+            "interrupted": "ABO.RECOVER"
+          },
+          "prerequisites": [
+            "ABO.ADAPTIVE_LOAD_STATUS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only after exact verified Data Loader success, discover/pin and check the job once. Repeated bounded 15-second job-only checks require the current explicit keep-checking choice. Pending returns the monitoring choice; no loader reads on ticks.",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "required-sequence",
+            "line": 9
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ABO.PUBLISH_MONITORING_CHOICE",
+          "node_type": "decision",
+          "sequence": 19,
+          "action_type": "collect_input",
+          "execution_route": "local",
+          "transitions": {
+            "keep_checking": "ABO.MONITOR_ADAPTIVE_SEARCH",
+            "check_later": "ABO.WAIT_PUBLISH_STATUS"
+          },
+          "prerequisites": [
+            "ABO.ADAPTIVE_LOAD_STATUS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Verified load success but publish completion not verified. Show full ABO template and actual status; ask keep checking every 15 seconds or check later. This is read-only monitoring consent, not ESS or publish mutation approval. Generic resume must not restart polling.",
+          "source": {
+            "file": "ora_adaptive_search_preparation.md",
+            "anchor": "adaptive-search-preparation",
+            "line": 1
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ABO.WAIT_PUBLISH_STATUS",
+          "node_type": "terminal",
+          "sequence": 20,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "ABO.PUBLISH_MONITORING_CHOICE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Check-later saves the exact-operation checkpoint and stops without a status GET. A later explicit check reads the same job once and returns ESS approval only after verified readiness, otherwise offers the choice again.",
+          "source": {
+            "file": "ora_adaptive_search_preparation.md",
+            "anchor": "adaptive-search-preparation",
+            "line": 1
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ABO.ESS_APPROVAL",
+          "node_type": "decision",
+          "sequence": 21,
+          "action_type": "approval_gate",
+          "execution_route": "local",
+          "transitions": {
+            "approved": "ABO.ESS_SUBMISSION",
+            "missing_or_stale": "ABO.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "ABO.MONITOR_ADAPTIVE_SEARCH"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Require separate explicit approval immediately before ESS POST of the exact Unified Asset Read Model Sync target and payload after final selective publish success and both entities enabled.",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "required-sequence",
+            "line": 9
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ABO.ESS_SUBMISSION",
+          "node_type": "step",
+          "sequence": 22,
+          "action_type": "execution_gate",
+          "execution_route": "core.fusion-api.ess-job-submitter",
+          "transitions": {
+            "submitted": "ABO.MONITOR_ESS",
+            "blocked": "ABO.RETURN_ISSUES",
+            "indeterminate": "ABO.INDETERMINATE"
+          },
+          "prerequisites": [
+            "ABO.ESS_APPROVAL"
+          ],
+          "on_failure": "stop",
+          "applies_when": "After separate exact-payload ESS approval, persist intent and submit one fixed Unified Asset Read Model Sync request.",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "required-sequence",
+            "line": 9
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ABO.MONITOR_ESS",
+          "node_type": "step",
+          "sequence": 23,
+          "action_type": "validate_result",
+          "execution_route": "core.fusion-api.ess-job-submitter",
+          "transitions": {
+            "pending": "ABO.MONITOR_ESS",
+            "succeeded": "ABO.COMPLETED",
+            "failed": "ABO.RETURN_ISSUES",
+            "timed_out": "ABO.TIMED_OUT",
+            "interrupted": "ABO.RECOVER"
+          },
+          "prerequisites": [
+            "ABO.ESS_SUBMISSION"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Automatically monitor the exact returned ESS request with GET-only calls until terminal. Do not expose it as a consultant status-check task.",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "required-sequence",
+            "line": 9
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ABO.RECOVER",
+          "node_type": "decision",
+          "sequence": 24,
+          "action_type": "validate_result",
+          "execution_route": "local",
+          "transitions": {
+            "cpq_preparation_pending": "ABO.CPQ_PREPARATION_APPROVAL",
+            "cpq_load_pending": "ABO.WAIT_CPQ_STATUS",
+            "adaptive_load_pending": "ABO.WAIT_ADAPTIVE_STATUS",
+            "adaptive_pending": "ABO.PUBLISH_MONITORING_CHOICE",
+            "ess_pending": "ABO.MONITOR_ESS",
+            "unproven": "ABO.INDETERMINATE",
+            "adaptive_preparation_pending": "ABO.ADAPTIVE_PREPARATION_APPROVAL",
+            "initialization_preparation_pending": "ABO.INITIALIZATION_PREPARATION_APPROVAL",
+            "initialization_submitted": "ABO.INITIALIZATION_STATUS"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Resume an unconsumed CPQ preparation proposal without generation/Core startup; expired/declined/failed proposals require fresh approval. Existing running/submitted checkpoints are not restarted to insert the new gate. Loader checks require explicit requests. Publish checkpoints do not restart loops: later status checks once or current keep-checking choice enables 15-second monitoring. Preserve existing ESS request-only monitoring; never replay mutations. At cpq_completed, display the same Adaptive Search preparation proposal or stopped state; never start workbook preparation or Core preflight. Confirmed child receipts recover without another approval/submission; uncertain intents block preparation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "error-handling",
+            "line": 1
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ABO.COMPLETED",
+          "node_type": "terminal",
+          "sequence": 25,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "ABO.MONITOR_ESS"
+          ],
+          "on_failure": "continue",
+          "applies_when": "CPQ is verified, Adaptive Search returned final successful entity evidence, and the exact ESS request completed successfully.",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "required-sequence",
+            "line": 9
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ABO.TIMED_OUT",
+          "node_type": "terminal",
+          "sequence": 26,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "continue",
+          "applies_when": "The bounded monitor stopped at timeout. Preserve exact operation/job, target, last status and elapsed wait. Later check once or obtain fresh keep-checking choice; do not submit another mutation or claim monitoring is still active.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "error-handling",
+            "line": 1
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ABO.INDETERMINATE",
+          "node_type": "terminal",
+          "sequence": 27,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "continue",
+          "applies_when": "A prior mutation may have been sent but durable exact correlation cannot be proven. Preserve safe diagnostics and never resend automatically.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "error-handling",
+            "line": 1
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ABO.RETURN_ISSUES",
+          "node_type": "terminal",
+          "sequence": 28,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "continue",
+          "applies_when": "A required precondition, exact status gate, or terminal external process result failed or is blocked.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "error-handling",
+            "line": 1
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ]
+    }
+  ]
+}

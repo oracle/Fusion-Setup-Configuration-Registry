@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from argparse import Namespace
 from contextlib import nullcontext
+from datetime import datetime, timezone
 import hashlib
 import json
 import os
@@ -292,7 +293,8 @@ def execute(props: dict[str, str], *, endpoint: str, soap_action: str, operation
                     raise ValueError("Response summary must be an object.")
             except (RuntimeError, ValueError) as exc:
                 raise AccountCombinationError("fusion_api", "SOAP result could not be interpreted; reconcile the request.") from exc
-            result = {**summary, **evidence, "status": "RESPONSE_RECEIVED", "mayHaveApplied": not read_only}
+            result = {**summary, **evidence, "status": "RESPONSE_RECEIVED", "mayHaveApplied": not read_only,
+                      "observedAt": datetime.now(timezone.utc).isoformat()}
             if receipt:
                 receipt.write(result)
             return result

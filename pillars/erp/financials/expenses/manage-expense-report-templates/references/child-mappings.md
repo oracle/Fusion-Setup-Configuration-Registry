@@ -62,11 +62,12 @@ duplicate requested relationships are rejected.
 
 Project Expenditure Mappings are not part of the current workbook or v1.5
 execution design. Every imported expense type has Projects disabled, no default
-project expenditure type, and no project receipt requirement. The builder also
-writes null account references: `LedgerName`, `AccountCombination`, and any
-`SegmentN` columns are blank. It also writes `TaxClassificationCode` and
-`TaxProductCategoryCode` blank. Do not add a project-mapping array, account
-fields, or tax fields to bypass those defaults.
+project expenditure type, and no project receipt requirement. Expense Type
+Account is an optional account number mapped to Segment1 with the BU primary
+ledger resolved automatically; omitted edit accounts are preserved.
+The builder writes `TaxClassificationCode` and `TaxProductCategoryCode` blank.
+Do not add a project-mapping array, direct ledger/segment fields, or tax fields
+to bypass those defaults.
 
 ## Evidence, review and execution
 

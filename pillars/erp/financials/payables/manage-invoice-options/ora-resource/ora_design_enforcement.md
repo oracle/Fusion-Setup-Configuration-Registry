@@ -14,12 +14,19 @@
 
 ## Design Rules
 
+A blank Required Lookup leaves the local package, field-contract, baseline,
+and approval checks in the rule fully enforced; no reference lookup is required.
+
 | Applies When | Severity | Required Lookup | Blocking Condition | Recommendation | Fix Allowed? |
 |---|---|---|---|---|---|
 | Always | Blocker | | The archive is not the exact AP_SYSTEM_PARAMETER task package or the header/node contract differs from its template. | Rebuild from the exact task template. | Yes |
-| A Payment-owned field is supplied | Blocker | Manage Payment Options field contract | The sibling Payment Options adapter/runtime is unavailable, its shared-row structure differs, or it rejects the submitted field value. | Stop before preview; correct the Payment field or resolve the dependency drift. | Yes |
+| A Payment-owned field is supplied | Blocker | | The sibling Payment Options adapter/runtime is unavailable, its shared-row structure differs, or it rejects the submitted field value. | Stop before preview; correct the Payment field or resolve the dependency drift. | Yes |
 | Create-time BU/ledger derivation | Blocker | resolve_business_unit_primary_ledger | The preflight cannot derive one active exact BU, its shared PrimaryLedgerId, and the matching ledger Name/CurrencyCode required to form the create row. | Correct the BU/ledger context and rerun preflight. | Yes |
-| Supporting payment-term or currency GET | Advisory | resolve_payment_term_from_name, resolve_invoice_currency, resolve_payment_currency | The endpoint is unavailable or returns zero, multiple, non-exact, or case-variant records. | Preserve the submitted CSV value with a warning; Fusion validates it during import. | Yes |
+| Supporting payment-term GET | Advisory | resolve_payment_term_from_name | The endpoint is unavailable, returns different term IDs, or returns incomplete/inconsistent term identity. | Repeated rows for one valid term ID and consistent nonblank name produce no warning; preserve the submitted name. Keep genuine identity ambiguity advisory; Fusion validates it during import. | Yes |
+| Supporting currency GET | Advisory | resolve_invoice_currency | The endpoint is unavailable or returns multiple records. | Preserve the submitted CSV value with a warning; Fusion validates it during import. A single readable result, including a non-exact or case-variant code, satisfies corroborating preflight. | Yes |
+| Supporting currency GET | Advisory | resolve_payment_currency | The endpoint is unavailable or returns multiple records. | Preserve the submitted CSV value with a warning; Fusion validates it during import. A single readable result, including a non-exact or case-variant code, satisfies corroborating preflight. | Yes |
+| Readable payment-term or currency GET returns zero records | Blocker | | No supporting result exists for the submitted term name or currency code. | Stop before candidate generation; correct the value and rerun preflight. | Yes |
+| Payment-term search cannot safely finish | Blocker | resolve_payment_term_from_name | The response is malformed, reported offset/count is inconsistent, or no valid match is found before the 100-page / 10,000-row limit. | Stop reading as soon as a valid requested-name match is found. Identical page contents alone are not a blocker. FSM performs final resolution; do not claim global uniqueness. | Yes |
 | A Fusion import is requested | Blocker | | Immutable preview, explicit candidate approval, and core.data-loader routing are absent. | Create a governed preview and obtain approval before one submission. | Yes, through the central workflow |
 
 ## Design Lookup Requirements
@@ -38,8 +45,29 @@
 | resolve_payment_currency | PaymentCurrencyCode is populated | Exact supplied currency code | ora_reference_lookups.md |
 | resolve_business_unit_primary_ledger | A new row is created from BuName | Exact BU, returned PrimaryLedgerId, and matching returned ledger Name | ora_reference_lookups.md |
 
+Interest account changes require `validate_account_segments_read_only` before
+the execution gate. Use the task-owned `scripts/interest_account_validation.py` with
+the unchanged core OAuth/HTTP client. `DynamicInsertion=Yes` is never part of this task.
+Unrelated updates do not require repeating account validation.
+
 ## Task Nodes
 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|
-| DESIGN.ENFORCE | step | 50 | design_enforcement | success->INVOICE.EXECUTION_GATE;failure->ERROR.BLOCK | DEP.CHECK | stop | Always |
+| DESIGN.ENFORCE | step | 50 | design_enforcement | success->INVOICE.EXECUTION_GATE;failure->ERROR.BLOCK | DEFAULT.APPLY | stop | Always |
+
+The task-node flow is **Input → Lookups → Dependencies → Defaults → Design → Execution gate**.
+`DEP.CHECK` leads to `DEFAULT.APPLY`, which applies only documented adapter create
+defaults to omitted values and preserves explicit requests and update values.
+`DESIGN.ENFORCE` therefore checks the resulting values after defaulting. Each node
+is defined once in its owning resource file; the generated registry connects them.
+
+Only requested Interest Expense Distribution retention is a mandatory post-import check, and only with Create Interest Invoices=Y. Use `verify-interest`; do not turn full-row reconciliation into a success gate.
+
+## Uploaded Changes
+
+Use the same field checks for NLP requests and uploaded ZIPs, including explicit
+clears. A generated create ZIP may carry its resolved ledger and base currency;
+validate those CSV cells against its exact saved build report. Do not treat
+them as new user-supplied ledger choices. Keep original request IDs only after
+the saved task, ZIP, baseline, row identity, and requested values match.

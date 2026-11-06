@@ -81,6 +81,7 @@ required_setup_tasks:
   - "ORA_POZ_CONFIGURE_SUPPLIER_NOTIFICATIONS_FOR_PROFILE_MGMT"
   - "POZ_MANAGE_SUPPLIER_USER_ROLE_USAGES"
   - "ORA_POZ_MANAGE_SUPPLIER_PORTAL_MESSAGES"
+  - "ORA_POZ_MANAGE_SUPPLIER_REGISTRATION_APPROVALS"
 applicability:
   industries:
     - "All"
@@ -115,6 +116,7 @@ Use this functional-area skill after Procurement scope is confirmed and the proj
 3. [Configure Supplier Notifications](configure-supplier-notifications/SKILL.md) (`ORA_POZ_CONFIGURE_SUPPLIER_NOTIFICATIONS_FOR_PROFILE_MGMT`)
 4. [Manage Supplier User Role Usages](manage-supplier-user-role-usages/SKILL.md) (`POZ_MANAGE_SUPPLIER_USER_ROLE_USAGES`)
 5. [Manage Supplier Portal Messages](manage-supplier-portal-messages/SKILL.md) (`ORA_POZ_MANAGE_SUPPLIER_PORTAL_MESSAGES`)
+6. [Manage Supplier Registration Approvals](../approval-management/manage-supplier-registration-approvals.md) (`ORA_POZ_MANAGE_SUPPLIER_REGISTRATION_APPROVALS`)
 
 ## Inputs
 

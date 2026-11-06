@@ -7,7 +7,7 @@ pillar: "Core"
 type: "orchestration"
 execution_mode: "hybrid"
 owner_team: "Central platform team"
-version: "0.1.0"
+version: "0.1.2"
 inputs:
   - "fusion_environment_context"
   - "planning_payload_or_active_runbook_context"
@@ -48,7 +48,7 @@ applicability:
 side_effects:
   - "Reads Oracle Fusion Run Book journeys, tasks, task details, attachments, documents, and Data Loader status when requested."
   - "May refresh the OAuth token cache when the cached token is unavailable or rejected."
-  - "Creates the initial Run Book automatically for a newly initialized project unless the initializer received --no-create-runbook; later creation from that project's persisted plan requires an explicit user request."
+  - "Creates the initial Run Book for a newly initialized project after accepted prevalidation or explicit skip; separate user deferrals require a later explicit creation request."
   - "Merges an implementation plan into a selected Run Book."
   - "Adds an ad hoc Run Book task or updates a task's comments or status."
   - "Uploads files to a selected Run Book task."
@@ -63,6 +63,31 @@ required_privileges:
 ---
 
 # Run Book
+
+## Purpose
+
+Provide the supported technical operations for Oracle Fusion Run Books and
+maintain their project bindings. Consume the selected workflow's task plan and
+operation request; the router and shared planning skills own scope and task
+selection. Use the existing operation contracts below for authentication,
+approval, execution, diagnostics and sanitized output.
+
+## Preflight
+
+Before dispatch, resolve the exact requested operation, target environment and
+unambiguous Run Book or task identity. Validate its required inputs through the
+bundled command and read its contract in
+[runbook-rest-api.md](references/runbook-rest-api.md). For project creation,
+enforce the canonical plan, allowed project binding state and any registered
+prevalidation handoff evidence in **Project workspace sequencing guard**.
+
+Apply the operation-specific permission, preview and confirmation rules below;
+do not introduce an extra confirmation for automatic initial creation. Confirm
+artifact destinations and immutable file identity where the operation consumes
+or produces a file. Delegate credential acquisition to core authentication;
+never bypass a failed input, identity, privilege or approval gate with another
+client. On failure preserve the existing command's partial/unknown outcome,
+no-write-retry rules and sanitized diagnostics.
 
 Use the bundled commands for all REST calls, status calculations, data normalization, and Markdown formatting. Read [runbook-rest-api.md](references/runbook-rest-api.md) before running a command.
 
@@ -79,11 +104,29 @@ Return every Run Book dashboard and task-detail result as Markdown directly in c
 
 ## Project workspace sequencing guard
 
-If the request is to create a new implementation project from workbook or other source planning material, route through `core/project-mgmt/project-workspace-initializer` first. Unless that initialization received `--no-create-runbook`, generate the persisted Run Book artifacts with `core/project-mgmt/project-workspace-initializer/scripts/create_project_runbook.py --project-root project/{project_id} --refresh-artifacts`, then create the initial Run Book automatically from its canonical persisted `runbook-plan.json` by supplying only `--project-root` to this skill. The planning script must not create the Oracle Run Book in this workflow.
+For every new implementation project, including plain-language setup requests without attachments, route through `shared.validation.prevalidation` and `core/project-mgmt/project-workspace-initializer` first. Initialize with `--no-create-runbook`, then generate the persisted local planning artifacts with `core/project-mgmt/project-workspace-initializer/scripts/create_project_runbook.py --project-root project/{project_id} --refresh-artifacts` while creation remains on hold. Only after the prevalidation handoff below releases that hold, create the initial Oracle Run Book from its canonical persisted `runbook-plan.json` by supplying `--project-root` to this skill. The planning script never creates or updates an Oracle Run Book.
+
+For every new-project `shared.validation.prevalidation` route, `--no-create-runbook`
+holds creation while the local project and pre-Run Book assessment are
+prepared. Resume the original creation request only when its authorization
+remains in effect, there is no separate user instruction to defer creation, and
+the project contains registered evidence for the same scope and environment of
+accepted `pre_runbook` readiness (`READY` or `READY WITH WARNINGS`), an
+explicit user skip decision, or a registered `OVERRIDE_AND_CONTINUE` decision
+with `handoff: continue` accepting every outstanding required prevalidation
+finding for the exact run, scope and environment. Inspect the original findings,
+recommended solutions, user instruction reference and override coverage; an
+override preserves the original readiness and does not certify PASS. Preserve earlier failures and mark skipped readiness
+unverified. Missing or ambiguous handoff evidence, `NOT READY`
+without an explicit skip or complete result override, and standalone assessments
+without an authorized implementation request do not release the hold.
+All canonical-plan, pending/unbound state, identity and operation-specific
+permission gates still apply. Prevalidation is read-only and does not verify
+Run Book writes; implementation creation remains owned by this skill.
 
 Before the automatic initial creation, require `runbook_control.status: pending` and an empty `active_runbook_ref`. On success, persist the active Run Book reference and set `status: active`, then return the command's complete sanitized `markdown` dashboard before continuing to any downstream workflow step. On a confirmed failure set `status: failed`; on an indeterminate POST outcome set `status: unknown`. Do not retry either outcome automatically, and do not permit downstream Fusion submission until the state is `active`.
 
-Only run `create-runbook` for an initialized project with a canonical persisted plan: automatically after new-project initialization that did not use `--no-create-runbook`, or explicitly when the user later requests creation for a deferred project.
+Only run `create-runbook` for an initialized project with a canonical persisted plan and the accepted readiness, explicit skip or result-override evidence required above: after the prevalidation handoff, or when the user later requests creation for a separately deferred project. A creation request, a default CLI option or missing evidence is not an explicit skip. Existing active bindings are never reset to rerun this checkpoint.
 
 ## Network access for Oracle Fusion commands
 
@@ -130,7 +173,7 @@ When the execution environment supports sandbox permissions:
 
 Treat `create-runbook` as a separate write operation.
 
-- Run it automatically after new-project initialization that did not use `--no-create-runbook`; later creation for a deferred initialized project still requires the user to explicitly request creation. Do not add a payload-preview confirmation to the automatic initial creation.
+- Resume it after the prevalidation handoff in the sequencing guard. Every new project requires that handoff, regardless of how requirements were supplied. Separately deferred projects require an explicit later creation request as well. Do not add a payload-preview confirmation to the automatic initial creation.
 - Request permission for exactly `python3 scripts/runbook_rest.py create-runbook`.
 - Do not reuse a read-only, `add-task`, or `update-task` approval.
 - Never retry the POST. Exit code 3 means Oracle Fusion either created the run book or the POST outcome is unknown; report that exact result and do not create another run book.
@@ -201,6 +244,14 @@ python3 scripts/runbook_rest.py merge-runbook [--journey-id <journey-id>] --inpu
 
 The command reuses the creation payload's `taskDetails`, sends no `journeyDetails`, and returns the refreshed target dashboard through the standard Markdown renderer. Do not pre-check duplicate task names; Fusion owns duplicate handling.
 
+## Collection pagination and follow-up reads
+
+For tasks, comments, documents and attachments, preserve the user's `total_record_fetch_limit`, `pagination_record_limit`, and `pagination_limit` as runtime CLI options on the first request and every related "show more" / "load more" follow-up. Use `pagination_record_limit` as the sole per-page record setting for these collections; `--page-size` is supported only by `list-runbooks`. Do not silently reset a small test limit to defaults, increase limits to fetch the remainder, or issue multiple CLI invocations to bypass one operation's limits. Authentication retry for the same page remains separate from pagination.
+
+Keep each result's internal `pagination` metadata, including `nextOffset`, `hasMore`, and `paginationSettings`, together with the selected journey/task and collection. The total-record limit is cumulative across the initial read and all "show more" follow-ups for the same collection, starting at offset zero. A follow-up reuses the same limits and starts at that collection's `nextOffset`; its remaining total allowance is `total_record_fetch_limit - offset`. Only the page-call allowance resets for an explicit follow-up. Never reset the offset or increase the total limit to bypass exhaustion. If `continuationAllowed` is false because the total limit is reached, do not call the CLI again even when `hasMore` is true. Only an explicit user request to raise the limit or restart permits changing that bound. Use `--offset` for `dashboard`, `summary`, `list-tasks`, or `get-documents`; for `task-detail`, use `--attachments-offset`, `--comments-offset`, or `--documents-offset` for the collection being continued. Keep separate cursors for separate collections. If the collection is ambiguous, clarify which collection to continue. Never restart from zero unless the user requests a refresh. When `hasMore` is false, do not issue another collection read. If continuation context is missing, ask for it instead of guessing or fetching everything.
+
+Preserve the existing summary and task-detail output format. Do not append automatic pagination availability, partial-count, page-only or total-limit notices to the displayed Markdown. Keep pagination metadata internal for continuation decisions. Return only newly fetched records for "show more"; do not refill or re-render all remaining records from a prior larger response. Example: limits 5 total, 2 per page and 1 page allow follow-up offsets 2 and 4, fetching two records and then one; the total cap prevents fetching a sixth record.
+
 ## Show a run book
 
 1. Pass `--journey-id` only when the user explicitly identifies another Run Book. Otherwise let the command resolve the active ID from a non-empty Data Loader `runID`; if none is configured, stop and request one.
@@ -252,7 +303,7 @@ Run `python3 scripts/runbook_rest.py summary [--journey-id <journey-id>]` and re
 
 4. Return the command's complete `markdown` task detail without a raw field panel. Always preserve this task-detail result and stop after delivering it.
 
-The command formats Sequence, Task, Status, % Completed, and Required using the same summary table as the task-list dashboard. It then shows a non-empty dependency, visible Notes text derived from the value returned by Oracle Fusion, the Object Notes comment history below Notes, task attachments when available, and the conditional Data Load Status described below. Do not encode or decode Notes. It applies these additional rules:
+Task details use a five-column table: Sequence, Task, Status, % Completed, and Required. Run Book dashboards use only Sequence, Task, and Status. It then shows visible Notes text derived from the value returned by Oracle Fusion, the Object Notes comment history below Notes, task attachments when available, and the conditional Data Load Status described below. Do not encode or decode Notes. It applies these additional rules:
 
 - Retrieve task comments from Object Notes using the selected task ID as `ObjectId`, `ObjectType: ORA_CHK_ALLOC_TASK`, and `ContextType: TASK_COMMENTS`. If comment retrieval fails, omit the Comments section and continue rendering task detail.
 - Render each comment in Fusion's descending `LastUpdateDate` order as `**{author}** — {UTC timestamp}` followed by its supported HTML converted to Markdown. If conversion or timestamp formatting cannot be completed, show the original `NoteText` and `Unknown date` rather than omitting the comment. Use `AuthorName`, then `AuthorKnownAs`, then `CreatedBy`, then `Unknown author`.

@@ -19,11 +19,11 @@
           },
           "prerequisites": [],
           "on_failure": "stop",
-          "applies_when": "A confirmed FSM option-edit package is requested",
+          "applies_when": "A confirmed FSM option create/update package is requested",
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 35
+            "line": 40
           },
           "readiness": {
             "status": "ready",
@@ -44,7 +44,7 @@
             "EXMSO.VALIDATE_EDIT_INPUT"
           ],
           "on_failure": "stop",
-          "applies_when": "A confirmed FSM option-edit package passed input validation",
+          "applies_when": "A confirmed FSM option create/update package passed input validation",
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",

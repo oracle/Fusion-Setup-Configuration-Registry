@@ -24,4 +24,34 @@
 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|
-| CALENDAR.ENFORCE_DESIGN | decision | 20 | design_enforcement | ready->CALENDAR.EXECUTION_GATE;blocked->CALENDAR.DESIGN_BLOCKED | CALENDAR.VALIDATE_INPUT | stop | Always |
+| CALENDAR.ENFORCE_DESIGN | decision | 20 | design_enforcement | ready->CALENDAR.EXECUTION_GATE;blocked->CALENDAR.DESIGN_BLOCKED | CALENDAR.CHECK_DEPENDENCIES | stop | Always |
+
+The task-node flow is **Input → Local value checks → Dependencies → Design → Execution gate**.
+`CALENDAR.CHECK_LOCAL_VALUES` precedes `CALENDAR.CHECK_DEPENDENCIES`, followed by
+`CALENDAR.ENFORCE_DESIGN`. This task has no defaulting node; the flow does not add
+inferred defaults or live lookups. Each node is defined once in its owning resource
+file; the generated registry connects them.
+
+## Supporting Parent Preservation
+
+For every period create or update, include its matching calendar header once
+in the same FSM archive. Match both CalendarName and CalendarType.
+
+- Existing calendar, no requested header change: copy its header from the fresh
+  current-data baseline without changing any business value.
+- Existing calendar, requested header change: use that baseline header and apply
+  only the permitted changes the user requested.
+- New calendar: include the explicitly requested calendar create row with the
+  required values. Do not invent a calendar to satisfy a period request.
+- Calendar absent from the baseline and no explicit calendar create: stop and
+  ask the user to identify an existing calendar or request a new calendar.
+
+Leave audit fields blank in all import rows. Preserve calendar dates when
+converting the export date format to the import date format. Reject missing
+parents, unrequested changes to supporting headers, and populated audit fields.
+Other existing periods do not need to be copied into the candidate. For an
+uploaded ZIP, require the header inside that ZIP; validation does not add it.
+Validate all uploaded rows together. Apply period creates and updates to the
+fresh baseline, then reject overlapping final dates involving a requested
+period. Include periods left unchanged in this check. The check applies when
+the header is unchanged, updated, or newly created.
