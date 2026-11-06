@@ -91,7 +91,7 @@ or technical lookup evidence.
 | Gate | Required behavior |
 |---|---|
 | Derived names | In the parent Design Preview, show source-to-name/code mappings once for non-internal fields. Report internal checks as passed or unresolved without exposing Internal=Yes values. |
-| Label messages | Use the exact display Name returned by resolve_segment_label. Keep technical label codes in lookup/import evidence only; if Name is unresolved, report that blocker. |
+| Label messages | Show Major Category label or Minor Category label for the documented seeded mapping without requiring exported metadata or a waiver. For custom, unknown, or conflicting labels, report unresolved identity/properties. Keep technical codes in import evidence only. |
 | Import readiness | Follow the parent preview and approval contract; show task-specific unresolved gaps without creating another approval gate. |
 | Post-import verification | Show package fingerprint, available process/request identifier, fresh export comparison, and recovery-approval state. |
 | Missing or ambiguous evidence | Do not infer a structure, value set, default, or lookup result. |

@@ -40,6 +40,7 @@ depends_on:
   - "shared.validation.reference-data-validator"
   - "core.data-loader"
 uses_core:
+  - "core.fusion-api.rest-api-client"
   - "core.project-mgmt.artifact-version-manager"
   - "core.project-mgmt.artifact-registry-manager"
   - "core.project-mgmt.project-state-manager"
@@ -184,4 +185,8 @@ Use this workflow when `dataloader_import_mode: "REST"` and a Fusion Data Loader
 
 ## Implementation Notes
 
+Review recorded creation/deletion cases in [tests/golden-scenarios.md](tests/golden-scenarios.md); their fixtures are sanitized session evidence, not live execution authorization.
+
 Use the parent functional-area skill `scm.supply-chain-planning.supply-chain-planning-configuration` for functional-area sequencing and scope decisions. Track token usage for any generated project artifact or skill-run record using the manifest policy.
+
+Before task validation, load [Task Rule Registry Execution](../../../../../core/data-loader/references/task-rule-registry-execution.md), the selected registry/source rules, and `ora-resource/ora_error_handling.md`. Resolve the exact task through the invoking runbook or Data Loader workflow's `resolve-task-rules` gate; require a ready registry and consistent source anchors, prerequisites, and transitions before following `start_node`. Stop on missing or inconsistent rules rather than inventing a route. The invoking runbook or Data Loader workflow owns task inputs and write approval. Route declared live GETs through `core.fusion-api.rest-api-client`; its environment, privilege, authentication, timeout and redaction checks apply. Persist validation failures through the declared project services as specified in the error guidance.

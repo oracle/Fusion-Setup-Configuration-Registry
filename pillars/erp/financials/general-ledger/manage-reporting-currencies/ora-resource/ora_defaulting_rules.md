@@ -9,6 +9,7 @@ Defaults are conditional population rules, not substitutes for required user con
 | Description | Blank | Journal or Subledger and the optional description is omitted | No |  |
 | TargetLedgerCategoryCode | ALC | New relationship | Yes, reject any conflicting input |  |
 | RelationshipTypeCode | BALANCE, JOURNAL, or SUBLEDGER from ConversionLevel | New relationship | Yes, derive from the validated level |  |
+| Relationship ledger aliases and parent keys | Derive from the level-specific Relationship Row Population Contract in ora_input_validation.md | Every new relationship and its rule rows | Yes; no blank Name2 or substitution of the primary for a secondary source | derive_minimum_target_graph |
 | ApplicationShortName | GL | New relationship and same-release template agrees | Yes, reject any other baseline value | inspect_scoped_reporting_currency_export |
 | OrgIdTrans | -99 | New relationship and same-release template agrees | Yes, reject any other baseline value | inspect_scoped_reporting_currency_export |
 | RelationshipEnabledFlag | Y | New baseline relationship | No; disclose and require confirmation |  |
@@ -24,7 +25,7 @@ Defaults are conditional population rules, not substitutes for required user con
 | AlcPeriodAverageRateTypeTrans | No default | Balance | No; require exact user-confirmed rate type | resolve_conversion_rate_type |
 | AlcPeriodEndRateTypeTrans | No default | Balance | No; require exact user-confirmed rate type | resolve_conversion_rate_type |
 | AlcDefaultConvRateTypeTrans | No default | Journal or Subledger | No; require exact user-confirmed rate type | resolve_conversion_rate_type |
-| FirstLedgerPeriodName | Exact FirstLedgerPeriodName from the scoped source physical row after one exact non-adjustment accountingPeriodsLOV match in the exported PeriodSetName and AccountedPeriodType scope | Journal or Subledger | No for the supported baseline; a different user value requires authoritative same-release eligibility evidence and revalidation, never LOV membership alone | resolve_first_opened_period |
+| FirstLedgerPeriodName | Exact FirstLedgerPeriodName from the scoped source physical row after one exact non-adjustment accountingPeriodsLOV PeriodNameId match in the exported PeriodSetName and AccountedPeriodType scope | Journal or Subledger | No for the supported baseline; a different user value requires authoritative same-release eligibility evidence and revalidation, never LOV membership alone | resolve_first_opened_period |
 | AlcInitConvOptionCode | Blank | Initialization is not requested | Yes, keep the whole initialization group blank |  |
 | AlcInitConvOptionCode | I | Non-EMU Journal or Subledger initialization is explicitly requested | Yes, reject partial or conflicting values | resolve_balance_initialization_period |
 | AlcInitPeriod | Exact eligible Balance Initialization Period | Initialization is requested | No; require user period intent and validation | resolve_balance_initialization_period |
@@ -47,7 +48,7 @@ Defaults are conditional population rules, not substitutes for required user con
 | Physical ShortName | Blank | New physical target | Yes, service-generated only |  |
 | TargetLedgerShortName | Blank | New relationship | Yes, service-generated only and independent of physical ShortName |  |
 | Physical structural and calendar fields | Copy exact source value by header name | Journal or Subledger physical target, except explicitly transformed fields | Yes, block user attempts to alter inherited structure in this task | read_source_physical_template |
-| Physical SLA method tuple | Copy exact source values | Journal or Subledger; Subledger requires method readiness | Yes, block invented method values | verify_subledger_source_readiness |
+| Physical SLA method tuple | Copy exact source values | Journal or Subledger; Subledger requires method readiness | Yes, inherit from the actual source; do not apply the secondary-ledger Journal blank-method policy or default to Standard Accrual | read_source_physical_template |
 | Physical option and account fields | Copy exact source values unless a supported task option is explicitly chosen and mapped | Journal or Subledger | No; every supported difference must be disclosed | read_source_physical_template |
 | BalSegValueOptionCode and BalSegColumnName | Exact source qualifier values | Journal or Subledger | Yes, derive rather than guess | derive_source_coa_qualifiers |
 | MgtSegValueOptionCode and MgtSegColumnName | Exact source qualifier values | Journal or Subledger | Yes, derive rather than guess | derive_source_coa_qualifiers |

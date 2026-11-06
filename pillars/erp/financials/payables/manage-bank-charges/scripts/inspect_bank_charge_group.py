@@ -17,6 +17,7 @@ import re
 from fsm_task_adapter import (
     AdapterError, _default_contract_path, _load_contract, _read_package,
     _validate_parent_assembly, assess_business_intake,
+    _bind_readback,
 )
 
 
@@ -106,11 +107,13 @@ def inspect_group(contract, intake, package):
         'local_input_checks_passed': checked['local_checks_passed'],
         'comparison': 'Full header and multiset of full child rows, using declared date/decimal types; no line key inferred.',
         'freshness': 'Caller must bind this file to a fresh authorized export result; a local path alone does not prove freshness.',
+        'persistenceVerified': False, 'comparisonOnly': True,
         'execution_ready': False, 'candidate_generated': False, 'fusion_calls': 0,
     }
 
 
-def compare_after(contract, intake, before, after):
+def compare_after(contract, intake, before, after, *, candidate_path=None,
+                  readback_evidence_path=None, import_request_id=None, target_url=None):
     before_result = inspect_group(contract, intake, before)
     after_result = inspect_group(contract, intake, after)
     if before_result['status'] != 'ABSENT':
@@ -123,7 +126,7 @@ def compare_after(contract, intake, before, after):
         new = Counter(_row(entity, row) for row in after.rows[entity['name']])
         preservation[entity['name']] = not bool(old - new)
     passed = after_result['status'] == 'EXACT' and all(preservation.values())
-    return {
+    comparison = {
         'status': 'PASS' if passed else 'FAIL', 'before_sha256': before.archive_sha256,
         'after_sha256': after.archive_sha256, 'target': after_result,
         'baseline_rows_preserved': preservation,
@@ -131,6 +134,19 @@ def compare_after(contract, intake, before, after):
         'boundary': 'Snapshot comparison only. Does not prove which process caused a row, authorize an import, or establish update/retry identity.',
         'execution_ready': False, 'fusion_calls': 0,
     }
+    candidate_error = None
+    if candidate_path is not None and readback_evidence_path is not None:
+        try:
+            candidate = _read_package(Path(candidate_path), contract)
+            if (candidate.metadata['ProcessRelease'] != before.metadata['ProcessRelease'] or
+                    inspect_group(contract, intake, candidate)['status'] != 'EXACT'):
+                raise AdapterError('Candidate release or requested charge group differs.')
+        except (AdapterError, OSError, ValueError) as exc:
+            candidate_error = f"Submitted candidate does not match this create: {exc}"
+    return _bind_readback(
+        comparison, contract, before, after, candidate_path,
+        readback_evidence_path, import_request_id, target_url, candidate_error,
+    )
 
 
 def main():
@@ -138,12 +154,22 @@ def main():
     parser.add_argument('--intake', type=Path, required=True)
     parser.add_argument('--snapshot', type=Path, required=True)
     parser.add_argument('--before', type=Path)
+    parser.add_argument('--candidate', type=Path)
+    parser.add_argument('--readback-evidence', type=Path)
+    parser.add_argument('--import-request-id')
+    parser.add_argument('--target-url')
     args = parser.parse_args()
     try:
+        if (args.candidate or args.readback_evidence or args.import_request_id or args.target_url) and not args.before:
+            raise AdapterError('Read-back evidence options require before and snapshot.')
         contract = _load_contract(_default_contract_path())
         intake = json.loads(args.intake.read_text())
         current = _read_package(args.snapshot, contract)
-        result = compare_after(contract, intake, _read_package(args.before, contract), current) if args.before else inspect_group(contract, intake, current)
+        result = compare_after(
+            contract, intake, _read_package(args.before, contract), current,
+            candidate_path=args.candidate, readback_evidence_path=args.readback_evidence,
+            import_request_id=args.import_request_id, target_url=args.target_url,
+        ) if args.before else inspect_group(contract, intake, current)
     except (AdapterError, ValueError, OSError) as exc:
         print(json.dumps({'status': 'REJECTED', 'message': str(exc), 'execution_ready': False, 'fusion_calls': 0}))
         return 1

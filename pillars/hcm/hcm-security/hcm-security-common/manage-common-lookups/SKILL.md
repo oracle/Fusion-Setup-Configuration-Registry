@@ -32,6 +32,7 @@ outputs:
   - "skill_run_record"
   - "token_usage_record"
 depends_on:
+  - "core.fusion-api.apps-common"
   - "shared.setup-export.task-level-export"
   - "shared.validation.setup-data-validator"
   - "shared.validation.reference-data-validator"

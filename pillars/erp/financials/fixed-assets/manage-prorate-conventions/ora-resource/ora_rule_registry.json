@@ -38,6 +38,7 @@
           "execution_route": "fusion-rest",
           "transitions": {
             "resolved": "PRC.GENERATE_DATES",
+            "name_exists": "PRC.DONE_EXISTS",
             "matches_listed": "PRC.DONE_FISCAL_YEARS",
             "not_found_or_failed": "PRC.HANDLE_LOOKUP"
           },
@@ -45,11 +46,11 @@
             "PRC.VALIDATE_INPUT"
           ],
           "on_failure": "stop",
-          "applies_when": "Apply Lookup Execution Rules and Fiscal-Year Lookup Freshness for the route selected by Required Dependency Order in ora_dependency_readiness.md. Under Fiscal-Year Selection Rules, return matches_listed for a complete nonempty inquiry finding, resolved for completed generation context and all applicable lookups, or not_found_or_failed for invalid, unresolved, or failed lookups.",
+          "applies_when": "Apply Lookup Execution Rules and Fiscal-Year Lookup Freshness for the route selected by Required Dependency Order in ora_dependency_readiness.md. For create, any exact convention-name match returns name_exists immediately, without existing-definition or date-row comparison. Otherwise, under Fiscal-Year Selection Rules, return matches_listed for a complete nonempty inquiry finding, resolved for completed generation context and all applicable lookups, or not_found_or_failed for invalid, unresolved, or failed lookups.",
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 87
+            "line": 97
           },
           "readiness": {
             "status": "ready",
@@ -74,7 +75,7 @@
           "source": {
             "file": "ora_defaulting_rules.md",
             "anchor": "task-nodes",
-            "line": 46
+            "line": 61
           },
           "readiness": {
             "status": "ready",
@@ -95,7 +96,7 @@
             "PRC.GENERATE_DATES"
           ],
           "on_failure": "stop",
-          "applies_when": "Apply applicable Design Rules before readiness. A date-integrity failure selects generation_failed. Pass an audit or package_gap to PRC.RESOLVE_PACKAGE for its blocked outcome. Parent-directed actual-package validation reuses these checks at the stage specified by Enforcement Order.",
+          "applies_when": "Apply applicable Design Rules before readiness. A date-integrity failure selects generation_failed. Pass an audit or package_gap to PRC.RESOLVE_PACKAGE for its blocked outcome. Parent-directed actual-package validation reuses these checks before Final ZIP Preview and import approval.",
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
@@ -113,87 +114,20 @@
           "action_type": "resolve_dependency",
           "execution_route": "local",
           "transitions": {
-            "create_verified": "PRC.DONE_CREATE",
-            "update_verified": "PRC.DONE_UPDATE",
-            "existing_zip_validated": "PRC.DONE_EXISTING_ZIP",
-            "already_exists": "PRC.DONE_EXISTS",
+            "create_verified": "PRC.IMPORT_GATE",
+            "update_verified": "PRC.IMPORT_GATE",
+            "existing_zip_validated": "PRC.IMPORT_GATE",
             "blocked": "PRC.HANDLE_PACKAGE"
           },
           "prerequisites": [
             "PRC.ENFORCE_DESIGN"
           ],
           "on_failure": "stop",
-          "applies_when": "Consume the applicable Dependency Rules and Design Enforcement result, then resolve_existing_prorate_convention for create/update. Any technical package gap selects blocked. Successful outcomes use Validation-Graph Handoff.",
+          "applies_when": "Consume the applicable Dependency Rules and Design Enforcement result, then resolve_existing_prorate_convention for create/update. Any technical package gap selects blocked. Successful package-required outcomes proceed to the parent Final ZIP Preview and import gate.",
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 111
-          },
-          "readiness": {
-            "status": "ready",
-            "blocking_reasons": []
-          }
-        },
-        {
-          "id": "PRC.DONE_CREATE",
-          "node_type": "terminal",
-          "sequence": 40,
-          "action_type": "terminal",
-          "execution_route": "local",
-          "transitions": {},
-          "prerequisites": [
-            "PRC.RESOLVE_PACKAGE"
-          ],
-          "on_failure": "continue",
-          "applies_when": "Verified create readiness; continue through Validation-Graph Handoff in ora_dependency_readiness.md.",
-          "source": {
-            "file": "ora_error_handling.md",
-            "anchor": "task-nodes",
-            "line": 61
-          },
-          "readiness": {
-            "status": "ready",
-            "blocking_reasons": []
-          }
-        },
-        {
-          "id": "PRC.DONE_UPDATE",
-          "node_type": "terminal",
-          "sequence": 41,
-          "action_type": "terminal",
-          "execution_route": "local",
-          "transitions": {},
-          "prerequisites": [
-            "PRC.RESOLVE_PACKAGE"
-          ],
-          "on_failure": "continue",
-          "applies_when": "Verified update readiness; continue through Validation-Graph Handoff in ora_dependency_readiness.md.",
-          "source": {
-            "file": "ora_error_handling.md",
-            "anchor": "task-nodes",
-            "line": 62
-          },
-          "readiness": {
-            "status": "ready",
-            "blocking_reasons": []
-          }
-        },
-        {
-          "id": "PRC.DONE_EXISTING_ZIP",
-          "node_type": "terminal",
-          "sequence": 42,
-          "action_type": "terminal",
-          "execution_route": "local",
-          "transitions": {},
-          "prerequisites": [
-            "PRC.RESOLVE_PACKAGE"
-          ],
-          "on_failure": "continue",
-          "applies_when": "Supplied archive passed task-local validation; continue through Validation-Graph Handoff in ora_dependency_readiness.md.",
-          "source": {
-            "file": "ora_error_handling.md",
-            "anchor": "task-nodes",
-            "line": 63
+            "line": 129
           },
           "readiness": {
             "status": "ready",
@@ -208,14 +142,14 @@
           "execution_route": "local",
           "transitions": {},
           "prerequisites": [
-            "PRC.RESOLVE_PACKAGE"
+            "PRC.LOOKUP_CONTEXT"
           ],
-          "on_failure": "continue",
-          "applies_when": "Equivalent existing convention; use Validation-Graph Handoff in ora_dependency_readiness.md.",
+          "on_failure": "stop",
+          "applies_when": "Create-name conflict: report Convention name already exists and ask only for a different Name. No equivalence claim, package preparation, or submission.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 64
+            "line": 73
           },
           "readiness": {
             "status": "ready",
@@ -233,11 +167,11 @@
             "PRC.LOOKUP_CONTEXT"
           ],
           "on_failure": "continue",
-          "applies_when": "Complete nonempty inquiry finding; use Validation-Graph Handoff in ora_dependency_readiness.md.",
+          "applies_when": "Complete nonempty inquiry finding; report the read-only result through Parent Workflow Handoff in ora_dependency_readiness.md.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 65
+            "line": 74
           },
           "readiness": {
             "status": "ready",
@@ -261,7 +195,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 66
+            "line": 75
           },
           "readiness": {
             "status": "ready",
@@ -285,7 +219,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 67
+            "line": 76
           },
           "readiness": {
             "status": "ready",
@@ -309,7 +243,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 68
+            "line": 77
           },
           "readiness": {
             "status": "ready",
@@ -333,7 +267,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 69
+            "line": 78
           },
           "readiness": {
             "status": "ready",
@@ -357,7 +291,56 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 70
+            "line": 79
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PRC.IMPORT_GATE",
+          "node_type": "decision",
+          "sequence": 75,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "approved": "PRC.HANDED_OFF_TO_PARENT",
+            "approval_missing": "PRC.HANDLE_APPROVAL"
+          },
+          "prerequisites": [
+            "PRC.RESOLVE_PACKAGE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "The Final ZIP Preview identifies one validated immutable package for live import.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 80
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PRC.HANDLE_APPROVAL",
+          "node_type": "step",
+          "sequence": 76,
+          "action_type": "error_handler",
+          "execution_route": "local",
+          "transitions": {
+            "handled": "PRC.ISSUES"
+          },
+          "prerequisites": [
+            "PRC.IMPORT_GATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Import approval is missing.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 81
           },
           "readiness": {
             "status": "ready",
@@ -377,7 +360,29 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 71
+            "line": 82
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PRC.HANDED_OFF_TO_PARENT",
+          "node_type": "terminal",
+          "sequence": 170,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "PRC.IMPORT_GATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Prorate Conventions import is accepted \u2014 pending parent verification.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 83
           },
           "readiness": {
             "status": "ready",

@@ -1,7 +1,7 @@
 ---
 skill_id: "erp.financials.expenses.manage-expenses-system-options"
 name: "Manage Expenses System Options Setup Task Guidance"
-description: "Guides Manage Expenses System Options setup, including workbook intake, confirmed FSM option-edit package preparation, and FSM export-backed validation."
+description: "Guides Manage Expenses System Options setup, including workbook intake, confirmed FSM option create/update package preparation, and FSM export-backed validation."
 layer: "pillar"
 pillar: "ERP"
 offering: "Financials"
@@ -19,7 +19,7 @@ source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 type: "planning"
 execution_mode: "assisted"
 owner_team: "ERP financials pillar team"
-version: "0.4.2"
+version: "0.6.0"
 inputs:
   - "implementation_objective"
   - "project_context"
@@ -39,6 +39,7 @@ depends_on:
   - "shared.validation.reference-data-validator"
   - "core.data-loader"
 uses_core:
+  - "core.fusion-api.rest-api-client"
   - "core.project-mgmt.artifact-version-manager"
   - "core.project-mgmt.artifact-registry-manager"
   - "core.project-mgmt.project-state-manager"
@@ -86,13 +87,21 @@ applicability:
     - "All"
   fusion_releases:
     - "Current Oracle Fusion Cloud release"
-side_effects: []
-required_privileges: []
+side_effects:
+  - "Writes a local review-only FSM ZIP for confirmed option and scalar-setting creates and updates."
+  - "Reads destination business-unit references through the shared REST client."
+required_privileges:
+  - "Read access to Financials business-unit LOV and task setup export."
 ---
 
 # Manage Expenses System Options Setup Task Guidance
 
 ## Purpose
+
+For fixed option dropdowns use the complete source-backed mappings in
+[dropdown-value-contract.md](references/dropdown-value-contract.md). A selected
+code need not occur in the target export. Do not use observed setup values to
+infer the dropdown's domain.
 
 Provides task-specific setup planning, routing, export, import, and validation guidance for `Manage Expenses System Options` under `Expenses`.
 
@@ -134,7 +143,7 @@ Use this skill when planning, sequencing, exporting, importing, or validating se
 1. Export setup task data with `shared.setup-export.task-level-export`.
 2. Validate setup task data with `shared.validation.setup-data-validator`.
 3. Validate reference data with `shared.validation.reference-data-validator`.
-4. Prepare a package only with the confirmed-edit contract below, then import
+4. Prepare a package only with the confirmed create/update contract below, then import
    the immutable package with `core.data-loader`.
 
 Use this task metadata when invoking those skills:
@@ -143,6 +152,20 @@ Use this task metadata when invoking those skills:
 - Functional area / Setup Object: `Expenses`
 - Setup task name: `Manage Expenses System Options`
 - Setup task code: `EXM_MANAGE_EXPENSES_SYSTEM_OPTIONS`
+
+## Source-Backed Task Behavior
+
+- Validate specific BUs through finBusinessUnitsLOV, independently of whether
+  Expenses setup rows exist in the export. All Business Units uses the global
+  identity with blank BuName and OtherOrgId=-1 for new option rows.
+- Create or update confirmed option and scalar settings by their exact
+  BU/code identity. Both paired option rows absent permits sparse insertion;
+  one-sided absence, divergence and duplicate identities block preparation.
+- Blank workbook values retain existing values or leave new overrides unset.
+  Do not copy global IDs/audits or materialize unspecified inherited settings.
+  Preserve unrelated rows and route imports through core Data Loader.
+- Follow references/create-update-contract.md for source evidence, mapping
+  limits, captured BU evidence and the separately governed live-import gate.
 
 ## Input Workbook
 
@@ -169,6 +192,9 @@ workbook version or treat an identity-only row as a change. On a specific
 business unit, `Use setup from all business units` requests inheritance;
 `Employee Liability Account` also accepts `Use setup from Oracle Fusion
 Payables`. The validator flags inheritance for a CSV representation check.
+Specific BUs are validated through a fresh complete finBusinessUnitsLOV result,
+not their presence in the export. Pass `--reference-evidence` to validate and
+build-import; see references/create-update-contract.md.
 For an existing business-unit override, removing its row from the import ZIP
 does not establish inheritance: [Oracle's CSV setup comparison guidance](https://docs.oracle.com/en/cloud/saas/applications-common/26d/oafsm/compare-task-setup-data.html)
 states that CSV import does not delete target records. Keep inheritance blocked
@@ -185,8 +211,14 @@ set `PYTHON` to that tool's bundled Python path if `python3` is not on `PATH`:
 
 ```text
 node scripts/expense_system_options_intake.mjs create --output /absolute/path/ManageExpensesSystemOptions_Input.xlsx
-node scripts/expense_system_options_intake.mjs validate --input /absolute/path/filled.xlsx --baseline-dir /absolute/path/extracted-current-data-export --baseline-process-id PROCESS_ID --baseline-archive /absolute/path/unchanged-export.zip --environment TARGET_ENV --output /absolute/path/intake-validation.json
+node scripts/expense_system_options_intake.mjs validate --input /absolute/path/filled.xlsx --baseline-dir /absolute/path/extracted-current-data-export --baseline-process-id PROCESS_ID --baseline-archive /absolute/path/unchanged-export.zip --environment TARGET_ENV --reference-evidence /absolute/path/business-unit-reference-evidence.json --output /absolute/path/intake-validation.json
 ```
+
+For specific Business Units, pass `--reference-evidence` to both `validate`
+and `build-import`. Capture it through the declared shared REST client using
+the [create/update contract](references/create-update-contract.md). Its target
+environment and baseline ProcessId must match the selected export. A request
+containing only All Business Units does not require this BU LOV evidence.
 
 If the export metadata contains the observed FSM placeholder
 `<ProcessId>-999</ProcessId>`, pass `--baseline-archive` with the unchanged
@@ -206,13 +238,13 @@ operation is `unresolved` and a pending baseline check is reported. A
 schema-only template export cannot resolve operations. The validator
 normalizes filled fields to JSON with `issues` and `pending_checks`; blank
 fields are omitted. It does not generate an import ZIP or mark a workbook
-import-ready when an input is dynamic, unmapped, inherited, or create-oriented.
-For a fresh baseline and one or more confirmed `EXM_SETUP_OPTION` **Edit**
-changes only, it emits `ready_for_import: true`. Preserve filled
+import-ready when an input is dynamic, unmapped, or inherited.
+For a fresh baseline and confirmed option or scalar-setting **Create/Edit**
+changes, it emits `ready_for_import: true`. Preserve filled
 workbooks and normalized results only in the authorized project workspace;
 they may contain customer setup data.
 
-## Confirmed FSM Option-Edit Package Contract
+## Confirmed FSM Option Create/Update Package Contract
 
 The task has a safe, narrow package-preparation path for a confirmed option
 edit. It does not turn every workbook field into an importable value.
@@ -222,9 +254,10 @@ requires all of the following:
 
 - a completed, fresh data export from the exact target environment and task;
 - no validation issues or pending mapping checks;
-- one or more **Edit** operations only; and
-- changes mapped to `EXM_SETUP_OPTION` with an exact option code and value
-  code. Creates, dynamic references, candidate or unmapped fields, and both
+- one or more resolved **Create** or **Edit** operations; and
+- changes mapped to `EXM_SETUP_OPTION` with an exact option/value code, or
+  confirmed scalar `EXM_ORG_SETTING` text, email and nonnegative-integer fields.
+  Dynamic references, candidate or unmapped fields, and both
   inheritance choices remain unsupported for package generation.
 
 Build the package from the same extracted data export and validation result:
@@ -236,6 +269,7 @@ node scripts/expense_system_options_intake.mjs build-import \
   --baseline-process-id PROCESS_ID \
   --baseline-archive /absolute/path/unchanged-export.zip \
   --environment TARGET_ENV \
+  --reference-evidence /absolute/path/business-unit-reference-evidence.json \
   --output /absolute/path/ManageExpensesSystemOptions_Edit.zip \
   --manifest-output /absolute/path/import-manifest.json
 ```
@@ -243,11 +277,15 @@ node scripts/expense_system_options_intake.mjs build-import \
 The builder binds the supplied ProcessId to the export metadata or, for the
 observed `-999` placeholder, to the unchanged exporter ZIP. It verifies
 the validated workbook digest and every baseline CSV digest, preserves all
-four exported members, and changes only the uniquely matched
+four exported members, and changes the uniquely matched or newly inserted
 `(BuName, OptionCode)` rows in both `EXM_SETUP_OPTION.csv` and its paired
 `EXM_CASH_ADV_SETUP_AND_POLICY.csv`. It retains every unrelated row
-and every non-value column. It rejects missing, duplicate, or divergent paired
-rows, a changed baseline, a changed workbook, an invalid metadata identity, or
+and existing non-value columns. For a missing option in both paired files,
+it appends a sparse row with BuName, OptionCode and ValueCode; global rows use
+blank BuName and OtherOrgId=-1. It never copies global IDs or audits into a BU.
+Confirmed scalar settings use BuName, SettingCode and SettingValue in
+EXM_ORG_SETTING. No baseline usage is required for a new override.
+It rejects duplicate or divergent paired rows, a changed baseline, a changed workbook, an invalid metadata identity, or
 any unsupported field. The generated ZIP is a candidate artifact only: pass it
 unchanged to `core.data-loader`, which performs its own preflight, Task Hook
 validation, immutable approval, submission, monitoring, and ProcessLog
@@ -263,9 +301,10 @@ reviewed export; do not create duplicate intake columns from them. The template 
 columns, not a complete value-code dictionary. The supplied UI screenshots
 establish the six dropdown display lists captured in the field catalog.
 
-Only use a catalog value code when its label-to-code match is confirmed by
-the export's current setting and supplied UI. An observed code without a
-confirmed label match is not enough to prepare an import. `candidate` and
+Use the complete source-defined lookup mappings for the five fixed option
+dropdowns in references/dropdown-value-contract.md. Export usage does not
+limit valid choices. An observed code without a confirmed label match is not
+enough to prepare an import. `candidate` and
 `unmapped` fields, dynamic references (currencies, accounts, policies,
 documents, pay groups, report templates), and enum choices with null codes
 require source or UI verification. Report those checks to the user and retain
@@ -288,7 +327,7 @@ For configuration validation or change preparation, read
 Oracle customer documentation used for their functional rules.
 
 The [compiled rule registry](ora-resource/ora_rule_registry.json) covers the
-confirmed FSM option-edit contract above. Run the resource-authoring planner
+confirmed FSM option create/update contract above. Run the resource-authoring planner
 for this task and require a current ready plan before consuming those nodes.
 The plan confirms the validated intake evidence, fresh baseline binding,
 package-preservation conditions, and the mandatory `core.data-loader` handoff;
@@ -296,7 +335,7 @@ it does not grant approval or claim that an import completed. Baseline exports
 use the separately declared CSV export workflow and its own preflight
 requirements.
 
-For a requested field outside the confirmed option-edit contract, classify the
+For a requested field outside the confirmed create/update contract, classify the
 request as `unsupported_by_confirmed_fsm_contract` and report the exact field
 and missing source or mapping evidence. Do not use a registry-readiness
 override to prepare or submit an import.

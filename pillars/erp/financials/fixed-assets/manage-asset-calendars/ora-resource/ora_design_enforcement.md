@@ -29,3 +29,9 @@ changing the General Ledger accounting design. Fixed Assets has no matching
 adjustment flag; copying the row can make it a depreciation period. For
 nonmonthly calendars, do not apply that monthly-calendar rule automatically;
 use the requested design and task-specific validation.
+
+## Task Nodes
+
+| Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
+|---|---|---|---|---|---|---|---|
+| CAL.ENFORCE_DESIGN | decision | 50 | design_enforcement | pass->CAL.IMPORT_GATE;blocked->CAL.HANDLE_DESIGN | CAL.APPLY_DEFAULTS | stop | Defaults and lookup results are available |

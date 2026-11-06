@@ -23,7 +23,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 99
+            "line": 111
           },
           "readiness": {
             "status": "ready",
@@ -52,7 +52,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 100
+            "line": 112
           },
           "readiness": {
             "status": "ready",
@@ -77,7 +77,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 101
+            "line": 113
           },
           "readiness": {
             "status": "ready",
@@ -99,11 +99,11 @@
             "WC.VALIDATE_WORK_CENTER"
           ],
           "on_failure": "stop",
-          "applies_when": "Operation scope is work_center; for create, resolve OrganizationCode and business-supplied WorkAreaCode to WorkAreaId and WorkAreaName; resolve every new named WorkCenterResource through resolve_active_production_resource_by_name before source preparation; when server-managed create reconciliation is selected also run describe_work_center_create_contract",
+          "applies_when": "Operation scope is work_center; for create, resolve OrganizationCode and business-supplied WorkAreaCode to WorkAreaId and WorkAreaName; resolve every new named or coded WorkCenterResource through resolve_active_production_resource before source preparation; when server-managed create reconciliation is selected also run describe_work_center_create_contract",
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 128
+            "line": 131
           },
           "readiness": {
             "status": "ready",
@@ -128,7 +128,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 102
+            "line": 114
           },
           "readiness": {
             "status": "ready",
@@ -225,7 +225,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 103
+            "line": 115
           },
           "readiness": {
             "status": "ready",
@@ -251,7 +251,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 129
+            "line": 132
           },
           "readiness": {
             "status": "ready",
@@ -344,11 +344,11 @@
             "WC.SELECT_OPERATION_SCOPE"
           ],
           "on_failure": "stop",
-          "applies_when": "Operation scope is calendar_resource; distinguish new WorkCenterResource numeric or name-based input from existing-association name/code input; defer resolver-derived new-resource source checks until lookup succeeds, then enforce them before approval; validate supplied Boolean serialization and operation-specific final child-record coverage; verification needs no stage, units, or artifact",
+          "applies_when": "Operation scope is calendar_resource; distinguish new WorkCenterResource numeric, name-based, or code-based input from existing-association name/code input; defer resolver-derived new-resource source checks until lookup succeeds, then enforce them before approval; validate supplied Boolean serialization and operation-specific final child-record coverage; verification needs no stage, units, or artifact",
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 104
+            "line": 116
           },
           "readiness": {
             "status": "ready",
@@ -370,11 +370,11 @@
             "WC.VALIDATE_CALENDAR_RESOURCE"
           ],
           "on_failure": "stop",
-          "applies_when": "Operation scope is calendar_resource; resolve new named WorkCenterResource associations through resolve_active_production_resource_by_name in the resolved parent's organization; use the complete resource-wide assignment scan for an override-resource update or conversion setting Available24HoursFlag=true",
+          "applies_when": "Operation scope is calendar_resource; resolve new named or coded WorkCenterResource associations through resolve_active_production_resource in the resolved parent's organization; use the complete resource-wide assignment scan for an override-resource update or conversion setting Available24HoursFlag=true",
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 130
+            "line": 133
           },
           "readiness": {
             "status": "ready",
@@ -471,7 +471,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 105
+            "line": 117
           },
           "readiness": {
             "status": "ready",
@@ -568,7 +568,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 106
+            "line": 118
           },
           "readiness": {
             "status": "ready",
@@ -593,7 +593,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 131
+            "line": 134
           },
           "readiness": {
             "status": "ready",

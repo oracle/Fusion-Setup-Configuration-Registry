@@ -21,5 +21,16 @@
 These are Fusion initialization defaults. For a create candidate, apply the
 required Terms Date Basis, Accounting Date Basis, Pay Date Basis, and Budget
 Date Basis values when omitted. For an existing business-unit record, preserve
-the exported current value. Never replace a blank or omitted update value with
-a default.
+exported values during unrelated updates. When the request explicitly sets
+`AutoCalculateInterestFlag=Y` and omits `ProrateIntInvAcrossDists`, the adapter
+writes `N` (Single distribution), matching the UI enable action. Disclose this
+in the preview's effective values and requirements. Preserve explicit `N`, `Y`,
+or blank choices; omission alone triggers this default. Do not ask for an
+allocation method unless the user wants a choice other than the disclosed
+default. Disabling interest continues to clear the dependent fields.
+
+## Task Nodes
+
+| Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
+|---|---|---|---|---|---|---|---|
+| DEFAULT.APPLY | step | 30 | apply_default | success->DESIGN.ENFORCE;failure->ERROR.BLOCK | DEP.CHECK | stop | Always; apply documented create defaults and omitted interest allocation when explicitly enabling interest; preserve explicit choices and unrelated update values |

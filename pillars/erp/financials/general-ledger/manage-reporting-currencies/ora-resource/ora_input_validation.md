@@ -21,7 +21,7 @@ The supported baseline is create-only and non-EMU. It does not review or submit 
 
 | Requirement Group | Accepted Fields | If Missing | How to Resolve | Applies When | Resolver |
 |---|---|---|---|---|---|
-| Source ledger identity | SourceLedgerName and, when available, SourceLedgerId | Stop and request the exact source ledger | Require one exact eligible primary or secondary match and reconcile it with the scoped task export | Always | resolve_source_ledger |
+| Source ledger identity | SourceLedgerName and, when available, SourceLedgerId; SourcePrimaryLedgerName when the owning primary of a secondary source is not already evidenced | Stop and request the exact source ledger | Require one exact eligible source, resolve its owning primary separately, and reconcile both identities and source membership with the scoped task export | Always | resolve_source_ledger |
 | Reporting currency identity | ReportingCurrencyName, Description | Stop when the name is absent; Description is optional and applies only to a physical Journal or Subledger target | Trim the name, require 1 through 30 characters, verify zero exact-name matches, and preserve exact optional description text | Always | check_reporting_currency_name_availability |
 | Conversion design | ConversionLevel | Stop and request Balance, Journal, or Subledger | Map the exact user selection to BALANCE, JOURNAL, or SUBLEDGER; reject any other value | Always |  |
 | Target currency | CurrencyCode | Stop and request the currency | Require one exact active enabled monetary-currency match; same-currency is allowed only after the advisory is acknowledged | Always | resolve_monetary_currency |
@@ -76,7 +76,7 @@ The supported baseline is create-only and non-EMU. It does not review or submit 
 | Source eligibility | Require PRIMARY or SECONDARY for Balance and Journal; require PRIMARY and accounting-method readiness for Subledger | Always | resolve_source_ledger |
 | Currency membership | Require one exact active enabled monetary currency; disclose but do not block a same-currency design after user confirmation | Always | resolve_monetary_currency |
 | Translation completeness | Require both rate types and both independent PTD or YTD choices | ConversionLevel is Balance | resolve_conversion_rate_type |
-| First opened period derivation and eligibility | Read FirstLedgerPeriodName, PeriodSetName, and AccountedPeriodType from the exact scoped source physical row; query the complete accountingPeriodsLOV scope using PeriodSetNameId and PeriodType; require exactly one row whose EnteredPeriodName equals the exported FirstLedgerPeriodName and whose AdjustmentPeriodFlag is false. Do not sort labels, choose the first response row, infer status fields the endpoint does not return, or reuse initialization eligibility. | ConversionLevel is Journal or Subledger | resolve_first_opened_period |
+| First opened period derivation and eligibility | Read FirstLedgerPeriodName, PeriodSetName, and AccountedPeriodType from the exact scoped source physical row; query the complete accountingPeriodsLOV scope using PeriodSetNameId and PeriodType; require exactly one row whose PeriodNameId equals the exported FirstLedgerPeriodName and whose AdjustmentPeriodFlag is false. Do not sort labels, choose the first response row, infer status fields the endpoint does not return, or reuse initialization eligibility. | ConversionLevel is Journal or Subledger | resolve_first_opened_period |
 | Initialization period eligibility | Require the first future-enterable period or first never-opened period using the balance-initialization predicate; do not reuse FirstOpenedPeriod merely because its name exists | InitializeConversion is Yes | resolve_balance_initialization_period |
 | Non-EMU initialization atomicity | Require AlcInitConvOptionCode I, eligible AlcInitPeriod, AlcInitDate equal to period start, AlcInitializingRateDate defaulting to prior-period end or the day before period start, and exact AlcInitializingRateTypeTrans; otherwise block | InitializeConversion is Yes | resolve_balance_initialization_period |
 | Initialization omission | Require all five initialization fields blank; reject a partial group | InitializeConversion is No |  |
@@ -93,8 +93,9 @@ The supported baseline is create-only and non-EMU. It does not review or submit 
 | Generated identifiers | Require physical ShortName and relationship TargetLedgerShortName blank on create where supported; never fabricate, copy, or interchange them | Always |  |
 | Segment qualifier fields | Derive column names from exact source COA qualifiers, never segment ordinals; for the proven BingoOps source require A and SEGMENT1 plus A and SEGMENT2 | ConversionLevel is Journal or Subledger | derive_source_coa_qualifiers |
 | All-values assignment | Require GL_LEDGER_SEG_VAL_ASSIGNMENT.csv header-only when BalSegValueOptionCode is A; rows require explicit nonbaseline account-filter intent and same-release evidence | Always |  |
-| Source-root closure | Require exactly one scoped source row in GL_LEDGER.csv and ORA_GL_PRIMARY_LEDGER_CONFIG.csv, with no unrelated existing primary, secondary, or reporting-currency rows | Always | derive_minimum_target_graph |
+| Source-root closure | Require exactly one owning-primary root in GL_LEDGER.csv and ORA_GL_PRIMARY_LEDGER_CONFIG.csv. Retain that primary and the actual source in both physical aliases, once when they are the same; exclude unrelated existing rows | Always | derive_minimum_target_graph |
 | Relationship cardinality | Require exactly one new ORA_GL_LEDGER_RELATIONSHIP.csv row for the target design | Always | derive_minimum_target_graph |
+| Relationship ledger aliases | Require nonblank, resolvable Name, Name1, Name2, and Name3 under the level-specific Relationship Row Population Contract; validate every repeated rule-parent key against the relationship | Always | derive_minimum_target_graph |
 | Rule cardinality | Require only the new target rules; the baseline has one Other and Other and Y and Y row | Always | derive_minimum_target_graph |
 | Header integrity | Preserve every exact member name, exact header text, header order, and column count from the current scoped package | Always | inspect_scoped_reporting_currency_export |
 | CSV serialization | Use RFC-compatible quoting, preserve embedded newlines in account-segment fields, reopen every generated CSV, and require each row width to equal its header width | Always | verify_authored_package_shape |
@@ -105,10 +106,10 @@ The supported baseline is create-only and non-EMU. It does not review or submit 
 
 | Member | Balance | Journal or Subledger | Baseline Rule |
 |---|---|---|---|
-| GL_LEDGER.csv | Exact scoped source root only | Exact scoped source root only | No target row. |
-| ORA_GL_PRIMARY_LEDGER_CONFIG.csv | Exact scoped source root only | Exact scoped source root only | No target row. |
-| GL_PRIMARY_LEDGER.csv | Exact source physical row only | Exact source physical row plus one new ALC and TARGET row | Both aliases represent the same physical target. |
-| GL_SECONDARY_LEDGER.csv | Exact source physical row only | Exact source physical row plus one new ALC and TARGET row | Both aliases represent the same physical target. |
+| GL_LEDGER.csv | Exact owning-primary root only | Exact owning-primary root only | No target row. |
+| ORA_GL_PRIMARY_LEDGER_CONFIG.csv | Exact owning-primary root only | Exact owning-primary root only | No target row. |
+| GL_PRIMARY_LEDGER.csv | Owning primary and actual source, once when equal | Owning primary and actual source, once when equal, plus one new ALC and TARGET row | Both aliases represent the same physical target. |
+| GL_SECONDARY_LEDGER.csv | Owning primary and actual source, once when equal | Owning primary and actual source, once when equal, plus one new ALC and TARGET row | Both aliases represent the same physical target. |
 | ORA_GL_LEDGER_RELATIONSHIP.csv | One new relationship | One new relationship | No unrelated relationship is carried forward. |
 | ORA_GL_JOUNAL_CONVERSION_RULES.csv | Only the new target rule rows | Only the new target rule rows | Current default is one Other and Other and Y and Y row. |
 | ORA_GL_JOURNAL_CONFIG_DETAIL.csv | Header-only | Header-only | Populate only for an explicitly requested supported nonbaseline feature. |
@@ -123,7 +124,7 @@ Author the physical ALC row by exact header-name mapping from the current source
 
 | Field or Family | Population Rule | Validation |
 |---|---|---|
-| Alias parent | GL_PRIMARY_LEDGER uses ORA_GL_PRIMARY_LEDGER_CONFIG.Name; GL_SECONDARY_LEDGER uses GL_LEDGER.Name | Both equal the exact scoped source root. |
+| Alias parent | GL_PRIMARY_LEDGER uses ORA_GL_PRIMARY_LEDGER_CONFIG.Name; GL_SECONDARY_LEDGER uses GL_LEDGER.Name | Both equal SourcePrimaryLedgerName, including when the actual source is secondary. |
 | Name and Name1 | ReportingCurrencyName | Both equal the validated target name. |
 | Description | Exact optional user text or blank | No synthesized description; not applicable to Balance. |
 | ShortName | Blank on create | Service-generated after successful import; never use TargetLedgerShortName. |
@@ -131,7 +132,7 @@ Author the physical ALC row by exact header-name mapping from the current source
 | ObjectTypeCode and LeLedgerTypeCode | Preserve exact source values | No guessed constants. |
 | CurrencyCode | Validated CurrencyCode | Exact resolved code. |
 | PeriodSetName, AccountedPeriodType, CalendarName, UserPeriodSetName | Preserve exact source values | Must remain source compatible. |
-| FirstLedgerPeriodName | Exact scoped source FirstLedgerPeriodName after resolve_first_opened_period validates the matching PeriodSetNameId, PeriodType, EnteredPeriodName, and non-adjustment row | Journal or Subledger baseline derives and previews this value; it is not mandatory user intake. |
+| FirstLedgerPeriodName | Exact scoped source FirstLedgerPeriodName after resolve_first_opened_period validates the matching PeriodSetNameId, PeriodType, PeriodNameId, and non-adjustment row | Journal or Subledger baseline derives and previews this value; it is not mandatory user intake. |
 | KeyFlexfieldCode, StructureInstanceCode, ApplicationShortName | Preserve exact source values | Must match the source COA structure. |
 | BalSegValueOptionCode and BalSegColumnName | Preserve or derive from exact source qualifier evidence | BingoOps evidence is A and SEGMENT1. |
 | MgtSegValueOptionCode and MgtSegColumnName | Preserve or derive from exact source qualifier evidence | BingoOps evidence is A and SEGMENT2. |
@@ -148,11 +149,13 @@ Author the physical ALC row by exact header-name mapping from the current source
 
 | Field or Family | Population Rule | Validation |
 |---|---|---|
-| GL_LEDGER.Name and GL_SECONDARY_LEDGER.Name | Exact source root name | Both bind to the scoped source graph. |
-| Name and Name3 | Exact source root name | Preserve same-role current template semantics. |
+| GL_LEDGER.Name and GL_SECONDARY_LEDGER.Name | GL_LEDGER.Name = SourcePrimaryLedgerName; GL_SECONDARY_LEDGER.Name = SourceLedgerName | The owning primary and actual source are distinct roles; they coincide only for a primary source. |
+| Name | SourceLedgerName for every conversion level | Resolve the actual source physical ledger, including a secondary source. |
 | TargetLedgerCategoryCode | ALC | Exact constant. |
 | RelationshipTypeCode | BALANCE, JOURNAL, or SUBLEDGER | Derived only from validated ConversionLevel. |
-| Name1 | Source root for Balance; ReportingCurrencyName for Journal or Subledger | Use same-release same-role template behavior. |
+| Name1 | SourceLedgerName for Balance; ReportingCurrencyName for Journal or Subledger | Balance references the source physical ledger; Journal and Subledger reference the proposed physical ALC target. |
+| Name2 | SourceLedgerName for Balance or Journal; ReportingCurrencyName for Subledger | Required SLA-ledger reference; resolve the existing source or proposed physical target. Never leave blank. |
+| Name3 | SourcePrimaryLedgerName for every conversion level | Resolve the owning primary even when the actual source is secondary. |
 | TargetCurrencyCode | Validated CurrencyCode | Exact resolved code. |
 | ApplicationShortName and OrgIdTrans | GL and -99 | Require same-release same-task evidence. |
 | TargetLedgerName | ReportingCurrencyName | Exact validated target name. |
@@ -171,7 +174,7 @@ Author the physical ALC row by exact header-name mapping from the current source
 
 | Field or Family | Population Rule | Validation |
 |---|---|---|
-| Relationship parent fields | Repeat the exact new relationship business keys through OrgIdTrans | Parent aliases must match the new relationship exactly. |
+| Relationship parent fields | Repeat GL_LEDGER.Name, GL_SECONDARY_LEDGER.Name, and every exported ORA_GL_LEDGER_RELATIONSHIP business-key field through OrgIdTrans | Match the new relationship exactly, including its level-specific Name1 and owning-primary Name3; do not add an unexported Name2 rule header. |
 | JeSourceKey and JeSourceName | Other for the current baseline | Resolve both for a selective design. |
 | JeCategoryKey and JeCategoryName | Other for the current baseline | Resolve both for a selective design. |
 | UserUpdatableFlag and IncludeFlag | Y and Y for the current baseline | The user confirms the broad include behavior. |
@@ -183,7 +186,7 @@ Author the physical ALC row by exact header-name mapping from the current source
 |---|---|
 | Intake summary | Exact environment, source ledger, name, level, currency, required user values, optional choices, advisories, explicit confirmations, and the derived First Opened Period evidence for Journal or Subledger. |
 | Package diff | SHA-256 of source export and immutable candidate ZIP; exact member order; exact headers; before and after row counts; added, removed, and changed semantic rows. |
-| Minimum graph | One source root; zero or one physical target by level; one relationship; only new target rules; all other CSV members header-only. |
+| Minimum graph | One owning-primary root; required primary and actual-source physical context; zero or one physical target by level; one relationship; only new target rules; all other CSV members header-only. |
 | Blank and generated values | Explicit list of intended blanks, including both independent generated short-name fields and all new-row audit values. |
 | Safety boundary | Statement that no Review and Submit, period opening, disable, deletion, or other lifecycle operation is included. |
 | Re-export | Same environment, same task, same primary-ledger scope; match target name, level, currency, rate options, initialization, physical cardinality, rules, generated identifiers, and absence of unrelated changes. |

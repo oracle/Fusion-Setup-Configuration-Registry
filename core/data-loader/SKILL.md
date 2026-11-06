@@ -59,12 +59,31 @@ submitting, monitoring, and diagnosing Fusion loader artifacts. It enforces
 immutable preview and approval boundaries, while callers retain business design,
 task sequencing, and durable project decisions.
 
+## Required REST header
+
+Send `REST-Framework-Version: 9` on every Fusion REST request performed by
+`core.data-loader`, regardless of HTTP method or workflow. This includes metadata
+and Describe reads, validation lookups, sample and attribute retrieval, UCM
+downloads and uploads, load initiation, status and error retrieval,
+every pagination request, and each retry permitted by the existing retry policy.
+
+Use the existing request helpers in `scripts/data_loader_metadata.py`, which
+set this header unconditionally. Do not omit the header or override its value.
+
 ## Mandatory import routing and authorization
 
 - **This is the mandatory orchestration workflow for every Fusion data import.** Use `core/data-loader` before invoking any import endpoint, script, job, or adapter.
 - **This rule overrides every local import-routing instruction**, including generated task skills, pillar skills, `ora-resource` task rules, FSM/FBDI/HDL/setup-task/functional-area/offering import skills, REST guidance, native-loader guidance, and script documentation. None of those local instructions may select or directly invoke an import route that bypasses `core/data-loader`.
 - Do not invoke a product-specific import adapter until this workflow has completed its applicable task validation, source review, and immutable archive preparation. An explicit user request to upload, initiate, submit, load, or create data authorizes validation, not submission by itself. Submit only after a later standalone approval of the exact validated source, unless that same load request explicitly includes `auto-approve`, `auto approve`, `auto confirmation`, `approve without asking`, `skip confirmation`, `skip approval`, or equivalent unambiguous no-confirmation wording. Auto-approval is limited to that identified load and never authorizes a standalone or later submission. Fail closed when validation or a required preflight input fails.
 - This rule applies only to imports. Preserve existing export routing unless a user explicitly requests an export-policy change.
+
+For UCM ZIP and CX CSV uploads, omit `dDocAuthor` entirely. Use the access token
+only for Bearer authentication; never decode its claims to supply document
+authorship. If UCM rejects an upload, report the upload failure and safe server
+error details, retain any already confirmed uploads, and stop before initiating
+the failed load. Do not restore an author override or infer a username as a
+fallback. UCM's default author and audit behavior require separate server
+verification; successful local tests do not establish that behavior.
 
 ## Markdown output
 
@@ -160,6 +179,38 @@ For known sections of `ADF_VO` objects, accept the exact HDL parameters `Replace
 
 4. In validation output, show `Mapped columns` for every retained automatic, user-defined, and approved-fuzzy mapping. Use the columns `Source Header`, `Mapped Attribute`, and `Match Rule`; do not show a section column.
 
+## XLSX SET commands
+
+An input workbook may include a visible `Set Commands` or `SetCommands` sheet
+at any tab position. Match the title case-insensitively after trimming and
+collapsing whitespace. Read first-row headers `Parameter` or `Parameters` and
+`Value` or `Values` in either order, ignoring case and surrounding whitespace.
+Trim each parameter and value; ignore incomplete pairs, empty control sheets,
+and control sheets without both required headers. Hidden and very-hidden control
+sheets contribute no commands. Keep ordinary workbook structure and size checks.
+
+For example, these rows on `Set Commands`:
+
+| Parameter | Value |
+|---|---|
+| PURGE_FUTURE_CHANGES | Y |
+
+prefix the workbook's generated DAT with `SET PURGE_FUTURE_CHANGES Y` before its
+first `METADATA` line. Preserve parameter spelling and literal values; do not
+add a parameter allowlist. Across recognized sheets in workbook order, the last
+complete value wins for each case-sensitive parameter name, while its first
+occurrence determines output order. A later incomplete row does not erase a
+complete value.
+
+Control sheets are excluded from business-object discovery, `Data Loader Map`
+coverage, attribute mapping, and ADF REST business-data date formatting. The
+first visible business-data worksheet still identifies the root, and normal
+business-data sheets and rows remain required. Each workbook contributes only
+its own SET commands, including in an existing multi-XLSX submission. Conversion
+occurs during preflight, before Task Hook evaluation and approval, so the retained
+archive and its existing integrity digest cover the commands. Generated samples
+remain unchanged; this support does not add XLSX conversion inside supplied ZIPs.
+
 ## Present every result clearly
 
 1. Read [references/user-friendly-output.md](references/user-friendly-output.md) before returning the result of any sample generation, validation, upload, initiation, status, information, monitoring, or troubleshooting action.
@@ -176,10 +227,10 @@ For known sections of `ADF_VO` objects, accept the exact HDL parameters `Replace
 ## Prepare, upload, and initiate a registered Fusion data load
 
 1. Use an explicitly named `.zip`, `.dat`, `.txt`, `.csv`, or `.xlsx` path when supplied. Otherwise, consider only supported files actively opened, selected, attached, or shared through the IDE context. Ignore every ZIP member beneath a case-insensitive `_MACOSX` or `__MACOSX` directory during classification and validation. When two or more shared files are all `.dat` files or all `.xlsx` files, use all of them. For CX Import, `--cx-import` also accepts one or more supplied `.csv` files as one direct CSV group; preserve data-file order, detect one optional mapping by content, and package the exact ordered members once into an internal deterministic staging ZIP for approval-bound reuse. When one or more supplied ZIPs are FSM archives, where each contains a member whose basename is exactly `ASM_SETUP_CSV_METADATA.xml`, treat every FSM ZIP as its own load and submit it separately from one homogeneous `.dat` or `.xlsx` group. Classify exactly one ZIP as CX Import when the prompt identifies it as CX Import (pass `--cx-import`) or one CSV contains the complete CX mapping signature described below. Mapping filenames have no special meaning. Reject CX selections that mix direct CSVs with other source types and any archive that combines the FSM marker with a CX marker or explicit CX selection. Reject every other mixed multi-file selection and do not scan unrelated local directories.
-2. Read [references/fusion-zip-rest.md](references/fusion-zip-rest.md) before using this workflow for HCM, SCM, or ERP. The `/hcmRestApi/` namespace identifies the shared Data Loader service and does not restrict registered business objects to the HCM product family. An FBDI ZIP is identified from internal CSV basenames using the live paginated `dataLoaderBusinessObjects` query with `q=ObjectType='FBDI'` and `expand=fbdiMetadata`, never from its outer filename. Match CSV stems case insensitively to `DataFileNamePrefix`, count each CSV once per Business Object, and choose the object with the highest match count. For a tie, list candidates and require an exact `--business-object` selection on a fresh preflight run. Validate one UCM account and one consistent nonblank `loadAdapterInterfaceId` for the selected object.
+2. Read [references/fusion-zip-rest.md](references/fusion-zip-rest.md) before using this workflow for HCM, SCM, or ERP. The `/hcmRestApi/` namespace identifies the shared Data Loader service and does not restrict registered business objects to the HCM product family. Identify an FBDI ZIP from internal CSV basenames through the advertised filename action, or legacy expanded metadata only when that action is absent, as specified in **FBDI filename routing** below. Count each CSV once per Business Object and choose the object with the highest match count. For a tie, list candidates and require an exact `--business-object` selection on a fresh preflight run. Validate one UCM account and one consistent nonblank `loadAdapterInterfaceId` for the selected object.
 3. For an explicit upload/initiation request without auto-approval wording, first run `python3 scripts/upload_and_initiate.py <source-path> --preflight-envelope-output <internal-envelope-path>` without `--approve-upload`, adding `--cx-import` when the prompt explicitly identifies CX Import. Return its approval-required report and wait for a later clear contextual affirmative, such as `yes`, `go ahead`, or `submit it`; do not require a fixed keyword. After approval, run `python3 scripts/upload_and_initiate.py --approved-preflight-envelope <internal-envelope-path> --approve-upload`, adding only the same explicit `--properties`, `--run-config`, and approved `--task-validation-envelope` context when applicable. Do not pass source files, mappings, skips, Business Object selections, or CX routing inputs on that approved invocation. It verifies the persisted artifact and approval context and uploads the exact saved bytes without source conversion or live validation. Direct CSV groups use repeated `--ide-file <path>` with `--cx-import` during preapproval validation and are staged once into a deterministic internal ZIP. Auto-approval applies only to that explicit load request; it does not waive required mapping/input, task-validation, schema, authentication, or destructive-operation gates. Do not require a review-copy directory. Treat `--approved-sha256` as deprecated; the structured preflight envelope is authoritative. When a CX ZIP or CSV group has no mapping CSV, ask exactly `What is the CX Business Object code for this file?` and stop; this is required request input, not a second approval. A mapping CSV derives the code exclusively from `IMPORT OBJECT` and rejects a caller-supplied code. The helper validates the exact source, persists one immutable upload artifact with its internal envelope, and uploads only those approved bytes. A single supported file retains the existing flow; two or more homogeneous `.dat` or `.xlsx` files are combined. When FSM ZIPs accompany that group, submit the combined DAT/XLSX load first, then each FSM ZIP independently in supplied order. Use `--properties <path>` only for an explicit OAuth environment override and `--run-config <path>` only for an explicit run-ID override. For one non-CX CSV whose filename does not match its registered object, one XLSX whose 30-character root worksheet prefix matches multiple longer discriminators, or a tied FBDI ZIP, add `--business-object <exact-name>` during preapproval validation.
    A routed FBDI ZIP must be the only supplied ZIP. The initiation report shows the resolved SCM business object route, matched CSV members, and mapped UCM account after acceptance.
-4. Let the script prepare the deterministic loader file or archive before the validation gates. Pass a supplied valid ZIP through unchanged and upload it with its exact original basename; this applies to ordinary, FSM, FBDI, and CX ZIP inputs. Package a single DAT file as-is; treat TXT files as preformatted HDL DAT content and rename the archive member to `.dat`; convert CSV headers and rows to `METADATA` and `MERGE` DAT records using the validated CSV filename stem, or its explicitly supplied `--business-object` discriminator. For XLSX input, use a valid legacy `Data Loader Map` as authoritative when present; otherwise resolve the first visible root worksheet by a case-sensitive exact registered discriminator first. Only when no exact match exists and the worksheet name is exactly 30 characters may it match the first 30 characters of a discriminator longer than 30 characters. Reject every shorter partial name, every non-exact name longer than 30 characters, and every ambiguous 30-character prefix; for an ambiguous prefix, list the candidates and require `--business-object <exact-top-level-discriminator>` on a single-XLSX retry. Resolve child and DFF sheets against that root schema by exact name or unique prefix. New workbooks never generate a map. Convert the workbook to `<validated-top-level-business-object>.dat`. Reject malformed legacy maps and any ambiguous map-free prefix. For multiple DAT or XLSX files, create one in-memory archive with members in supplied order. Multi-DAT members retain their source basenames; multi-XLSX members use their validated top-level discriminator and must be unique. Name only generated ZIP uploads `<source-stem>_YYYY-MM-DD_HH-MM-SS.zip` using local preparation time; use `combined-data-load` as the source stem for a multi-file archive. Persist the exact upload name in preflight so a later approved upload reuses it unchanged. The helper uploads only the final ZIP bytes. Keep the prepared file or archive immutable through the remaining validation gates; any source, mapping, formatting, or packaging change restarts all applicable gates.
+4. Let the script prepare the deterministic loader file or archive before the validation gates. Pass a supplied valid ZIP through unchanged and upload it with its exact original basename; this applies to ordinary, FSM, FBDI, and CX ZIP inputs. Package a single DAT file as-is; treat TXT files as preformatted HDL DAT content and rename the archive member to `.dat`; convert CSV headers and rows to `METADATA` and `MERGE` DAT records using the validated CSV filename stem, or its explicitly supplied `--business-object` discriminator. For XLSX input, use a valid legacy `Data Loader Map` as authoritative when present; otherwise resolve the first visible business-data worksheet by a case-sensitive exact registered discriminator first. Only when no exact match exists and the worksheet name is exactly 30 characters may it match the first 30 characters of a discriminator longer than 30 characters. Reject every shorter partial name, every non-exact name longer than 30 characters, and every ambiguous 30-character prefix; for an ambiguous prefix, list the candidates and require `--business-object <exact-top-level-discriminator>` on a single-XLSX retry. Resolve child and DFF sheets against that root schema by exact name or unique prefix. New workbooks never generate a map. Convert the workbook to `<validated-top-level-business-object>.dat`. Reject malformed legacy maps and any ambiguous map-free prefix. For multiple DAT or XLSX files, create one in-memory archive with members in supplied order. Multi-DAT members retain their source basenames; multi-XLSX members use their validated top-level discriminator and must be unique. Name only generated ZIP uploads `<source-stem>_YYYY-MM-DD_HH-MM-SS.zip` using local preparation time; use `combined-data-load` as the source stem for a multi-file archive. Persist the exact upload name in preflight so a later approved upload reuses it unchanged. The helper uploads only the final ZIP bytes. Keep the prepared file or archive immutable through the remaining validation gates; any source, mapping, formatting, or packaging change restarts all applicable gates.
 5. Before upload, run all read-only source and metadata checks. A nonblank `runID` does not restrict eligible sources or validate the requested task. For a multi-DAT or multi-XLSX submission, validate every source independently: resolve the case-sensitive top-level discriminator through the unfiltered `findDataLoaderBos` finder, refresh the matched object through the advertised FSCR finder (falling back to the business-object detail GET only when absent or empty) and fetch its UCM DAT template, query component attributes, and validate every supplied `METADATA` section and attribute against the live schema.
 6. After all source, metadata, Business Object, and Data Loader API validation has passed and the final immutable upload artifact is prepared, invoke Task Hook `data-load` for every task-routed load before presenting approval. Task Hook performs **Ora Resource Task Validation** against its exact upload bytes. Persist the resulting approved Task Hook envelope with the preflight state. Do not run a later conversion or validation step that changes the upload artifact; any approved-artifact change requires fresh validation and approval.
 For two or more XLSX sources, write flushed per-workbook checkpoints to `stderr` for business-object resolution, template, sheet, and header matching, parent-child and key-metadata validation, and in-memory DAT conversion. Keep these checkpoints internal unless the operation runs long enough to require a progress update; then consolidate them into one short, nontechnical commentary update. They must never appear in the final dashboard or Markdown result. If one or more resolved business objects fail source or schema validation, report all failed and eligible objects, make no POST, and require the user to explicitly confirm skipping every failed discriminator. On the fresh retry, pass each exact discriminator as `--skip-business-object <discriminator>`, revalidate all sources, and submit only eligible objects in original order when the skip list exactly matches the current failures. Do not offer skipping for unresolved or unsafe source files, duplicate targets, environment or authentication failures, archive failures, upload failures, or initiation failures; those remain fail-closed. Do not require every attribute marked mandatory by live metadata, because required fields depend on the selected DAT operation and section and Fusion enforces operation-specific required values during import or load. Template-only DFF sections receive the same schema validation. Do not send `ProductAreaCode`. A configured nonblank `runID` is sent to `initiateDataLoad` so Fusion's backend can associate the load with its Run Book; it does not replace Ora Resource Task Validation or restrict the business objects that can be loaded. For an explicit ZIP containing a member whose basename is exactly `ASM_SETUP_CSV_METADATA.xml`, case-sensitive, classify it as FSM, preserve it unchanged, skip Business Object validation, and add `sourceType: "FSM"` only to its initiation payload. For an otherwise unclassified ZIP with CSV members, GET all pages of `dataLoaderBusinessObjects` with `q=ObjectType='FBDI'`, `expand=fbdiMetadata`, and `onlyData=true`. Match each CSV stem case insensitively against `DataFileNamePrefix` and count it once per Business Object. Choose the highest positive match count. Keep unmatched CSVs in the original ZIP. If no CSV matches, stop before upload. For a tie, list the tied objects and counts and require exact `--business-object` selection on a fresh preflight run; reject any other selection. Validate unique case-insensitive basenames, safe paths, nonempty matched files, one normalized UCM account, and one consistent nonblank scalar `loadAdapterInterfaceId` for the selected object. Persist that route before approval. For CX Import, bypass `dataLoaderBusinessObjects`, UCM DAT-template, component, attribute, and registered business-object validation except for one required read-only `objectMetadata/<ObjectCode>?fields=UcmAccount&onlyData=true` lookup during preapproval validation. Require only nonempty path-safe CSV members with unique case-insensitive basenames, zero or one content-identified mapping CSV, and at least one data CSV. Identify the mapping CSV only when its first nonblank row is `MAP NAME,MAP DESCRIPTION,IMPORT OBJECT,OBJECT DISPLAY NAME` and a later row is `COLUMN HEADER,TARGET ATTRIBUTE CODE,TARGET ATTRIBUTE DISPLAY NAME,SOURCE ATTRIBUTE CODE`, comparing trimmed cells case-insensitively in exact column order. Every nonblank metadata row before the column header must have the same nonblank `IMPORT OBJECT` value; this authoritative trimmed value is sent as `cxImportObjectName`. Without a mapping CSV, require the caller's trimmed `--cx-import-object-code` value. Require the metadata response's nonblank `UcmAccount`, convert `crm/accessGroups/import/` to `crm$/accessGroups$/import$`, show it in the approval preview, persist it in the preflight envelope, and use it for the mapping and data CSV uploads; no account fallback is allowed. Reject partial, reversed, reordered, blank, conflicting, or duplicate mapping headers. Preserve exact bytes and original data-member order. For every other explicit ZIP, inspect every DAT member, require exactly one registered root per member with no duplicate roots, validate each member against its live schema, and preserve the valid archive bytes unchanged.
@@ -196,7 +247,45 @@ For two or more XLSX sources, write flushed per-workbook checkpoints to `stderr`
 3. Save a prepared validation archive beside its source by default; for multi-source validation, use the first source. `--output-zip <path>.zip` may select any writable destination. When that destination is not writable, require `--project-root project/<project_id>` and save under `artifacts/core/data-loader/current/mapping-reviews/` in that initialized project. Use a meaningful deterministic ZIP name based on the validated top-level discriminator, first-record user-key values, and row count; keep the full filename including `.zip` to 49 characters or fewer. Confirm every saved ZIP is non-empty and ZIP-valid, and include its direct link in the Markdown report. The ZIP is a validation deliverable only; it does not authorize UCM upload or data-load initiation.
 4. Any change to the source, mapping, schema, or output archive requires another validation before upload approval.
 
+### FBDI filename routing
+
+Classify FSM and CX archives first. For other CSV ZIPs, inspect
+`/hcmRestApi/resources/11.13.18.05/dataLoaderBusinessObjects/describe` for the
+`findFbdiObjectsByFileName` custom action in `actions`. When advertised, POST to
+that resource's `/action/findFbdiObjectsByFileName` using the ADF action media
+type and `{"pFileName":"ATPRules,InvPickConfirmInterface123"}`: comma-separated
+CSV basenames from the ZIP without `.csv`, preserving filename suffixes and
+member order. Reject blank stems or embedded commas. Unwrap the action response's
+`result` field when present and JSON-decode it once when it is text. Accept a
+bare array for compatibility. Require the decoded value to be an array; a
+`result` of `"[]"` means no matches. Missing, null, malformed, or non-array
+results block without retry or fallback. Parse the array using
+`BusObjFileDiscriminator` as business-object identity,
+`DataFileNamePrefixes` as matching prefixes, and the same row's `UcmAccount` and
+`LoadAdapterInterfaceId`. Require a nonblank identity and a nonempty array of
+nonblank text prefixes. Do not use `BusinessObject` or the singular
+`DataFileNamePrefix` in this action response. The action uses the shared
+120-second transport timeout without retries. Describe failures, malformed
+responses, and action failures block; an empty action array means no matches.
+
+Only when the action is absent, use the existing `q=ObjectType='FBDI'` GET with
+expanded `fbdiMetadata`, reading all parent and nested pages. In this fallback,
+identify the business object from the parent's nonblank `BusObjTopDiscriminator`;
+retain it across nested pages. Read `DataFileNamePrefix`, `UcmAccount`, and
+adapter IDs from child rows. Do not substitute child `BusinessObject`, child
+`BusObjFileDiscriminator`, parent `BusinessObject`, or `UIName` for this identity.
+
 ## Generate a sample XLSX workbook or explicitly requested DAT file
+
+Workbook generation prefers the bundled `@oai/artifact-tool` writer, including
+the existing `DATA_LOADER_ARTIFACT_NODE` and `DATA_LOADER_ARTIFACT_NODE_MODULES`
+overrides. If Node, its module directory, or the package is missing, the helper
+automatically uses a Python standard-library XLSX writer. Both writers preserve
+the same files, including the attribute-details workbook for DAT samples; no
+`openpyxl` installation is required. A broken installed runtime, serialization
+failure, permission error, or output-validation failure remains an error and
+does not trigger fallback. Use the helper in Codex, Cursor, or Claude Code;
+missing spreadsheet tooling does not require manually authoring sample files.
 
 Sample and attribute requests resolve candidates through the paginated
 `dataLoaderBusinessObjects?q=BusObjTopDiscriminator LIKE '<requested-name>%' OR UIName LIKE '<requested-name>%'`

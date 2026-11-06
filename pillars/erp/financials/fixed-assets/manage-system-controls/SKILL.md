@@ -37,6 +37,7 @@ depends_on:
   - "shared.validation.reference-data-validator"
   - "core.data-loader"
 uses_core:
+  - "core.fusion-api.rest-api-client"
   - "core.project-mgmt.artifact-version-manager"
   - "core.project-mgmt.artifact-registry-manager"
   - "core.project-mgmt.project-state-manager"

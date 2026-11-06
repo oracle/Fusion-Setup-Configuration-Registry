@@ -1,0 +1,132 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "ORA_RCL_FIELD_SERVICE_TECHNICIANS",
+      "task_name": "Field Service Technicians",
+      "start_node": "FST.VALIDATE_INPUT",
+      "nodes": [
+        {
+          "id": "FST.VALIDATE_INPUT",
+          "node_type": "step",
+          "sequence": 1,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "FST.RESOLVE_IDENTITIES",
+            "invalid": "FST.RETURN_REFUSAL"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Current business-read, verification or mutation request: return invalid before source preparation because the complete core reader is unavailable; do not proceed to identity resolution",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 55
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "FST.RESOLVE_IDENTITIES",
+          "node_type": "step",
+          "sequence": 2,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "resolved": "FST.EXECUTION_GATE",
+            "blocked": "FST.RETURN_REFUSAL"
+          },
+          "prerequisites": [
+            "FST.VALIDATE_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Locally evaluate original complete same-environment Data Loader assignment, technician and stock-location evidence and separately verified required data visibility; missing, partial, ambiguous or mismatched evidence returns blocked",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 35
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "FST.EXECUTION_GATE",
+          "node_type": "decision",
+          "sequence": 3,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "FST.RETURN_PREPARED",
+            "blocked": "FST.RETURN_REFUSAL"
+          },
+          "prerequisites": [
+            "FST.RESOLVE_IDENTITIES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "After input validation and reference resolution; require complete Data Loader reference evidence, verified operation privileges and validated immutable Data Loader artifact before preview",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 44
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "FST.RETURN_PREPARED",
+          "node_type": "terminal",
+          "sequence": 4,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "FST.EXECUTION_GATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "All checks for the selected create, EnabledFlag-only update, default usable repair or one assignment deletion pass; return prepared preview for separate Data Loader approval; no import has occurred",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 45
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "FST.RETURN_REFUSAL",
+          "node_type": "terminal",
+          "sequence": 5,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "continue",
+          "applies_when": "A required task contract or validation gate is unresolved",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 46
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

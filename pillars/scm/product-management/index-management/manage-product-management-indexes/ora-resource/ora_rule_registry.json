@@ -23,7 +23,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 32
+            "line": 40
           },
           "readiness": {
             "status": "ready",
@@ -50,7 +50,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 33
+            "line": 41
           },
           "readiness": {
             "status": "ready",
@@ -76,7 +76,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 39
+            "line": 55
           },
           "readiness": {
             "status": "ready",
@@ -103,7 +103,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 40
+            "line": 56
           },
           "readiness": {
             "status": "ready",
@@ -129,7 +129,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 41
+            "line": 57
           },
           "readiness": {
             "status": "ready",
@@ -155,7 +155,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 44
+            "line": 60
           },
           "readiness": {
             "status": "ready",
@@ -181,11 +181,11 @@
             "PMINDEX.RESOLVE_EXISTING_ATTRIBUTES"
           ],
           "on_failure": "stop",
-          "applies_when": "Resolve requested additions when present; otherwise continue with any missing seeded candidates, including removal-only requests",
+          "applies_when": "Resolve requested additions from complete existing metadata first; only unsatisfied requests need available metadata or scope confirmation; otherwise continue with missing seeded candidates",
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 42
+            "line": 58
           },
           "readiness": {
             "status": "ready",
@@ -201,11 +201,11 @@
           "transitions": {},
           "prerequisites": [],
           "on_failure": "stop",
-          "applies_when": "One scope candidate is resolved and requires user confirmation",
+          "applies_when": "One scope candidate is resolved for omitted group or object scope and requires user confirmation",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 74
+            "line": 90
           },
           "readiness": {
             "status": "ready",
@@ -225,7 +225,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 75
+            "line": 91
           },
           "readiness": {
             "status": "ready",
@@ -239,7 +239,7 @@
           "action_type": "reference_lookup",
           "execution_route": "fusion-rest",
           "transitions": {
-            "verified": "PMINDEX.CALCULATE_ATTRIBUTE_DELTA",
+            "verified": "PMINDEX.RESOLVE_CREATE_CONTRACT",
             "blocked": "PMINDEX.HANDLE_ERROR",
             "failure": "PMINDEX.HANDLE_ERROR"
           },
@@ -247,11 +247,68 @@
             "PMINDEX.RESOLVE_ATTRIBUTE_SCOPE"
           ],
           "on_failure": "stop",
-          "applies_when": "Validate every prospective POST; a zero-candidate validation succeeds without an available-attributes call",
+          "applies_when": "Validate every prospective POST; already-indexed requests and zero candidates succeed without an available-attributes call",
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 43
+            "line": 59
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PMINDEX.RESOLVE_CREATE_CONTRACT",
+          "node_type": "step",
+          "sequence": 85,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "PMINDEX.RESOLVE_REMOVAL_ATTRIBUTE_IDS",
+            "not_applicable": "PMINDEX.RESOLVE_REMOVAL_ATTRIBUTE_IDS",
+            "blocked": "PMINDEX.HANDLE_ERROR",
+            "failure": "PMINDEX.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "PMINDEX.VALIDATE_AVAILABLE_ATTRIBUTE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Prospective POST candidates require live describe; no POST candidates use not_applicable",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 63
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PMINDEX.RESOLVE_REMOVAL_ATTRIBUTE_IDS",
+          "node_type": "decision",
+          "sequence": 86,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "PMINDEX.CALCULATE_ATTRIBUTE_DELTA",
+            "not_applicable": "PMINDEX.CALCULATE_ATTRIBUTE_DELTA",
+            "candidate_confirmation_required": "PMINDEX.REQUEST_REMOVAL_SCOPE_CONFIRMATION",
+            "missing": "PMINDEX.REQUEST_ATTRIBUTE_ID",
+            "ambiguous": "PMINDEX.REQUEST_ATTRIBUTE_ID",
+            "blocked": "PMINDEX.HANDLE_ERROR",
+            "failure": "PMINDEX.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "PMINDEX.RESOLVE_CREATE_CONTRACT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Resolve every removal by all name/code/subtype/ID selectors before final delta validation; no removals use not_applicable without a lookup",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 62
           },
           "readiness": {
             "status": "ready",
@@ -261,24 +318,23 @@
         {
           "id": "PMINDEX.CALCULATE_ATTRIBUTE_DELTA",
           "node_type": "decision",
-          "sequence": 86,
+          "sequence": 87,
           "action_type": "design_enforcement",
           "execution_route": "local",
           "transitions": {
             "calculated": "PMINDEX.DATA_LOADER_GATE",
-            "removals": "PMINDEX.RESOLVE_REMOVAL_ATTRIBUTE_IDS",
             "empty": "PMINDEX.PREPARE_ESS_REBUILD_EMPTY",
             "blocked": "PMINDEX.HANDLE_ERROR"
           },
           "prerequisites": [
-            "PMINDEX.VALIDATE_AVAILABLE_ATTRIBUTE"
+            "PMINDEX.RESOLVE_REMOVAL_ATTRIBUTE_IDS"
           ],
           "on_failure": "stop",
-          "applies_when": "Every requested index change or rebuild; route removal-only changes through resolved DELETE IDs and the Data Loader gate",
+          "applies_when": "Every requested index change or rebuild; all removal identities are resolved and cross-operation overlap is rejected before final delta validation and prepared-archive approval; nonempty POST or DELETE rows reach the Data Loader gate",
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 26
+            "line": 51
           },
           "readiness": {
             "status": "ready",
@@ -286,27 +342,19 @@
           }
         },
         {
-          "id": "PMINDEX.RESOLVE_REMOVAL_ATTRIBUTE_IDS",
-          "node_type": "step",
-          "sequence": 91,
-          "action_type": "reference_lookup",
-          "execution_route": "fusion-rest",
-          "transitions": {
-            "verified": "PMINDEX.DATA_LOADER_GATE",
-            "missing": "PMINDEX.REQUEST_ATTRIBUTE_ID",
-            "ambiguous": "PMINDEX.HANDLE_ERROR",
-            "blocked": "PMINDEX.HANDLE_ERROR",
-            "failure": "PMINDEX.HANDLE_ERROR"
-          },
-          "prerequisites": [
-            "PMINDEX.CALCULATE_ATTRIBUTE_DELTA"
-          ],
+          "id": "PMINDEX.REQUEST_REMOVAL_SCOPE_CONFIRMATION",
+          "node_type": "terminal",
+          "sequence": 94,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
           "on_failure": "stop",
-          "applies_when": "Every removal, whether or not additions are present",
+          "applies_when": "One existing removal candidate has omitted group or object selectors; show its resolved names/codes and request scope confirmation",
           "source": {
-            "file": "ora_reference_lookups.md",
+            "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 46
+            "line": 92
           },
           "readiness": {
             "status": "ready",
@@ -322,11 +370,11 @@
           "transitions": {},
           "prerequisites": [],
           "on_failure": "stop",
-          "applies_when": "A removal request could not resolve the backend-issued AttributeId for the exact indexed-attribute record",
+          "applies_when": "Removal selectors did not resolve one existing backend record; request a missing or conflicting name/code/subtype distinction or verify a supplied ID, never require the user to discover a backend ID",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 76
+            "line": 93
           },
           "readiness": {
             "status": "ready",
@@ -344,16 +392,16 @@
             "status_not_requested": "PMINDEX.WAIT_DATA_LOADER_STATUS",
             "status_pending": "PMINDEX.WAIT_DATA_LOADER_STATUS",
             "status_succeeded": "PMINDEX.VERIFY_LOADED_ATTRIBUTES",
-            "status_failed": "PMINDEX.HANDLE_ERROR",
+            "status_failed": "PMINDEX.DECIDE_FAILED_LOAD_REBUILD",
             "blocked": "PMINDEX.HANDLE_ERROR"
           },
           "prerequisites": [],
           "on_failure": "stop",
-          "applies_when": "Nonempty POST or DELETE delta; require immutable artifact approval and a successful user-requested status for the same accepted Request ID before readback",
+          "applies_when": "Nonempty POST or DELETE delta; reconciled status must bind the original request and confirmed core evidence without resubmission; require prepared-archive row validation and Core artifact-bound Task Hook approval and a requested status for the same accepted Request ID; success requires readback, terminal failure requires the explicit rebuild-choice branch",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 78
+            "line": 95
           },
           "readiness": {
             "status": "ready",
@@ -371,11 +419,11 @@
             "PMINDEX.DATA_LOADER_GATE"
           ],
           "on_failure": "stop",
-          "applies_when": "Exact Data Loader artifact and target environment require core.data-loader approval before any import",
+          "applies_when": "Exact captured Data Loader rows and target environment require core.data-loader approval before any import",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 79
+            "line": 96
           },
           "readiness": {
             "status": "ready",
@@ -397,7 +445,78 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 80
+            "line": 97
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PMINDEX.DECIDE_FAILED_LOAD_REBUILD",
+          "node_type": "decision",
+          "sequence": 117,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "proceed": "PMINDEX.PREPARE_ESS_REBUILD_FAILED",
+            "decline": "PMINDEX.DONE_FAILED_LOAD_NO_REBUILD",
+            "awaiting_choice": "PMINDEX.REQUEST_FAILED_LOAD_REBUILD_CHOICE",
+            "blocked": "PMINDEX.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "PMINDEX.DATA_LOADER_GATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Confirmed terminal failed load for the same accepted Request ID and canonical index; present full diagnostics and partial-success counts in the current response; save no core failure file unless specifically requested; fresh user-requested in-memory status evidence permits continuation without a saved report; explicit choice required",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 102
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PMINDEX.REQUEST_FAILED_LOAD_REBUILD_CHOICE",
+          "node_type": "terminal",
+          "sequence": 118,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "PMINDEX.DECIDE_FAILED_LOAD_REBUILD"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Present the failure and ask whether to proceed; wait for a fresh user choice",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 103
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PMINDEX.DONE_FAILED_LOAD_NO_REBUILD",
+          "node_type": "terminal",
+          "sequence": 119,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "PMINDEX.DECIDE_FAILED_LOAD_REBUILD"
+          ],
+          "on_failure": "stop",
+          "applies_when": "User declines rebuilding after failure; record decision without ESS submission",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 104
           },
           "readiness": {
             "status": "ready",
@@ -423,7 +542,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 45
+            "line": 61
           },
           "readiness": {
             "status": "ready",
@@ -449,7 +568,7 @@
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 27
+            "line": 52
           },
           "readiness": {
             "status": "ready",
@@ -471,11 +590,36 @@
             "PMINDEX.CALCULATE_ATTRIBUTE_DELTA"
           ],
           "on_failure": "stop",
-          "applies_when": "The calculated POST and DELETE delta is empty; Data Loader is recorded as skipped and the exact canonical-index ESS decision is still required",
+          "applies_when": "The validated POST and DELETE delta is empty; persist it, skip Data Loader, prepare the exact canonical-index ESS payload and persist ess_approval_pending before fresh approval",
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 28
+            "line": 53
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PMINDEX.PREPARE_ESS_REBUILD_FAILED",
+          "node_type": "decision",
+          "sequence": 142,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "prepared": "PMINDEX.REQUEST_ESS_APPROVAL_FAILED",
+            "blocked": "PMINDEX.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "PMINDEX.DECIDE_FAILED_LOAD_REBUILD"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Confirmed terminal failed load and explicit proceed choice for the same Request ID and canonical index; retain terminal failure checkpoint markers and current in-memory status evidence or an authorized report, without requiring a saved core failure file, and prepare the immutable payload without declaring load success",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 54
           },
           "readiness": {
             "status": "ready",
@@ -497,7 +641,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 81
+            "line": 98
           },
           "readiness": {
             "status": "ready",
@@ -519,7 +663,29 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 82
+            "line": 99
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PMINDEX.REQUEST_ESS_APPROVAL_FAILED",
+          "node_type": "terminal",
+          "sequence": 147,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "PMINDEX.PREPARE_ESS_REBUILD_FAILED"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Present exact payload, target, current-configuration impact and failed-load counts; require fresh ESS approval independent of the proceed choice",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 105
           },
           "readiness": {
             "status": "ready",
@@ -541,7 +707,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 83
+            "line": 100
           },
           "readiness": {
             "status": "ready",
@@ -563,7 +729,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 84
+            "line": 101
           },
           "readiness": {
             "status": "ready",
@@ -583,7 +749,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 77
+            "line": 94
           },
           "readiness": {
             "status": "ready",

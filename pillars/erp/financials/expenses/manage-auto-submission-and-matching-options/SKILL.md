@@ -19,7 +19,7 @@ source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 type: "planning"
 execution_mode: "hybrid"
 owner_team: "ERP financials pillar team"
-version: "0.4.2"
+version: "0.4.4"
 inputs:
   - "fusion_environment_context"
   - "input_workbook_or_business_values"
@@ -90,7 +90,7 @@ applicability:
   countries:
     - "All"
   fusion_releases:
-    - "11.13.27.01.0 (qualified organization-setting import profile; other releases require contract qualification)"
+    - "Oracle Fusion releases whose fresh task export matches the supported FSM schema contract; no release-number allowlist"
 side_effects:
   - "Writes a local candidate ZIP to a new explicitly selected protected path before core validation and approval."
   - "Delegates approved template/baseline export jobs to shared.setup-export.task-level-export."
@@ -254,6 +254,8 @@ protected local storage under core's retention policy, never tracked source.
 Always confirm the user's time zone for the run. If workbook, session or target
 values conflict, ask the user to choose and confirm; never substitute silently.
 Reuse a later explicit confirmation. See the portable contract for the lookup.
+
+For any BU schedule request, apply the [BU schedule display check](references/execution-contract.md#verify-the-bu-schedule-display-before-approval), including inherited and already-satisfied cases. Enablement is explicit user input, never a default. Resolve visibility intent before Task Hook approval.
 
 For enabling auto submission, resolve the resulting complete schedule from
 explicit changes plus verified current values: at least one weekday, valid

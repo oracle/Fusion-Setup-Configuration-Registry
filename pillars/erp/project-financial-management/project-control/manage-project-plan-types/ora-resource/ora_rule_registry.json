@@ -19,11 +19,11 @@
           },
           "prerequisites": [],
           "on_failure": "stop",
-          "applies_when": "Apply only documented omitted-field defaults for a new PROJECT_PLAN; otherwise preserve supplied/current values and continue",
+          "applies_when": "Apply documented create defaults and the conditional active-buffer save default on submitted create/update options; otherwise preserve supplied/current values and continue",
           "source": {
             "file": "ora_defaulting_rules.md",
             "anchor": "task-nodes",
-            "line": 169
+            "line": 172
           },
           "readiness": {
             "status": "ready",
@@ -48,7 +48,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 317
+            "line": 331
           },
           "readiness": {
             "status": "ready",
@@ -100,7 +100,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 484
+            "line": 496
           },
           "readiness": {
             "status": "ready",
@@ -126,7 +126,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 485
+            "line": 497
           },
           "readiness": {
             "status": "ready",
@@ -151,7 +151,7 @@
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 143
+            "line": 150
           },
           "readiness": {
             "status": "ready",
@@ -177,7 +177,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 71
+            "line": 81
           },
           "readiness": {
             "status": "ready",
@@ -197,7 +197,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 72
+            "line": 82
           },
           "readiness": {
             "status": "ready",
@@ -217,7 +217,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 73
+            "line": 83
           },
           "readiness": {
             "status": "ready",
@@ -237,7 +237,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 74
+            "line": 84
           },
           "readiness": {
             "status": "ready",
@@ -259,7 +259,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 75
+            "line": 85
           },
           "readiness": {
             "status": "ready",
@@ -281,7 +281,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 76
+            "line": 86
           },
           "readiness": {
             "status": "ready",

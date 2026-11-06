@@ -29,6 +29,8 @@ required_setup_tasks:
   - "ORA_POZ_MANAGE_INTERNAL_SUPPLIER_PROFILE_CHANGE_APPROVALS"
   - "ORA_POZ_MANAGE_SUPPLIER_SPEND_AUTHORIZATION_APPROVALS"
   - "ORA_POZ_MANAGE_SUPPLIER_PROFILE_CHANGE_APPROVALS"
+  - "PO_MANAGE_PURCHASING_DOCUMENT_APPROVALS"
+  - "ORA_PO_MANAGE_INTAKE_REQUEST_APPROVALS"
 token_usage_tracking:
   enabled: true
   granularity: "per_skill_run"
@@ -76,3 +78,5 @@ Use the matching task-specific guidance with the approved configuration change a
 - [Manage Internal Supplier Profile Change Approvals](manage-internal-supplier-profile-change-approvals.md) (`ORA_POZ_MANAGE_INTERNAL_SUPPLIER_PROFILE_CHANGE_APPROVALS`)
 - [Manage Supplier Spend Authorization Approvals](manage-supplier-spend-authorization-approvals.md) (`ORA_POZ_MANAGE_SUPPLIER_SPEND_AUTHORIZATION_APPROVALS`)
 - [Manage Supplier Profile Change Approvals](manage-supplier-profile-change-approvals.md) (`ORA_POZ_MANAGE_SUPPLIER_PROFILE_CHANGE_APPROVALS`)
+- [Manage Purchasing Document Approvals](manage-purchasing-document-approvals.md) (`PO_MANAGE_PURCHASING_DOCUMENT_APPROVALS`)
+- [Manage Intake Request Approvals](manage-intake-request-approvals.md) (`ORA_PO_MANAGE_INTAKE_REQUEST_APPROVALS`)

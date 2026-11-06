@@ -1,0 +1,158 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "ORA_RCL_RESOURCE_ITEM_MAPPING",
+      "task_name": "Manage Resource to Item Mapping",
+      "start_node": "RIM.VALIDATE_INPUT",
+      "nodes": [
+        {
+          "id": "RIM.VALIDATE_INPUT",
+          "node_type": "step",
+          "sequence": 1,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "RIM.RESOLVE_IDENTITIES",
+            "invalid": "RIM.RETURN_REFUSAL"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Current business-read, verification or mutation request: return invalid before source preparation because the complete core reader is unavailable; do not proceed to identity resolution",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 29
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RIM.RESOLVE_IDENTITIES",
+          "node_type": "decision",
+          "sequence": 2,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "resolved": "RIM.CHECK_DEPENDENCIES",
+            "blocked": "RIM.RETURN_REFUSAL"
+          },
+          "prerequisites": [
+            "RIM.VALIDATE_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Evaluate original complete current-run mapping and applicable organization/resource/item reader evidence through the local resolvers; require matching environment/host and verified data visibility; any failed contract, ambiguity or missing evidence blocks",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 32
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RIM.CHECK_DEPENDENCIES",
+          "node_type": "decision",
+          "sequence": 3,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "RIM.EXECUTION_GATE",
+            "not_applicable": "RIM.EXECUTION_GATE",
+            "blocked": "RIM.RETURN_REFUSAL"
+          },
+          "prerequisites": [
+            "RIM.RESOLVE_IDENTITIES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Require every applicable Data Loader-owned identity and association check; mark only unrelated dependencies not_applicable",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 20
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RIM.EXECUTION_GATE",
+          "node_type": "decision",
+          "sequence": 4,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "RIM.RETURN_PREPARED",
+            "blocked": "RIM.RETURN_REFUSAL"
+          },
+          "prerequisites": [
+            "RIM.CHECK_DEPENDENCIES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Require supported Data Loader capabilities, applicable identity evidence, live template validation and actual project binding before core preview",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 21
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RIM.RETURN_PREPARED",
+          "node_type": "terminal",
+          "sequence": 5,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "RIM.EXECUTION_GATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return supported Data Loader results or its validated handoff; core approval remains mandatory",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 22
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RIM.RETURN_REFUSAL",
+          "node_type": "terminal",
+          "sequence": 6,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "continue",
+          "applies_when": "Report the precise blocker and required core capability without substituting another route",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 23
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

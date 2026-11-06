@@ -11,8 +11,8 @@ can verify an empty target. Where rows exist, inspect them only for identity,
 duplicates, conflicts, explicit updates, or post-import verification. Do not
 infer a KFF REST/BOSS discovery route. Value sets use the documented lookup below.
 
-Seeded label metadata is still needed to resolve a label display Name and
-properties; no existing structure or assignment is required for a new design.
+The seeded Category and Location label mappings below are authoritative for preparation;
+exported label rows are neither required nor used to derive them.
 
 ## Local Lookups
 
@@ -23,7 +23,7 @@ evidence; they do not introduce a new live execution route.
 | Resolver | Runs When | Source Values | Match Rule | Values to Fill | If No Match or Many Matches |
 |---|---|---|---|---|---|
 | resolve_existing_kff_structure | Before deciding create, update, disable, replacement, or no change. | Selected KFF/application, requested structure and instance, complete current KFF export and metadata. | Retain all structures for the selected pair, then match requested parent/child identities exactly. Include instances, structure and instance segments, labels, and every structure EnabledFlag. | Full existing-state comparison, enabled-structure count, instance enabled state, and verified absence where coverage is complete. | Verified absence permits a create candidate only. Missing coverage, ambiguous identities, or an absent update target blocks classification. |
-| resolve_segment_label | A label definition or assignment is in scope, including Category structure changes. | Selected KFF/application, label display Name or supplied code, structure/segment selection, current label-definition and assignment export members with metadata. | Resolve the seeded required **Major Category label** to exactly one exported internal identifier in the selected KFF. Use its actual exported display Name; never manufacture a display name from its identifier. Read required/unique properties from authoritative label metadata when needed. | Major Category label display Name, internal identifier, required/unique properties, existing assignments, and proposed assignment result. | Missing or ambiguous seeded-label identity or needed properties blocks authoring. Verified absence of a custom label is a create candidate only for an explicitly approved definition supported by the target contract. A new assignment need not already exist. |
+| resolve_segment_label | During dependency readiness when labels or Category changes are in scope. | Documented seeded mappings, selected KFF/application, and explicit segment selection; authoritative evidence for other labels. | Use the seeded mappings below directly for their specified KFF/application without exported values. Preserve explicit choices; resolve custom, unknown, or conflicting labels separately. | Label identity, applicable assignment constraints, and selected segment. | Missing exported seeded-label data does not block preparation or require a waiver. Ask only for unresolved segment selection; other unresolved labels or conflicts remain blockers. |
 | verify_segment_tree | Tree Code is supplied. | Tree Code, effective Value Set Code, supplied approved target tree metadata, and current same-task export. | Exactly one registered tree linked to the effective value set. | Tree identity and verified association. | Missing, ambiguous, or incompatible evidence blocks the supplied tree; do not invent a live tree endpoint. |
 | parent_post_import_verification_kff | After an accepted Data Loader operation completes. | Completed process logs/status, approved scope, and fresh same-task KFF export. | Terminal import status plus fresh read-back must match the complete approved structure, instance, segment, label, and enabled-state delta. | Parent verification result or precise mismatch. | The Fixed Assets parent owns the verification and blocks completion on missing evidence or target mismatch. Loader-wrapper success alone is insufficient. |
 
@@ -41,6 +41,30 @@ setup task pending or justify submitting deployment again.
 ## Lookup Result Classification
 
 ## Customer-Facing Label Wording
+
+Seeded CAT#/140 definitions supplied in the Manage Segment Labels screenshot:
+
+| Segment Label Code | Name | Description | Global | Required | Unique | BI Object Name |
+|---|---|---|---|---|---|---|
+| BASED_CATEGORY | Major Category | Major category for each asset | No | Yes | Yes | Segment1 |
+| MINOR_CATEGORY | Minor Category | Minor category for each asset | No | No | Yes | Segment2 |
+
+Reuse these definitions; do not create them or require exported label rows.
+Assign Major Category exactly once to the selected segment. Assign optional
+Minor Category only when explicitly selected, at most once. BI Object Name
+does not select the customer's segment or its position.
+
+Seeded LOC#/140 definition supplied in the Manage Segment Labels screenshot:
+
+| Segment Label Code | Name | Global | Required | Unique | BI Object Name |
+|---|---|---|---|---|---|
+| LOC_STATE | State Segment | No | No | Yes | Segment2 |
+
+For a Location design containing a state segment, suggest the optional State
+Segment label. Assign it only when the customer requests or accepts the suggestion
+and selects the segment; otherwise omit it without blocking preparation. Assign
+it at most once per structure. Reuse the seeded definition without exported label
+rows. BI Object Name does not force assignment to the second segment.
 
 For CAT# structure and instance creation, use `BASED_CATEGORY` in FSM import
 rows, schema validation, reference lookups, and technical package evidence. Do
@@ -63,4 +87,3 @@ label**. Do not display `BASED_CATEGORY` in customer-facing text.
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|
 | KFF.LOOKUP_EXISTING | decision | 30 | reference_lookup | match->KFF.DONE_MATCH;absent->KFF.APPLY_DEFAULTS;approved_change->KFF.APPLY_DEFAULTS;different_or_ambiguous->KFF.HANDLE_LOOKUP;failure->KFF.HANDLE_LOOKUP | KFF.RESOLVE_DEPENDENCIES | stop | Dependencies are ready. |
-| KFF.HANDED_OFF_TO_PARENT | terminal | 120 | terminal | none | KFF.IMPORT_GATE | continue | Accepted — pending parent verification. The Fixed Assets parent owns status, process-log review, and fresh target read-back. |

@@ -36,13 +36,6 @@
           "sequence": 20,
           "action_type": "reference_lookup",
           "execution_route": "fusion-rest",
-          "required_skill_routes": [
-            {
-              "resolver": "resolve_asset_key_segment_values",
-              "skill_id": "erp.financials.fixed-assets.manage-fixed-assets-flexfield-value-sets",
-              "purpose": "Validate all KEY# segment values and dependent-parent mappings."
-            }
-          ],
           "transitions": {
             "resolved": "MAK.CHECK_DEPENDENCIES",
             "unresolved_or_ambiguous": "MAK.HANDLE_LOOKUP"
@@ -80,7 +73,7 @@
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 119
+            "line": 123
           },
           "readiness": {
             "status": "ready",
@@ -104,9 +97,9 @@
           "on_failure": "stop",
           "applies_when": "Compare requested operation with exact existing-key evidence.",
           "source": {
-            "file": "ora_design_enforcement.md",
+            "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 42
+            "line": 87
           },
           "readiness": {
             "status": "ready",
@@ -155,7 +148,7 @@
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 43
+            "line": 48
           },
           "readiness": {
             "status": "ready",
@@ -166,7 +159,7 @@
           "id": "MAK.PREPARE_ARCHIVE",
           "node_type": "step",
           "sequence": 60,
-          "action_type": "archive_preparation",
+          "action_type": "execution_gate",
           "execution_route": "local",
           "transitions": {
             "prepared": "MAK.IMPORT_GATE",
@@ -179,8 +172,8 @@
           "applies_when": "Verify the completed validation sequence, then obtain and inspect the template/spec package for the immutable FSM artifact.",
           "source": {
             "file": "ora_error_handling.md",
-            "anchor": "validation-and-execution-boundary",
-            "line": 73
+            "anchor": "task-nodes",
+            "line": 77
           },
           "readiness": {
             "status": "ready",
@@ -205,7 +198,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 74
+            "line": 78
           },
           "readiness": {
             "status": "ready",
@@ -229,7 +222,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 75
+            "line": 79
           },
           "readiness": {
             "status": "ready",
@@ -253,7 +246,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 76
+            "line": 80
           },
           "readiness": {
             "status": "ready",
@@ -273,33 +266,11 @@
             "MAK.RESOLVE_OPERATION"
           ],
           "on_failure": "stop",
-          "applies_when": "A Create request matches an existing exact key.",
+          "applies_when": "An existing exact key conflicts with the requested operation.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 77
-          },
-          "readiness": {
-            "status": "ready",
-            "blocking_reasons": []
-          }
-        },
-        {
-          "id": "MAK.OPERATION_DECISION_REQUIRED",
-          "node_type": "terminal",
-          "sequence": 145,
-          "action_type": "terminal",
-          "execution_route": "local",
-          "transitions": {},
-          "prerequisites": [
-            "MAK.HANDLE_OPERATION_DECISION"
-          ],
-          "on_failure": "stop",
-          "applies_when": "Await explicit user operation selection.",
-          "source": {
-            "file": "ora_error_handling.md",
-            "anchor": "task-nodes",
-            "line": 83
+            "line": 81
           },
           "readiness": {
             "status": "ready",
@@ -323,7 +294,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 78
+            "line": 82
           },
           "readiness": {
             "status": "ready",
@@ -347,7 +318,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 79
+            "line": 83
           },
           "readiness": {
             "status": "ready",
@@ -364,14 +335,14 @@
             "handled": "MAK.ISSUES"
           },
           "prerequisites": [
-            "MAK.IMPORT_GATE"
+            "MAK.ENFORCE_DESIGN"
           ],
           "on_failure": "stop",
-          "applies_when": "Validation evidence or the artifact required at this stage is incomplete.",
+          "applies_when": "Validation evidence, archive guard, template package, or immutable artifact required at this stage is incomplete.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 80
+            "line": 84
           },
           "readiness": {
             "status": "ready",
@@ -393,7 +364,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 81
+            "line": 85
           },
           "readiness": {
             "status": "ready",
@@ -413,7 +384,27 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 82
+            "line": 86
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MAK.OPERATION_DECISION_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 145,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "No artifact or import is permitted until the requester explicitly selects Create-new or Update-existing.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 87
           },
           "readiness": {
             "status": "ready",

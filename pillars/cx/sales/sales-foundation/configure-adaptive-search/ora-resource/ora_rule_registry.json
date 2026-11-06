@@ -20,11 +20,11 @@
           },
           "prerequisites": [],
           "on_failure": "stop",
-          "applies_when": "Every requested-object Adaptive Search publish, including CPQ-only and explicit Full Publish requests; HTTP 400 Could not find active meta model, null, or empty Entities results select the new-environment path; a recognized CPQ alias bypasses catalog validation but not the new-environment check",
+          "applies_when": "Every requested-object Adaptive Search publish, including CPQ-only and explicit Full Publish requests; a recognized CPQ alias bypasses catalog validation but not the new-environment check",
           "source": {
             "file": "ora_rest_execution.md",
-            "anchor": "task-nodes",
-            "line": 131
+            "line": 186,
+            "anchor": "task-nodes"
           },
           "readiness": {
             "status": "ready",
@@ -48,8 +48,8 @@
           "applies_when": "Entities GET returned HTTP 200",
           "source": {
             "file": "ora_reference_lookups.md",
-            "anchor": "task-nodes",
-            "line": 37
+            "line": 54,
+            "anchor": "task-nodes"
           },
           "readiness": {
             "status": "ready",
@@ -74,8 +74,8 @@
           "applies_when": "Compare every non-CPQ-alias requested object display name with all nonempty localizedName values returned by the isDocument=true Entities HTTP 200 response, without applying isEnabled; direct CPQ entities are excluded from this comparison; for invalid values suggest up to three nearest matches without displaying the full catalog; require explicit disambiguation when a display name maps to multiple entityName values",
           "source": {
             "file": "ora_reference_lookups.md",
-            "anchor": "task-nodes",
-            "line": 38
+            "line": 55,
+            "anchor": "task-nodes"
           },
           "readiness": {
             "status": "ready",
@@ -96,11 +96,11 @@
             "AS.ENTITY.VALIDATE_REQUEST"
           ],
           "on_failure": "stop",
-          "applies_when": "Enabled document entities were resolved and requested names are valid; explicit Full Publish continues to the retention decision and Partial Publish continues to preflight",
+          "applies_when": "Enabled document entities were resolved and requested names are valid; do not ask for confirmation here",
           "source": {
             "file": "ora_reference_lookups.md",
-            "anchor": "task-nodes",
-            "line": 39
+            "line": 56,
+            "anchor": "task-nodes"
           },
           "readiness": {
             "status": "ready",
@@ -117,11 +117,20 @@
             "retain": "AS.PUBLISH.PREFLIGHT",
             "requested_only": "AS.PUBLISH.PREFLIGHT"
           },
-          "prerequisites": ["AS.ENTITY.REVIEW"],
+          "prerequisites": [
+            "AS.ENTITY.REVIEW"
+          ],
           "on_failure": "stop",
-          "applies_when": "For explicit Full Publish with a nonempty Entities response, show current active objects and newly requested objects, then ask whether to retain active objects with requested objects. This is not live approval.",
-          "source": {"file": "ora_rest_execution.md", "anchor": "object-review-pattern", "line": 89},
-          "readiness": {"status": "ready", "blocking_reasons": []}
+          "applies_when": "For explicit Full Publish with a nonempty Entities response, show active and newly requested objects and ask whether to retain active objects with requested objects; this is not live approval",
+          "source": {
+            "file": "ora_rest_execution.md",
+            "line": 187,
+            "anchor": "task-nodes"
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
         },
         {
           "id": "AS.ENTITY.CONFIRM",
@@ -140,8 +149,8 @@
           "applies_when": "Legacy compatibility node retained for registry continuity; it has no inbound transition in the single-confirmation flow and must not render a user prompt",
           "source": {
             "file": "ora_rest_execution.md",
-            "anchor": "task-nodes",
-            "line": 132
+            "line": 188,
+            "anchor": "task-nodes"
           },
           "readiness": {
             "status": "ready",
@@ -165,8 +174,8 @@
           "applies_when": "Legacy compatibility node retained for registry continuity; it has no inbound transition in the single-confirmation flow and must not render a user prompt",
           "source": {
             "file": "ora_rest_execution.md",
-            "anchor": "task-nodes",
-            "line": 133
+            "line": 189,
+            "anchor": "task-nodes"
           },
           "readiness": {
             "status": "ready",
@@ -185,11 +194,11 @@
           },
           "prerequisites": [],
           "on_failure": "stop",
-          "applies_when": "The requested list is valid, the user explicitly requested Full Publish, or an Entities HTTP 400 Could not find active meta model, null, or empty result selected the new-environment full-publish path. A publishStatus HTTP 404 with exactly {\"Error\":\"Cannot parse null string\"} is an expected no-prior-publish pass; WAIT, RUNNING, and PAUSED block; all other errors stop.",
+          "applies_when": "The requested list is valid, the user explicitly requested Full Publish, or a null or empty Entities result selected the new-environment full-publish path",
           "source": {
             "file": "ora_rest_execution.md",
-            "anchor": "task-nodes",
-            "line": 134
+            "line": 190,
+            "anchor": "task-nodes"
           },
           "readiness": {
             "status": "ready",
@@ -208,11 +217,11 @@
           },
           "prerequisites": [],
           "on_failure": "stop",
-          "applies_when": "Semantically validate the bundled publish contract before payload mapping; this local-contract node performs no Fusion describe request",
+          "applies_when": "Semantically validate the bundled publish contract before payload mapping; this local node performs no Fusion describe request",
           "source": {
             "file": "ora_rest_execution.md",
-            "anchor": "task-nodes",
-            "line": 135
+            "line": 191,
+            "anchor": "task-nodes"
           },
           "readiness": {
             "status": "ready",
@@ -236,8 +245,8 @@
           "applies_when": "Approved entity input and current contract are available",
           "source": {
             "file": "ora_rest_execution.md",
-            "anchor": "task-nodes",
-            "line": 136
+            "line": 192,
+            "anchor": "task-nodes"
           },
           "readiness": {
             "status": "ready",
@@ -261,8 +270,8 @@
           "applies_when": "Assemble the combined confirmation content internally; do not render a separate user-facing preview",
           "source": {
             "file": "ora_rest_execution.md",
-            "anchor": "task-nodes",
-            "line": 137
+            "line": 193,
+            "anchor": "task-nodes"
           },
           "readiness": {
             "status": "ready",
@@ -286,8 +295,8 @@
           "applies_when": "Render the one combined confirmation table after immutable source validation; its approval authorizes both selection and the exact Data Loader source",
           "source": {
             "file": "ora_rest_execution.md",
-            "anchor": "task-nodes",
-            "line": 138
+            "line": 194,
+            "anchor": "task-nodes"
           },
           "readiness": {
             "status": "ready",
@@ -311,8 +320,8 @@
           "applies_when": "Legacy compatibility node retained for registry continuity. It has no inbound transition and must not execute.",
           "source": {
             "file": "ora_rest_execution.md",
-            "anchor": "task-nodes",
-            "line": 139
+            "line": 195,
+            "anchor": "task-nodes"
           },
           "readiness": {
             "status": "ready",
@@ -333,11 +342,11 @@
             "AS.REST.APPROVAL"
           ],
           "on_failure": "stop",
-          "applies_when": "Submit the approved immutable source through the standard `core.data-loader` import flow for registered business object `publish`. The shared Data Loader upload and initiation flow is sufficient: Fusion resolves the registered business object's REST mapping. Do not require, discover, or block on a publish-specific release adapter.",
+          "applies_when": "Submit the standalone approved immutable source through the standard `core.data-loader` import flow for registered business object `publish`. The shared Data Loader upload and initiation flow is sufficient: Fusion resolves the registered business object's REST mapping. Do not require, discover, or block on a publish-specific release adapter.",
           "source": {
             "file": "ora_rest_execution.md",
-            "anchor": "task-nodes",
-            "line": 140
+            "line": 196,
+            "anchor": "task-nodes"
           },
           "readiness": {
             "status": "ready",
@@ -355,11 +364,11 @@
             "AS.DATALOADER.RELEASE"
           ],
           "on_failure": "stop",
-          "applies_when": "Data Loader initiation returned ContentId and RequestId; display them as Data Loader identifiers and do not poll or infer an Adaptive Search Publish Job ID",
+          "applies_when": "Standalone Data Loader initiation returned ContentId and RequestId; display them with unambiguous Data Loader labels and do not poll",
           "source": {
             "file": "ora_rest_execution.md",
-            "anchor": "task-nodes",
-            "line": 141
+            "line": 197,
+            "anchor": "task-nodes"
           },
           "readiness": {
             "status": "ready",
@@ -378,8 +387,8 @@
           "applies_when": "Preflight, embedded-contract validation, or payload mapping is blocked",
           "source": {
             "file": "ora_rest_execution.md",
-            "anchor": "task-nodes",
-            "line": 142
+            "line": 205,
+            "anchor": "task-nodes"
           },
           "readiness": {
             "status": "ready",
@@ -400,8 +409,8 @@
           "applies_when": "User declined the combined confirmation; collect a new list and start another review iteration",
           "source": {
             "file": "ora_rest_execution.md",
-            "anchor": "task-nodes",
-            "line": 143
+            "line": 206,
+            "anchor": "task-nodes"
           },
           "readiness": {
             "status": "ready",
@@ -422,8 +431,8 @@
           "applies_when": "Invalid names and nearest display-name suggestions were displayed; collect and validate a corrected list before preflight",
           "source": {
             "file": "ora_rest_execution.md",
-            "anchor": "task-nodes",
-            "line": 144
+            "line": 207,
+            "anchor": "task-nodes"
           },
           "readiness": {
             "status": "ready",
@@ -442,8 +451,8 @@
           "applies_when": "Final preview or live approval is rejected",
           "source": {
             "file": "ora_rest_execution.md",
-            "anchor": "task-nodes",
-            "line": 145
+            "line": 208,
+            "anchor": "task-nodes"
           },
           "readiness": {
             "status": "ready",
@@ -464,8 +473,8 @@
           "applies_when": "Entity discovery, REST submission, or publish job fails",
           "source": {
             "file": "ora_error_handling.md",
-            "anchor": "task-nodes",
-            "line": 68
+            "line": 89,
+            "anchor": "task-nodes"
           },
           "readiness": {
             "status": "ready",
@@ -486,8 +495,275 @@
           "applies_when": "Failure is terminal and diagnostics are captured",
           "source": {
             "file": "ora_error_handling.md",
+            "line": 90,
+            "anchor": "task-nodes"
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "AS.ABO_INITIALIZATION.PREPARE",
+          "node_type": "step",
+          "sequence": 300,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "prepared": "AS.ABO_INITIALIZATION.APPROVAL",
+            "not_required": "AS.ABO_INITIALIZATION.READY",
+            "blocked": "AS.END.BLOCKED"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "ABO only: consumed exact two-hour initialization preparation permission, verified CPQ, known catalog blocker, distinct afi identity and fixed nine-object Full row. Blank publishType, same four operation/header values. Recheck catalog/concurrency; ready catalog returns not_required without load. Standalone unchanged.",
+          "source": {
+            "file": "ora_abo_initialization.md",
             "anchor": "task-nodes",
-            "line": 69
+            "line": 65
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "AS.ABO_INITIALIZATION.APPROVAL",
+          "node_type": "decision",
+          "sequence": 310,
+          "action_type": "approval_gate",
+          "execution_route": "local",
+          "transitions": {
+            "submitted": "AS.ABO_INITIALIZATION.STATUS",
+            "declined_or_uncertain": "AS.END.BLOCKED"
+          },
+          "prerequisites": [
+            "AS.ABO_INITIALIZATION.PREPARE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Evaluate initialization validated workbook rows and ordered task rules; show the unchanged Core preview. Require independent approval of that exact current preview, reserve intent, then submit its verified immutable archive once. Expired or changed previews require fresh preparation; an uncertain submission must be reconciled.",
+          "source": {
+            "file": "ora_abo_initialization.md",
+            "anchor": "task-nodes",
+            "line": 66
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "AS.ABO_INITIALIZATION.STATUS",
+          "node_type": "decision",
+          "sequence": 320,
+          "action_type": "validate_result",
+          "execution_route": "local",
+          "transitions": {
+            "pending": "AS.ABO_INITIALIZATION.STATUS",
+            "verified": "AS.ABO_INITIALIZATION.READY",
+            "failed_or_uncertain": "AS.END.BLOCKED"
+          },
+          "prerequisites": [
+            "AS.ABO_INITIALIZATION.APPROVAL"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Explicit GET-only initialization status. Pending stops. Exact loader and newly pinned job success plus fresh ABO pair presence return catalog_ready, never eligible_for_ess. Parent proposes fresh Partial preparation; no automatic submission.",
+          "source": {
+            "file": "ora_abo_initialization.md",
+            "anchor": "task-nodes",
+            "line": 67
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "AS.ABO_INITIALIZATION.READY",
+          "node_type": "terminal",
+          "sequence": 330,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Return catalog-ready/not-required evidence only to ABO; it must present a new Partial preparation proposal. This is not a Partial submission, final enabled readiness or ESS authorization.",
+          "source": {
+            "file": "ora_abo_initialization.md",
+            "anchor": "task-nodes",
+            "line": 68
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "AS.COMPANION.PREPARE",
+          "node_type": "step",
+          "sequence": 200,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "prepared": "AS.COMPANION.APPROVAL",
+            "blocked": "AS.END.BLOCKED"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Fusion ABO only: verified CPQ predecessor; validate embedded API contract and all six mapped loader fields; follow Core workbook and persisted-preflight handoffs and validate rows through ordered task rules",
+          "source": {
+            "file": "ora_rest_execution.md",
+            "line": 198,
+            "anchor": "task-nodes"
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "AS.COMPANION.APPROVAL",
+          "node_type": "decision",
+          "sequence": 210,
+          "action_type": "approval_gate",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "AS.COMPANION.SUBMIT",
+            "invalid": "AS.END.BLOCKED"
+          },
+          "prerequisites": [
+            "AS.COMPANION.PREPARE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Separate current Core preview approval on the exact validated archive",
+          "source": {
+            "file": "ora_rest_execution.md",
+            "line": 199,
+            "anchor": "task-nodes"
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "AS.COMPANION.SUBMIT",
+          "node_type": "step",
+          "sequence": 220,
+          "action_type": "execution_gate",
+          "execution_route": "core.data-loader",
+          "transitions": {
+            "submitted": "AS.COMPANION.SUBMITTED",
+            "failed": "AS.ERROR.HANDLE",
+            "indeterminate": "AS.END.FAILED"
+          },
+          "prerequisites": [
+            "AS.COMPANION.APPROVAL"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Fusion ABO only: submit the prepared source exactly once through Data Loader and keep Data Loader IDs private",
+          "source": {
+            "file": "ora_rest_execution.md",
+            "line": 200,
+            "anchor": "task-nodes"
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "AS.COMPANION.SUBMITTED",
+          "node_type": "terminal",
+          "sequence": 230,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "AS.COMPANION.SUBMIT"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return opaque `publish_operation_id` and `SUBMITTED`; it is not an Adaptive Search job result",
+          "source": {
+            "file": "ora_rest_execution.md",
+            "line": 201,
+            "anchor": "task-nodes"
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "AS.COMPANION.STATUS",
+          "node_type": "step",
+          "sequence": 240,
+          "action_type": "evaluate_result",
+          "execution_route": "core.fusion-api.rest-api-client",
+          "transitions": {
+            "pending": "AS.COMPANION.STATUS",
+            "succeeded": "AS.COMPANION.SUCCEEDED",
+            "failed": "AS.END.FAILED",
+            "indeterminate": "AS.END.FAILED"
+          },
+          "prerequisites": [
+            "AS.COMPANION.LOAD_STATUS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Verified exact loader success; one discovery/pinned-job tick; parent repeats at 15 seconds only on current monitoring choice, no loader reads",
+          "source": {
+            "file": "ora_rest_execution.md",
+            "line": 203,
+            "anchor": "task-nodes"
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "AS.COMPANION.SUCCEEDED",
+          "node_type": "terminal",
+          "sequence": 250,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "AS.COMPANION.STATUS"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return final success and exact entity-readiness evidence to Fusion ABO; never submit ESS here",
+          "source": {
+            "file": "ora_rest_execution.md",
+            "line": 204,
+            "anchor": "task-nodes"
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "AS.COMPANION.LOAD_STATUS",
+          "node_type": "decision",
+          "sequence": 235,
+          "action_type": "evaluate_result",
+          "execution_route": "core.data-loader",
+          "transitions": {
+            "succeeded": "AS.COMPANION.STATUS",
+            "pending": "AS.COMPANION.SUBMITTED",
+            "failed": "AS.END.FAILED",
+            "indeterminate": "AS.END.FAILED"
+          },
+          "prerequisites": [
+            "AS.COMPANION.SUBMITTED"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Explicit user loader-status request only; pending stops",
+          "source": {
+            "file": "ora_rest_execution.md",
+            "line": 202,
+            "anchor": "task-nodes"
           },
           "readiness": {
             "status": "ready",

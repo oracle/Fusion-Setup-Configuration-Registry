@@ -31,7 +31,8 @@ field. Report conflicts instead of guessing. Never ask again for a known value.
 | Existing template | Unique existing identity and requested changes | Missing edit identity/delta | Blank means unchanged; explicit Clear means null only where nullable | Target identity exists or a type is added | export_preservation_baseline |
 | New type | Parent identity, name, start date, category decision, itemization/prepaid settings, receipt rules, field overrides and optional values | Missing type values after target classification | Fill gaps; a start date must be explicitly supplied or selected | Target type identity is absent | export_preservation_baseline |
 | Itemization | Disabled, Enabled, Required scoped to one expense type | Missing applicable control | Resolve control and conditional rows using workbook contract | New type or changed itemization | |
-| Account, tax, and Projects | Fixed import defaults: account/tax null and Projects Disabled | N/A | Do not collect values | Every imported type | |
+| Account | Optional account number as text, maximum 25 characters; blank Edit preserves | Missing BU primary-ledger evidence | Resolve ledger automatically through REST; never request its name | Supplied Expense Type Account | destination_reference_evidence |
+| Tax and Projects | Fixed import defaults: tax null and Projects Disabled | N/A | Do not collect values | Every imported type | |
 | Route support | Every nonblank requested field has a supported CSV mapping and handler | Unsupported input | Explain the field gap and obtain a supported correction; never drop it | Candidate preparation | |
 
 ## Validation Rules
@@ -54,8 +55,9 @@ field. Report conflicts instead of guessing. Never ask again for a known value.
   do not derive codes by replacing spaces, changing case, or guessing. Do not
   offer or infer seeded category codes in this workbook-first route.
 - Tax classification and tax product category are not collected or resolved:
-  v1.5 writes both CSV values as null. Account values are also not collected or
-  resolved and are written as null.
+  v1.5 writes both CSV values as null. Expense Type Account maps to `Segment1`,
+  with `LedgerName` resolved from the owning BU's primary ledger. Blank Edit
+  accounts preserve exported values. Direct ledger/segment inputs remain unsupported.
 - Itemization child rows apply only to their Enabled/Required parent type.
   A supplied project mapping is unsupported because v1.5 disables Projects;
   do not silently discard it. Use references/child-mappings.md for supported
@@ -70,9 +72,9 @@ field. Report conflicts instead of guessing. Never ask again for a known value.
   references, thresholds and virtual-card programs are empty. No policy is
   assigned. These fields are never captured. Reject selected card-enabled
   records on Edit, preserving unrelated baseline rows and policy assignments.
-- Project mapping arrays, account fields, tax fields, and project controls are
+- Project mapping arrays, direct ledger/segment fields, tax fields, and project controls are
   rejected for v1.5. The builder writes `EnableProjectsFlag=N`,
-  `RcptRequiredProjFlag=N`, and blank account/tax/default-expenditure values
+  `RcptRequiredProjFlag=N`, and blank tax/default-expenditure values
   for every imported expense type.
 - Default-template Yes, project mapping, mapping removal and itemization end-dating remain
   unsupported. Report populated unsupported values

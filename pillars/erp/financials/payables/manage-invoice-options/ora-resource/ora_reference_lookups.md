@@ -5,12 +5,11 @@
 | Resolver | Runs When | Source Values | Request Path or URL | Requested Fields | Match Rule | Values to Fill | If No Match or Many Matches |
 |---|---|---|---|---|---|---|---|
 | resolve_business_unit_by_name_and_enterprise | A create candidate needs FSM import context | Requester-supplied BuName and optional EnterpriseId | `resolve_lookup_prerequisites.py` calls `GET /fscmRestApi/resources/11.13.18.05/finBusinessUnitsLOV` for the exact active BU and records its ID and PrimaryLedgerId. EnterpriseId is resolved locally from the explicit create row, current-run default, or one distinct nonblank value in the fresh FSM export; no CRM, BICC, SQL, or BU-to-enterprise call is used. | BusinessUnitId, ActiveFlag, EnterpriseId | Require one active exact BU and one deterministic EnterpriseId under the documented precedence | EnterpriseId -> BusinessUnitId -> OrgId | Block zero or multiple BU matches, an inactive BU, or a blank EnterpriseId with no unambiguous current-run default. Never create a business unit. |
-| resolve_payment_term_from_name | TermName, PrepaymentTermName, or EmployeeTermName is populated | One supplied term name | `GET /fscmRestApi/resources/11.13.18.05/payablesPaymentTerms?onlyData=true&fields=name,termsId&q=name='<requested-name>'`; `resolve_lookup_prerequisites.py` records the response receipt. | Returned record count | One readable result continues. Multiple results are advisory without local ID selection. | Submitted term name; returned names and IDs are corroborating evidence only. FSM resolves TermName, PrepaymentTermName, and EmployeeTermName in its import context. | Block a readable zero-result. Multiple results or unavailable read access are advisory; Fusion import validates and resolves the value again. |
+| resolve_payment_term_from_name | TermName, PrepaymentTermName, or EmployeeTermName is populated | One supplied term name | `GET /fscmRestApi/resources/11.13.18.05/payablesPaymentTerms?onlyData=true&fields=name,termsId&q=name='<requested-name>'`; `resolve_lookup_prerequisites.py` records the response receipt. | First page containing a valid termsId and a case-insensitive match for the supplied name; no uniqueness proof required | Stop immediately when a valid matching row is found, even when hasMore is true. Repeated rows are allowed. Preserve observed-page ambiguity diagnostics and the submitted name; never select or serialize an ID. Record uniquenessVerified=false. If no valid match is found and more pages are available, continue to the next page. Check the reported offset/count and enforce the 100-page / 10,000-row limits. | Submitted term name; returned names and IDs are corroborating evidence only. FSM resolves TermName, PrepaymentTermName, and EmployeeTermName in its import context. | Block when all pages contain no matching name. Malformed or non-advancing pagination and exhausted search limits block; identical page contents alone do not. Observed identity ambiguity or unavailable access is advisory; FSM import performs final resolution. |
 | resolve_terms_date_basis | `TermsDateBasis` is supplied | Requested code | Built-in system allowlist; no REST request | exact code | Allow `Current` (System date), `Goods Received` (Goods received date), `Invoice` (Invoice date), or `Invoice Received` (Invoice received date). | Validated Terms Date Basis code | Block any other value. |
 | resolve_accounting_date_basis | `GlDateFromReceiptFlag` is supplied | Requested code | Built-in system allowlist; no REST request | exact code | Allow `CURRENT` (System date), `GOODS RECEIVED/CURRENT` (Goods received or system date), `GOODS RECEIVED/INVOICE` (Goods received or invoice date), or `INVOICE` (Invoice date). | Validated Accounting Date Basis code | Block any other value. |
 | resolve_pay_date_basis | `PayDateBasisLookupCode` is supplied | Requested code | Built-in system allowlist; no REST request | exact code | Allow only `DISCOUNT` or `DUE`. | Validated Pay Date Basis code | Block any other value. |
-| Budget Date Basis | `BudgetDateBasis` is supplied | Requested code | No task-owned lookup; no REST request | N/A | Recognized codes are `ACC` (Accounting date), `INV` (Invoice date), and `SYS` (System date). | Submitted code | Fusion validates the submitted code during import. |
-| pass_through_budget_date_basis | `BudgetDateBasis` is supplied | Requested code | No task-owned preflight; customer-configured lookup | N/A | Preserve the supplied CSV code. | Submitted value | Fusion validates it during the governed import. |
+| pass_through_budget_date_basis | `BudgetDateBasis` is supplied | Requested code | No task-owned lookup; no REST request | N/A | Recognized codes are `ACC` (Accounting date), `INV` (Invoice date), and `SYS` (System date). | Submitted code | Fusion validates the submitted code during import. |
 | pass_through_vendor_pay_group | `VendorPayGroupLookupCode` is supplied | Requested code | No task-owned preflight; customer-configured lookup | N/A | Preserve the supplied CSV code. | Submitted value | Fusion validates it during the governed import. |
 | pass_through_employee_pay_group | `EmployeePayGroupLookupCode` is supplied | Requested code | No task-owned preflight; customer-configured lookup | N/A | Preserve the supplied CSV code. | Submitted value | Fusion validates it during the governed import. |
 | resolve_account_derivation_method | Account Derivation Method is supplied | Requested display value | Built-in system allowlist; no REST request | exact value | A blank represents None. Otherwise allow only `Transaction Account Builder`. | Validated Account Derivation Method value | Block any other nonblank value. |
@@ -20,7 +19,7 @@
 | resolve_ss_unit_price_change | Nonblank `SsUpriceChangeForQtymatch` is supplied | Requested code | Built-in system allowlist; no REST request | exact code | A blank is permitted; otherwise allow `NO` (No), `PRICE DECREASE ONLY` (Price decrease only), `PRICE INCREASE ONLY` (Price increase only), or `PRICE INCREASE OR DECREASE` (Price increase or decrease). | Validated Quantity-Based Match Unit Price Change code | Block any other nonblank value. |
 | resolve_invoice_currency | `InvoiceCurrencyCode` is supplied | Requested `InvoiceCurrencyCode`, trimmed and uppercased, and a read-only currency receipt | `GET /fscmRestApi/resources/11.13.18.05/currenciesLOV?finder=CurrencyCodeAllRowsFinder;CurrencyCode=<canonical-code>`; `resolve_lookup_prerequisites.py` records the canonical receipt. | Returned record count | One readable result continues. Multiple results are advisory without selecting a returned value. | Canonical uppercase invoice currency code; returned values are corroborating evidence only. FSM validates the code in import context. | Block a readable zero-result. Multiple results or unavailable read access are advisory. |
 | resolve_payment_currency | `PaymentCurrencyCode` is supplied | Requested `PaymentCurrencyCode`, trimmed and uppercased, and a read-only currency receipt | `GET /fscmRestApi/resources/11.13.18.05/currenciesLOV?finder=CurrencyCodeAllRowsFinder;CurrencyCode=<canonical-code>`; `resolve_lookup_prerequisites.py` records the canonical receipt. | Returned record count | One readable result continues. Multiple results are advisory without selecting a returned value. | Canonical uppercase payment currency code; returned values are corroborating evidence only. FSM validates the code in import context. | Block a readable zero-result. Multiple results or unavailable read access are advisory. |
-| InterestSegments | `AutoCalculateInterestFlag` is Y and `SOBName` or `InterestSegments` is supplied | Requested `SOBName` and complete `InterestSegments` | No task-owned CCID/SOAP preflight. | N/A | Preserve the submitted values without a CCID validation call. | Submitted ledger and segments | Fusion FSM Import performs the authoritative account-combination validation. |
+| validate_account_segments_read_only | Nonblank effective account when InterestSegments or SOBName changes, or interest is enabled | Exact operation, target BU, effective ledger, ordered account segments and fresh baseline | Task-owned `scripts/interest_account_validation.py`, `POST /fscmService/AccountCombinationService` with DynamicInsertion=No through core SOAP transport | Status, CcId | Require HTTP success, Status=Valid, positive existing CCID and readOnly=true | Bound validation receipt only; no CCID column is written | Invalid, missing CCID, SOAP fault or unavailable service blocks candidate generation. Never create an account or downgrade this check to advisory. |
 | resolve_business_unit_primary_ledger | A new AP_SYSTEM_PARAMETER row is created from BuName | Requested `BuName` and two read-only REST receipts | `resolve_lookup_prerequisites.py` queries `finBusinessUnitsLOV` for the exact BU and `ledgersLOV/{PrimaryLedgerId}` for Name and CurrencyCode. | BU: `matchedBuName`, `primaryLedgerId`; ledger: `ledgerId`, `name` | Require one or more active exact BU rows with one shared, nonblank PrimaryLedgerId, and a ledger receipt whose ID and Name match it. | Attested SOBName and BaseCurrencyCode for the new row | Block a missing, malformed, or conflicting-primary-ledger receipt. |
 
 ## Business Labels to CSV Codes
@@ -77,3 +76,35 @@ Payment-term names, currency codes, and pay-group codes are not translated by th
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|
 | LOOKUP.PREFLIGHT | step | 15 | reference_lookup | success->DEP.CHECK;failure->ERROR.BLOCK | INPUT.VALIDATE | stop | Any populated field has a resolver in the Live Lookups table. Run every applicable read-only REST or SOAP resolver and retain its receipt. |
+
+## Reusing Results for a Generated ZIP
+
+Save the JSON build report beside the ZIP. Use
+`validate-upload --baseline <fresh-export.zip> --package <candidate.zip>
+--validation-context <build-report.json>`. The saved report must belong to
+that exact task, ZIP, and baseline. It keeps each original request linked to
+its BU, ledger, currency, term, and interest-account validation results.
+
+Interest-account checks still require the same BU, ordered account segments,
+ledger, baseline, and positive existing CCID with DynamicInsertion=No. A changed
+ZIP or baseline requires new preparation and results. For separately prepared
+uploads, obtain preflight receipts for the upload's row IDs and supply the array
+with `--prerequisites`; do not relabel old receipts manually.
+
+
+## Authentication profile and selected Fusion identity
+
+The OAuth properties `environment` identifies the login/trust profile; it may
+include an authentication-method label and need not equal Fusion's `ProcessEnv`.
+For reference preflight, provide the independently selected Fusion identity as
+`referenceContext: {"environment": "<Fusion ProcessEnv>", "baseUrl": "https://<Fusion host>"}`
+in the design, or pass a JSON file with those two fields via `--reference-context`.
+For Payment Terms uploaded-package lookups, use `--reference-context`.
+The selected origin must match the configured authenticated origin, and the
+selected environment must still match the baseline/package `ProcessEnv` exactly.
+Conflicting CLI/design contexts are rejected before any reference call. The same
+selected context must be used for offline receipt and uploaded-package validation.
+Without an explicit context, the existing profile-name fallback remains; a
+mismatch blocks rather than guessing from a suffix, hostname, ZIP, or receipt.
+Timestamp freshness, source hashes, release compatibility and origin checks remain
+in force. This does not rename profiles, edit trust enrollment, or change OAuth.

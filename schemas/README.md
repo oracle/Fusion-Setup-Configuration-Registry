@@ -42,3 +42,14 @@ ISO 8601 timestamp for the start of the activity, including a timezone offset or
 
 Token usage estimates are operational estimates unless exact tokenizer or API
 accounting data is available. The default repository method is `chars/4`.
+
+## Implementation Validation Contracts
+
+| Schema | Purpose |
+| --- | --- |
+| `implementation-validation-check.schema.json` | Normalized offering-owned setup or transactional check/SVF intake; no execution authorization. |
+| `implementation-validation-run.schema.json` | Sanitized stage-specific evidence, requirement traceability, task outcomes, assertions, diagnostics and cleanup. |
+
+These additive versioned contracts do not change the existing
+`validation-result.schema.json`. The local reporting helper adds semantic
+checks and derived readiness; see `core/validation/reporting/SKILL.md`.

@@ -77,6 +77,8 @@ workspace_outputs:
     versioning_policy: "append-only"
 required_setup_tasks:
   - "ORA_INTRASTAT_PARAMETERS"
+  - "ORA_INTRASTAT_COUNTRY_CHARACTERISTICS"
+  - "ORA_INTRASTAT_RULES"
 applicability:
   industries:
     - "All"
@@ -107,6 +109,8 @@ Use this functional-area skill after Manufacturing and Supply Chain Materials Ma
 ## Setup Tasks
 
 1. [Intrastat Parameters](intrastat-parameters/SKILL.md) (`ORA_INTRASTAT_PARAMETERS`)
+2. [Intrastat Country Characteristics](intrastat-country-characteristics/SKILL.md) (`ORA_INTRASTAT_COUNTRY_CHARACTERISTICS`)
+3. [Intrastat Rules](intrastat-rules/SKILL.md) (`ORA_INTRASTAT_RULES`)
 
 ## Inputs
 

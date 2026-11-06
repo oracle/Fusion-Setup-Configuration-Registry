@@ -1,0 +1,176 @@
+{
+  "schema_version": "1.0",
+  "project_id": "demo-04-business-assertion-failed",
+  "run_id": "sample-04-business-assertion-failed",
+  "stage": "transactional-validation",
+  "environment": "DEMO-TEST",
+  "started_at": "2026-10-20T10:00:00Z",
+  "request": "ILLUSTRATIVE: run one reviewed draft-transaction check in DEMO-TEST using existing references. Preview the exact action before execution.",
+  "scope": "One fictional draft transaction with one intrinsic line. No submission, approval workflow, downstream processing or wider implementation certification.",
+  "scope_ref": "evidence.html#scope",
+  "requirement_version": "DEMO-1.0",
+  "redaction_reviewed": true,
+  "requirements": [
+    {
+      "requirement_id": "demo-r1",
+      "description": "Use an existing enabled business reference",
+      "source_ref": "evidence.html#scope",
+      "expected_setup": "DEMO-REFERENCE is enabled and retained on the draft.",
+      "task_refs": [
+        "DEMO-T1"
+      ],
+      "check_ids": [
+        "demo.single-draft-check"
+      ],
+      "owner": "Demo pillar SME (fictional)",
+      "required": true
+    },
+    {
+      "requirement_id": "demo-r2",
+      "description": "Save the intended one-line draft",
+      "source_ref": "evidence.html#scope",
+      "expected_setup": "One primary draft with one intrinsic line and quantity 1.",
+      "task_refs": [
+        "DEMO-T2"
+      ],
+      "check_ids": [
+        "demo.single-draft-check"
+      ],
+      "owner": "Demo pillar SME (fictional)",
+      "required": true
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "DEMO-T1",
+      "title": "Configure business reference",
+      "status": "completed",
+      "source_ref": "evidence.html#tasks",
+      "captured_at": "2026-10-20T09:50:00Z",
+      "environment": "DEMO-TEST",
+      "evidence_current": true,
+      "details": "Fictional task status only; correctness is assessed independently.",
+      "owner": "Demo implementer (fictional)",
+      "completed_at": "2026-10-20T09:10:00Z"
+    },
+    {
+      "task_id": "DEMO-T2",
+      "title": "Configure draft defaults",
+      "status": "completed",
+      "source_ref": "evidence.html#tasks",
+      "captured_at": "2026-10-20T09:50:00Z",
+      "environment": "DEMO-TEST",
+      "evidence_current": true,
+      "details": "Fictional task status only; correctness is assessed independently.",
+      "owner": "Demo implementer (fictional)",
+      "completed_at": "2026-10-20T09:20:00Z"
+    }
+  ],
+  "checks": [
+    {
+      "result_id": "demo-result-04-business-assertion-failed",
+      "check_id": "demo.single-draft-check",
+      "check_version": "DEMO-1.0",
+      "title": "Create and verify one draft transaction",
+      "owner": "Demo pillar SME (fictional)",
+      "required": true,
+      "blocking": true,
+      "requirement_refs": [
+        "demo-r1",
+        "demo-r2"
+      ],
+      "task_refs": [
+        "DEMO-T1",
+        "DEMO-T2"
+      ],
+      "source_ref": "evidence.html#procedure",
+      "status": "FAIL",
+      "method": "manual-evidence",
+      "environment": "DEMO-TEST",
+      "observed_at": "2026-10-20T10:05:00Z",
+      "evidence_current": true,
+      "reason": "The saved quantity is 2, while the approved expectation is 1. Creation alone did not establish correctness.",
+      "assertions": [
+        {
+          "assertion_id": "draft-created",
+          "expected": "One primary draft record exists with one intrinsic line.",
+          "observed": "DEMO-TXN-004 is recorded as a draft with one intrinsic line.",
+          "status": "PASS",
+          "evidence_refs": [
+            "evidence.html#outcome"
+          ]
+        },
+        {
+          "assertion_id": "reference-retained",
+          "expected": "The draft retains the existing enabled DEMO-REFERENCE.",
+          "observed": "DEMO-TXN-004 retains the enabled DEMO-REFERENCE.",
+          "status": "PASS",
+          "evidence_refs": [
+            "evidence.html#outcome"
+          ]
+        },
+        {
+          "assertion_id": "quantity-correct",
+          "expected": "The saved line quantity is 1.",
+          "observed": "The saved line quantity is 2.",
+          "status": "FAIL",
+          "evidence_refs": [
+            "evidence.html#outcome"
+          ]
+        }
+      ],
+      "evidence_refs": [
+        "evidence.html#outcome"
+      ],
+      "performed_by": "Demo implementer (fictional)",
+      "next_action": "Pillar SME: investigate the value mismatch and correct it through the approved implementation route; a later retest is a separate invocation.",
+      "transaction": {
+        "test_key": "DEMO-STABLE-04-BUSINESS-ASSERTION-FAILED",
+        "record_id": "DEMO-TXN-004",
+        "request_id": "",
+        "new_primary_count": 1,
+        "reused": false,
+        "approval_ref": "evidence.html#execution-approval",
+        "side_effects": [
+          "One fictional primary draft DEMO-TXN-004 and one intrinsic line; no submission or downstream processing.",
+          "Fictional text evidence recorded at 10:05 UTC before any cleanup. No screenshot is included."
+        ],
+        "cleanup_status": "removed-verified",
+        "cleanup_evidence_refs": [
+          "evidence.html#cleanup"
+        ],
+        "cleanup_owner": "Demo implementer (fictional)",
+        "cleanup_next_action": ""
+      }
+    }
+  ],
+  "decisions": [
+    {
+      "decision_id": "demo-execution-approval",
+      "summary": "Fictional approval at 10:01 UTC for the displayed one-record draft action in DEMO-TEST. This sample is not real authorization.",
+      "owner": "Demo project owner (fictional)",
+      "source_ref": "evidence.html#execution-approval"
+    },
+    {
+      "decision_id": "demo-cleanup-approval",
+      "summary": "Fictional separate approval at 10:07 UTC for cleanup of DEMO-TXN-004 only, after evidence capture.",
+      "owner": "Demo project owner (fictional)",
+      "source_ref": "evidence.html#cleanup"
+    }
+  ],
+  "recommendations": [
+    {
+      "message": "Pillar SME: investigate the value mismatch and correct it through the approved implementation route; a later retest is a separate invocation.",
+      "owner": "Demo pillar SME (fictional)",
+      "source_ref": "evidence.html#outcome"
+    }
+  ],
+  "errors": [],
+  "limitations": [
+    "SYNTHETIC SAMPLE — no Fusion access, real approvals, transaction creation or deletion occurred.",
+    "Each example is an independent alternative with its own fictional project. The six cases are not a single project history or a batch execution.",
+    "This is an output illustration, not an executable Oracle API, screen, privilege or cleanup specification. A real pillar must provide the reviewed supported route.",
+    "Evidence is invented text in evidence.html. No real screenshot, API response, approval token or customer record is included.",
+    "Only one primary record and one intrinsic line are in scope. A successful check does not verify the whole implementation."
+  ]
+}

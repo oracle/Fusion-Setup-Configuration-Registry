@@ -75,7 +75,10 @@ workspace_outputs:
   - artifact_type: "token_usage_record"
     default_location: "project/{project_id}/artifacts/shared/token-usage/current/token-usage-log.md"
     versioning_policy: "append-only"
-required_setup_tasks: []
+required_setup_tasks:
+  - "CUSTOM_ENABLE_FUSION_ASSET_BASED_ORDERING"
+  - "CUSTOM_ORACLE_SALES_TO_QUOTING_INTEGRATION"
+  - "CUSTOM_QUOTING_TO_ORACLE_ORDER_MANAGEMENT_INTEGRATION"
 applicability:
   industries:
     - "All"
@@ -105,12 +108,9 @@ Use this functional-area skill after Configure Price Quote scope is confirmed an
 
 ## Setup Tasks
 
-No Quoting setup-task skill is shipped in this release. Route CPQ Integration
-Center administration to the CPQ owner until the supported Data Loader workflow
-is available.
-
-See the [26D removal and handoff record](references/26d-integration-skill-removal.md)
-for affected capabilities, existing-project handling, and recovery guidance.
+1. [Enable Fusion Asset-Based Ordering](enable-fusion-asset-based-ordering/SKILL.md) (`CUSTOM_ENABLE_FUSION_ASSET_BASED_ORDERING`)
+2. [Oracle Sales to Quoting Integration](oracle-sales-to-quoting-integration/SKILL.md) (`CUSTOM_ORACLE_SALES_TO_QUOTING_INTEGRATION`)
+3. [Quoting to Oracle Order Management Integration](quoting-to-oracle-order-management-integration/SKILL.md) (`CUSTOM_QUOTING_TO_ORACLE_ORDER_MANAGEMENT_INTEGRATION`)
 
 ## Inputs
 
@@ -129,7 +129,4 @@ for affected capabilities, existing-project handling, and recovery guidance.
 
 ## Implementation Notes
 
-Do not schedule the withdrawn CPQ integration tasks for automated execution in
-26D. Record the CPQ-owner handoff and any resulting blocker in the project plan.
-Track token usage for any generated project artifact or skill-run record using
-the manifest policy.
+Use the generated nested setup-task skills for task-level planning, sequencing, setup-data routing, and validation. Track token usage for any generated project artifact or skill-run record using the manifest policy.

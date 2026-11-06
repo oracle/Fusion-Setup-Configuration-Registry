@@ -44,17 +44,20 @@ When there are 10 or fewer equivalent matches, list all of them. When there are 
 
 For every user-defined request, this is a blocking sequence: receive the
 fiscal-year cycle; resolve the start year when it was omitted from System
-Controls; list all existing fiscal years matching that cycle and resolved
-coverage; then obtain the user's reuse-or-create-new decision. A supplied
-Fiscal Year Name never bypasses any step in that sequence. Do not validate a
-name as a create candidate, resolve exact existing state, prepare a preview,
-or generate a package before the list and decision are complete. A zero-match
+Controls; check the exact existing state of a supplied candidate Fiscal Year
+Name read-only, or mark that check not applicable when no name was supplied;
+list all existing fiscal years matching that cycle and resolved coverage; then
+obtain the user's reuse-or-create-new decision. A supplied Fiscal Year Name
+never bypasses the list or decision. The candidate-name check does not
+authorize creation. Do not prepare a preview or generate a package before
+the list and decision are complete. A zero-match
 list still requires the create-new decision and then a user-supplied new name.
 
 ### Mandatory Oldest-DPIS First-Year Containment
 
 After the reuse-or-create decision and before preview or package preparation,
-when the user asks to create from Oldest DPIS, identify the first fiscal year
+when the selected start basis is Oldest DPIS, including a missing start
+defaulted from System Controls, identify the first fiscal year
 from the requested cycle and validate its complete date range against Oldest
 DPIS. The first fiscal-year row must contain Oldest DPIS inclusively:
 `Start Date <= Oldest DPIS <= End Date`. Compare actual dates, not the
@@ -100,4 +103,4 @@ present, failed check, and correction required; never silently omit a row.
 |---|---|---|---|---|---|---|---|
 | FY.VALIDATE_INPUT | decision | 10 | validate_input | valid->FY.RESOLVE_DEPENDENCIES;invalid->FY.HANDLE_INPUT | none | stop | Every request. |
 | FY.DECIDE_EQUIVALENT | decision | 40 | validate_input | reuse->FY.DONE_EXISTS;create_new->FY.VALIDATE_DPIS_CONTAINMENT;unresolved->FY.HANDLE_DEPENDENCY | FY.LOOKUP_EXISTING | stop | Equivalent fiscal-year results and the supplied candidate name's exact status, when a name was supplied, are available; user must choose reuse or create-new. |
-| FY.VALIDATE_DPIS_CONTAINMENT | decision | 45 | validate_input | valid->FY.APPLY_DEFAULTS;invalid->FY.HANDLE_INPUT | FY.DECIDE_EQUIVALENT | stop | User selected create-new; require the first Fiscal Year Date interval to contain Oldest DPIS. |
+| FY.VALIDATE_DPIS_CONTAINMENT | decision | 45 | validate_input | valid->FY.APPLY_DEFAULTS;not_applicable->FY.APPLY_DEFAULTS;invalid->FY.HANDLE_INPUT | FY.DECIDE_EQUIVALENT | stop | User selected create-new. For an Oldest-DPIS-based start, including a missing start defaulted from System Controls, require the first Fiscal Year Date interval to contain Oldest DPIS; return valid or invalid. For a ledger-derived or explicitly supplied non-DPIS start, validate its selected cycle and coverage, preserve the accepted basis, and return not_applicable for DPIS containment; invalid basis or coverage returns invalid. |

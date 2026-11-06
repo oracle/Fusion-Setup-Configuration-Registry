@@ -24,9 +24,13 @@ structure, value-set, existing-location, and DFF evidence for the retained
 parent batch. A prerequisite approval does not approve the later Asset
 Locations artifact or import.
 
-This skill ends at `validated_for_import`. `core.data-loader` owns approval,
-submission, polling, ProcessLog retrieval, target-state verification, and
-routing to any dependent task.
+This skill ends at `validated_for_import`. The calling workflow follows the
+parent Fixed Assets approval gates and uses `core.data-loader` for submission.
+After acceptance, hand the target, immutable archive identity, request ID, and
+child-specific verification criteria to the Fixed Assets parent. The parent
+routes status and ProcessLog retrieval through `core.data-loader`, applies
+fresh target-state verification, shows the Post-Execution Verification Preview,
+and controls dependent-task progression.
 
 ## Error Classifications
 
@@ -64,8 +68,8 @@ only when they block the batch or when the user requests them.
 This graph returns read-only validation findings to the calling workflow.
 VALIDATED means validated_for_import for the current stage, never a successful
 Fusion import. Approval is not required to run Task Hook validation.
-`core.data-loader` owns subsequent approval, submission, polling, ProcessLog
-retrieval, target-state verification, and post-import routing. The task
+Subsequent approval, submission, and accepted-import handoff follow the
+parent-owned continuation defined in Prerequisite Continuation above. The task
 template/spec export starts
 only at `MAL.PREPARE_ARCHIVE`, after the design node passes. Before calling
 `shared.setup-export.task-level-export`, verify the ordered rule-result record
@@ -79,14 +83,14 @@ operation outcome must be `create_new` or `update_existing`.
 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---:|---:|---|---|---|---|---|
-| MAL.PREPARE_ARCHIVE | step | 60 | archive_preparation | prepared->MAL.IMPORT_GATE;blocked->MAL.HANDLE_READINESS | MAL.ENFORCE_DESIGN | stop | Verify the completed validation sequence and batch-current DFF-definition evidence, then obtain and inspect the template/spec package for the immutable artifact. |
+| MAL.PREPARE_ARCHIVE | step | 60 | execution_gate | prepared->MAL.IMPORT_GATE;blocked->MAL.HANDLE_READINESS | MAL.ENFORCE_DESIGN | stop | Verify the completed validation sequence and batch-current DFF-definition evidence, then obtain and inspect the template/spec package for the immutable artifact. |
 | MAL.IMPORT_GATE | decision | 70 | execution_gate | ready->MAL.VALIDATED;incomplete->MAL.HANDLE_READINESS | MAL.PREPARE_ARCHIVE | stop | Read-only design validation and immutable archive preparation are complete. Approval is owned by the surrounding Data Loader workflow. |
 | MAL.HANDLE_INPUT | step | 80 | error_handler | handled->MAL.ISSUES | MAL.VALIDATE_INPUT | stop | Input is invalid. |
 | MAL.HANDLE_DEPENDENCY | step | 90 | error_handler | handled->MAL.ISSUES | MAL.CHECK_DEPENDENCIES | stop | A dependency is blocked or ambiguous. |
 | MAL.HANDLE_OPERATION_DECISION | step | 95 | error_handler | decision_requested->MAL.OPERATION_DECISION_REQUIRED | MAL.RESOLVE_OPERATION | stop | An existing exact location conflicts with the requested operation. |
 | MAL.HANDLE_LOOKUP | step | 100 | error_handler | handled->MAL.ISSUES | MAL.RESOLVE_REFERENCES | stop | A required reference cannot resolve. |
 | MAL.HANDLE_DESIGN | step | 110 | error_handler | handled->MAL.ISSUES | MAL.ENFORCE_DESIGN | stop | A design rule blocks the request. |
-| MAL.HANDLE_READINESS | step | 120 | error_handler | handled->MAL.ISSUES | MAL.PREPARE_ARCHIVE or MAL.IMPORT_GATE | stop | Validation evidence, DFF-definition evidence, template package, or immutable artifact required at this stage is incomplete. |
+| MAL.HANDLE_READINESS | step | 120 | error_handler | handled->MAL.ISSUES | MAL.ENFORCE_DESIGN | stop | Validation evidence, DFF-definition evidence, template package, or immutable artifact required at this stage is incomplete. |
 | MAL.VALIDATED | terminal | 130 | terminal | none | MAL.IMPORT_GATE | stop | Return validated_for_import for the current validation scope; no approval, submission or Fusion completion is implied. |
 | MAL.ISSUES | terminal | 140 | terminal | none | none | stop | A request stopped for correction, dependency, lookup, design, approval, or process issue. |
 | MAL.OPERATION_DECISION_REQUIRED | terminal | 145 | terminal | none | none | stop | No artifact or import is permitted until the requester explicitly selects Create-new or Update-existing. |

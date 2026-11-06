@@ -36,6 +36,7 @@ depends_on:
   - "shared.validation.setup-data-validator"
   - "shared.validation.reference-data-validator"
   - "core.data-loader"
+  - "erp.financials.payables.manage-invoice-options"
 uses_core:
   - "core.project-mgmt.artifact-version-manager"
   - "core.project-mgmt.artifact-registry-manager"
@@ -116,17 +117,41 @@ Invoice-owned settings.
   values explicitly requested for change.
 - Validate the resulting complete shared row with the Invoice Options field
   contract before preview. This protects Invoice-owned prerequisites and
-  preservation rules, but does not authorize this task to add, default, or
-  change Invoice-owned values. Invoke only the sibling validator, not the full
-  Invoice Options skill, to avoid a recursive workflow.
+  preservation rules. For creates, include the documented shared-row create
+  defaults from Invoice Options in the blueprint, preview, and actual CSV.
+  This does not authorize other Invoice-owned changes. Invoke only the sibling validator, not the full
+  Invoice Options skill, to avoid a recursive workflow. Apply the same checks
+  to uploaded ZIP rows. Check creates as complete proposed rows; for updates,
+  combine the supplied changes with baseline values before checking. Report
+  missing required fields or shared-row rule failures against the affected row.
+- For an uploaded create ZIP, use `validate-upload --validation-context` with
+  the saved build report for that exact ZIP and baseline. The report carries
+  the existing lookup results. Check `SOBName` and `BaseCurrencyCode` against
+  the business unit's resolved primary ledger; these are required CSV context,
+  not requested changes. Missing or mismatched lookup results stop validation.
+  Require the shared create defaults in the actual uploaded CSV; reject blank
+  or conflicting cells instead of filling them during validation. Keep the ZIP
+  unchanged and continue to enforce the shared required fields.
 - Do not infer a Payment Options value from an export. Validate supplied values
   only against their documented field contract; preserve an omitted optional
-  field exactly as it appears in the baseline. Do not add a CSV column that is
+  field exactly as it appears in the baseline. Only creates receive the shared
+  documented defaults; updates never receive them. Do not add a CSV column that is
   absent from the exact task template.
 - Before normalization, run `scripts/resolve_lookup_prerequisites.py` for an
-  applicable read-only preflight. Preserve an advisory lookup result with the
-  requested value; Fusion performs the final target-context validation during
-  the approved import.
+  applicable read-only preflight. For a new shared row, it delegates the supplied
+  `TermName` to the Invoice Options-owned resolver and carries the resulting
+  receipt into normalization. This does not authorize Invoice-owned term changes
+  on Payment updates or require a separate Invoice Options workflow/export.
+  If the API responds successfully but finds no
+  matching record, stop preparation and ask the user to correct the value. If a
+  supporting lookup cannot be checked, keep the supplied value, record why the
+  check was skipped, and allow preparation to continue. A new row must still
+  stop if required BU/ledger values cannot be obtained. Follow the detailed
+  response rules in `ora-resource/ora_reference_lookups.md`; Fusion performs the
+  final check during the approved import.
+- For Bank Charge Deduction Type, write `Standard`, `Negotiated`, or `None`
+  in `BankChargeDeductionTypeDes`. The CSV takes the name; database codes
+  `S`, `N`, and `X` are not valid values for this CSV field.
 - Route every import through `core.data-loader` in FSM mode. A candidate still
   requires an immutable preview and explicit approval before submission.
 
@@ -221,3 +246,66 @@ submit a second Payment Options full-row package. Use this Payment Options
 package only for a payment-only request.
 
 Use the parent functional-area skill `erp.financials.payables` for functional-area sequencing and scope decisions. Track token usage for any generated project artifact or skill-run record using the manifest policy.
+
+## Verifying Changes After Import
+
+`reconcile` can report `PASS` only after the workflow has observed a successful
+import and a later completed export from the same task and environment. Supply
+`--verification-evidence <observations.json> --environment <selected-environment>
+--base-url <selected-https-origin> --import-request-id <completed-import-request>`
+along with the baseline, approved candidate, blueprint, requirements and export.
+Missing, stale or mismatched evidence leaves verification `PENDING`; say that
+saved changes have not yet been verified.
+
+For an offline file comparison, use `reconcile --compare-only`. Its result is
+`MATCH` or `DIFFERENT`, with `persistenceVerification=NOT_PERFORMED`. A file match
+does not prove that an import occurred. Package building and import approval
+are unchanged. See [Error Handling](ora-resource/ora_error_handling.md#reconciliation-evidence)
+for the required observations.
+
+
+## Reference Lookup Evidence
+
+When a design or uploaded ZIP uses lookup receipts, follow
+[Reference evidence provenance](references/reference-evidence-provenance.md).
+Keep the selected target separate from evidence, require matching environment
+and HTTPS origin, and rerun preflight for missing, malformed, future, or
+more-than-24-hour-old observations. The same provenance checks apply to
+unavailable lookup warnings. An offline receipt does not authorize a live call
+or prove that Fusion imported the ZIP.
+
+
+## Uploaded Package Compatibility
+
+Before reporting an uploaded ZIP as valid, supply `validate-upload` with
+`--target-context <selected-target.json>` from the independently selected
+workflow target. Both baseline and uploaded metadata must match its environment
+and release. Read [Uploaded package compatibility](references/uploaded-package-compatibility.md)
+for the contract and migration boundary. Matching schemas alone do not establish
+source/target compatibility.
+
+
+## Source Manifest Labels and Origins
+
+When producing a source manifest or verifying post-import observations, follow
+[Manifest labels and HTTPS origins](references/manifest-labels-and-origins.md).
+A source manifest's environment must match its ZIP metadata; keep migration
+destination information separate. Use a credential-free HTTPS origin without
+an API path, query or fragment. A template-only label requires an empty package.
+
+
+## Sibling Runtime Dependency
+
+Payment Options imports the Invoice Options descriptor and runtime for shared
+AP_SYSTEM_PARAMETER validation and delegates lookup preflight to its resolver.
+Invoice Options may call back only into the Payment field contract; it must not
+recursively invoke the full Payment Options workflow or blueprint validator.
+
+The sibling ID in `depends_on` is a required code/component dependency. Package
+both skill folders, including their SKILL.md, e2e-adapter.json and script files,
+under the same Payables parent directory. Preserve the sibling directory names
+used by the loaders. The reciprocal declarations describe mutual runtime
+requirements, not an execution order or a request to run both workflows.
+Dependency collection should include each skill once. A missing sibling runtime
+or descriptor blocks validation with an actionable error; do not replace it with
+weaker local checks. Keep both components together when distributing this pair.

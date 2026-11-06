@@ -15,7 +15,7 @@
 
 | Applies When | Severity | Required Lookup | Blocking Condition | Recommendation | Fix Allowed? |
 |---|---|---|---|---|---|
-| Always | Error | Exact scoped relationship | Source and target do not form exactly one current primary-to-secondary relationship | Correct the scope or obtain a fresh matching export | Yes, before preview |
+| Always | Error | Exact scoped relationship and child tuples | Source and target do not form exactly one current relationship, or the mapping delta changes exported OrgIdTrans, RelationshipTypeCode, or any child parent reference | Correct the scope or obtain a fresh matching export; preserve exported keys for Name4/rate changes and handle any separately evidenced key transition outside this baseline | Yes, before preview |
 | COAs differ | Error | Exact directional COA mapping | No single From source to To target mapping exists | Create or select the mapping through the supported Financial Reporting Structures workflow, then re-export | Yes, through owning setup workflow |
 | COAs are the same | Warning | Exact relationship comparison | Accountable GL-781805 decision is absent | Explain the warning and record accept or cancel; keep Name4 blank on accept | Yes, decision only |
 | Currencies differ | Error | Exact conversion rate type | Rate type is absent, disabled, ineffective, ambiguous, or resolver failed | Ask the user for an exact eligible rate type | Yes, before preview |

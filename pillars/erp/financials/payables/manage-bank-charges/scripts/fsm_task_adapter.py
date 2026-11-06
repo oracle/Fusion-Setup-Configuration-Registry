@@ -27,12 +27,14 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 from xml.etree import ElementTree
 
+from readback_evidence import bind_readback_result, read_observation, _host as _target_origin
+
 
 SCHEMA_VERSION = "fscr-fsm-task-adapter-v1"
 MAX_MEMBER_BYTES = 10 * 1024 * 1024
 MAX_TOTAL_BYTES = 100 * 1024 * 1024
 MAX_COMPRESSION_RATIO = 100
-SUCCESS_STATUS = re.compile(r"COMPLETE|SUCCESS|SUCCEED", re.IGNORECASE)
+SUCCESS_STATUSES = frozenset({"COMPLETE", "COMPLETED", "SUCCESS", "SUCCEEDED"})
 
 
 class AdapterError(ValueError):
@@ -61,11 +63,13 @@ def _read_json(path: Path) -> Any:
 
 
 def _write_json(path: Path, value: Any) -> None:
+    _validate_new_outputs([path], [])
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(
-        json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n",
-        encoding="utf-8",
-    )
+    with tempfile.TemporaryDirectory(prefix=".bank-charge-json-", dir=path.parent) as temporary:
+        staged = Path(temporary) / "report.json"
+        staged.write_text(json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n",
+                          encoding="utf-8")
+        os.link(staged, path)
 
 
 def _default_contract_path() -> Path:
@@ -176,13 +180,12 @@ def _metadata_object_contracts(root: ElementTree.Element) -> dict[str, dict[str,
             continue
         name = _first_xml_text(node, "BusinessObjectShortName")
         if not name:
-            continue
+            raise AdapterError("Metadata contains an unnamed business object.")
         if name in result:
             raise AdapterError(f"Metadata contains duplicate business object {name}.")
         attributes = [
             value.strip()
             for value in _first_xml_text(node, "XmlAttributeList").split(",")
-            if value.strip()
         ]
         types = [
             value.strip()
@@ -192,6 +195,8 @@ def _metadata_object_contracts(root: ElementTree.Element) -> dict[str, dict[str,
             raise AdapterError(
                 f"Metadata object {name} has {len(attributes)} attributes and {len(types)} types."
             )
+        if not all(attributes) or len(attributes) != len(set(attributes)):
+            raise AdapterError(f"Metadata object {name} has blank or duplicate attributes.")
         result[name] = {
             "nodePath": _first_xml_text(node, "XmlNodePath"),
             "nodeSequence": _first_xml_text(node, "NodeSequence"),
@@ -272,13 +277,15 @@ def _read_package(path: Path, contract: dict[str, Any]) -> PackageData:
             "Package ObjectShortName does not match the adapter task identity: "
             f"{metadata['ObjectShortName']!r}."
         )
-    if not SUCCESS_STATUS.search(metadata["ProcessStatus"]):
+    if metadata["ProcessStatus"].strip().upper() not in SUCCESS_STATUSES:
         raise AdapterError(
             f"Package process status is not successful: {metadata['ProcessStatus']!r}."
         )
     if not metadata["ProcessEnv"] or not metadata["ProcessRelease"]:
         raise AdapterError("Package metadata must declare ProcessEnv and ProcessRelease.")
     object_contracts = _metadata_object_contracts(root)
+    if set(object_contracts) != {entity["name"] for entity in contract["package"]["entities"]}:
+        raise AdapterError("Metadata business objects differ from the exact task contract.")
     for entity in contract["package"]["entities"]:
         actual = object_contracts.get(entity["name"])
         if actual is None:
@@ -306,6 +313,9 @@ def _read_package(path: Path, contract: dict[str, Any]) -> PackageData:
                 f"Metadata node sequence for {entity['name']} is {actual_node_sequence!r}, "
                 f"expected {expected_node_sequence!r} from e2e-adapter.json."
             )
+        native_fields = {field for field in entity["headers"] if "." not in field}
+        if set(actual["types"]) != native_fields:
+            raise AdapterError(f"Metadata attributes for {entity['name']} differ from its native CSV fields.")
         for field, actual_type in actual["types"].items():
             if field not in entity["headers"]:
                 raise AdapterError(
@@ -353,6 +363,8 @@ def _schema_fingerprint(contract: dict[str, Any], package: PackageData) -> str:
 
 
 def _validate_new_outputs(outputs: list[Path], inputs: list[Path]) -> None:
+    if any(path.is_symlink() for path in outputs):
+        raise AdapterError("Output paths must not be symbolic links.")
     resolved_outputs = [path.resolve() for path in outputs]
     resolved_inputs = {path.resolve() for path in inputs}
     if len(resolved_outputs) != len(set(resolved_outputs)):
@@ -419,18 +431,18 @@ def _validate_field_value(
         if isinstance(value, (int, float)) and not isinstance(value, bool):
             candidate = str(value)
         elif isinstance(value, str):
-            candidate = value.strip()
+            candidate = value
         else:
             candidate = ""
-        if candidate:
+        if re.fullmatch(r"[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?", candidate):
             try:
                 valid = Decimal(candidate).is_finite()
             except InvalidOperation:
                 valid = False
     elif normalized_type == "date":
-        if isinstance(value, str) and value.strip():
+        if isinstance(value, str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
             try:
-                date.fromisoformat(value.strip())
+                date.fromisoformat(value)
                 valid = True
             except ValueError:
                 valid = False
@@ -569,8 +581,22 @@ def _is_omitted(value: Any) -> bool:
     return value is None or (isinstance(value, str) and not value.strip())
 
 
+def _applicable_reference_checks(header):
+    checks = {("resolve_currency", "")}
+    if header.get("LegalEntityName") != "All":
+        checks.add(("resolve_legal_entity", ""))
+    for side in ("Transferring", "Receiving"):
+        if header.get(side + "BankOption") == "Specific bank":
+            checks.add(("resolve_bank", side))
+        if header.get(side + "BranchOption") == "Specific branch":
+            checks.add(("resolve_bank_branch", side))
+        if header.get(side + "BankCountry"):
+            checks.add(("resolve_bank_country", side))
+    return checks
+
+
 def _additional_rest_check_warnings(results, environment, header):
-    """Record unavailable Bank Charges reference reads as additional checks."""
+    """Validate recorded reference outcomes; return only availability warnings."""
     if not isinstance(results, list):
         raise AdapterError("reference_check_results must be an array.")
     reference_fields = ["LegalEntityName", "LegalEntityIdentifier", "CurrencyCode"]
@@ -591,33 +617,41 @@ def _additional_rest_check_warnings(results, environment, header):
     allowed = {"resolver", "side", "status", "failureClass", "httpStatus",
                "method", "endpointPath", "requestContext", "evidence"}
     for item in results:
-        if not isinstance(item, dict) or set(item) != allowed:
+        if not isinstance(item, dict):
+            raise AdapterError("Reference API outcome must be an object.")
+        verified = item.get("status") == "verified"
+        expected = allowed | {"matchCount", "hasMore"} if verified else allowed
+        if set(item) != expected:
             raise AdapterError("Reference API outcome must contain only the declared sanitized fields.")
         resolver, side = item["resolver"], item["side"]
         if any(not isinstance(item[name], str) for name in ("resolver", "side", "failureClass")):
             raise AdapterError("Reference API resolver, side and failure class must be strings.")
-        if item["status"] != "unavailable":
-            raise AdapterError("Only an unavailable API check can be deferred; invalid or ambiguous references require correction.")
+        if item["status"] not in ("unavailable", "verified"):
+            raise AdapterError("Reference checks must be verified or unavailable; invalid or ambiguous references require correction.")
         if resolver not in paths or (resolver in {"resolve_legal_entity", "resolve_currency"}
                                     and side != "") or (resolver not in {"resolve_legal_entity", "resolve_currency"}
                                                        and side not in {"Transferring", "Receiving"}):
             raise AdapterError("Reference API outcome names an unknown resolver or bank side.")
-        if (resolver == "resolve_legal_entity" and header.get("LegalEntityName") == "All"
-                or resolver == "resolve_bank" and header.get(side + "BankOption") != "Specific bank"
-                or resolver == "resolve_bank_branch" and header.get(side + "BranchOption") != "Specific branch"
-                or resolver == "resolve_bank_country" and not header.get(side + "BankCountry")):
+        if (resolver, side) not in _applicable_reference_checks(header):
             raise AdapterError("Reference API outcome is not applicable to this charge group.")
         status = item["httpStatus"]
         if (not environment or item["requestContext"] != context or item["method"] != "GET"
                 or item["endpointPath"] != "/fscmRestApi/resources/11.13.18.05/" + paths[resolver]
                 or (status is not None and type(status) is not int)
-                or item["failureClass"] not in availability
-                or status not in availability[item["failureClass"]]
                 or not isinstance(item["evidence"], str) or not item["evidence"].strip()):
-            raise AdapterError("Reference outcome must bind this environment/group and an API availability failure.")
+            raise AdapterError("Reference outcome must bind this environment/group and declared GET endpoint.")
         if (resolver, side) in seen:
-            raise AdapterError("Duplicate unavailable reference API check.")
+            raise AdapterError("Duplicate reference API check.")
         seen.add((resolver, side))
+        if verified:
+            if (status != 200 or item["failureClass"] != ""
+                    or type(item["matchCount"]) is not int or item["matchCount"] != 1
+                    or item["hasMore"] is not False):
+                raise AdapterError("Verified reference requires HTTP 200, one exact match, no further pages and no failure class.")
+            continue
+        if (item["failureClass"] not in availability
+                or status not in availability[item["failureClass"]]):
+            raise AdapterError("Unavailable reference must record an API availability failure.")
         warnings.append({"status": "UNVERIFIED_API_UNAVAILABLE", "resolver": resolver, "side": side,
                          "failureClass": item["failureClass"], "httpStatus": status,
                          "evidence": item["evidence"],
@@ -714,11 +748,19 @@ def assess_business_intake(contract: dict[str, Any], intake: dict[str, Any]) -> 
             raise AdapterError("The only payment range must have an open upper amount.")
         local_checks += ["single_range_starts_at_zero", "single_range_open_upper_amount"]
     all_scope = all(normalized[side + "BankOption"] == "All banks" and normalized[side + "BranchOption"] == "All branches" for side in ("Transferring", "Receiving"))
+    applicable_checks = _applicable_reference_checks(normalized)
+    country_lookup_required = any(resolver == "resolve_bank_country" for resolver, _ in applicable_checks)
     not_applicable = ["resolve_bank", "resolve_bank_country", "resolve_bank_branch"] if all_scope else []
+    if country_lookup_required:
+        not_applicable = [resolver for resolver in not_applicable if resolver != "resolve_bank_country"]
     unresolved = sorted(set(normalized) - set(header["createFields"]))
     reference_warnings = _additional_rest_check_warnings(
         intake.get("reference_check_results", []),
         (intake.get("environment") or {}).get("name"), normalized)
+    verified_references = [copy.deepcopy(item) for item in intake.get("reference_check_results", [])
+                           if item["status"] == "verified"]
+    reference_verified = ({(item["resolver"], item["side"]) for item in verified_references}
+                          == applicable_checks)
     assembly_review = None
     if all_scope and normalized["LegalEntityName"] == "All":
         header_row = {field: "" if normalized.get(field) is None else str(normalized[field]) for field in header["headers"]}
@@ -744,7 +786,11 @@ def assess_business_intake(contract: dict[str, Any], intake: dict[str, Any]) -> 
         "not_applicable_resolvers": not_applicable,
         "local_choice_resolvers": ["resolve_bank_option", "resolve_branch_option", "resolve_settlement_priority"],
         "reference_validation_warnings": reference_warnings,
-        "applicable_reference_contracts": ["resolve_legal_entity", "resolve_currency"] + ([] if all_scope else ["conditional_specific_bank_country_branch"]),
+        "reference_validation_verified": reference_verified,
+        "reference_validation_evidence": verified_references,
+        "applicable_reference_contracts": (["resolve_legal_entity", "resolve_currency"]
+                                           + ([] if all_scope else ["conditional_specific_bank_country_branch"])
+                                           + (["resolve_bank_country"] if country_lookup_required else [])),
         "supplied_header_fields_without_create_contract": unresolved,
         "csv_assembly_review": assembly_review,
         "confirmed_execution_contracts": ["Create input consumption for all 94 package fields and 18-column CSV parent assembly."],
@@ -1416,7 +1462,7 @@ def _write_candidate(
     }
     metadata_member = contract["package"]["metadataMember"]
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    with zipfile.ZipFile(output_path, "w") as archive:
+    with zipfile.ZipFile(output_path, "x") as archive:
         for member in template.member_names:
             if member in entity_by_member:
                 entity = entity_by_member[member]
@@ -1687,10 +1733,20 @@ def reconcile(
     blueprint_path: Path,
     requirements_path: Path,
     export_path: Path,
+    readback_evidence_path: Path | None = None,
+    import_request_id: str | None = None,
+    target_url: str | None = None,
 ) -> dict[str, Any]:
     baseline = _read_package(baseline_path, contract)
     candidate = _read_package(candidate_path, contract)
     persisted = _read_package(export_path, contract)
+    for label, package in (("Candidate", candidate), ("Observed export", persisted)):
+        for field in ("ProcessEnv", "ProcessRelease"):
+            if package.metadata[field] != baseline.metadata[field]:
+                raise AdapterError(
+                    f"{label} {field} differs from baseline: "
+                    f"{package.metadata[field]!r} versus {baseline.metadata[field]!r}."
+                )
     blueprint = _read_json(blueprint_path)
     requirements = _read_json(requirements_path)
     _validate_blueprint(contract, blueprint, baseline)
@@ -1839,7 +1895,7 @@ def reconcile(
         if semantic_equivalences:
             matrix_row["semanticEquivalences"] = semantic_equivalences
         matrix.append(matrix_row)
-    return {
+    comparison = {
         "schemaVersion": SCHEMA_VERSION,
         "status": "PASS" if all(row["passed"] for row in matrix) else "FAIL",
         "task": contract["task"],
@@ -1849,6 +1905,35 @@ def reconcile(
         "requirementMatrix": matrix,
         "mismatchCount": sum(not row["passed"] for row in matrix),
     }
+    return _bind_readback(
+        comparison, contract, baseline, persisted, candidate_path,
+        readback_evidence_path, import_request_id, target_url,
+    )
+
+
+def _bind_readback(comparison, contract, before, after, candidate_path=None,
+                   readback_evidence_path=None, import_request_id=None, target_url=None,
+                   candidate_error=None):
+    """Keep package comparisons distinct from governed persistence evidence."""
+    evidence = read_observation(readback_evidence_path)
+    if candidate_error is not None:
+        evidence = {"_readError": candidate_error}
+    candidate_sha256 = ""
+    if candidate_path is not None:
+        try:
+            candidate_sha256 = _sha256_path(Path(candidate_path))
+        except OSError as exc:
+            evidence = {"_readError": f"Cannot read the submitted candidate: {exc}"}
+    return bind_readback_result(
+        comparison, evidence,
+        task_code=contract["task"]["code"],
+        environment=before.metadata["ProcessEnv"],
+        baseline_sha256=getattr(before, "archive_sha256", ""),
+        candidate_sha256=candidate_sha256,
+        export_sha256=getattr(after, "archive_sha256", ""),
+        import_request_id=import_request_id,
+        target_url=target_url,
+    )
 
 
 def make_rollback(
@@ -1930,14 +2015,20 @@ def normalized_manifest(
     template_only: bool,
 ) -> dict[str, Any]:
     package = _read_package(package_path, contract)
+    if not isinstance(environment, str) or environment.strip() != package.metadata["ProcessEnv"]:
+        raise AdapterError("Manifest environment must match package ProcessEnv.")
+    try:
+        origin = _target_origin(base_url)
+    except ValueError as exc:
+        raise AdapterError("Manifest base URL must be a complete HTTPS origin.") from exc
     populated = [
         entity["member"]
         for entity in contract["package"]["entities"]
         if package.rows[entity["name"]]
     ]
     return {
-        "environment": environment,
-        "baseUrl": base_url,
+        "environment": package.metadata["ProcessEnv"],
+        "baseUrl": origin,
         "taskName": contract["task"]["name"],
         "taskCode": contract["task"]["code"],
         "status": package.metadata["ProcessStatus"],
@@ -2193,7 +2284,8 @@ def build_update_package(contract, request, snapshot, output):
             'source_path': str(output.resolve()), 'candidate_generated': True}
 
 
-def compare_update_after(contract, request, before, after):
+def compare_update_after(contract, request, before, after, *, candidate_path=None,
+                         readback_evidence_path=None, import_request_id=None, target_url=None):
     """Require the exact proposed complete state, allowing only typed formatting changes."""
     review = prepare_update(contract, request, before)
     _check_update_snapshot(contract, request, after)
@@ -2208,26 +2300,43 @@ def compare_update_after(contract, request, before, after):
             'missing_or_changed_rows': sum((wanted - observed).values()),
             'extra_or_changed_rows': sum((observed - wanted).values()),
         }
-    return {
+    comparison = {
         'status': 'PASS' if all(item['matches'] for item in checks.values()) else 'FAIL',
         'before_sha256': before.archive_sha256, 'after_sha256': after.archive_sha256,
         'request_sha256': review['request_sha256'], 'complete_state_checks': checks,
         'boundary': 'Observed state and preservation only; no assertion about process causation, importer keys or execution readiness.',
         'import_ready': False, 'execution_ready': False, 'fusion_calls': 0,
     }
+    candidate_error = None
+    if candidate_path is not None and readback_evidence_path is not None:
+        try:
+            validate_update_package(
+                contract, request, before, _read_update_package(Path(candidate_path), contract)
+            )
+        except (AdapterError, OSError, ValueError) as exc:
+            candidate_error = f"Submitted candidate does not match this update: {exc}"
+    return _bind_readback(
+        comparison, contract, before, after, candidate_path,
+        readback_evidence_path, import_request_id, target_url, candidate_error,
+    )
 
 
 
 def _run_update_command(args):
     published_package = None
     try:
+        if (args.candidate or args.readback_evidence or args.import_request_id or args.target_url) and not args.after:
+            raise AdapterError('Read-back evidence options apply only with --after.')
         if args.package and not args.output:
             raise AdapterError('--package requires --output for the accompanying review JSON.')
         if args.output:
             if args.output.suffix.lower() != '.json':
                 raise AdapterError('--output must be a review JSON file; use --package for a ZIP.')
             outputs = [args.output] + ([args.package] if args.package else [])
-            inputs = [args.request, args.snapshot] + ([args.after] if args.after else []) + ([args.validate_package] if args.validate_package else [])
+            inputs = ([args.request, args.snapshot] + ([args.after] if args.after else [])
+                      + ([args.validate_package] if args.validate_package else [])
+                      + ([args.candidate] if args.candidate else [])
+                      + ([args.readback_evidence] if args.readback_evidence else []))
             _validate_new_outputs(outputs, inputs)
             if any(path.is_symlink() for path in outputs):
                 raise AdapterError('Output paths must not be symbolic links.')
@@ -2240,7 +2349,11 @@ def _run_update_command(args):
         elif args.validate_package:
             result = validate_update_package(contract, request, before, _read_update_package(args.validate_package, contract))
         elif args.after:
-            result = compare_update_after(contract, request, before, _read_update_package(args.after, contract))
+            result = compare_update_after(
+                contract, request, before, _read_update_package(args.after, contract),
+                candidate_path=args.candidate, readback_evidence_path=args.readback_evidence,
+                import_request_id=args.import_request_id, target_url=args.target_url,
+            )
         else:
             result = prepare_update(contract, request, before)
         encoded = json.dumps(result, indent=2, allow_nan=False) + '\n'
@@ -2258,7 +2371,7 @@ def _run_update_command(args):
                           'candidate_generated': False, 'fusion_calls': 0}))
         return 1
     print(encoded, end='')
-    return int(result['status'] == 'FAIL')
+    return int(result['status'] in {'FAIL', 'PENDING', 'BLOCKED'})
 
 
 def _bool_arg(value: str) -> bool:
@@ -2290,6 +2403,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     update_mode.add_argument("--package", type=Path)
     update_mode.add_argument("--validate-package", type=Path)
     update_mode.add_argument("--after", type=Path)
+    update.add_argument("--candidate", type=Path)
+    update.add_argument("--readback-evidence", type=Path)
+    update.add_argument("--import-request-id")
+    update.add_argument("--target-url")
     update.add_argument("--output", type=Path)
 
     manifest = sub.add_parser("manifest", help="Normalize one exact-task source ZIP.")
@@ -2337,6 +2454,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     reconcile_parser.add_argument("--blueprint", type=Path, required=True)
     reconcile_parser.add_argument("--requirements", type=Path, required=True)
     reconcile_parser.add_argument("--export", type=Path, required=True)
+    reconcile_parser.add_argument("--readback-evidence", type=Path)
+    reconcile_parser.add_argument("--import-request-id")
+    reconcile_parser.add_argument("--target-url")
     return parser.parse_args(argv)
 
 
@@ -2344,12 +2464,32 @@ def _command_succeeded(command: str, result: dict[str, Any]) -> bool:
     if command == "assess-intake":
         return result.get("status") == "LOCAL_INPUT_PASS_EXECUTION_BLOCKED"
     if command == "manifest":
-        return result.get("status") == "COMPLETED"
+        return str(result.get("status", "")).strip().upper() in SUCCESS_STATUSES
     return result.get("status", "PASS") == "PASS"
+
+
+def _validate_cli_outputs(args: argparse.Namespace) -> None:
+    output_names = {"report", "blueprint_output", "preview_output", "requirements_output", "output"}
+    if args.command == "update":
+        output_names.add("package")
+    outputs = [value for key, value in vars(args).items()
+               if key in output_names and isinstance(value, Path)]
+    inputs = [value for key, value in vars(args).items()
+              if key not in output_names and isinstance(value, Path)]
+    if not hasattr(args, "contract"):
+        inputs.append(_default_contract_path())
+    _validate_new_outputs(outputs, inputs)
 
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
+    try:
+        # Validate every destination together before reading or writing any output,
+        # including failure reports. Never write a failure to a rejected path.
+        _validate_cli_outputs(args)
+    except (AdapterError, OSError, ValueError) as exc:
+        print(json.dumps({"status": "FAIL", "errors": [{"code": "OUTPUT_PATH", "message": str(exc)}]}), file=sys.stderr)
+        return 1 if args.command == "update" else 2
     if args.command == "update":
         return _run_update_command(args)
     if args.command == "assess-intake":
@@ -2433,6 +2573,9 @@ def main(argv: list[str] | None = None) -> int:
                 args.blueprint,
                 args.requirements,
                 args.export,
+                args.readback_evidence,
+                args.import_request_id,
+                args.target_url,
             )
         else:
             raise AdapterError(f"Unknown command {args.command!r}.")
@@ -2440,14 +2583,18 @@ def main(argv: list[str] | None = None) -> int:
             _write_json(args.report, result)
         print(json.dumps(result, indent=2, sort_keys=True, ensure_ascii=False))
         return 0 if _command_succeeded(args.command, result) else 2
-    except AdapterError as exc:
+    except (AdapterError, OSError, ValueError) as exc:
         failure = {
             "schemaVersion": SCHEMA_VERSION,
             "status": "FAIL",
             "errors": [{"code": "ADAPTER_ERROR", "message": str(exc)}],
         }
         if getattr(args, "report", None):
-            _write_json(args.report, failure)
+            try:
+                _write_json(args.report, failure)
+            except (AdapterError, OSError):
+                # A destination created after preflight must also stay untouched.
+                pass
         print(json.dumps(failure, indent=2, sort_keys=True), file=sys.stderr)
         return 2
 

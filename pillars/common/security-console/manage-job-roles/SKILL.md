@@ -16,7 +16,7 @@ businessObject: ""
 source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 execution_mode: "hybrid"
 owner_team: "FSCR Security team"
-version: "0.2.1"
+version: "0.3.0"
 inputs:
   - "project_id"
   - "source_environment"
@@ -27,6 +27,8 @@ inputs:
   - "user_input_file"
   - "execution_approval"
   - "role_definition_or_change_request"
+  - "security_checkup_choice"
+  - "proposed_role_and_privilege_evidence"
 outputs:
   - "manage-job-roles-export"
   - "import-template-export"
@@ -40,9 +42,12 @@ outputs:
   - "token_usage_record"
   - "role_change_plan"
   - "operation_support_result"
+  - "security_checkup_decision"
+  - "security_checkup_result_reference"
 depends_on:
   - "shared.setup-export.task-level-export"
   - "shared.validation.setup-data-validator"
+  - "shared.common.security.risk-and-security-checkup"
   - "core.data-loader"
 uses_core:
   - "core.data-loader"
@@ -71,8 +76,12 @@ state_updates:
   - "scope"
   - "exports"
   - "validation_results"
+  - "design_decisions"
   - "token_usage_records"
 workspace_outputs:
+  - artifact_type: "design_decision"
+    default_location: "project/{project_id}/decisions/common/security-console/manage-job-roles/"
+    versioning_policy: "append-only"
   - artifact_type: "configuration_export"
     default_location: "project/{project_id}/exports/common/security-console/manage-job-roles/"
     versioning_policy: "major-new-version-minor-confirm-update"
@@ -103,9 +112,11 @@ applicability:
   fusion_releases:
     - "Current Oracle Fusion Cloud release"
 side_effects:
+  - "Only when the user opts in, delegates read-only risk metadata retrieval and assessment artifacts to the shared Risk and Security Checkup workflow."
   - "May route an approved task-level export to the shared export skill."
   - "May route an approved immutable FSM archive to core.data-loader for upload and import."
 required_privileges:
+  - "When the optional checkup is selected, BOSS read privileges required by shared.common.security.risk-and-security-checkup in the selected target environment."
   - "Verified Functional Setup Manager privileges to export the Manage Job Roles setup task."
   - "Verified target-environment privileges to upload and initiate the approved FSM archive through Data Loader."
 ---
@@ -257,9 +268,73 @@ This workflow uses `core.data-loader` for execution, never browser creation.
 3. Do not alter, unpack-and-repack, merge, or otherwise transform the archive
    after validation. Any change invalidates the evidence and approval preview.
 
+## Optional Risk and Security Checkup
+
+After archive validation and before the Data Loader handoff, resolve the user's
+choice for this candidate and target. This is part of `MJR.DESIGN_GATE`. The
+checkup dependency and its BOSS privileges are conditional on opting in; they
+must not block the declined path. Export-only and template-only requests do
+not enter this import checkpoint.
+
+Unless the user has already explicitly chosen for this candidate and target, ask:
+
+> Would you like to run Risk and Security Checkup on the proposed role access before importing? It checks for sensitive access and toxic privilege combinations.
+
+Wait for an explicit yes or no. Silence, an import request, or import approval
+is not consent to this assessment. Reuse an existing explicit choice for the
+unchanged candidate and target without asking again.
+
+- **Yes:** Route to
+  [Risk and Security Checkup](../../../../shared/common/security/risk-and-security-checkup/SKILL.md)
+  (`shared.common.security.risk-and-security-checkup`) under the active project
+  workflow, using the selected target environment. That skill owns input
+  normalization, Core-delegated fresh BOSS metadata reads, assessment delivery,
+  artifacts, diagnostics and token accounting. Complete its preflight before
+  external reads; do not start direct HTTP, OAuth or hierarchy lookups here.
+- **No:** Record `declined` and present **Security checkup: Not performed**.
+  Continue to the normal Data Loader validation and approval workflow without
+  executing the checkup, authenticating for it, or implying the roles are safe.
+
+Assess the proposed resulting role access rather than treating change rows as
+a complete final role. Apply the checkup's
+[input contract](../../../../shared/common/security/risk-and-security-checkup/references/input-validation.md):
+its job-role ZIP normalizer excludes hierarchy expansion and cannot establish
+final membership from REMOVE rows without a baseline. For a delta or redesign,
+require baseline and proposed resulting privilege evidence, including resolved
+inherited access where relevant, supplied or obtained through an already
+supported routed workflow. Do not invent effective access or add a live lookup
+route. Preserve the checkup's supplied-input coverage limitations. Evaluate
+roles independently unless explicit user/persona grouping is supplied.
+
+Present completed findings and coverage gaps before the import preview. Keep
+risk acceptance with the user; findings do not authorize automatic role changes
+or create a second import-approval gate. If the selected assessment fails or
+required evidence is unavailable, record `blocked` or `failed` with its
+classified diagnostic and stop this handoff. The user may resolve the blocker
+or explicitly decline the optional assessment and proceed with **Security
+checkup: Not performed**; never silently skip it or report a clean result.
+
+Persist an append-only `security_checkup_decision` in the declared project
+decision location and register/update project state through the existing Core
+services. Record task, candidate artifact reference, target, explicit choice,
+status (`declined`, `completed`, `blocked`, or `failed`), input coverage, and
+assessment/diagnostic artifact references when available. Keep Data Loader
+session captures, hashes, previews and approval objects in its live process
+according to its contract; do not serialize them into the decision record.
+
+If remediation changes the archive, repeat archive validation and this choice
+checkpoint for the new candidate; do not reuse the old assessment. A changed
+target or assessment input likewise invalidates prior assessment evidence.
+Choosing the checkup never approves an import. Core Data Loader retains its
+single authoritative final preview and execution-approval workflow. Present
+the checkup outcome separately before that preview without altering the
+loader's required preview output.
+
 ## Import the validated archive
 
-1. Route the immutable validated archive to `core.data-loader` as an FSM,
+1. Complete the optional checkup checkpoint above: require an explicit decline
+   or a completed assessment presented to the user for the unchanged candidate
+   and target. Route the immutable validated archive to `core.data-loader` as an FSM,
    task-routed import. Provide the task context, target environment, archive
    SHA-256, and validation evidence.
 2. Let `core.data-loader` complete its required source and API validation and

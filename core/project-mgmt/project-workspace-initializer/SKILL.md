@@ -7,7 +7,7 @@ pillar: "Core"
 type: "planning"
 execution_mode: "assisted"
 owner_team: "Central platform team"
-version: "0.1.1"
+version: "0.1.2"
 inputs:
   - "project_name"
   - "customer"
@@ -89,12 +89,33 @@ python3 core/project-mgmt/project-workspace-initializer/scripts/initialize_proje
   --implementation-objective "Implement Oracle Fusion Cloud Order Management" \
   --pillar SCM \
   --offering "Order Management" \
-  --identified-task-mapping "path/to/identified-task-mapping.json"
+  --identified-task-mapping "path/to/identified-task-mapping.json" \
+  --no-create-runbook
 ```
 
-The script creates `project/{project_id}/README.md` with the local workspace ignore notice, seeds the objective artifact, writes the initializer run record, and updates the project state and artifact index. New-project initialization requires automatic initial Run Book creation by default. The workspace template does not seed `runbook_control`; after the planning wrapper successfully persists all initial Run Book planning artifacts, it adds `runbook_control` with `status: pending`. The workflow must then continue through `core.runbook` and persist the creation outcome. Use `--no-create-runbook` only when the user explicitly wants to defer Oracle Run Book creation; generate the same planning artifacts, leave `status: pending`, and wait for an explicit user request to create the Run Book.
+The script creates `project/{project_id}/README.md` with the local workspace ignore notice, seeds the objective artifact, writes the initializer run record, and updates the project state and artifact index. Every new implementation project must first pass the `shared.validation.prevalidation` run-or-skip checkpoint, including projects from plain-language requests without an attachment. The workspace template does not seed `runbook_control`; after the planning wrapper successfully persists all initial Run Book planning artifacts, it adds `runbook_control` with `status: pending`. Use `--no-create-runbook` to hold Oracle creation while that checkpoint is resolved. After accepted assessment or explicit skip, resume the originally authorized creation through `core.runbook` and persist its outcome. A separate user instruction to defer Run Book creation remains in force and requires a later explicit creation request.
 
 ## Project Initialization Completion Gate
+
+### Prevalidation handoff for every new project
+
+Route every new implementation project through `shared.validation.prevalidation`,
+including plain-language requests and explicitly selected tasks. Honor the
+requested name and accept the task-map builder's validated
+local bootstrap mapping. Use `--no-create-runbook` to hold Oracle creation while
+the local project, task mapping and planning artifacts are prepared. Persist the
+staged source/scope/ordered-sequence evidence under the new workspace and index
+it before invoking the planning wrapper. This hold is required by the selected
+workflow even when the original request authorizes eventual Run Book creation.
+
+Offer run or skip prevalidation through that skill before creating any Oracle
+Run Book. An explicit run request already supplies the run choice. Resume the
+original authorized creation workflow through `core.runbook` only after the
+stage assessment is accepted or the user explicitly skips; a blocked assessment
+alone is not a skip. This workflow-specific handoff is the exception to waiting
+for a separate creation request after `--no-create-runbook`. An explicit user
+instruction to defer Run Book creation still controls. All other initialization,
+task-mapping and core Run Book gates remain in force.
 
 Do not report project initialization complete until all required artifacts have been created and verified. Report the exact paths for:
 
@@ -121,7 +142,7 @@ report the mapping gap; do not create a Run Book plan.
 
 The generic `artifacts/shared/runbook/current/identified-task-mapping.json` location is the initializer's traceability input for the later Run Book workflow. When a user also requests an implementation-facing plan, persist that plan separately under the applicable project implementation artifact path (for example, `artifacts/{pillar}/{offering}/`) and index both artifacts.
 
-For every initialization, the LLM must call `scripts/create_project_runbook.py --project-root project/{project_id} --refresh-artifacts` to generate and persist `setup-task-plan.json`, `task-context.json`, and `runbook-plan.json`. This script is planning-only and never creates or updates an Oracle Run Book. When `runbook_control` is absent, it adds `status: pending` only after all three artifacts are written. When control already exists, artifact generation and refresh leave the entire project-state file untouched, regardless of the Run Book status. If `--no-create-runbook` was supplied, stop with `status: pending` and wait for an explicit user request to create the Run Book from the persisted plan. Otherwise, invoke `core.runbook` to create the Oracle Run Book automatically and supply the absolute project workspace path to its `create-runbook --project-root` option. Only that creation command requires pending, unbound state. It persists the active reference and `status: active` on success, `status: failed` on a confirmed failure, or `status: unknown` on a partial or indeterminate creation. Both failure states block downstream Fusion submission and must not be retried automatically.
+For every initialization, the LLM must call `scripts/create_project_runbook.py --project-root project/{project_id} --refresh-artifacts` to generate and persist `setup-task-plan.json`, `task-context.json`, and `runbook-plan.json`. This script is planning-only and never creates or updates an Oracle Run Book. When `runbook_control` is absent, it adds `status: pending` only after all three artifacts are written. When control already exists, artifact generation and refresh leave the entire project-state file untouched, regardless of the Run Book status. Keep `status: pending` while the prevalidation choice or assessment is unresolved. Once accepted readiness or an explicit skip is registered for the same scope and environment, invoke `core.runbook` to resume the originally authorized Oracle Run Book creation, unless the user separately deferred it. A separate deferral requires a later explicit request; that request still does not waive the prevalidation checkpoint. Invoke creation and supply the absolute project workspace path to its `create-runbook --project-root` option. Only that creation command requires pending, unbound state. It persists the active reference and `status: active` on success, `status: failed` on a confirmed failure, or `status: unknown` on a partial or indeterminate creation. Both failure states block downstream Fusion submission and must not be retried automatically.
 
 ## Multi-Context Runbook Planning
 

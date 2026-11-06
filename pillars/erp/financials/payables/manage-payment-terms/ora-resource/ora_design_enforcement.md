@@ -8,16 +8,20 @@
 
 | Sequence | Step | What Must Happen |
 |---|---|---|
-| 1 | Resolver readiness | Run every applicable supporting read-only GET. One or more rows corroborate only. Zero rows block as `not_found`; malformed or unexpected responses block as `resolver_failure`; HTTP 400 is advisory; and HTTP 401/403, network, timeout, rate-limit, or 5xx failures record `validation_skipped`. |
+| 1 | Resolver readiness | Check supplied Set Codes and calendar names with the declared read-only GETs. No matches or malformed results stop processing. An unavailable check may be skipped only when the required value was already supplied. A Set Name or unspecified set must resolve completely to one distinct SetCode; missing, ambiguous or unavailable resolution stops processing. See Reference Lookups. |
 
 ## Design Rules
+
+A blank Required Lookup leaves the local package, field-contract, baseline,
+and approval checks in the rule fully enforced; no reference lookup is required.
 
 | Applies When | Severity | Required Lookup | Blocking Condition | Recommendation | Fix Allowed? |
 |---|---|---|---|---|---|
 | Always | Blocker | | The archive is not the exact AP_MANAGE_PAYMENT_TERMS task package or the header/node contract differs from its template. | Rebuild from the exact task template. | Yes |
-| A child update is requested | Blocker | Fresh current-data export | The archive omits the matching `AP_TERM_HEADER` row for an `AP_TERM_LINE` or `AP_TERM_HEADER_TRANSLATION` update. | Include the parent header in the same archive and blank its audit fields. | Yes |
+| A child create or update is requested | Blocker | | The archive omits the matching `AP_TERM_HEADER` row for an `AP_TERM_LINE`, `AP_TERM_SUBSCRIPTION`, or `AP_TERM_HEADER_TRANSLATION` create or update, or changes an unchanged supporting parent. | Include each matching parent once; use the unchanged fresh-baseline header with audit fields blank unless an explicit header operation supplies it. Block generation when no parent is available. | Yes |
 | Calendar is used | Conditional blocker | validate_payables_calendar | Zero rows (`not_found`) or a malformed/unexpected response (`resolver_failure`) | Stop before ZIP/import. One or more rows corroborate only; HTTP 400 is advisory and availability failures are skipped. | Yes |
 | SetCode is used | Conditional blocker | validate_set_code | Zero rows (`not_found`) or a malformed/unexpected response (`resolver_failure`) | Stop before ZIP/import. One or more rows corroborate only; HTTP 400 is advisory and availability failures are skipped. | Yes |
+| A new payment-term header is created | Blocker | | No matching `AP_TERM_LINE` create exists in the same package, including for a disabled header. Assignments and translations do not satisfy this rule. | Stop with `AP_AT_LEAST_ONE_CHILD` before preview/ZIP generation and ask for installment details. Existing-parent changes do not require another installment. | No automatic installment creation |
 | Payment Term active dates | Blocker |  | A date is malformed or `EndDateActive` precedes `StartDateActive` | Correct the date value or range before package generation. | Yes |
 | Payment Term Rank | Blocker |  | Rank is not a whole numeric value, exceeds 18 digits, or duplicates another Payment Term Rank in the global fresh-export collection | Correct the Rank before package generation; do not scope the comparison by Set Code or invent a positive/minimum range. | Yes |
 | Payment Term due basis | Blocker |  | A line has neither or both of `DuePercent` and `DueAmount`; a term mixes bases; percentage lines do not total 100; or amount lines omit an explicit zero-amount line | Correct the requested line collection before package generation. | Yes |
@@ -32,8 +36,23 @@
 | validate_payables_calendar | AP_TERM_LINE.Calendar is used | Calendar name | ora_reference_lookups.md |
 | validate_set_code | AP_TERM_SUBSCRIPTION.SetCode is used | Submitted reference data set code | ora_reference_lookups.md |
 
+## Set Resolution
+
+Use the rules in [Reference Lookups](ora_reference_lookups.md) before creating
+the package. Keep explicit codes unchanged. Resolve names and unspecified sets
+to one distinct code, and show the mapping in the preview. Stop on missing,
+multiple, incomplete, or conflicting results. Do not pick another set to get
+past a failed check. CSV keys must contain SetCode, never SetName.
+
 ## Task Nodes
 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|
 | DESIGN.ENFORCE | step | 60 | design_enforcement | success->PAYTERM.EXECUTION_GATE;failure->ERROR.BLOCK | DEFAULT.APPLY | stop | Always |
+
+The task-node flow is **Input → Dependencies → Calendar lookup → Set lookup → Defaults → Design → Execution gate**.
+The calendar and set lookups follow dependency checks, including the documented
+advisory-unavailable routes. `DEFAULT.APPLY` supplies omitted create-header values
+for EnabledFlag, Type (`STD`), and StartDateActive before design checks, as specified
+in `ora_defaulting_rules.md`. Each node is defined once in its owning resource file;
+the generated registry connects them.

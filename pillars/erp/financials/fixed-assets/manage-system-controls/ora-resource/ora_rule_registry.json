@@ -22,33 +22,8 @@
           "applies_when": "Enterprise Name is supplied",
           "source": {
             "file": "ora_input_validation.md",
-            "anchor": "field-validation",
-            "line": 11
-          },
-          "readiness": {
-            "status": "ready",
-            "blocking_reasons": []
-          }
-        },
-        {
-          "id": "SYS.RESOLVE_DEPENDENCIES",
-          "node_type": "decision",
-          "sequence": 38,
-          "action_type": "resolve_dependency",
-          "execution_route": "local",
-          "transitions": {
-            "ready": "SYS.PRESENT_REFERENCE_PREVIEW",
-            "blocked": "SYS.HANDLE_DEPENDENCY"
-          },
-          "prerequisites": [
-            "SYS.COLLECT_CREATE_INPUTS"
-          ],
-          "on_failure": "stop",
-          "applies_when": "Existing System Controls absence is confirmed and creation inputs are valid",
-          "source": {
-            "file": "ora_dependency_readiness.md",
-            "anchor": "dependency-rules",
-            "line": 10
+            "anchor": "task-nodes",
+            "line": 68
           },
           "readiness": {
             "status": "ready",
@@ -73,8 +48,8 @@
           "applies_when": "Enterprise Name is valid",
           "source": {
             "file": "ora_reference_lookups.md",
-            "anchor": "live-lookups",
-            "line": 9
+            "anchor": "task-nodes",
+            "line": 130
           },
           "readiness": {
             "status": "ready",
@@ -98,8 +73,8 @@
           "applies_when": "Existing System Controls absence is confirmed",
           "source": {
             "file": "ora_input_validation.md",
-            "anchor": "field-validation",
-            "line": 11
+            "anchor": "task-nodes",
+            "line": 69
           },
           "readiness": {
             "status": "ready",
@@ -110,7 +85,7 @@
           "id": "SYS.DONE_READ_ONLY",
           "node_type": "terminal",
           "sequence": 36,
-          "action_type": "present_read_only_state",
+          "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
           "prerequisites": [
@@ -119,9 +94,34 @@
           "on_failure": "continue",
           "applies_when": "One exact Enterprise Name row already exists",
           "source": {
-            "file": "ora_reference_lookups.md",
-            "anchor": "existing-state-boss-lookup",
-            "line": 16
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 39
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "SYS.RESOLVE_DEPENDENCIES",
+          "node_type": "decision",
+          "sequence": 38,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "SYS.PRESENT_REFERENCE_PREVIEW",
+            "blocked": "SYS.HANDLE_DEPENDENCY"
+          },
+          "prerequisites": [
+            "SYS.COLLECT_CREATE_INPUTS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Existing System Controls absence is confirmed and creation inputs are valid",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 30
           },
           "readiness": {
             "status": "ready",
@@ -132,7 +132,7 @@
           "id": "SYS.PRESENT_REFERENCE_PREVIEW",
           "node_type": "decision",
           "sequence": 39,
-          "action_type": "render_reference_validation_preview",
+          "action_type": "evaluate_result",
           "execution_route": "local",
           "transitions": {
             "complete": "SYS.APPLY_DEFAULTS",
@@ -145,8 +145,8 @@
           "applies_when": "The System Controls create path is confirmed",
           "source": {
             "file": "ora_reference_lookups.md",
-            "anchor": "mandatory-reference-validation-preview-gate",
-            "line": 79
+            "anchor": "task-nodes",
+            "line": 131
           },
           "readiness": {
             "status": "ready",
@@ -170,8 +170,8 @@
           "applies_when": "Confirmed create path and export metadata are resolved",
           "source": {
             "file": "ora_defaulting_rules.md",
-            "anchor": "standard-defaults",
-            "line": 3
+            "anchor": "task-nodes",
+            "line": 22
           },
           "readiness": {
             "status": "ready",
@@ -195,8 +195,8 @@
           "applies_when": "Defaults and lookup results are available",
           "source": {
             "file": "ora_design_enforcement.md",
-            "anchor": "design-rules",
-            "line": 3
+            "anchor": "task-nodes",
+            "line": 21
           },
           "readiness": {
             "status": "ready",
@@ -220,8 +220,8 @@
           "applies_when": "A reviewed package is proposed for import",
           "source": {
             "file": "ora_error_handling.md",
-            "anchor": "refusal-rules",
-            "line": 22
+            "anchor": "task-nodes",
+            "line": 40
           },
           "readiness": {
             "status": "ready",
@@ -238,15 +238,14 @@
             "handled": "SYS.ISSUES"
           },
           "prerequisites": [
-            "SYS.VALIDATE_INPUT",
-            "SYS.COLLECT_CREATE_INPUTS"
+            "SYS.VALIDATE_INPUT"
           ],
           "on_failure": "stop",
           "applies_when": "Identity or creation input is invalid",
           "source": {
             "file": "ora_error_handling.md",
-            "anchor": "failure-classes",
-            "line": 3
+            "anchor": "task-nodes",
+            "line": 41
           },
           "readiness": {
             "status": "ready",
@@ -269,8 +268,8 @@
           "applies_when": "A prerequisite is unresolved",
           "source": {
             "file": "ora_error_handling.md",
-            "anchor": "failure-classes",
-            "line": 3
+            "anchor": "task-nodes",
+            "line": 42
           },
           "readiness": {
             "status": "ready",
@@ -293,8 +292,8 @@
           "applies_when": "Lookup evidence is missing or ambiguous",
           "source": {
             "file": "ora_error_handling.md",
-            "anchor": "failure-classes",
-            "line": 3
+            "anchor": "task-nodes",
+            "line": 43
           },
           "readiness": {
             "status": "ready",
@@ -317,8 +316,8 @@
           "applies_when": "A design rule blocks the request",
           "source": {
             "file": "ora_error_handling.md",
-            "anchor": "failure-classes",
-            "line": 3
+            "anchor": "task-nodes",
+            "line": 44
           },
           "readiness": {
             "status": "ready",
@@ -341,8 +340,8 @@
           "applies_when": "Import approval is missing",
           "source": {
             "file": "ora_error_handling.md",
-            "anchor": "refusal-rules",
-            "line": 22
+            "anchor": "task-nodes",
+            "line": 45
           },
           "readiness": {
             "status": "ready",
@@ -363,8 +362,8 @@
           "applies_when": "Package is ready for approved import",
           "source": {
             "file": "ora_error_handling.md",
-            "anchor": "disclosure-rules",
-            "line": 15
+            "anchor": "task-nodes",
+            "line": 46
           },
           "readiness": {
             "status": "ready",
@@ -383,8 +382,8 @@
           "applies_when": "Any validation, lookup, dependency, design, or approval issue",
           "source": {
             "file": "ora_error_handling.md",
-            "anchor": "failure-classes",
-            "line": 3
+            "anchor": "task-nodes",
+            "line": 47
           },
           "readiness": {
             "status": "ready",

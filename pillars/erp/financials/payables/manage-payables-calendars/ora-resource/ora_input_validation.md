@@ -39,4 +39,44 @@
 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|
-| CALENDAR.VALIDATE_INPUT | step | 10 | validate_input | valid->CALENDAR.ENFORCE_DESIGN;invalid->CALENDAR.INPUT_BLOCKED | none | stop | Always |
+| CALENDAR.VALIDATE_INPUT | step | 10 | validate_input | valid->CALENDAR.CHECK_LOCAL_VALUES;invalid->CALENDAR.INPUT_BLOCKED | none | stop | Always |
+
+## Supporting Parent Validation
+
+For every period create or update, include its matching calendar header once
+in the same FSM archive. Match both CalendarName and CalendarType.
+
+- Existing calendar, no requested header change: copy its header from the fresh
+  current-data baseline without changing any business value.
+- Existing calendar, requested header change: use that baseline header and apply
+  only the permitted changes the user requested.
+- New calendar: include the explicitly requested calendar create row with the
+  required values. Do not invent a calendar to satisfy a period request.
+- Calendar absent from the baseline and no explicit calendar create: stop and
+  ask the user to identify an existing calendar or request a new calendar.
+
+Leave audit fields blank in all import rows. Preserve calendar dates when
+converting the export date format to the import date format. Reject missing
+parents, unrequested changes to supporting headers, and populated audit fields.
+Other existing periods do not need to be copied into the candidate. For an
+uploaded ZIP, require the header inside that ZIP; validation does not add it.
+Validate all uploaded rows together so overlapping period creates and duplicate
+year/period-number pairs are rejected when the header is unchanged, updated, or
+newly created. For both user requests and uploaded ZIPs, compare requested
+periods with each other and with retained baseline periods. Within the same
+Calendar Name and Calendar Type, two periods cannot use the same year and
+period number, even when their dates do not overlap.
+
+## Explicit Clears and Final Period Dates
+
+For an existing record, a populated description changed to blank is a requested
+clear. Apply the same validation to NLP input and uploaded ZIPs. Blank optional
+cells on new records remain omitted; required-field checks still apply.
+
+Apply all requested period creates and updates to the fresh baseline before
+checking for overlapping dates. Compare the final periods within the same
+Calendar Name and Calendar Type, including periods left unchanged. Reject an
+overlap involving a requested period, even when periods have different years.
+A shared start/end date counts as an overlap. Use the final dates when another
+period moves in the same batch. Existing overlaps between two unchanged periods
+do not block an unrelated change.

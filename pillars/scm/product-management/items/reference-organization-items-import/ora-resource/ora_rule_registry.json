@@ -1,0 +1,255 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "CUSTOM_EGP_FBDI_IMPORT_REF_ORG_ITEMS",
+      "task_name": "Reference Organization Items Import",
+      "start_node": "REF_ORG_ITEMS.CHECK_ITEM_INDEX",
+      "nodes": [
+        {
+          "id": "REF_ORG_ITEMS.CHECK_ITEM_INDEX",
+          "node_type": "decision",
+          "sequence": 1,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "available": "REF_ORG_ITEMS.DEFAULT_MODE",
+            "index_remediation_required": "REF_ORG_ITEMS.INDEX_REMEDIATION_REQUIRED",
+            "failure": "REF_ORG_ITEMS.FAILED"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Before preparation, run verify_item_search_index_readiness; at Task Hook verify the same-validation-cycle retained result.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 42
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "REF_ORG_ITEMS.DEFAULT_MODE",
+          "node_type": "step",
+          "sequence": 2,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "REF_ORG_ITEMS.VALIDATE_FBDI",
+            "invalid": "REF_ORG_ITEMS.FAILED"
+          },
+          "prerequisites": [
+            "REF_ORG_ITEMS.CHECK_ITEM_INDEX"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Resolve explicit Import Mode or apply ORA_REF_ORG_ASSGN_BOM_COMMON when omitted; return the validated code in the Core rule result; Core owns deployed BO configuration; RESOLVE_CONTEXT evaluates its returned preflight evidence.",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 33
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "REF_ORG_ITEMS.VALIDATE_FBDI",
+          "node_type": "step",
+          "sequence": 3,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "REF_ORG_ITEMS.RESOLVE_CONTEXT",
+            "invalid": "REF_ORG_ITEMS.FAILED"
+          },
+          "prerequisites": [
+            "REF_ORG_ITEMS.DEFAULT_MODE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Validate captured source, mode, template, populated sheets, Batch ID and CSV member contract, from Core captured nativeSources or its final immutable native ZIP; include validated Batch ID in the ordered rule-result evidence.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 42
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "REF_ORG_ITEMS.RESOLVE_CONTEXT",
+          "node_type": "step",
+          "sequence": 4,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "verified": "REF_ORG_ITEMS.CONFIRM_DEPENDENCIES",
+            "blocked": "REF_ORG_ITEMS.FAILED"
+          },
+          "prerequisites": [
+            "REF_ORG_ITEMS.VALIDATE_FBDI"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Resolve supplied business scope and evaluate Core-returned BO preflight evidence against the bound source and task; retain the validated batch and requested mode intent without inspecting BO configuration.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 43
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "REF_ORG_ITEMS.CONFIRM_DEPENDENCIES",
+          "node_type": "step",
+          "sequence": 5,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "REF_ORG_ITEMS.VALIDATE_SCOPE",
+            "blocked": "REF_ORG_ITEMS.FAILED"
+          },
+          "prerequisites": [
+            "REF_ORG_ITEMS.RESOLVE_CONTEXT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Require both resolved prerequisite results to pass; missing or conflicting business/route evidence blocks preview; environment checks remain with core.",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 26
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "REF_ORG_ITEMS.VALIDATE_SCOPE",
+          "node_type": "step",
+          "sequence": 6,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "REF_ORG_ITEMS.HANDOFF_GATE",
+            "invalid": "REF_ORG_ITEMS.FAILED"
+          },
+          "prerequisites": [
+            "REF_ORG_ITEMS.CONFIRM_DEPENDENCIES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Confirm effective organization/structure scope matches resolved mode and intended request.",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 33
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "REF_ORG_ITEMS.HANDOFF_GATE",
+          "node_type": "decision",
+          "sequence": 7,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "REF_ORG_ITEMS.READY_FOR_LOADER",
+            "blocked": "REF_ORG_ITEMS.FAILED"
+          },
+          "prerequisites": [
+            "REF_ORG_ITEMS.VALIDATE_SCOPE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Require complete captured native-source, dependency, Core-returned BO routing and scope results; return to the selected Core workflow for final preview and approval.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 47
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "REF_ORG_ITEMS.READY_FOR_LOADER",
+          "node_type": "terminal",
+          "sequence": 8,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "REF_ORG_ITEMS.HANDOFF_GATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return passed task rules to core; this neither approves upload nor claims completed import.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 48
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "REF_ORG_ITEMS.FAILED",
+          "node_type": "terminal",
+          "sequence": 9,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "continue",
+          "applies_when": "Return issues and safe next action without submission.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 49
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "REF_ORG_ITEMS.INDEX_REMEDIATION_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 10,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "REF_ORG_ITEMS.CHECK_ITEM_INDEX"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Unknown Item Index; return remediation handoff to Product Management orchestration without continuing this import.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 50
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

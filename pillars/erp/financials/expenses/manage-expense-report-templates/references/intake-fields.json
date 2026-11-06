@@ -1,5 +1,5 @@
 {
-  "schema_version": "3.0",
+  "schema_version": "3.1",
   "source_layout": "ManageExpenseReportTemplateSeparateSheets_Blank - V3.xlsx",
   "sections": [
     {
@@ -378,10 +378,19 @@
           ],
           "requiredFor": "optional",
           "nullable": true
+        },
+        {
+          "label": "Expense Type Account",
+          "key": "account_number",
+          "kind": "text",
+          "maximum": 25,
+          "note": "Optional account number, entered as text to preserve leading zeros. The Business Unit primary ledger is resolved automatically. Blank Edit preserves; blank Create is unset. Clearing is not supported.",
+          "requiredFor": "optional",
+          "nullable": false
         }
       ],
       "sheet_name": "Expense Types",
-      "description": "Add one row per expense type. Template Name must identify one parent template; Business Unit is inherited from it. Accounts and tax values are imported as null, and Projects is imported as Disabled. The fresh target export determines the operation: an existing Business Unit + Template Name + Expense Type Name is updated; an absent combination is created.\nFor a new expense type, enter the identity, all † fields, and applicable ‡ values; optional blanks mean no value. For an existing expense type, blank values preserve the target value, entered values update it, and Clear removes an optional, nullable value. For field behaviors, No override restores the template setting and Blank is treated exactly as an empty cell."
+      "description": "Add one row per expense type. Template Name identifies one parent; Business Unit is inherited from it. Expense Type Account accepts the account number as text; the primary ledger is resolved automatically. Tax values remain null and Projects Disabled. A fresh target export determines Create or Edit.\nFor a new type, enter the identity, all † fields, and applicable ‡ values. Existing-record blanks preserve target values. Clear removes a nullable value. No override restores the template field behavior; Blank is an empty cell."
     },
     {
       "key": "itemizations",

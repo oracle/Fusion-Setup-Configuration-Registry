@@ -21,7 +21,7 @@ algorithm. All responses follow Disclosure Rules, and continuation follows
 | Fiscal-year name/cycle conflict | State the observed boundary-month mismatch, including mixed month pairs when present, and ask for a corrected name or cycle. |
 | Fiscal-year boundary or non-null midpoint evidence is malformed, out of range, or conflicting | Identify the affected fiscal-year evidence and ask for its setup to be checked. |
 | Returned fiscal-year sequence has a gap or overlap | State the observed missing period or overlap and ask for that Fiscal Year Name's setup to be checked. |
-| Date generation, fallback, or integrity fails | Identify the normalized basis, affected fiscal-year range, and observed failure. Apply the User-supplied dates rule in [Field Validation](ora_input_validation.md#field-validation). |
+| Date generation, fallback, or integrity fails | Identify the normalized basis, affected fiscal-year range, and observed failure. Preserve supplied values and use [Design Rules](ora_design_enforcement.md#design-rules) to distinguish a genuine conflict from remaining unused fiscal-year coverage. |
 | Existing-ZIP basis resolution fails | Report the resolution gap during Task Hook validation and apply the Immutable artifact rule in Design Enforcement. |
 | Validation export is missing or stale | Resume automatic verification through the shared export route. Reuse an existing process instead of starting a duplicate. On terminal failure, explain why checking existing conventions failed from the returned evidence. |
 | Reference Data Set name is valid but code mapping fails | Use the validity result from validate_reference_data_set_name in [Live Lookups](ora_reference_lookups.md#live-lookups); explain why the code could not be determined, stop preparation, and ask for the Reference Data Set setup to be checked. |
@@ -30,7 +30,7 @@ algorithm. All responses follow Disclosure Rules, and continuation follows
 | Existing-ZIP route changed or replaced the archive | Discard the rebuilt path and resume Core validation with the original archive. |
 | Prepared package fidelity fails | Retain approved configuration and report one package-correction action, not a submission-approval prompt. |
 | Shared export, ZIP preparation, upload, import, or result check fails, remains unfinished, or completes partly | Use the existing owner from Parent Workflow Continuation or SKILL.md, then translate its returned outcome through Disclosure Rules. Do not add an executor, retry policy, or approval gate. |
-| Fusion reports gaps/overlaps after a sorted copy passed coverage | Check Actual package row order in Design Enforcement and obtain a fresh same-target export to check exact parent/detail state before a correction. Do not infer fiscal-year setup gaps from that message alone. Preserve the failed archive and approved business values; corrections use existing parent gates. Describe an ordering defect as locally verified, not server-side recovery until a corrected approved import succeeds. |
+| Fusion reports gaps/overlaps after a sorted copy passed coverage | Check Actual package row order in Design Enforcement and use the declared live existing-convention lookup to check exact parent/detail state before a correction. Do not infer fiscal-year setup gaps from that message alone. Preserve the failed archive and approved business values; corrections use existing parent gates. Describe an ordering defect as locally verified, not server-side recovery until a corrected approved import succeeds. |
 
 ## Parent Import Handoff
 
@@ -50,7 +50,7 @@ For preview field labels, use
 | Gate | What Must Be Shown |
 |---|---|
 | All user-facing responses | Use concise plain business language. Fusion and ZIP are acceptable; keep API/BOSS/FSM/HTTP/OAuth, resolver/schema/Task Hook terminology, technical field names, internal paths, error codes, request IDs, retry counts, CSV/XML details, raw errors, and stack traces out of replies. Preserve business values and usable ZIP links. |
-| Inherited report wording | This task's plain-language requirement overrides directions to echo helper reports or identifiers verbatim. Retain the original report internally; render its business outcome, counts, warnings, approvals, and deliverable links. This changes presentation only, not execution or approvals, and adds no diagnostic artifacts. |
+| Inherited report wording | Core Data Loader owns its approval preview and accepted-initiation report; preserve those required outputs. Keep task explanations concise and include actionable diagnostics and requested deliverable links. |
 | Failed or blocked operation | State what could not complete, the observed reason, what is known about the outcome, and one safe next action. Use the owning task/parent/Core evidence; never invent a cause or replace a known reason with a generic blocked message. If no usable reason is available, say so and suggest the appropriate support action. |
 | Unfinished, partial, or uncertain outcome | Distinguish failure, running work, a check that did not finish, partial completion, and unknown completion. Do not claim success, no submission, or unchanged Fusion configuration without verification. Use the owner's safe status/recovery action under Conversation State and Resume. |
 | Post-import handoff | Owner: Fixed Assets parent and `core.data-loader`; state: `accepted — pending parent verification`; immutable archive fingerprint, target, requested prorate convention name and fiscal-year scope, and request ID. |
@@ -62,7 +62,7 @@ For preview field labels, use
 
 | Situation | What Must Not Happen |
 |---|---|
-| Connectivity/authentication blocks live evidence | Do not offer a user-provided export ZIP as a substitute for required live lookup/existing-state validation or the declared create/update export-acquisition route. |
+| Connectivity/authentication blocks live evidence | Do not offer a user-provided export ZIP as a substitute for required live lookup/existing-state validation or the declared create/update export-acquisition route. For update date retrieval, resolve_existing_prorate_dates explicitly requires a fresh skill-acquired export directly, without a BOSS date request. |
 | Only business intake is complete | Do not claim the convention details are correct and complete before all applicable lookups and fresh same-target export dependencies succeed. |
 | Submitted import without verified matching target state | Do not report the prorate convention as created solely because an archive was accepted or a related job succeeded. |
 
@@ -70,7 +70,7 @@ For preview field labels, use
 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|
-| PRC.DONE_EXISTS | terminal | 43 | terminal | none | PRC.RESOLVE_PACKAGE | continue | Equivalent existing convention; report reuse/no package through Parent Workflow Handoff in ora_dependency_readiness.md. |
+| PRC.DONE_EXISTS | terminal | 43 | terminal | none | PRC.LOOKUP_CONTEXT | stop | Create-name conflict: report Convention name already exists and ask only for a different Name. No equivalence claim, package preparation, or submission. |
 | PRC.DONE_FISCAL_YEARS | terminal | 44 | terminal | none | PRC.LOOKUP_CONTEXT | continue | Complete nonempty inquiry finding; report the read-only result through Parent Workflow Handoff in ora_dependency_readiness.md. |
 | PRC.HANDLE_INPUT | step | 45 | error_handler | handled->PRC.ISSUES | PRC.VALIDATE_INPUT | stop | Input is missing or invalid; use Error Situations. |
 | PRC.HANDLE_LOOKUP | step | 50 | error_handler | handled->PRC.ISSUES | PRC.LOOKUP_CONTEXT | stop | An applicable lookup is invalid, unresolved, or failed; use Error Situations. |

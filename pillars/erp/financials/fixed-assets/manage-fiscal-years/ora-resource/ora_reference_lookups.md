@@ -60,7 +60,7 @@ System Controls start-year default first when needed. When the requester
 supplied a Fiscal Year Name, complete its exact-name existing-state check
 before showing the equivalent list and requesting the reuse-or-create-new
 decision. When no name was supplied, mark that exact-name check not
-applicable. Do not create a preview or begin package work before the decision.
+applicable. If the create-new decision supplies a name that was not checked or changes the candidate name, run resolve_existing_fiscal_year for that exact selected name after the decision and before defaults or preview. Require confirmed absence for create-new; an existing or ambiguous selected name blocks creation. Do not create a preview or begin package work before the decision.
 ## BOSS Verification and Expected Outcomes
 
 Use `assetFiscalYearDatesView` as the authoritative pre-submission check.

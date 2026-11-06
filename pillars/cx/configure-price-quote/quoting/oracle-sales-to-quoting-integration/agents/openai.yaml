@@ -1,0 +1,4 @@
+interface:
+  display_name: "Configure Oracle Sales to Quoting Integration"
+  short_description: "Create and verify CPQ Integration Center connections through IntegrationVendors Data Loader."
+  default_prompt: "Use $configure-oracle-sales-to-quoting-integration to stage the FusionSales CRM connection through IntegrationVendors Data Loader with the active Fusion host, FDOS_CREDENTIAL_REQUIRED placeholders, and enabled=false. After each approved initiation is accepted, return Core's initiation report and stop; do not poll automatically. Retrieve status and errors through Core only on a later explicit user request. After confirmed load success and user-managed credential entry and enablement in Integration Center, stage Fusion Account Integration the same way. Verify both connections only after their successful loads and user-managed enablement. Validate each archive, complete Task Hook validation, and request approval separately before each load."

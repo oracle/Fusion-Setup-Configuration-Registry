@@ -5,7 +5,7 @@
 | Sequence | Dependency | What Must Happen |
 |---|---|---|
 | 1 | Plant organization access | The authenticated user must have access to the resource organization before a create or program-file association. |
-| 2 | Resource prerequisites | The organization, resource type, UOM, and resource identity must pass validation before a resource is created or updated. |
+| 2 | Resource prerequisites | On create, the organization, resource type, UOM, and resource identity must pass validation. On PATCH, resolve the existing target and validate applicable prerequisites for the explicitly supplied changes; unchanged create fields need not be resupplied. |
 | 3 | Instance prerequisites | The parent resource must be active and of the matching type before a labor or equipment instance is changed. |
 | 4 | Association prerequisites | A primary work center must be assigned to the parent resource; an equipment asset must satisfy the documented plant and work-center eligibility rules. |
 | 5 | Automation prerequisites | Robotics must be enabled and the parent equipment resource must have AutomationEquipmentFlag set before associating a program file. |

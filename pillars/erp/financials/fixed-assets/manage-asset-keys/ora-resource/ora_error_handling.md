@@ -19,9 +19,13 @@ After a prerequisite change, obtain fresh structure, value-set, and
 existing-combination evidence for the retained parent batch. Batch optimization
 does not bypass the separate immutable-artifact approval gate.
 
-This skill ends at `validated_for_import`. `core.data-loader` owns approval,
-submission, polling, FSM ProcessLog retrieval, target-state verification, and
-any routing to a dependent task.
+This skill ends at `validated_for_import`. The calling workflow follows the
+parent Fixed Assets approval gates and uses `core.data-loader` for submission.
+After acceptance, hand the target, immutable archive identity, request ID, and
+child-specific verification criteria to the Fixed Assets parent. The parent
+routes status and ProcessLog retrieval through `core.data-loader`, applies
+fresh target-state verification, shows the Post-Execution Verification Preview,
+and controls dependent-task progression.
 
 ## Error Classifications
 
@@ -56,8 +60,8 @@ collect fresh references and existing combinations for the retained parent batch
 This graph returns read-only validation findings to the calling workflow.
 VALIDATED means validated_for_import for the current stage, never a successful
 Fusion import. Approval is not required to run Task Hook validation.
-`core.data-loader` owns subsequent approval, submission, polling, ProcessLog
-retrieval, target-state verification, and post-import routing. The task
+Subsequent approval, submission, and accepted-import handoff follow the
+parent-owned continuation defined in Prerequisite Continuation above. The task
 template/spec export starts
 only at `MAK.PREPARE_ARCHIVE`, after the design node passes. Before calling
 `shared.setup-export.task-level-export`, verify the ordered rule-result record.
@@ -70,14 +74,14 @@ reference, dependency, operation, default, and design nodes respectively.
 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---:|---:|---|---|---|---|---|
-| MAK.PREPARE_ARCHIVE | step | 60 | archive_preparation | prepared->MAK.IMPORT_GATE;blocked->MAK.HANDLE_READINESS | MAK.ENFORCE_DESIGN | stop | Verify the completed validation sequence, then obtain and inspect the template/spec package for the immutable FSM artifact. |
+| MAK.PREPARE_ARCHIVE | step | 60 | execution_gate | prepared->MAK.IMPORT_GATE;blocked->MAK.HANDLE_READINESS | MAK.ENFORCE_DESIGN | stop | Verify the completed validation sequence, then obtain and inspect the template/spec package for the immutable FSM artifact. |
 | MAK.IMPORT_GATE | decision | 70 | execution_gate | ready->MAK.VALIDATED;incomplete->MAK.HANDLE_READINESS | MAK.PREPARE_ARCHIVE | stop | Read-only design validation and immutable archive preparation are complete. Approval is owned by the surrounding Data Loader workflow. |
 | MAK.HANDLE_INPUT | step | 80 | error_handler | handled->MAK.ISSUES | MAK.VALIDATE_INPUT | stop | Input is invalid. |
 | MAK.HANDLE_DEPENDENCY | step | 90 | error_handler | handled->MAK.ISSUES | MAK.CHECK_DEPENDENCIES | stop | A dependency is blocked or ambiguous. |
 | MAK.HANDLE_OPERATION_DECISION | step | 95 | error_handler | decision_requested->MAK.OPERATION_DECISION_REQUIRED | MAK.RESOLVE_OPERATION | stop | An existing exact key conflicts with the requested operation. |
 | MAK.HANDLE_LOOKUP | step | 100 | error_handler | handled->MAK.ISSUES | MAK.RESOLVE_REFERENCES | stop | A required reference cannot resolve. |
 | MAK.HANDLE_DESIGN | step | 110 | error_handler | handled->MAK.ISSUES | MAK.ENFORCE_DESIGN | stop | A design rule blocks the request. |
-| MAK.HANDLE_READINESS | step | 120 | error_handler | handled->MAK.ISSUES | MAK.PREPARE_ARCHIVE or MAK.IMPORT_GATE | stop | Validation evidence, archive guard, template package, or immutable artifact required at this stage is incomplete. |
+| MAK.HANDLE_READINESS | step | 120 | error_handler | handled->MAK.ISSUES | MAK.ENFORCE_DESIGN | stop | Validation evidence, archive guard, template package, or immutable artifact required at this stage is incomplete. |
 | MAK.VALIDATED | terminal | 130 | terminal | none | MAK.IMPORT_GATE | stop | Return validated_for_import for the current validation scope; no approval, submission or Fusion completion is implied. |
 | MAK.ISSUES | terminal | 140 | terminal | none | none | stop | A request stopped for correction, dependency, lookup, design, approval, or process issue. |
 | MAK.OPERATION_DECISION_REQUIRED | terminal | 145 | terminal | none | none | stop | No artifact or import is permitted until the requester explicitly selects Create-new or Update-existing. |

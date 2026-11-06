@@ -2,12 +2,19 @@
 
 ## Standard Defaults
 
+For creation, use supplied business values first and default only missing
+values. Source new values from these skill rules and declared live reference
+checks; never copy or derive them from exported CSV data rows.
+
 | Field | Internal | Default Value | Applies When | Override User Value? | Resolver |
 |---|---|---|---|---|---|
 | Reference Data Set | No | Enterprise Set | Omitted during create preparation; preserve the existing selection on updates | No; keep an explicit selection | validate_reference_data_set_name |
-| Description | No | Exact Prorate Convention Name for create only. For update, preserve the existing Description when the request omits Description. | Description is absent or blank during create preparation; update preparation uses the exact current parent row from resolve_existing_prorate_parent | No; keep a supplied Description | resolve_existing_prorate_parent for update |
-| Prorate day position | No | First day | Input validation resolves Monthly or Following month without a first-day, mid-month, or last-day qualifier | No; keep the supported day position resolved by input validation | |
-| DeprWhenAcquiredFlag | No | No for a create; preserve the value returned by resolve_existing_prorate_parent for an update | Depreciate when placed in service is omitted during create or update preparation | No; keep a supplied Yes or No and use the export-proven representation | resolve_existing_prorate_parent |
+| Description | No | Human-readable sentence-case form of Prorate Convention Name | Description is omitted for a new definition | No; keep a supplied Description | |
+| Prorate day position | No | First day | Monthly or Following month has neither a supplied prorate date nor a day qualifier | No; supplied values take priority | |
+| Depreciate when placed in service | No | No for create and update; do not derive it from the BOSS Boolean | The business flag is omitted | No; keep supplied Yes/No or Y/N | |
+| Business date format | Yes | YYYY/MM/DD for business date fields; preview dates remain MM/DD/YYYY | Preparing business date cells; never infer format from exported values | No; format the date without changing it | |
+| Depreciate when placed in service format | Yes | Yes/Y maps to YES. No/N maps to NO. Preserve these uppercase values in DeprWhenAcquiredFlag. | Serializing the business flag | No | |
+| Fiscal-year boundary dates | Yes | Leave blank when omitted and preserve supplied values; omit columns absent from the current template | Preparing the parent row; no separate import-acceptance check or customer question is required | No | |
 | Unspecified Convention Info DFF columns | No | Blank for a create; preserve each current value returned by resolve_existing_prorate_parent for an update | Convention Info is absent or omits an export column during create or update preparation | No; never copy values from a different convention | resolve_existing_prorate_parent |
 
 Apply the Enterprise Set default before required-input validation; do not ask the
@@ -37,14 +44,15 @@ without reinterpreting business input. Output supplies prorate_date_rows.
 
 | Topic | Behavior |
 |---|---|
+| Supplied schedule | Preserve supplied starting dates and generate exactly the requested positive whole number of months using actual month lengths and leap years. A first period end date supplies the first EndDate; a first prorate date supplies the first ProrateDate. Derive a missing first StartDate from the source month within verified fiscal-year coverage. Default only missing values; never extend a supplied count automatically. |
 | Input | Consume normalizedFiscalYearRows from resolve_prorate_fiscal_year_range. Process each returned year separately in its supplied order using its own startDate, endDate, and nullable midyearStartDate. Apply Fiscal-year setup preservation in [Design Rules](ora_design_enforcement.md#design-rules). |
 | Monthly and Following month ranges | Enumerate each year's intersecting calendar months in ascending order. StartDate is the later of the fiscal-year start and the month's first day; EndDate is the earlier of the fiscal-year end and the month's last day. Preserve separate clipped rows at a fiscal-year boundary within a month. |
 | Monthly and Following month target | Monthly uses the source row's calendar month; Following month uses the next calendar month, including December-to-January rollover. |
 | Day position | For those two families, First day is day 1, Mid-month is day 15, and Last day is the actual final day of the target month. |
 | Half-year | Emit exactly one full-year tuple per returned fiscal-year interval: StartDate and EndDate are that year's exact boundaries; ProrateDate is its non-null midyearStartDate, otherwise the fallback below. |
 | Half-year null-midpoint fallback | Only when that row's midyearStartDate is null, calculate inclusiveMonthCount as the calendar-month difference between start and end plus one. Add floor(inclusiveMonthCount divided by two) calendar months to that year's startDate, clamping the day only when the target month requires it. |
-| Calendar arithmetic | Use date-only arithmetic without timezone conversion, actual month lengths, and leap years; never fixed-day increments. For Monthly and Following month, do not clip ProrateDate to the generated range: it may precede a clipped StartDate or exceed the fiscal-year end. Half-year's in-range requirement is enforced in Design Rules. |
-| Existing-ZIP basis resolution | Use the archive's exact FiscalYearName and generate six Monthly/Following month candidates and one Half-year candidate separately for each returned fiscal year. A candidate that cannot be derived is not a match; retain its reason when no valid match remains or it was explicitly requested. Compare each candidate with the archive using the tuple-multiset check in Complete per-year coverage under [Design Rules](ora_design_enforcement.md#design-rules). Accept one unique match, or a supplied basis hint selecting one of multiple matches; otherwise return a basis-resolution gap. Apply Design Rules to the matched archive. |
+| Calendar arithmetic | Use date-only calendar arithmetic and advance from the original anchors. Preserve month-end dates: January 31 becomes February 28/29 and then March 31; otherwise clamp the original day only when needed. Never use fixed-day increments. For Monthly and Following month, do not clip ProrateDate to the generated range: it may precede a clipped StartDate or exceed the fiscal-year end. Half-year's in-range requirement is enforced in Design Rules. |
+| Existing-ZIP basis resolution | Preserve the original archive. Compare retained supplied schedule requirements directly when available; otherwise match the supported basis candidates over the archive's requested scope, not unrelated available years. Require a unique match or an explicit basis hint; report ambiguity without rebuilding the ZIP. Apply Design Rules. |
 
 ## Task Nodes
 

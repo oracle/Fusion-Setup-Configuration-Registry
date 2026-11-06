@@ -25,7 +25,7 @@
     "prerequisiteChecks": {
       "evidence": [
         "compiled ora_rule_registry.json readiness=ready",
-        "complete-row create/update preparation policy",
+        "source-required fields and nullable percentage create/update preparation policy",
         "scripts/validate_references.py checks core-fetched target/digest-bound evidence"
       ],
       "limitations": [

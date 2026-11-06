@@ -1,0 +1,204 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "ORA_MANAGE_REGISTRATION_TO_RECEIVE_RECALL_ALERTS",
+      "task_name": "Manage Registration to Receive Recall Alerts",
+      "start_node": "RECALL.REGISTRATION.VALIDATE-INPUT",
+      "nodes": [
+        {
+          "id": "RECALL.REGISTRATION.VALIDATE-INPUT",
+          "node_type": "decision",
+          "sequence": 10,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "RECALL.REGISTRATION.LOOKUP-SITE-START-DATE",
+            "invalid": "RECALL.REGISTRATION.HANDLE-ISSUE"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "A registration import or explicit credential-validation request is made",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 34
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RECALL.REGISTRATION.LOOKUP-SITE-START-DATE",
+          "node_type": "decision",
+          "sequence": 15,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "valid": "RECALL.REGISTRATION.LOOKUP-FEATURE-OPTIN",
+            "missing_or_invalid": "RECALL.REGISTRATION.HANDLE-ISSUE",
+            "lookup_failed": "RECALL.REGISTRATION.HANDLE-ISSUE"
+          },
+          "prerequisites": [
+            "RECALL.REGISTRATION.VALIDATE-INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "A registration import or explicit credential-validation request is made",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 23
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RECALL.REGISTRATION.LOOKUP-FEATURE-OPTIN",
+          "node_type": "decision",
+          "sequence": 17,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "enabled": "RECALL.REGISTRATION.ENFORCE-DESIGN",
+            "disabled": "RECALL.REGISTRATION.HANDLE-ISSUE",
+            "ambiguous_or_failed": "RECALL.REGISTRATION.HANDLE-ISSUE"
+          },
+          "prerequisites": [
+            "RECALL.REGISTRATION.LOOKUP-SITE-START-DATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "A registration import or explicit credential-validation request is made",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 24
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RECALL.REGISTRATION.ENFORCE-DESIGN",
+          "node_type": "decision",
+          "sequence": 20,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "import_ready": "RECALL.REGISTRATION.DONE-IMPORT-PREFLIGHT",
+            "validation_ready": "RECALL.REGISTRATION.DONE-VALIDATION-PREFLIGHT",
+            "blocked": "RECALL.REGISTRATION.HANDLE-ISSUE"
+          },
+          "prerequisites": [
+            "RECALL.REGISTRATION.LOOKUP-FEATURE-OPTIN"
+          ],
+          "on_failure": "stop",
+          "applies_when": "A registration import or explicit credential-validation request is made",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 46
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RECALL.REGISTRATION.HANDLE-ISSUE",
+          "node_type": "step",
+          "sequence": 30,
+          "action_type": "error_handler",
+          "execution_route": "local",
+          "transitions": {
+            "handled": "RECALL.REGISTRATION.RETURN-ISSUES"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Input or design validation is blocked",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 39
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RECALL.REGISTRATION.DONE-IMPORT-PREFLIGHT",
+          "node_type": "terminal",
+          "sequence": 40,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "RECALL.REGISTRATION.ENFORCE-DESIGN"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Import checks passed; core.data-loader owns immutable preview, approval, and import",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 40
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RECALL.REGISTRATION.DONE-VALIDATION-PREFLIGHT",
+          "node_type": "terminal",
+          "sequence": 50,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "RECALL.REGISTRATION.ENFORCE-DESIGN"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Credential-validation checks passed; only the declared REST operation may be executed",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 41
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RECALL.REGISTRATION.RETURN-ISSUES",
+          "node_type": "terminal",
+          "sequence": 60,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Validation issues have been classified and disclosed",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 42
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

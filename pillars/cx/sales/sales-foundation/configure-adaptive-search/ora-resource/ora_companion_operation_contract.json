@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "contract_id": "adaptive-search-companion-operation-v2",
+  "schema_version": "2.0",
+  "description": "Fusion ABO versioned Core Data Loader handoff over the 26.10 persisted-preflight route; public submission/status identity stays schema_version 1.0 for existing ESS consumers.",
+  "handover_version": "2.0",
+  "initialization": {
+    "guidance": "ora_abo_initialization.md",
+    "trigger": "Only Entities exact HTTP 400 {Error: Could not find active meta model}, null response, null items or empty items. Other errors/malformed/nonempty missing-pair catalogs stop.",
+    "request_operation": "submit_initial_full_publish",
+    "status_entry_point": "initialization_status",
+    "status_operation": "get_initial_full_publish_status",
+    "identity_prefix": "afi_",
+    "private_purpose": "adaptive_search_initialization",
+    "publish_type": "full",
+    "entities": [
+      "Account",
+      "Contact",
+      "Lead",
+      "Opportunity",
+      "Revenue",
+      "Activity",
+      "Asset",
+      "Product",
+      "CRMProductGroup"
+    ],
+    "data_loader_required_values": {
+      "RestAction": "POST",
+      "entities": "[\"Account\",\"Contact\",\"Lead\",\"Opportunity\",\"Revenue\",\"Activity\",\"Asset\",\"Product\",\"CRMProductGroup\"]",
+      "publishType": "",
+      "Content-Type": "application/json",
+      "REST-Framework-Version": "9",
+      "Preference": "transient"
+    },
+    "body_fields": [
+      "entities"
+    ],
+    "approval": "Separate two-hour one-use parent Full preparation permission, then independent current Core preview approval on the same Core preflight. Preparation permission cannot submit.",
+    "recovery": "Distinct adaptive-initialization checkpoint; either-stage intents/receipts block new submissions. Confirmed receipt status only; unknown intent is indeterminate, never replayed.",
+    "readiness": "Explicit exact loader success, new pinned publish job success with exact echoed ID, then fresh catalog presence of ConsolidatedAsset and SerializedAsset. Presence not enabled state permits only a new Partial Publish proposal.",
+    "eligible_for_ess": false,
+    "continuation": "Fresh Partial Publish preparation and independent Core approval; existing enabled-entity and ESS gates remain unchanged. Standalone behavior unchanged.",
+    "preparation_entry_point": "prepare_initialization_load"
+  },
+  "data_loader_row": {
+    "business_object": "publish",
+    "required_values": {
+      "RestAction": "POST",
+      "entities": "[\"ConsolidatedAsset\",\"SerializedAsset\"]",
+      "publishType": "selective",
+      "Content-Type": "application/json",
+      "REST-Framework-Version": "9",
+      "Preference": "transient"
+    },
+    "body_fields": [
+      "entities",
+      "publishType"
+    ],
+    "rule": "Validate the embedded API contract and complete row before Core sample generation. Operation/header columns are not REST-body properties. Host checks all six values against Core validated workbook rows before approval; missing or incorrect values stop. Optional surrogate/reference fields are not business payload requirements."
+  },
+  "privacy": {
+    "public_forbidden_fields": [
+      "internal_data_loader",
+      "raw_source",
+      "source_sha256",
+      "archive_sha256",
+      "approval_preview_sha256",
+      "approval_record_ref"
+    ],
+    "rule": "Parent/companion JSON shares opaque operation identity and non-executable business provenance. Core preview/receipt Markdown is relayed unchanged; private IDs are retained only in the companion operation checkpoint."
+  },
+  "identity": {
+    "required": [
+      "schema_version",
+      "handover_version",
+      "operation",
+      "project_id",
+      "target",
+      "entities",
+      "publish_type"
+    ],
+    "target_required": [
+      "environment",
+      "fusion_host"
+    ],
+    "target_rules": {
+      "fusion_host": "HTTPS origin without credentials, path, query or fragment"
+    },
+    "publish_type": "selective",
+    "entities_rule": "Exactly ordered ConsolidatedAsset, SerializedAsset."
+  },
+  "workflow_provenance": {
+    "required": [
+      "project_id",
+      "target",
+      "workflow_approval_fingerprint",
+      "cpq_verification"
+    ],
+    "rule": "Exact v2 parent workflow and completed CPQ load plus business readbacks; provenance is not approval.",
+    "submission_limit": 1
+  },
+  "operations": {
+    "prepare_publish_load": {
+      "required": [
+        "verified_cpq_predecessor",
+        "v2_parent_workflow",
+        "fixed_request"
+      ],
+      "side_effects": "Read-only entity/concurrency checks and canonical workbook values; Core generates the workbook. One Core submission only after independent persisted-preview approval.",
+      "result": {
+        "state": "SUBMITTED",
+        "required": [
+          "publish_operation_id",
+          "project_id",
+          "target",
+          "entities",
+          "publish_type",
+          "status_check_operation"
+        ]
+      }
+    },
+    "get_partial_publish_status": {
+      "required": [
+        "publish_operation_id",
+        "project_id",
+        "target",
+        "entities",
+        "publish_type"
+      ],
+      "explicit_load_status": "True only for an explicit user load-status request; pending stops. Default false never queries Data Loader.",
+      "verified_load_binding": [
+        "request_id",
+        "publish_operation_id",
+        "project_id",
+        "target",
+        "status",
+        "verified_at"
+      ],
+      "job_monitoring": "After exact verified load success, discover/pin new job distinct from baseline. Parent checks once, then offers keep checking every 15 seconds or check later. Repeated bounded exact-job reads require current explicit consent; check-later saves/stops; later status requests check once. Valid RUNNING/PENDING reads continue normally. A status_read_error is distinct from publish pending: stop immediately for auth/authorization failures after Core's single GET refresh attempt, or after three consecutive other read failures; save a resumable checkpoint for the same job. No Data Loader reads on job ticks.",
+      "monitoring_choice_owner": "Fusion ABO parent; single-tick companion status and standalone behavior unchanged",
+      "monitoring_choices": [
+        "continuous",
+        "manual"
+      ],
+      "poll_interval_seconds": 15,
+      "ess_gate": "Both monitoring paths require exact terminal success and enabled fixed entities, then separate exact-payload ESS approval. No ESS submission in this companion."
+    }
+  },
+  "status_result": {
+    "schema_version": "1.0",
+    "states": [
+      "DATA_LOADER_PENDING",
+      "DATA_LOADER_FAILED",
+      "PUBLISH_PENDING",
+      "PUBLISH_RUNNING",
+      "SUCCEEDED",
+      "PUBLISH_FAILED",
+      "CANCELLED",
+      "TIMED_OUT",
+      "BLOCKED",
+      "INDETERMINATE"
+    ],
+    "status_read_error": "Optional sanitized diagnostic for a failed status GET: failure_stage, failure_class, observed_at, and optional HTTP status/provider_error. It does not change the publish state and never makes the operation eligible for ESS.",
+    "monitoring_read_failure_policy": "The parent preserves the last read error and consecutive failure count. Authentication/authorization errors stop continuous monitoring immediately; other read errors stop after three consecutive failures. A successful read clears the count and error. Valid nonterminal publish responses continue under the existing bounded 15-second monitor.",
+    "ess_rule": "eligible_for_ess only after exact terminal job success and final readiness of both fixed entities."
+  },
+  "recovery": {
+    "rule": "Persist intent before upload. After possible submission use exact status/reconciliation; never automatically replay/reprepare. Changed or expired unsubmitted artifacts require fresh validation and approval.",
+    "legacy": "Reject saved prepare/approve commands; identity-valid already-submitted v1 records are status-readable only."
+  },
+  "loader_protocol": {
+    "entry_point": "ABO prepare-adaptive-load -> adaptive_publish_executor.prepare_publish_load",
+    "handoff_version": "26.10.1",
+    "core_entry_point": "core.data-loader workbook, persisted-preflight, submission and status handoffs",
+    "workbook": "Companion returns a versioned generate_workbook handoff with canonical values; Core returns the project-local workbook path and the companion checks exact handoff identity before continuing.",
+    "preflight": "Companion returns prepare_persisted_load for the confirmed workbook, business object, project, Run Book task and authentication reference. Core validates with --preflight-envelope-output and builds the Task Hook preview; the companion checks archive hash, task context and exact finalData before displaying approval.",
+    "structured_results": {
+      "workbook": "handoff_version, handoff_id, status=generated, workbook_path",
+      "preflight": "handoff_version, handoff_id, status=approval_required, source_path, preflight_path, task_validation, task_preview_path, core_approval_markdown",
+      "submission": "handoff_version, handoff_id, state=success, submission_started=true, content_id, request_id, markdown with the same IDs",
+      "status": "handoff_version, handoff_id, request_id, status=SUCCEEDED|PENDING|FAILED|INDETERMINATE, markdown and safe counts"
+    },
+    "rules": "Evaluate ordered Task Hook resources against the exact validated source, six mapped fields and current-stage evidence; no blanket pass.",
+    "preview": "Core creates the exact persisted Task Hook preview; build-load-preview accepts its bound structured result. Optional XLSX link precedes unchanged Core Markdown.",
+    "approval": "Later explicit contextual approval of the current preview digest; preparation permission cannot upload.",
+    "submission": "submit-data-load reserves intent and returns submit_approved_persisted_load; Core approves/verifies the archive and returns its taskValidationEnvelope unchanged, then submits the saved bytes through approved-preflight-envelope exactly once. complete-data-load accepts only a matching correlated Core receipt.",
+    "status": "An explicit user request returns a bound data_load_status handoff for the saved Request ID. The companion accepts only its matching structured Core result before any publish-job lookup.",
+    "timeout": "Core Task Hook preview expires after 30 minutes; preparation permission is a distinct two-hour one-use proposal.",
+    "persistence": "Existing Core immutable archive, preflight and Task Hook envelopes; no credentials or tokens."
+  }
+}

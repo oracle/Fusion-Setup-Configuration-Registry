@@ -271,6 +271,37 @@ def split_verified_noops(changes, baseline):
     return {'changes': remaining, 'already_satisfied': satisfied}
 
 
+def assess_schedule_visibility(changes, baseline):
+    """Predict BU UI selection from complete, reconciled same-target facts.
+
+    No defaults or writes. The assisted caller must resolve inherited outcomes
+    with the user before Task Hook approval; this is not a live UI assertion.
+    """
+    split_verified_noops(changes, baseline)  # Reject ambiguous identities.
+    option = 'ENABLE_AUTO_SUB_DA_EXP'
+    current = {(r['scope'], r['business_unit']): r['value'] for r in baseline
+               if r['entity'] == 'EXM_SETUP_OPTION' and r['code'] == option}
+    proposed = {(r['scope'], r['business_unit']): r['value'] for r in changes
+                if r['entity'] == 'EXM_SETUP_OPTION' and r['code'] == option}
+    units = sorted({r['business_unit'] for r in changes
+                    if r['scope'] == 'BUSINESS_UNIT' and
+                    (r['code'] in SETTING_CODES.values() or r['code'] == option)})
+    results = []
+    for bu in units:
+        key = ('BUSINESS_UNIT', bu)
+        value = proposed.get(key, current.get(key))
+        if key in proposed and value not in {'Y', 'N'}:
+            raise InputError('Explicit auto-submission choice must be Y or N.')
+        inherited = value not in {'Y', 'N'}
+        results.append({'business_unit': bu, 'bu_enablement': value,
+                        'enablement_source': 'explicit_input' if key in proposed else 'baseline',
+                        'schedule_display': 'inherited' if inherited else 'business_unit',
+                        'controls_enabled': value == 'Y',
+                        'requires_user_resolution': inherited,
+                        'live_ui_verified': False})
+    return results
+
+
 def inspect_aliases(metadata_xml, *, changed_entities=None):
     """Detect the known collision; never certify serialization or deployed code."""
     if '<!DOCTYPE' in metadata_xml.upper() or '<!ENTITY' in metadata_xml.upper():

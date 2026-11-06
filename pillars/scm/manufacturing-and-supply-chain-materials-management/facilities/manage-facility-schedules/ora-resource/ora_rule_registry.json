@@ -50,18 +50,11 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 21
+            "line": 28
           },
           "readiness": {
-            "status": "incomplete",
-            "blocking_reasons": [
-              {
-                "file": "ora_reference_lookups.md",
-                "line": 7,
-                "column": "Request Path or URL",
-                "message": "Value is TBD"
-              }
-            ]
+            "status": "ready",
+            "blocking_reasons": []
           }
         },
         {
@@ -155,16 +148,8 @@
         }
       ],
       "readiness": {
-        "status": "incomplete",
-        "blocking_reasons": [
-          {
-            "node_id": "FAC_SCH.RESOLVE_WORKDAY_PATTERN",
-            "file": "ora_reference_lookups.md",
-            "line": 7,
-            "column": "Request Path or URL",
-            "message": "Value is TBD"
-          }
-        ]
+        "status": "ready",
+        "blocking_reasons": []
       }
     }
   ]

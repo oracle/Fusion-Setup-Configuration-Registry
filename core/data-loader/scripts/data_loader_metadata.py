@@ -813,8 +813,8 @@ def _validated_page(response: Any, *, offset: int, label: str) -> tuple[list[Any
 
 
 def _escape_like_value(value: str) -> str:
-    """Escape a literal value for a Fusion q= LIKE expression."""
-    return value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+    """Escape string-literal quotes and LIKE wildcards for a Fusion q= filter."""
+    return value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_").replace("'", "''")
 
 
 def _business_object_lookup_filter(lookup_value: str) -> str:
@@ -841,7 +841,7 @@ def find_business_objects(
     offset = 0
     results: list[dict[str, Any]] = []
     if top_discriminator_prefix or sample_attribute_lookup:
-        escaped_value = _escape_like_value(lookup_value.strip()).replace("'", "''")
+        escaped_value = _escape_like_value(lookup_value.strip())
         if not escaped_value:
             raise DataLoadError(
                 "business-object-validation", "Business-object lookup value must not be blank."

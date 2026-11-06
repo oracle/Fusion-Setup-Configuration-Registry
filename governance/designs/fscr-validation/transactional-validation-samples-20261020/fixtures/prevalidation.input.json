@@ -1,0 +1,210 @@
+{
+  "run_id": "demo-procurement-validation-prevalidation-20261020T080000Z",
+  "generated_at": "2026-10-20T08:00:00Z",
+  "assessment_stage": "pre_runbook",
+  "target_environment": {
+    "name": "DEMO-TEST",
+    "base_url": "https://demo-test.example.invalid",
+    "release": "unknown (synthetic sample)"
+  },
+  "selected_scope": {
+    "pillar": "SCM",
+    "offering": "Procurement",
+    "functional_areas": [
+      "DEMO-FA-PROCUREMENT"
+    ],
+    "planned_setup_tasks": [
+      "DEMO-T1 — Configure business unit DEMO-BU",
+      "DEMO-T2 — Configure supplier DEMO-SUP and site DEMO-SITE",
+      "DEMO-T3 — Configure purchasable item DEMO-ITEM",
+      "DEMO-T4 — Configure approval rule DEMO-APPROVAL"
+    ],
+    "task_details": [
+      {
+        "sequence": 1,
+        "functional_area_code": "DEMO-FA-PROCUREMENT",
+        "functional_area_name": "Demo procurement setup (fictional planning group)",
+        "task_code": "DEMO-T1",
+        "task_name": "Configure business unit DEMO-BU",
+        "phase": "Planned; implementation not started"
+      },
+      {
+        "sequence": 2,
+        "functional_area_code": "DEMO-FA-PROCUREMENT",
+        "functional_area_name": "Demo procurement setup (fictional planning group)",
+        "task_code": "DEMO-T2",
+        "task_name": "Configure supplier DEMO-SUP and site DEMO-SITE",
+        "phase": "Planned; implementation not started"
+      },
+      {
+        "sequence": 3,
+        "functional_area_code": "DEMO-FA-PROCUREMENT",
+        "functional_area_name": "Demo procurement setup (fictional planning group)",
+        "task_code": "DEMO-T3",
+        "task_name": "Configure purchasable item DEMO-ITEM",
+        "phase": "Planned; implementation not started"
+      },
+      {
+        "sequence": 4,
+        "functional_area_code": "DEMO-FA-PROCUREMENT",
+        "functional_area_name": "Demo procurement setup (fictional planning group)",
+        "task_code": "DEMO-T4",
+        "task_name": "Configure approval rule DEMO-APPROVAL",
+        "phase": "Planned; implementation not started"
+      }
+    ]
+  },
+  "overall_decision": "READY",
+  "checks": [
+    {
+      "category": "environment_authentication",
+      "check_name": "Selected environment and read-session identity",
+      "required": true,
+      "status": "PASS",
+      "repository_evidence": [
+        "Synthetic sample reference: sample-evidence.html#pre-auth; no repository or live-environment inspection is claimed."
+      ],
+      "live_environment_evidence": [
+        "SYNTHETIC — illustrative evidence only; no live call occurred. Fictional observation: the sample read-session identity matches DEMO-TEST and the approved sample scope."
+      ],
+      "artifact_references": [
+        "sample-evidence.html#pre-auth"
+      ],
+      "external_identifiers": [],
+      "failure_classification": null,
+      "recommended_remediation": "No issue is illustrated for this check. Collect real evidence through the declared workflow before using this result operationally.",
+      "notes": "Project demo-procurement-validation. Synthetic example only: no login or environment request occurred. The actual Fusion release is unknown; this sample does not certify release compatibility."
+    },
+    {
+      "category": "catalog_readiness",
+      "check_name": "Planning catalog identity and mapping coverage",
+      "required": true,
+      "status": "PASS",
+      "repository_evidence": [
+        "Synthetic sample reference: sample-evidence.html#pre-catalog; no repository or live-environment inspection is claimed."
+      ],
+      "live_environment_evidence": [
+        "SYNTHETIC — illustrative evidence only; no live call occurred. Fictional observation: the sample catalog maps all four DEMO task identifiers to the selected sample planning group without ambiguity."
+      ],
+      "artifact_references": [
+        "sample-evidence.html#pre-catalog"
+      ],
+      "external_identifiers": [],
+      "failure_classification": null,
+      "recommended_remediation": "No issue is illustrated for this check. Collect real evidence through the declared workflow before using this result operationally.",
+      "notes": "DEMO task and functional-area codes are fictional identifiers, not Oracle catalog entries. No Oracle catalog availability was checked."
+    },
+    {
+      "category": "offering_functional_area_readiness",
+      "check_name": "Offering and functional-area scope",
+      "required": true,
+      "status": "PASS",
+      "repository_evidence": [
+        "Synthetic sample reference: sample-evidence.html#pre-scope; no repository or live-environment inspection is claimed."
+      ],
+      "live_environment_evidence": [
+        "SYNTHETIC - no live call occurred. At the fictional 08:00 UTC assessment, the sample capability record identifies SCM / Procurement and DEMO-FA-PROCUREMENT as enabled, with the fictional required feature DEMO-PROCUREMENT-SETUP active. The mapping covers all four planned tasks. These invented names and observations do not identify a real Oracle feature or endpoint."
+      ],
+      "artifact_references": [
+        "sample-evidence.html#pre-scope"
+      ],
+      "external_identifiers": [],
+      "failure_classification": null,
+      "recommended_remediation": "No issue is illustrated for this check. Collect real evidence through the declared workflow before using this result operationally.",
+      "notes": "The fixture separately records intended scope, visible catalog mapping and an observed enabled/required-feature state. A real assessment must collect those distinct facts through its supported route; catalog visibility alone does not prove enablement."
+    },
+    {
+      "category": "setup_task_readiness",
+      "check_name": "Planned task coverage and dependencies",
+      "required": true,
+      "status": "PASS",
+      "repository_evidence": [
+        "Synthetic sample reference: sample-evidence.html#pre-tasks; no repository or live-environment inspection is claimed."
+      ],
+      "live_environment_evidence": [
+        "SYNTHETIC — illustrative evidence only; no live call occurred. Fictional observation: DEMO-T1 through DEMO-T4 are mapped once each; the example orders the business-unit task before dependent supplier/site and approval setup."
+      ],
+      "artifact_references": [
+        "sample-evidence.html#pre-tasks"
+      ],
+      "external_identifiers": [],
+      "failure_classification": null,
+      "recommended_remediation": "No issue is illustrated for this check. Collect real evidence through the declared workflow before using this result operationally.",
+      "notes": "This is a planning check. All four tasks remain planned; no task has been created in an Oracle Run Book or completed. Pillar owners must confirm real task relationships."
+    },
+    {
+      "category": "data_loader_readiness",
+      "check_name": "Declared loader route and metadata visibility",
+      "required": true,
+      "status": "PASS",
+      "repository_evidence": [
+        "Synthetic sample reference: sample-evidence.html#pre-loader; no repository or live-environment inspection is claimed."
+      ],
+      "live_environment_evidence": [
+        "SYNTHETIC — illustrative evidence only; no live call occurred. Fictional observation: the sample route-evidence record marks the declared metadata read checks for the four planned tasks as available for the sample identity."
+      ],
+      "artifact_references": [
+        "sample-evidence.html#pre-loader"
+      ],
+      "external_identifiers": [],
+      "failure_classification": null,
+      "recommended_remediation": "No issue is illustrated for this check. Collect real evidence through the declared workflow before using this result operationally.",
+      "notes": "No actual Data Loader object, registration, endpoint or payload is asserted. No upload, sample load, validation job or import was performed; future load success is not established."
+    },
+    {
+      "category": "runbook_read_readiness",
+      "check_name": "Run Book list connectivity before creation",
+      "required": true,
+      "status": "PASS",
+      "repository_evidence": [
+        "Synthetic sample reference: sample-evidence.html#pre-runbook-read; no repository or live-environment inspection is claimed."
+      ],
+      "live_environment_evidence": [
+        "SYNTHETIC — illustrative evidence only; no live call occurred. Fictional observation: the sample Run Book list read succeeds and returns no books for this new sample project."
+      ],
+      "artifact_references": [
+        "sample-evidence.html#pre-runbook-read"
+      ],
+      "external_identifiers": [],
+      "failure_classification": null,
+      "recommended_remediation": "No issue is illustrated for this check. Collect real evidence through the declared workflow before using this result operationally.",
+      "notes": "A successful empty list demonstrates only the illustrated list-read check. No existing Run Book was inspected, no Run Book ID exists, and task-detail or write access remains unverified."
+    },
+    {
+      "category": "runbook_write_verification",
+      "check_name": "Run Book write verification deferred to core workflow",
+      "required": true,
+      "status": "NOT APPLICABLE",
+      "repository_evidence": [
+        "Synthetic sample stage decision: pre_runbook excludes Run Book creation and write verification during this assessment."
+      ],
+      "live_environment_evidence": [],
+      "artifact_references": [
+        "sample-evidence.html#pre-runbook-write"
+      ],
+      "external_identifiers": [],
+      "failure_classification": null,
+      "recommended_remediation": "Resume the originally authorized creation workflow through core.runbook only after its normal prerequisites and operation-specific checks are satisfied.",
+      "notes": "READY applies only to this synthetic pre_runbook assessment. No Run Book was created and write permission remains unverified. In standalone full_readiness, the required isolated-write check must not be excluded; an unavailable or declined supported write verification is BLOCKED and prevents READY."
+    },
+    {
+      "category": "privilege_connectivity",
+      "check_name": "Permissions for the selected read checks",
+      "required": true,
+      "status": "PASS",
+      "repository_evidence": [
+        "Synthetic sample reference: sample-evidence.html#pre-privileges; no repository or live-environment inspection is claimed."
+      ],
+      "live_environment_evidence": [
+        "SYNTHETIC — illustrative evidence only; no live call occurred. Fictional observation: the sample read checks above complete without recorded authentication, authorization or transport errors."
+      ],
+      "artifact_references": [
+        "sample-evidence.html#pre-privileges"
+      ],
+      "external_identifiers": [],
+      "failure_classification": null,
+      "recommended_remediation": "No issue is illustrated for this check. Collect real evidence through the declared workflow before using this result operationally.",
+      "notes": "This example covers only the selected reads. It does not certify all OAuth scopes, Fusion roles, business-data access, write privileges or transactional permissions."
+    }
+  ]
+}

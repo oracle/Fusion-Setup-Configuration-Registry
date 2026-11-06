@@ -81,7 +81,25 @@ The value-set task owns definition fields, supplied values, preview, approval,
 creation, and target verification. This default supplies no business values
 and authorizes no Fusion write.
 
+## Category Label Default
+
+For new Category structures, use the documented seeded Major Category mapping
+in ora_reference_lookups.md during dependency readiness, before ordinary defaults.
+Reuse explicit Major/Minor Category segment selections; if unclear, ask which
+segment has each role. Assign the Major Category label exactly once to the
+selected segment. Use the seeded Minor Category mapping only when its optional
+label assignment is explicitly selected.
+Exported data values must not supply new-row values, defaults, or label resolution;
+use exports only for package schema and existing-state or post-import checks.
+
 ## Standard Defaults
+
+Populate `FND_APP_KEY_FLEXFIELD.csv` with exactly one parent row per distinct
+KFF/application pair referenced by the approved child rows: selected `CAT#`,
+`LOC#`, or `KEY#`, each paired with `140`. Never suffix these seeded keys.
+These same-package linking rows are required even when the template is empty
+and the KFFs already exist in Fusion. Include only referenced pairs; preserve
+the template headers and encoding. Other unchanged members remain header-only.
 
 Apply these proposals only to omitted fields on new objects. For updates,
 preserve the current value unless an explicit approved change is supplied.
@@ -104,7 +122,7 @@ proposals, not claims about Oracle-delivered defaults.
 | Segment DisplayWidth | No | 6 | Blank | No | Approved design or this task proposal; export only to preserve updates |  |
 | Segment RangeType | No | No generic default | Blank | No | Approved design or this task proposal; export only to preserve updates |  |
 | DefaultValueSetCode and Instance ValueSetCode | No | Verified referenced ValueSetCode | Blank after successful lookup | No | resolve_compatible_value_set | resolve_compatible_value_set |
-| SegmentLabelCode | Yes | Internal code resolved from the selected label display Name; no generic default | Label definition or assignment requested | No | resolve_segment_label | resolve_segment_label |
+| SegmentLabelCode | Yes | Documented seeded Major Category mapping; no generic default for other labels | New Category structure with an explicitly selected Major Category segment | No | ora_reference_lookups.md; preserve explicit choices | resolve_segment_label |
 | Structure Instance Description | No | Blank | Blank | No | Approved design |  |
 | Structure Instance EnabledFlag | No | Y | Blank | No | Approved design or this task proposal; export only to preserve updates |  |
 | DynamicCombinationCreationAllowed | No | Y (Yes) | Omitted on a new structure instance | No | This task default or explicit approved override; preserve existing values on updates |  |

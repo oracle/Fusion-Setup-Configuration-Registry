@@ -23,7 +23,6 @@ depends_on:
   - "shared.project-intake.scope-definition"
   - "shared.implementation-planning.offering-task-map-builder"
 uses_core:
-  - "core.fusion-dev.pillar-skill-gen"
   - "core.project-mgmt.project-state-manager"
   - "core.project-mgmt.artifact-registry-manager"
   - "core.project-mgmt.artifact-version-manager"
@@ -96,13 +95,13 @@ Use this offering-level skill after Procurement is in scope and before routing t
 
 ## Routing Responsibility
 
-This skill routes control to functional-area skills created by developers under this folder. Developers should create functional-area skills with `core.fusion-dev.pillar-skill-gen` using the catalog-backed path pattern:
+This skill routes control to existing catalog-backed functional-area skills under this folder:
 
 ```text
 pillars/scm/procurement/{functional-area-slug}/
 ```
 
-When a requested functional area is not yet present under this offering, use the setup catalog below to identify the matching functional area and invoke `core.fusion-dev.pillar-skill-gen` to generate the child skill before adding functional-area-specific guidance.
+When a requested functional-area skill is missing, identify the exact catalog match, record the missing capability in the selected project workspace, and stop that route with the next action to request a developer-authored skill. Do not generate skills or substitute a direct execution route during implementation.
 
 ## Inputs
 
@@ -155,6 +154,6 @@ Setup task count: `462`
 
 - Keep offering-level planning, scope decisions, sequencing, and cross-functional-area handoffs in this skill.
 - Put functional-area-specific implementation guidance in generated child skills under this offering folder.
-- Use `core.fusion-dev.pillar-skill-gen` for child functional-area skill creation so generated skills follow the repository contract.
-- Use `core.fusion-dev.fusionapps-resource-authoring` after child skill creation when Oracle FusionApps `ora-resource/` guidance is needed.
-- Do not create setup-task-specific skills directly under this offering folder unless the user explicitly requests nested task-level skill generation through the pillar skill generator.
+- Use only existing catalog-backed child skills and their declared task-local guidance.
+- Report missing skills or guidance to repository maintainers; authoring belongs to the development workflow.
+- Route setup-task work to its existing functional-area or nested task skill; do not create skills during implementation.

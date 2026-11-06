@@ -1,5 +1,12 @@
 # FSCR — Oracle Fusion Setup and Configuration Skills Registry
 
+**FSCR helps customers, system integrators, and AI assistants turn Oracle Fusion
+implementation questions into guided, reviewable work.**
+
+Its shared foundation of reusable AI skills and guided workflows supports planning,
+setup, configuration, and validation across Oracle Fusion Cloud Applications,
+including ERP, HCM, SCM, and CX.
+
 FSCR is separately released sample and reference material for planning and
 configuring Oracle Fusion Cloud implementations. It is not an Oracle Fusion
 Cloud product feature and is not covered by Fusion Cloud product support.
@@ -9,8 +16,6 @@ to access. You must configure your own environment connection, supply your own
 authorized credentials, and have the permissions required for each operation.
 FSCR does not include a Fusion environment or credentials. Review generated
 plans, requests, and changes before running them in your environment.
-
-This repository contains the proposed skills taxonomy for AI-enabled Oracle Fusion Cloud implementation acceleration.
 
 ## License
 
@@ -32,34 +37,39 @@ The repository is organized to support:
 
 ## Getting Started
 
-Start with [FSCR Onboarding](core/getting-started/onboarding/SKILL.md) for an
-introduction to FSCR, an overview of how its skills and project workspace fit
-together, and guidance on any login or authentication question or issue.
+**Start with a question or an implementation goal.**
 
-The onboarding journey guides you through:
+With this repository open in your AI assistant, describe what you want to
+understand or accomplish.
 
-1. Creating a public OAuth client (**Mobile Application**) in your Fusion
-   instance's Identity Domain, using the [IAM setup steps and diagrams](core/getting-started/onboarding/references/iam-client-application-setup.md).
-2. Populating `core/auth/fusionEnv.properties` with your environment, Client ID,
-   callback, and service scopes.
-3. Understanding first-time Fusion environment enrollment in
-   `~/.fusionaim/oauth-trust.json`, PKCE browser login, and access-token acquisition
-   and reuse through the [authentication flow guide](core/getting-started/onboarding/references/pkce-login-flow.md).
-4. Troubleshooting configuration, enrollment, callback, scope, and access issues.
+### First-time users
 
-Example requests include “Introduce me to FSCR”, “Help me set up the Mobile
-Application”, “Help me populate fusionEnv.properties”, and “Why is my login failing?”.
-Onboarding provides guidance; requested enrollment and login execution use
+Try questions such as:
+
+- “Introduce me to FSCR and explain what I can do with it.”
+- “Help me define the scope and requirements for an Oracle Fusion implementation.”
+- “What information should I gather before starting configuration?”
+- “Help me connect FSCR to my Fusion environment.”
+
+### Returning users
+
+Continue work in your saved project workspace with requests such as:
+
+- “Resume my implementation project and summarize where we left off.”
+- “What should I work on next, and are there any dependencies or blockers?”
+- “Help me continue configuring [offering or functional area].”
+- “Our requirements have changed. Help me assess the impact on the implementation plan.”
+
+For guided setup and authentication help, see
+[FSCR Onboarding](core/getting-started/onboarding/SKILL.md). Onboarding provides
+guidance; environment enrollment and login execution follow the
 [Fusion OAuth Authentication](core/auth/fusion-oauth-authentication/SKILL.md)
-and its workflow checks.
-
-To start or resume implementation work, begin with the
-[Implementation Router](router/implementation-router/SKILL.md).
+workflow and its checks.
 
 ## Software Requirements
 
 FSCR skills require Oracle Fusion Applications Release 26D with the
-16 October 2026 Weekly Maintenance Pack for Fusion Applications Update 26D,
+06 November 2026 Weekly Maintenance Pack for Fusion Applications Update 26D,
 or a higher release or maintenance pack.
 
 ## Prerequisites
@@ -162,13 +172,6 @@ Skills that produce project artifacts should also declare `persists_project_stat
 ## Repository Status
 
 This repository contains sample skills, scripts, reference material, and
-workspace templates. Review each workflow and its prerequisites before using
-it with your authorized Fusion environment.
-
-This is a scaffold repository. Teams should add skill implementation files,
-manifests, test fixtures, knowledge artifacts, and project workspace artifact
-templates within the established folders.
-
-```plaintext
-
-```
+workspace templates. Coverage and implementation depth vary by skill. Review
+each workflow and its prerequisites before using it with your authorized Fusion
+environment.

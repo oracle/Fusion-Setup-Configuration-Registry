@@ -1,0 +1,271 @@
+{
+  "schema_version": "1.0",
+  "project_id": "demo-procurement-validation",
+  "summary_id": "demo-executive-summary",
+  "generated_at": "2026-10-20T14:00:00Z",
+  "environment": "DEMO-TEST",
+  "environment_url": "https://demo-test.example.invalid",
+  "summary_type": "historical_evidence_index",
+  "project_readiness": "NOT_ASSESSED",
+  "sources": [
+    {
+      "kind": "prevalidation",
+      "result_ref": "artifacts/shared/validation/demo-procurement-validation-prevalidation-20261020T080000Z/readiness.json",
+      "result_sha256": "05ae011487a6a7fb5368e62f7f7c885d7ac4559f9fc749a72ed2ad2bdddc12b7",
+      "report_ref": "artifacts/shared/validation/demo-procurement-validation-prevalidation-20261020T080000Z/readiness.html",
+      "report_sha256": "eda5a54c4ac3ad854685178f9d6a3c2e320ecb55038b5b799c35232a6dee17d6",
+      "run_id": "demo-procurement-validation-prevalidation-20261020T080000Z",
+      "stage": "prevalidation",
+      "recorded_at": "2026-10-20T08:00:00Z",
+      "outcome": "READY",
+      "scope": "{\n  \"pillar\": \"SCM\",\n  \"offering\": \"Procurement\",\n  \"functional_areas\": [\n    \"DEMO-FA-PROCUREMENT\"\n  ],\n  \"planned_setup_tasks\": [\n    \"DEMO-T1 — Configure business unit DEMO-BU\",\n    \"DEMO-T2 — Configure supplier DEMO-SUP and site DEMO-SITE\",\n    \"DEMO-T3 — Configure purchasable item DEMO-ITEM\",\n    \"DEMO-T4 — Configure approval rule DEMO-APPROVAL\"\n  ],\n  \"task_details\": [\n    {\n      \"sequence\": 1,\n      \"functional_area_code\": \"DEMO-FA-PROCUREMENT\",\n      \"functional_area_name\": \"Demo procurement setup (fictional planning group)\",\n      \"task_code\": \"DEMO-T1\",\n      \"task_name\": \"Configure business unit DEMO-BU\",\n      \"phase\": \"Planned; implementation not started\"\n    },\n    {\n      \"sequence\": 2,\n      \"functional_area_code\": \"DEMO-FA-PROCUREMENT\",\n      \"functional_area_name\": \"Demo procurement setup (fictional planning group)\",\n      \"task_code\": \"DEMO-T2\",\n      \"task_name\": \"Configure supplier DEMO-SUP and site DEMO-SITE\",\n      \"phase\": \"Planned; implementation not started\"\n    },\n    {\n      \"sequence\": 3,\n      \"functional_area_code\": \"DEMO-FA-PROCUREMENT\",\n      \"functional_area_name\": \"Demo procurement setup (fictional planning group)\",\n      \"task_code\": \"DEMO-T3\",\n      \"task_name\": \"Configure purchasable item DEMO-ITEM\",\n      \"phase\": \"Planned; implementation not started\"\n    },\n    {\n      \"sequence\": 4,\n      \"functional_area_code\": \"DEMO-FA-PROCUREMENT\",\n      \"functional_area_name\": \"Demo procurement setup (fictional planning group)\",\n      \"task_code\": \"DEMO-T4\",\n      \"task_name\": \"Configure approval rule DEMO-APPROVAL\",\n      \"phase\": \"Planned; implementation not started\"\n    }\n  ]\n}",
+      "stage_scope": "pre_runbook",
+      "baseline": "Environment readiness; requirement baseline not recorded in this source",
+      "counts": {
+        "PASS": 7,
+        "FAIL": 0,
+        "BLOCKED": 0,
+        "INDETERMINATE": 0,
+        "SKIPPED": 0,
+        "NOT_RUN": 0,
+        "NOT_APPLICABLE": 1
+      }
+    },
+    {
+      "kind": "validation",
+      "result_ref": "artifacts/shared/validation/demo-implementation-review-20261020/implementation-review.json",
+      "result_sha256": "771931ac1f62ed6d34ea40dbabf96d219b63f470add19dd9cc5a8d33dfb53b77",
+      "report_ref": "artifacts/shared/validation/demo-implementation-review-20261020/implementation-review.html",
+      "report_sha256": "b14beab5cca03c253f561665232cec1dd0e655e289b2260da1222cba91ccf58b",
+      "run_id": "demo-implementation-review-20261020",
+      "stage": "implementation-review",
+      "recorded_at": "2026-10-20T10:00:00Z",
+      "outcome": "BLOCKED",
+      "scope": "SYNTHETIC SAMPLE ONLY: business unit, supplier/site, purchasable item and approval rule. Every value, identity, timestamp, observation and outcome is fictional.",
+      "stage_scope": "implementation-review",
+      "baseline": "DEMO-1.0 / sample-evidence.html#impl-approved-scope",
+      "counts": {
+        "PASS": 2,
+        "FAIL": 1,
+        "BLOCKED": 0,
+        "INDETERMINATE": 0,
+        "SKIPPED": 0,
+        "NOT_RUN": 1,
+        "NOT_APPLICABLE": 0
+      }
+    },
+    {
+      "kind": "validation",
+      "result_ref": "artifacts/shared/validation/demo-transaction-20261020-120000/transactional-validation.json",
+      "result_sha256": "7e0bd60ab99d6a48cc6359dbe34024f91024ffecc522762be77bb45d5a92dc97",
+      "report_ref": "artifacts/shared/validation/demo-transaction-20261020-120000/transactional-validation.html",
+      "report_sha256": "384a62085f0957fa121d0e7b20f14fa20095dae26eddd74a0096887912eb13fe",
+      "run_id": "demo-transaction-20261020-120000",
+      "stage": "transactional-validation",
+      "recorded_at": "2026-10-20T12:00:00Z",
+      "outcome": "READY_WITHIN_VERIFIED_SCOPE",
+      "scope": "One fictional manual check of saving a draft purchase requisition and retaining the intended business-unit, item and supplier/site references. No submission, approval workflow, purchase order, receipt, or wider implementation certification.",
+      "stage_scope": "transactional-validation",
+      "baseline": "DEMO-1.0 / sample-evidence.html#tx-scope",
+      "counts": {
+        "PASS": 1,
+        "FAIL": 0,
+        "BLOCKED": 0,
+        "INDETERMINATE": 0,
+        "SKIPPED": 0,
+        "NOT_RUN": 0,
+        "NOT_APPLICABLE": 0
+      }
+    }
+  ],
+  "counts": {
+    "PASS": 10,
+    "FAIL": 1,
+    "BLOCKED": 0,
+    "INDETERMINATE": 0,
+    "SKIPPED": 0,
+    "NOT_RUN": 1,
+    "NOT_APPLICABLE": 1
+  },
+  "recorded_check_results": 13,
+  "tasks": [
+    {
+      "task": {
+        "task_id": "DEMO-T1",
+        "title": "Business unit",
+        "status": "completed",
+        "source_ref": "sample-evidence.html#tx-prerequisites",
+        "captured_at": "2026-10-20T11:30:00Z",
+        "environment": "DEMO-TEST",
+        "evidence_current": true,
+        "details": "Fictional business unit DEMO-BU available; completed at 09:00 UTC.",
+        "owner": "Demo implementer (fictional)",
+        "completed_at": "2026-10-20T09:00:00Z"
+      },
+      "captured_at": "2026-10-20T11:30:00Z",
+      "run_id": "demo-transaction-20261020-120000"
+    },
+    {
+      "task": {
+        "task_id": "DEMO-T2",
+        "title": "Supplier/site",
+        "status": "completed",
+        "source_ref": "sample-evidence.html#tx-prerequisites",
+        "captured_at": "2026-10-20T11:30:00Z",
+        "environment": "DEMO-TEST",
+        "evidence_current": true,
+        "details": "Earlier inactive-site blocker corrected at 11:10 UTC; fictional site DEMO-SITE is now active, supported by the later prerequisite evidence.",
+        "owner": "Demo implementer (fictional)",
+        "completed_at": "2026-10-20T11:10:00Z"
+      },
+      "captured_at": "2026-10-20T11:30:00Z",
+      "run_id": "demo-transaction-20261020-120000"
+    },
+    {
+      "task": {
+        "task_id": "DEMO-T3",
+        "title": "Purchasable item",
+        "status": "completed",
+        "source_ref": "sample-evidence.html#tx-prerequisites",
+        "captured_at": "2026-10-20T11:30:00Z",
+        "environment": "DEMO-TEST",
+        "evidence_current": true,
+        "details": "Fictional item DEMO-ITEM available; completed at 09:20 UTC.",
+        "owner": "Demo implementer (fictional)",
+        "completed_at": "2026-10-20T09:20:00Z"
+      },
+      "captured_at": "2026-10-20T11:30:00Z",
+      "run_id": "demo-transaction-20261020-120000"
+    },
+    {
+      "task": {
+        "task_id": "DEMO-T4",
+        "title": "Approval rule",
+        "status": "completed",
+        "source_ref": "sample-evidence.html#tx-prerequisites",
+        "captured_at": "2026-10-20T11:30:00Z",
+        "environment": "DEMO-TEST",
+        "evidence_current": true,
+        "details": "Earlier pending setup completed at 11:20 UTC and reviewed at 11:30 UTC. No approval transaction was executed.",
+        "owner": "Demo implementer (fictional)",
+        "completed_at": "2026-10-20T11:20:00Z"
+      },
+      "captured_at": "2026-10-20T11:30:00Z",
+      "run_id": "demo-transaction-20261020-120000"
+    }
+  ],
+  "findings": [
+    {
+      "run_id": "demo-implementation-review-20261020",
+      "stage": "implementation-review",
+      "status": "FAIL",
+      "title": "Verify supplier site activation and business unit",
+      "owner": "Procurement pillar owner",
+      "expected": [
+        "DEMO-SITE is active and assigned to DEMO-BU."
+      ],
+      "observed": [
+        "Synthetic observation: DEMO-SITE is inactive and assigned to DEMO-BU."
+      ],
+      "evidence": [
+        "sample-evidence.html#impl-supplier-site"
+      ],
+      "next_action": "Correct the inactive supplier site through its owning implementation skill and approval controls, then request a new read-back validation; this report does not change setup.",
+      "observed_at": "2026-10-20T10:02:00Z"
+    },
+    {
+      "run_id": "demo-implementation-review-20261020",
+      "stage": "implementation-review",
+      "status": "NOT_RUN",
+      "title": "Verify approval rule through a manual application check",
+      "owner": "Implementer",
+      "expected": [
+        "DEMO-APPROVAL is enabled with approver group DEMO-APPROVERS."
+      ],
+      "observed": [
+        ""
+      ],
+      "evidence": [],
+      "next_action": "Complete the approval rule through its owning skill, then run the pillar-provided manual check and supply sanitized evidence with performer and observation time. A bypass leaves verification unconfirmed.",
+      "observed_at": "2026-10-20T10:04:00Z"
+    },
+    {
+      "run_id": "demo-implementation-review-20261020",
+      "stage": "implementation-review",
+      "status": "REVIEW",
+      "title": "impl-supplier-site: unresolved FAIL",
+      "owner": "Project owner / relevant check owner",
+      "expected": "Complete verified coverage",
+      "observed": "See source report",
+      "evidence": [
+        "artifacts/shared/validation/demo-implementation-review-20261020/implementation-review.json"
+      ],
+      "next_action": "Review the source report and assign the follow-up.",
+      "observed_at": "2026-10-20T10:00:00Z"
+    },
+    {
+      "run_id": "demo-implementation-review-20261020",
+      "stage": "implementation-review",
+      "status": "REVIEW",
+      "title": "impl-supplier-site: required verification incomplete, stale or attested only",
+      "owner": "Project owner / relevant check owner",
+      "expected": "Complete verified coverage",
+      "observed": "See source report",
+      "evidence": [
+        "artifacts/shared/validation/demo-implementation-review-20261020/implementation-review.json"
+      ],
+      "next_action": "Review the source report and assign the follow-up.",
+      "observed_at": "2026-10-20T10:00:00Z"
+    },
+    {
+      "run_id": "demo-implementation-review-20261020",
+      "stage": "implementation-review",
+      "status": "REVIEW",
+      "title": "impl-approval-rule: required verification incomplete, stale or attested only",
+      "owner": "Project owner / relevant check owner",
+      "expected": "Complete verified coverage",
+      "observed": "See source report",
+      "evidence": [
+        "artifacts/shared/validation/demo-implementation-review-20261020/implementation-review.json"
+      ],
+      "next_action": "Review the source report and assign the follow-up.",
+      "observed_at": "2026-10-20T10:00:00Z"
+    },
+    {
+      "run_id": "demo-implementation-review-20261020",
+      "stage": "implementation-review",
+      "status": "REVIEW",
+      "title": "DEMO-T4: task incomplete or evidence stale",
+      "owner": "Project owner / relevant check owner",
+      "expected": "Complete verified coverage",
+      "observed": "See source report",
+      "evidence": [
+        "artifacts/shared/validation/demo-implementation-review-20261020/implementation-review.json"
+      ],
+      "next_action": "Review the source report and assign the follow-up.",
+      "observed_at": "2026-10-20T10:00:00Z"
+    },
+    {
+      "run_id": "demo-implementation-review-20261020",
+      "stage": "implementation-review",
+      "status": "REVIEW",
+      "title": "impl-supplier-site: FAIL",
+      "owner": "Project owner / relevant check owner",
+      "expected": "Complete verified coverage",
+      "observed": "See source report",
+      "evidence": [
+        "artifacts/shared/validation/demo-implementation-review-20261020/implementation-review.json"
+      ],
+      "next_action": "Review the source report and assign the follow-up.",
+      "observed_at": "2026-10-20T10:00:00Z"
+    }
+  ],
+  "transaction_counts": {
+    "known_created_records_across_runs": 1,
+    "runs_with_unknown_created_count": 0,
+    "runs_reusing_records": 0,
+    "cleanup_dispositions": {
+      "removed-verified": 1
+    }
+  }
+}

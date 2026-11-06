@@ -149,26 +149,33 @@ def _normalize(label: str, raw: str, location: str) -> str:
 def _merge(input_row, mapping, existing, location):
     result = dict(existing or {})
     changed = False
+    # UI mandatory hints inherit entity requiredness. Percentages are nullable;
+    # only compare them when both are populated. Never invent numeric defaults.
+    required = {"UserConversionType", "DfltExchangeRateFlag"}
+    if "Conversion Rate Type" not in mapping:
+        required.add("DispWarningToUser")
     for label, field in mapping.items():
         supplied = _normalize(label, input_row[label], location)
         if supplied:
             changed |= result.get(field) != supplied
             result[field] = supplied
         elif existing is None:
-            # No source-backed create defaults are established for this task.
-            raise IntakeError(f"{location}: {label} is required for a new row")
-    # The live route accepts complete merged business rows only. Reject an
-    # unsupported baseline rather than serializing an accidental null request.
+            if field in required:
+                raise IntakeError(f"{location}: {label} is required for a new row")
+            result[field] = ""
     for label, field in mapping.items():
         if not result.get(field):
-            raise IntakeError(f"{location}: {label} needs an explicit value for the complete-row contract")
+            if field in required:
+                raise IntakeError(f"{location}: {label} needs an explicit value")
+            continue
         raw = result[field]
         if label in {"Default Conversion Rate?", "Display Warning to User?"}:
             if raw not in {"Y", "N"}:
                 raise IntakeError(f"{location}: {label} has an unsupported baseline flag")
         else:
             _normalize(label, raw, location)
-    if Decimal(result["ErrorTolerance"]) <= Decimal(result["WarningTolerance"]):
+    if (result.get("ErrorTolerance") and result.get("WarningTolerance")
+            and Decimal(result["ErrorTolerance"]) <= Decimal(result["WarningTolerance"])):
         raise IntakeError(f"{location}: Error Tolerance must exceed Warning Tolerance")
     for field in AUDIT:
         result[field] = ""
@@ -208,6 +215,8 @@ def build(workbook: Path, template: Path, current_export: Path, environment: str
         children[key] = row
     planned_parents, planned_children = {}, {}
     changes = []
+    omitted_empty_exceptions = []
+    seen_children = set()
     for number, data in parent_input:
         key = _normalize("Business Unit*", data["Business Unit*"], f"Conversion Rate Policies!{number}")
         if key in planned_parents:
@@ -225,8 +234,16 @@ def build(workbook: Path, template: Path, current_export: Path, environment: str
         if not re.fullmatch(r"[A-Z]{3}", currency):
             raise IntakeError(f"{location}: Currency Code must be three letters")
         key = bu, currency
-        if key in planned_children:
+        if key in seen_children:
             raise IntakeError(f"{location}: duplicate business unit and currency")
+        seen_children.add(key)
+        # An identity with no requested override settings is not a request to
+        # create an exception. This applies to every currency, including USD.
+        # Existing rows still use normal blank-means-preserve semantics.
+        if key not in children and not any(data[field] for field in CHILD_FIELDS):
+            omitted_empty_exceptions.append({"business_unit": bu, "currency": currency,
+                                             "source": location, "reason": "No override settings supplied"})
+            continue
         if bu not in planned_parents:
             if bu not in parents:
                 raise IntakeError(f"{location}: business unit has no parent policy")
@@ -239,6 +256,10 @@ def build(workbook: Path, template: Path, current_export: Path, environment: str
         if changed or key not in children:
             changes.append(location)
     if not changes:
+        if omitted_empty_exceptions:
+            return {"status": "NO_CHANGES_REQUIRED", "task_code": TASK, "environment": environment,
+                    "dry_run": dry_run, "omitted_empty_exceptions": omitted_empty_exceptions,
+                    "message": "No requested changes remain; no exception row or import ZIP was created."}
         raise IntakeError("Workbook produces no changes against the current export")
     # Preserve every observed child of a touched parent in the review candidate.
     # Header-only child CSV preservation was observed; absent members/nodes and
@@ -262,6 +283,7 @@ def build(workbook: Path, template: Path, current_export: Path, environment: str
                                       "operation": "create" if previous is None else "update",
                                       "changed_fields": fields})
     result = {"status": "REVIEW_ONLY_NOT_APPROVED", "task_code": TASK,
+              "omitted_empty_exceptions": omitted_empty_exceptions,
               "environment": environment, "dry_run": dry_run,
               "parent_rows": len(planned_parents), "child_rows": len(planned_children),
               "changed_input_rows": changes, "field_changes": field_changes,

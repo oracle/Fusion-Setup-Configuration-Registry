@@ -1,0 +1,113 @@
+{
+  "schema_version": "1.0",
+  "project_id": "synthetic-validation-demo",
+  "run_id": "transaction-001",
+  "stage": "transactional-validation",
+  "environment": "synthetic-test-environment",
+  "started_at": "2026-10-09T10:00:00Z",
+  "request": "Run one synthetic check",
+  "scope": "One synthetic capability",
+  "scope_ref": "synthetic-approved-scope",
+  "requirement_version": "1.0",
+  "redaction_reviewed": true,
+  "requirements": [
+    {
+      "requirement_id": "req-1",
+      "description": "Configured capability is available",
+      "source_ref": "synthetic-requirement",
+      "expected_setup": "Enabled with the intended reference association",
+      "task_refs": [
+        "task-1"
+      ],
+      "check_ids": [
+        "transaction-check-1"
+      ],
+      "owner": "Pilot SME",
+      "required": true
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "task-1",
+      "title": "Configure synthetic capability",
+      "status": "completed",
+      "source_ref": "synthetic-task-result",
+      "captured_at": "2026-10-09T09:59:00Z",
+      "environment": "synthetic-test-environment",
+      "evidence_current": true,
+      "details": "One configured object; no load errors reported",
+      "owner": "Implementer",
+      "completed_at": "2026-10-09T09:45:00Z"
+    }
+  ],
+  "checks": [
+    {
+      "result_id": "result-1",
+      "check_id": "transaction-check-1",
+      "check_version": "1.0.0",
+      "title": "One synthetic transaction",
+      "owner": "Pilot SME",
+      "required": true,
+      "blocking": true,
+      "requirement_refs": [
+        "req-1"
+      ],
+      "task_refs": [
+        "task-1"
+      ],
+      "source_ref": "synthetic-pillar-check",
+      "status": "PASS",
+      "method": "manual-evidence",
+      "environment": "synthetic-test-environment",
+      "observed_at": "2026-10-09T10:00:00Z",
+      "evidence_current": true,
+      "reason": "",
+      "assertions": [
+        {
+          "assertion_id": "enabled",
+          "expected": "Enabled with intended association",
+          "observed": "Enabled with intended association",
+          "status": "PASS",
+          "evidence_refs": [
+            "synthetic-read-back"
+          ]
+        }
+      ],
+      "evidence_refs": [
+        "synthetic-read-back"
+      ],
+      "performed_by": "Synthetic implementer",
+      "next_action": "",
+      "transaction": {
+        "test_key": "IMP_TEST_001",
+        "record_id": "synthetic-record-001",
+        "request_id": "synthetic-request-001",
+        "new_primary_count": 1,
+        "reused": false,
+        "approval_ref": "synthetic-explicit-approval",
+        "side_effects": [
+          "One synthetic draft record"
+        ],
+        "cleanup_status": "removed-verified",
+        "cleanup_evidence_refs": [
+          "synthetic-removal-read-back"
+        ],
+        "cleanup_owner": "Synthetic implementer",
+        "cleanup_next_action": ""
+      }
+    }
+  ],
+  "decisions": [
+    {
+      "decision_id": "decision-1",
+      "summary": "Synthetic baseline approved for demonstration",
+      "owner": "Project owner",
+      "source_ref": "synthetic-decision"
+    }
+  ],
+  "recommendations": [],
+  "limitations": [
+    "Synthetic fixture only. No real setup or transaction was verified."
+  ],
+  "errors": []
+}

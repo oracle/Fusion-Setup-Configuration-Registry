@@ -8,13 +8,17 @@ calling it directly does not enforce this task-local gate.
 from __future__ import annotations
 
 import argparse
+import copy
+import csv
 import hashlib
 import importlib.util
+import io
 import json
 from pathlib import Path
 import sys
 import tempfile
 from typing import Any
+import zipfile
 
 TASK_DIRECTORY = Path(__file__).resolve().parents[1]
 REPOSITORY_ROOT = TASK_DIRECTORY.parents[4]
@@ -46,6 +50,32 @@ def _validate(content: bytes, operation: str) -> dict[str, Any]:
     if any(result[key]["status"] != "passed" for key in ("packageIntegrity", "taskContractValidation")):
         raise ValueError("Task archive validation blocked: " + json.dumps(result, sort_keys=True, ensure_ascii=False))
     return result
+
+
+def _with_reference_warnings(value: dict[str, Any], content: bytes) -> dict[str, Any]:
+    """Keep unsupported target checks visible even when a narrative omits them."""
+    value = copy.deepcopy(value)
+    results = value.get('ruleResults', [])
+    reference = next((r for r in results if r.get('source', '').endswith('ora_reference_lookups.md')), None)
+    if reference is None:
+        return value  # The canonical rule engine reports missing rule resources.
+    with zipfile.ZipFile(io.BytesIO(content)) as archive:
+        if _contract.CHILD not in archive.namelist():
+            return value  # Parent-only updates do not introduce option rows.
+        rows = csv.DictReader(io.StringIO(archive.read(_contract.CHILD).decode('utf-8-sig')))
+        for row in rows:
+            for field, label in (('Name', 'Period Profile'), ('Name2', 'Budget Generation Financial Plan Type'),
+                                 ('Name3', 'Forecast Financial Plan Type')):
+                if not row.get(field):
+                    continue
+                path = _contract.CHILD+'.'+field
+                issues = reference.setdefault('issues', [])
+                if not any(i.get('code') == 'REFERENCE_UNRESOLVED' and i.get('path') == path
+                           and i.get('value') == row[field] for i in issues):
+                    issues.append({'code': 'REFERENCE_UNRESOLVED', 'severity': 'warning',
+                        'blocking': False, 'path': path, 'value': row[field],
+                        'message': label+' '+row[field]+': ZIP validation does not establish target membership or eligibility. Carry current target evidence separately; otherwise this value remains unverified.'})
+    return value
 
 
 def build_preview(archive: Path, operation: str, rule_results: list[dict[str, Any]], *, task_context: Path, sequence: int) -> dict[str, Any]:
@@ -82,8 +112,9 @@ def build_from_input(value: dict[str, Any]) -> dict[str, Any]:
     if final_data.get("archiveSha256") != hashlib.sha256(content).hexdigest():
         raise ValueError("Prepared archive bytes do not match finalData.archiveSha256.")
     result = _validate(content, final_data.get("operation"))
+    _contract.validate_source_intent(content, final_data.get('sourceInput'))
     return {
-        "preview": _route(value),
+        "preview": _route(_with_reference_warnings(value, content)),
         "archiveValidation": result,
         "taskRoutingContext": {"taskContextPath": value["taskContextPath"], "sequence": value["sequence"]},
     }
@@ -112,12 +143,17 @@ def _check_preview(record: Any) -> dict[str, Any]:
     if final_data.get("archiveSha256") != hashlib.sha256(content).hexdigest():
         raise ValueError("Prepared archive bytes do not match the preview SHA-256; rebuild and approve.")
     result = _validate(content, final_data.get("operation"))
+    _contract.validate_source_intent(content, final_data.get('sourceInput'))
     if record.get("archiveValidation") != result:
         raise ValueError("Executable archive findings are missing or stale; rebuild the preview.")
     routing = record.get("taskRoutingContext")
     if not isinstance(routing, dict):
         raise ValueError("Preview must retain its Task Hook routing context.")
-    routed = _route({**routing, "taskName": TASK_NAME, "finalData": final_data, "ruleResults": preview.get("ruleResults")})
+    route_input = {**routing, "taskName": TASK_NAME, "finalData": final_data, "ruleResults": preview.get("ruleResults")}
+    checked = _with_reference_warnings(route_input, content)
+    if checked['ruleResults'] != route_input['ruleResults']:
+        raise ValueError('Reference warnings are missing or stale; rebuild the preview.')
+    routed = _route(checked)
     if routed.get("runbookBinding") != preview.get("runbookBinding"):
         raise ValueError("Project Run Book binding changed; create a fresh preview and approval.")
     return result

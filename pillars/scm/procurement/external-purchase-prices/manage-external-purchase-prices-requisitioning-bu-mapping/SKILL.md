@@ -154,9 +154,14 @@ in this task, even though the shared client supports those methods.
    visibility for the requested parent and relevant children, safe evidence
    destinations, and a finite read budget before any external call. Pure reads
    do not require Procurement/BPA maintenance readiness or write privileges.
-3. Use `ora-resource/ora_rule_registry.json` and the general
-   [task-node execution guide](../../../../../core/fusion-dev/fusionapps-resource-authoring/references/ora-resource-task-node-execution-guide.md),
-   not the loader's task-rule helper. The read path is
+3. Load this task's `ora-resource/ora_rule_registry.json` and select the
+   single entry matching its exact task code and name. Require readiness
+   `ready` with no blocking reasons. Check that the start node, transition
+   targets, prerequisites, and source file/heading for every reachable node
+   exist and agree with the task-local rules. Stop on a missing, ambiguous,
+   incomplete, or inconsistent graph; request a maintainer correction rather
+   than repairing it during a read. Do not use the loader's task-rule helper.
+   The read path is
    `EPPBU.VALIDATE_INPUT` → `EPPBU.RESOLVE_REFERENCES` →
    `EPPBU.RETURN_READ_RESULT`. Classify and disclose failures through
    `EPPBU.HANDLE_ERROR` → `EPPBU.RETURN_ISSUES`.

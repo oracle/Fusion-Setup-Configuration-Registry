@@ -97,6 +97,12 @@ required_setup_tasks:
   - "ORA_CMK_COLLAB_MESG_SERVICE_PROVIDER"
   - "ORA_CMK_MNGE_SIMPLIFIED_COLLAB_MSG_CONFIG"
   - "ORA_POZ_CONFIGURE_SUPPLIER_OUTBOUND_SYNCHRONIZATION_SERVICE"
+  - "ORA_MANAGE_ADDRESS_VERIFICATION_CLOUD_TO_CX_CLOUD_INTEGRATION"
+  - "HZ_MANAGE_TRADING_COMMUNITY_PERSON_DESCRIPTIVE_FLEXFIELDS"
+  - "HZ_TRADING_COMMUNITY_ORGANIZATION_SITE_DESC_FLEXFIELDS"
+  - "ZCQ_MANAGE_SERVER_CONFIGURATIONS"
+  - "HZ_MANAGE_GEOGRAPHIES"
+  - "HZ_MANAGE_ADDRESS_FORMATS"
 applicability:
   industries:
     - "All"
@@ -147,6 +153,14 @@ Use this functional-area skill after Procurement scope is confirmed and the proj
 19. [Manage Collaboration Messaging Service Providers](manage-collaboration-messaging-service-providers/SKILL.md) (`ORA_CMK_COLLAB_MESG_SERVICE_PROVIDER`)
 20. [Manage Simplified Collaboration Messaging Configuration](manage-simplified-collaboration-messaging-configuration/SKILL.md) (`ORA_CMK_MNGE_SIMPLIFIED_COLLAB_MSG_CONFIG`)
 21. [Configure Supplier Outbound Synchronization Service](configure-supplier-outbound-synchronization-service.md) (`ORA_POZ_CONFIGURE_SUPPLIER_OUTBOUND_SYNCHRONIZATION_SERVICE`)
+22. [Manage Integration with Oracle Verification Services](manage-integration-with-oracle-verification-services.md) (`ORA_MANAGE_ADDRESS_VERIFICATION_CLOUD_TO_CX_CLOUD_INTEGRATION`)
+23. [Manage Trading Community Person Descriptive Flexfields](../../../cx/customer-data-management/trading-community-foundation/manage-trading-community-person-descriptive-flexfields/SKILL.md) (`HZ_MANAGE_TRADING_COMMUNITY_PERSON_DESCRIPTIVE_FLEXFIELDS`)
+24. [Manage Trading Community Organization Site Descriptive Flexfields](../../../cx/customer-data-management/trading-community-foundation/manage-trading-community-organization-site-descriptive-flexfields/SKILL.md) (`HZ_TRADING_COMMUNITY_ORGANIZATION_SITE_DESC_FLEXFIELDS`)
+25. [Manage Server Configurations](../../../cx/customer-data-management/data-quality-foundation/manage-server-configurations/SKILL.md) (`ZCQ_MANAGE_SERVER_CONFIGURATIONS`)
+26. [Manage Geographies](../../../cx/customer-data-management/enterprise-profile/manage-geographies/SKILL.md) (`HZ_MANAGE_GEOGRAPHIES`)
+27. [Manage Address Formats](../../../cx/customer-data-management/trading-community-foundation/manage-address-formats/SKILL.md) (`HZ_MANAGE_ADDRESS_FORMATS`)
+
+For the five CX-owned tasks above, delegate execution to the linked skill; that skill determines the inputs, validation, execution route, and approvals. Do not duplicate its guidance in Suppliers.
 
 ## Related Supplier Approval Tasks
 

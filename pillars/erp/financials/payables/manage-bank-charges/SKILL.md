@@ -17,7 +17,7 @@ dataloader_import_mode: "FSM"
 businessObject: ""
 source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 type: "planning"
-execution_mode: "assisted"
+execution_mode: "hybrid"
 owner_team: "ERP financials pillar team"
 version: "0.1.0"
 inputs:
@@ -26,21 +26,26 @@ inputs:
   - "setup_task_scope"
   - "setup_data_artifacts"
   - "snapshot_bound_update_request"
+  - "post_import_export_observation"
 outputs:
   - "setup_task_plan"
   - "setup_data_routing"
   - "validation_checkpoints"
   - "update_review"
   - "update_package"
+  - "persistence_verification"
   - "skill_run_record"
   - "token_usage_record"
 depends_on:
   - "shared.setup-export.task-level-export"
+  - "shared.setup-export.fsm-csv-export"
   - "shared.validation.setup-data-validator"
   - "shared.validation.reference-data-validator"
   - "core.data-loader"
   - "core.fusion-api.rest-api-client"
+  - "core.auth.fusion-oauth-authentication"
 uses_core:
+  - "core.auth.fusion-oauth-authentication"
   - "core.fusion-api.rest-api-client"
   - "core.project-mgmt.artifact-version-manager"
   - "core.project-mgmt.artifact-registry-manager"
@@ -89,8 +94,11 @@ applicability:
     - "All"
   fusion_releases:
     - "Current Oracle Fusion Cloud release"
-side_effects: []
-required_privileges: []
+side_effects:
+  - "Writes local preparation, comparison and export-observation artifacts."
+  - "Approved post-import verification queries Core import status and starts/downloads a fresh task data export through Shared."
+required_privileges:
+  - "Fusion privileges and OAuth scope for task data export and Core Data Loader status retrieval."
 ---
 
 # Manage Bank Charges Setup Task Guidance
@@ -123,9 +131,11 @@ a live export.
 4. For updates, use the update-preparation procedure below. For creates, use
    `scripts/fsm_task_adapter.py assess-intake` for local input checks.
    `scripts/prepare_charge_group_create.py` prepares create source or compares
-   complete groups; it accepts recorded unavailable additional REST checks, or
-   the existing explicit reference-verification waiver for offline intake, and
-   has no verified-reference mode. `scripts/inspect_bank_charge_group.py` compares
+   complete groups; it accepts successful reference evidence for every applicable
+   lookup, recorded unavailable additional REST checks, or the existing explicit
+   reference-verification waiver for offline intake. Record outcomes using the
+   `reference_check_results` contract in `ora_reference_lookups.md`.
+   `scripts/inspect_bank_charge_group.py` compares
    only All legal entities, banks and branches with one open-ended range and
    adapter-declared node sequences. Use each script's `--help` for arguments.
    Do not invent a waiver or infer identifiers from an unavailable API.
@@ -137,9 +147,24 @@ a live export.
    a fresh export before declaring completion. Record the approved artifact,
    process identity, results and remaining blockers in the project workspace
    using the manifest's run and token-usage policies.
+   Follow [post-import verification](references/readback-verification.md):
+   matching file contents alone report `PENDING`; declare saved values verified
+   only when `persistenceVerified` is true and the observation matches the current
+   target, import request and exact files.
 
 Use only the owning workflow's declared external routes. Stop on an uncertain
 import outcome before retrying; follow the error-handling resource.
+Before observing persistence, preflight the candidate hash, Core preflight and
+initiation evidence, configured target and unused output paths. Redact execution
+diagnostics: retain process identities, artifact hashes and the sanitized failure
+stage; never record credentials, tokens or raw sensitive responses.
+
+Use new, distinct paths for reports and generated artifacts; outputs must not
+overwrite inputs or existing files. Package metadata must use an exact terminal
+success status: `COMPLETE`, `COMPLETED`, `SUCCESS`, or `SUCCEEDED`
+(case-insensitive). A package manifest's environment must match `ProcessEnv`,
+and its base URL must be a valid HTTPS origin without a path, query, credentials,
+or fragment.
 
 ## Additional REST Validation Availability
 
@@ -147,7 +172,7 @@ Use `core.fusion-api.rest-api-client` for the declared legal entity, currency,
 bank, country and branch GET checks. Access failures, missing endpoints, timeouts
 and service outages are `UNVERIFIED_API_UNAVAILABLE` warnings: preserve supplied
 references and continue preparation and preview without a separate waiver.
-The Run Book converts the core client's sanitized failure into
+The Run Book converts the core client's successful checks or sanitized failures into
 `reference_check_results` using `ora_reference_lookups.md`. Supply this optional
 array in create intake or the snapshot-bound update request; the offline scripts
 do not call REST themselves. Warnings remain in the preparation review and must

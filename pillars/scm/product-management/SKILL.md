@@ -23,7 +23,6 @@ depends_on:
   - "shared.project-intake.scope-definition"
   - "shared.implementation-planning.offering-task-map-builder"
 uses_core:
-  - "core.fusion-dev.pillar-skill-gen"
   - "core.project-mgmt.project-state-manager"
   - "core.project-mgmt.artifact-registry-manager"
   - "core.project-mgmt.artifact-version-manager"
@@ -96,13 +95,9 @@ Use this offering-level skill after Product Management is in scope and before ro
 
 ## Routing Responsibility
 
-This skill routes control to functional-area skills created by developers under this folder. Developers should create functional-area skills with `core.fusion-dev.pillar-skill-gen` using the catalog-backed path pattern:
-
 ```text
 pillars/scm/product-management/{functional-area-slug}/
 ```
-
-When a requested functional area is not yet present under this offering, use the setup catalog below to identify the matching functional area and invoke `core.fusion-dev.pillar-skill-gen` to generate the child skill before adding functional-area-specific guidance.
 
 ## Inputs
 
@@ -155,6 +150,19 @@ Setup task count: `234`
 
 - Keep offering-level planning, scope decisions, sequencing, and cross-functional-area handoffs in this skill.
 - Put functional-area-specific implementation guidance in generated child skills under this offering folder.
-- Use `core.fusion-dev.pillar-skill-gen` for child functional-area skill creation so generated skills follow the repository contract.
-- Use `core.fusion-dev.fusionapps-resource-authoring` after child skill creation when Oracle FusionApps `ora-resource/` guidance is needed.
-- Do not create setup-task-specific skills directly under this offering folder unless the user explicitly requests nested task-level skill generation through the pillar skill generator.
+
+## Item Index Remediation Handoff
+
+When `scm.product-management.items.import-items` ends at
+`ITEM_IMPORT.INDEX_REMEDIATION_REQUIRED`, this offering skill owns the
+cross-functional-area continuation. The Import Items task itself must not
+invoke or wait for another task.
+
+1. Tell the user: `The Product Management item search index is unavailable. Manage Product Management Indexes is now the required remediation task; it will collect the index-specific inputs before making any change.`
+2. Route to `scm.product-management.index-management.manage-product-management-indexes` (`CUSTOM_EGP_MANAGE_PM_INDEXES`) in the same target environment and project context. Do not infer an index name, requested attribute changes, rebuild option, approval, or completion from the failed lookup.
+3. Let that task collect its own one-index request and follow its normal Data Loader, status, readback, ESS, and approval gates. Report that the remediation task is executing only after it has begun its selected workflow; do not claim that an index rebuild was submitted or completed before its verified result.
+4. Wait at the remediation task's documented user-input, approval, status, or completion terminal. Resume the Import Items task only after the index task reports verified completion for the same environment.
+5. Restart Import Items from `ITEM_IMPORT.CHECK_ITEM_INDEX` and require a new `verify_item_search_index_readiness` GET result classified as `available`. Do not reuse the original HTTP 404 result or continue directly to FBDI preparation.
+
+The offering-level handoff selects the remediation task but does not bypass its
+input collection, approval, Data Loader, or ESS controls.

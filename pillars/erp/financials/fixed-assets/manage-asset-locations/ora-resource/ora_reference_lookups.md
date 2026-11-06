@@ -68,7 +68,7 @@ for the mapping business key.
 ### DFF Metadata Export
 
 For each immutable Asset Location import batch, request one new same-environment
-DFF metadata export through [Apps Common Descriptive Flexfields](../../../../../core/fusion-api/apps-common/descriptive-flexfields/SKILL.md).
+DFF metadata export through [Apps Common Descriptive Flexfields](../../../../../../core/fusion-api/apps-common/descriptive-flexfields/SKILL.md).
 Use the **Manage Fixed Assets Descriptive Flexfields** task
 (`FA_MANAGE_FIXED_ASSETS_DESCRIPTIVE_FLEXFILEDS`) in offering `Financials` and
 functional area `Fixed Assets` (`FIN_FIXED_ASSETS_DEPLOYED`), with its task
@@ -128,3 +128,4 @@ Do not reuse pre-import verification evidence.
 |---|---:|---:|---|---|---|---|---|
 | MAL.RESOLVE_REFERENCES | decision | 20 | reference_lookup | resolved->MAL.RESOLVE_SEGMENT_VALUES;required_input_missing->MAL.HANDLE_INPUT;unresolved_or_ambiguous->MAL.HANDLE_LOOKUP | MAL.VALIDATE_INPUT | stop | Resolve System Controls and LOC# structure; map all physical segments and stop on missing required segment input. Then export the batch-current DFF definition, identify required FA_LOCATIONS columns, and stop on missing DFF input before value-set lookup or prerequisite preparation. |
 | MAL.RESOLVE_SEGMENT_VALUES | decision | 25 | reference_lookup | resolved->MAL.CHECK_DEPENDENCIES;missing_confirmed->MAL.CHECK_DEPENDENCIES;unresolved_or_ambiguous->MAL.HANDLE_LOOKUP | MAL.RESOLVE_REFERENCES | stop | After both KFF and DFF input gates pass, validate mapped segment values. Send confirmed missing value-set members to dependency evaluation; stop on unverified evidence. |
+| MAL.RESOLVE_OPERATION | decision | 35 | evaluate_result | create_new->MAL.APPLY_DEFAULTS;update_existing->MAL.APPLY_DEFAULTS;decision_required->MAL.HANDLE_OPERATION_DECISION | MAL.CHECK_DEPENDENCIES | stop | Compare requested operation with exact existing-location evidence. |

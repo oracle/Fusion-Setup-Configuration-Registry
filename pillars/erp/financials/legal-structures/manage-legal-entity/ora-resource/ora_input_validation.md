@@ -6,7 +6,7 @@
 |---|---|---|---|---|---|
 | Legal identity | Name, LegalEntityIdentifier, Country | Block before preview | User supplies the approved statutory identity; resolve Country as one enabled territory and one active country geography receipt | Always | resolve_entity_country_geography |
 | Identifying jurisdiction | User-supplied identifying-jurisdiction name or partial search text | Ask for the missing name/search text and stop before preview; reuse it when already supplied | Resolve the input and any explicit candidate selection through the jurisdiction lookup | Always | resolve_entity_identifying_jurisdiction |
-| Legal location | Exact existing or earlier-approved in-package legal-address natural key | Block before preview | Resolve one active internal legal address in the same country | Always | resolve_entity_legal_address |
+| Legal location | Existing or earlier-approved in-package legal address, identified by components, display address, or LeFormattedAddress | Block before preview | Resolve one active internal legal address in the same country | Always | resolve_entity_legal_address |
 | Explicit identifying registrations | EntityRegistrationNumber and MainLruRegistrationNumber | Block before preview | User supplies both statutory numbers, each no longer than 30 and free of scoped collisions | Always | find_entity_conflict |
 | Complete UI-equivalent aggregate | One XLE_ENTITY_PROFILE root, one same-name main XLE_ETB_PROFILE row, one identifying XLE_REGISTRATION row, and one identifying ORA_XLE_LEGAL_REPORTING_UNIT_REGISTRATION row | Block before preview | Author all four rows explicitly; root-only import does not regenerate children | Every CREATE |  |
 
@@ -32,7 +32,7 @@
 | Explicit children | Reject zero, duplicate, differently named, nonidentifying, or partial main-LRU/entity-registration/main-LRU-registration child rows | Every CREATE |  |
 | Authority and functions | Reject PartyName, IssuingFormattedAddress, hidden authority/site values, or any function input; require both function CSVs to contain zero candidate rows | Every supported CREATE | resolve_entity_enabled_function_code |
 | Dates and flags | Dates may be null; when both are supplied start must not follow end. TransactingEntityFlag, PsuFlag, and LegalEmployerFlag accept Y or N only | Applicable fields supplied |  |
-| System ownership | Reject user-supplied physical IDs, LocationId, SourceId, audit, ESS, object-version, generated display, or other system values | Every CREATE |  |
+| System ownership | Reject user-supplied physical IDs, LocationId, SourceId, audit, ESS, object-version, generated display, or other system values as CREATE values; display address text may identify the lookup row | Every CREATE |  |
 | DFF and localization | Keep base families null unless a supplied or active runtime context requires exact segment validation | Context or segment supplied |  |
 
 ## Task Nodes

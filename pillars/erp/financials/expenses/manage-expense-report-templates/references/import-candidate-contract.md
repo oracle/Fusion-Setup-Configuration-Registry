@@ -12,6 +12,11 @@ produced. Bind it to the later baseline by adding `baseline_process_id` and the
 exact `baseline_sha256` after the export succeeds. The candidate builder accepts
 this shape:
 
+Pass `--reference-evidence` with the core-captured destination category/BU/ledger
+results described in `destination-reference-contract.md`. When provided,
+`account_number` is an optional string on an expense type; omit it for an
+unchanged Edit account. The implementor supplies no ledger name.
+
 ```json
 {
   "schema_version": "1.5",
@@ -113,8 +118,11 @@ labels are also accepted). Newly enabled itemization needs included child types.
 Supply the top-level `itemizations` array as described in `child-mappings.md`.
 The builder derives each mapping operation from the complete relationship
 identity, applies additions after parent/type rows, and preserves unrelated
-itemization mappings. It writes account and tax values as null and Projects as
-disabled; do not supply account, tax, project-control, default-expenditure, or
+itemization mappings. Optional `account_number` is the account value as text,
+mapped to Segment1; LedgerName is derived from the BU primary ledger using
+destination REST evidence. Omitted accounts preserve existing values on edits.
+It writes tax values as null and Projects as disabled; do not supply direct
+ledger/segment, tax, project-control, default-expenditure, or
 project-mapping fields in a v1.5 design.
 
 For both template and expense-type receipt rules, `cash_receipt_threshold` is

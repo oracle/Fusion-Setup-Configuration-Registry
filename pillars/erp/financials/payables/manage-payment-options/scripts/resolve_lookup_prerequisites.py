@@ -56,11 +56,10 @@ INVOICE_OWNED_PAYMENT_TERM_FIELDS = frozenset(
 
 
 def _without_invoice_owned_payment_term_fields(design: dict[str, Any]) -> dict[str, Any]:
-    """Return a preflight view that excludes Invoice Options-owned term fields.
+    """Keep required create TermName for its owning read-only resolver.
 
-    Payment Options uses the sibling resolver only for shared-row prerequisites.
-    It must not validate or resolve the default payment-term fields owned by
-    Manage Invoice Options.
+    A new shared row needs its supplied TermName receipt. Other Invoice-owned
+    term fields and all update term changes remain outside Payment ownership.
     """
     preflight_design = copy.deepcopy(design)
     operations = preflight_design.get("operations")
@@ -72,21 +71,33 @@ def _without_invoice_owned_payment_term_fields(design: dict[str, Any]) -> dict[s
         values = operation.get("values")
         if not isinstance(values, dict):
             continue
+        shared_create = (
+            operation.get("action") == "create"
+            and operation.get("entity") == "AP_SYSTEM_PARAMETER"
+        )
         for field in INVOICE_OWNED_PAYMENT_TERM_FIELDS:
+            if shared_create and field == "TermName":
+                continue
             values.pop(field, None)
     return preflight_design
 
 
 def main(argv: list[str] | None = None) -> int:
-    """Run the shared preflight without Invoice Options-owned term lookups."""
+    """Delegate required create references; preserve update ownership limits."""
     args = DELEGATE.parse_args(argv)
     try:
+        DELEGATE._validate_new_outputs([args.output], [value for key, value in vars(args).items()
+                                                     if key != "output" and isinstance(value, Path)])
         design = DELEGATE._read_json(args.design)
         config = DELEGATE.metadata.read_config(
             args.properties, **DELEGATE.metadata.oauth_kwargs(args)
         )
+        if args.reference_context:
+            config["referenceContext"] = DELEGATE._read_json(args.reference_context)
+        baseline = (DELEGATE._read_package(args.baseline, DELEGATE._load_contract(TASK_ROOT / "e2e-adapter.json"))
+                    if args.baseline else None)
         resolved, summary = DELEGATE.resolve_lookup_prerequisites(
-            _without_invoice_owned_payment_term_fields(design), config
+            _without_invoice_owned_payment_term_fields(design), config, baseline
         )
         # The delegate does not transform operation values. Restore the original
         # operations so the output remains a faithful Payment Options design.
@@ -94,8 +105,11 @@ def main(argv: list[str] | None = None) -> int:
         DELEGATE._write_json(args.output, resolved)
         print(json.dumps({"status": "PASS", **summary, "output": str(args.output)}, sort_keys=True))
         return 0
-    except (DELEGATE.LookupPreflightError, DELEGATE.metadata.DataLoadError, OSError) as exc:
-        print(json.dumps({"status": "FAIL", "error": str(exc)}, sort_keys=True), file=sys.stderr)
+    except (DELEGATE.AdapterError, DELEGATE.LookupPreflightError, DELEGATE.metadata.DataLoadError, OSError) as exc:
+        failure = {"status": "FAIL", "error": str(exc)}
+        if hasattr(exc, "classification"):
+            failure.update(classification=exc.classification, failureClass=exc.failure_class)
+        print(json.dumps(failure, sort_keys=True), file=sys.stderr)
         return 1
 
 

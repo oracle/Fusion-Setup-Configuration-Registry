@@ -5,6 +5,11 @@ for an explicit shared-conversion action. This is not a CSV field or stored
 checkbox. Resolve source rate/date values first; use the PLAN_TYPE mapping in
 Design Enforcement. Independent conversion choices use normal row attributes
 without this action. Preserve and preview all resulting `derivedChanges`.
+The optional internal `sourceInput` retains the source-form business object.
+Its `Curr_Set_Use_Conversion` control is translated by preparation and reconciled
+against the ZIP using `finalData.sourceInput` at the preview gate; it is never
+serialized as a CSV flag. Canonical-only callers without source-form input
+continue to use the existing explicit action contract.
 
 Preparation also supports explicit `insertRows` on an existing parent,
 language-scoped `rename`, and `duplicateFrom` with optional `copyChildren` on a
@@ -12,6 +17,15 @@ create. These are internal action inputs, not new CSV headers. Use the contracts
 in Design Enforcement and scripts/README.md; consultants supply business intent.
 
 Accept codes, meanings, names, descriptions, translations and ordinary natural-language phrasing in any language when the evidence and context identify one valid member. Resolve intent to one CSV column first, then resolve its value. Do not require English, exact labels or prior knowledge of a code. Reject zero or multiple plausible matches from a supported authority; missing REST validation is unresolved/nonblocking under ora_reference_lookups.md, not evidence of an invalid value.
+
+## Legacy Forecast Input Normalization
+
+| Source input | Resolution | User guidance |
+|---|---|---|
+| Prog_Sett_Automatically_generate_fo omitted, empty or Remaining plan on ordinary create | No explicit forecast checkbox selection. Omit ProgAutoGenFcstVer from canonical requested choices so preparation materializes N from the scoped create default. Remaining plan belongs to EtcMethodCode; preserve the independently supplied ETC method. Retain original sourceInput and disclose the misplaced legacy value in the preview | Do not ask whether to enable automatic forecast generation or request a forecast financial plan type for this default |
+| Explicit supported forecast checkbox choice | Resolve the explicit choice to canonical Y/N; preserve it over the create default. Y requires the selected forecast type in Name3 | Ask for the forecast type only when generation is explicitly enabled and its type is missing |
+| No explicit forecast change on update or Duplicate, including misplaced Remaining plan | Preserve the existing or copied forecast setting; never apply the ordinary-create N default over it | A retained Y still requires its retained applicable Name3; resolve missing retained evidence through the selected workflow |
+| Any other non-Boolean forecast value or conflicting explicit choices | Not covered by the legacy Remaining plan normalization; resolve the specific conflicting or invalid intent before preview | Do not silently replace an explicit unsupported choice with N |
 
 ## CSV Column Intent Resolution
 
@@ -295,7 +309,7 @@ Every exported column has one row below. Resolve business intent to the scoped c
 | PJO_PPT_PLAN_OPTION_RATE_SCH.csv.RateScheduleName4; PJO_PPT_PLAN_OPTION_RATE_SCH.csv.RateScheduleName7 | Non-Labor Planning Rate Schedule: use the dedicated resolver; serialize exact RATE_SCHEDULE_NAME for the scoped cost/bill column; retain ID internally. | Planning rates are enabled and the scoped schedule is supplied; bill schedules additionally require a revenue branch | resolve_nonlabor_schedule |
 | PJO_PPT_PLAN_OPTION_RATE_SCH.csv.RateScheduleName8; PJO_PPT_PLAN_OPTION_RATE_SCH.csv.RateScheduleName9 | Project Role Planning Rate Schedule: use the dedicated resolver; serialize exact RATE_SCHEDULE_NAME for the scoped cost/bill column; retain ID internally. | Scoped schedule supplied for this business-unit row; actual-rate Project Role Cost Rate is target-observed; bill schedules require supported revenue context | resolve_role_schedule |
 | PJO_PPT_PLAN_OPTION_RATE_SCH.csv.IndSchName | Burden Schedule: use the dedicated resolver; serialize canonical Name; never schedule ID. | Planning rates are enabled and Burden Schedule is supplied | resolve_burden_schedule |
-| Task Settings date buffer | SyncTxnDateBuffer is optional, including when synchronization is enabled. Validate a supplied active value as an integer; when SyncTaskTxnPlanDates=N, preserve the disabled buffer and do not treat it as an active adjustment. Do not invent zero or make an omitted buffer a blocker. No unsupported minimum/maximum is imposed | Task Settings values supplied | |
+| Task Settings date buffer | SyncTxnDateBuffer is optional business input. With SyncTaskTxnPlanDates=Y, preparation materializes 0 when the effective value is empty on create/update; explicit integers override retained values and omitted nonempty retained buffers are preserved. An active blank in final ZIP bytes returns UNMATERIALIZED_DEFAULT; it requires preparation, not more business input. Validate nonempty active values as integers. With N, preserve the inactive buffer. No unsupported minimum/maximum is imposed | Submitted Task Settings row | |
 | FIXED_DATE companions | For each scoped conversion RateDateType, pair its same-prefix RateDate column; validate a supplied date. Conversion-date requiredness follows the corresponding enabled context, including project-level override flags. NtpRateDate is required when NtpRateDateType=FIXED_DATE; block that incomplete request instead of inventing a date. | A fixed-date member resolves |  |
 | DFF and translations | Resolve configured DFF context/segment labels and translation representation before changes; preserve omitted fields. Missing dynamic membership authority follows the nonblocking unresolved policy; the template does not define their value sets. | DFF or translation values supplied |  |
 | Unmapped or hidden field | Block a requested change when intent, domain or PROJECT_PLAN applicability remains unproven; preserve existing values for unrequested fields. No UI LOV is not permission to skip validation. | No verified mapping or applicability in this task |  |

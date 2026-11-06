@@ -5,9 +5,9 @@
 | Sequence | Step | What Must Happen |
 |---|---|---|
 | 1 | Collect | Obtain mapping identity, rule design, accounting date, environment, and current FSM task-CSV evidence; obtain FBDI evidence only when that interface is selected |
-| 2 | Lookup source COA | Resolve one enabled source COA through chartOfAccountsLOV; block before export when missing, disabled, or ambiguous |
-| 3 | Lookup target COA | Resolve one enabled target COA through chartOfAccountsLOV; block before export when missing, disabled, or ambiguous |
-| 4 | Compare mapping | Compare existing mapping evidence before export; terminate on identical and require direction on differences |
+| 2 | Lookup source COA | Resolve one enabled source COA through chartOfAccountsLOV; block mapping submission when missing, disabled, or ambiguous |
+| 3 | Lookup target COA | Resolve one enabled target COA through chartOfAccountsLOV; block mapping submission when missing, disabled, or ambiguous |
+| 4 | Compare mapping | Acquire the target template first; compare current target mapping evidence when available. Identical terminates; differences need direction; pending permits local preparation only |
 | 5 | Resolve conditional metadata | Resolve segments, value sets, values, hierarchies, and structure metadata; export structure metadata only when supported evidence cannot resolve it |
 | 6 | Default | Preserve user-supplied SecurityFlag, import mode, and accounting date; otherwise apply N, Increment, and current preparation date, then record evidence |
 | 7 | Validate | Enforce EO, VO, mapping, rule, hierarchy, selected-import-contract, concurrency, and approval rules |
@@ -23,9 +23,10 @@
 | COAMAP.003 | Header create or update | Error | find_mapping_definition | Application description is longer than 240 characters | Shorten the description | Yes |
 | COAMAP.004 | Existing header found | Error | find_mapping_definition | Requested and existing parent or child definitions differ without direction | Choose update or a distinct mapping | No |
 | COAMAP.005 | Approved update | Error | find_mapping_definition | Audit or version evidence changed after comparison | Refresh, compare, and approve again | No |
+| COAMAP.044 | Mapping create | Error | resolve_segment_value_set | Header has no rule definition, or a segment-rule design omits an enabled target segment or uses its wrong value set | Supply validated rules and prove complete target coverage before Data Loader approval | Yes |
 | COAMAP.006 | Segment rule | Error | find_target_coa | Target segment does not exist in the target chart | Correct the segment | Yes |
 | COAMAP.007 | Source-dependent segment rule | Error | find_source_coa | Referenced source segment does not exist | Correct the segment | Yes |
-| COAMAP.008 | Segment rule | Error | inspect_current_fbdi | Mapping method is not one of the three documented methods or technical code is unproved | Use a current-template accepted method | Yes |
+| COAMAP.008 | Segment rule | Error | resolve_segment_map_method | Mapping method is not one of the three documented methods or technical code is unproved | Use a current-template accepted method | Yes |
 | COAMAP.009 | Assign single value | Error | resolve_mapping_values | Target constant is missing, invalid, inactive, or ineffective | Select a valid target value | Yes |
 | COAMAP.010 | Copy value | Error | find_source_coa, find_target_coa | Source and target value sets do not contain identical permitted values | Use rollup rules or align the value sets | Yes |
 | COAMAP.011 | Rollup rule | Error | resolve_mapping_values | Target or source detail value is invalid for the accounting date | Correct the values | Yes |
@@ -44,15 +45,15 @@
 | COAMAP.040 | Data Loader FSM account-rule package | Error | inspect_current_fsm_task_csv | ORA_GL_AFF_MAP_RULE.csv, its export-derived header, matching task metadata, or parent mapping reference is absent or altered | Re-export the task and regenerate the package from the current contract before Data Loader submission | Yes |
 | COAMAP.024 | FBDI package | Error | inspect_current_fbdi | Template is not current, columns changed or deleted, code guessed, or ZIP shape differs | Rebuild from the current template | Yes |
 | COAMAP.025 | FBDI package | Error | resolve_mapping_values, resolve_mapping_hierarchy | Any row or parent-child reference is invalid or unresolved | Correct all rows before submission | Yes |
-| COAMAP.026 | Replace | Critical | find_mapping_definition, inspect_current_fbdi | Package is partial or explicit Replace approval is absent | Use Increment or supply a complete approved set | No |
+| COAMAP.026 | Replace | Critical | find_mapping_definition | Package is partial or explicit Replace approval is absent | Use Increment or supply a complete approved set | No |
 | COAMAP.027 | Any mutation | Critical | find_mapping_definition | Exact environment-bound approval is absent | Obtain explicit approval | No |
-| COAMAP.028 | Technical import field | Error | inspect_current_fbdi | UI label, physical column, table ID, or guessed default is used without accepted-value evidence | Resolve from the current template, export, or supported metadata | Yes |
+| COAMAP.028 | Technical import field | Error | select_import_route | UI label, physical column, table ID, or guessed default is used without accepted-value evidence | Resolve from the current template, export, or supported metadata | Yes |
 | COAMAP.029 | Hierarchy-dependent rule | Warning | resolve_mapping_hierarchy | Duplicate children or optional Essbase publication constraints affect another use | Disclose the constraint; do not require Essbase solely for mapping | No |
-| COAMAP.030 | Readiness | Error | all applicable resolvers | Any business decision or technical lookup gap remains | Resolve every blocker and regenerate readiness | Yes |
+| COAMAP.030 | Readiness | Error | all applicable resolvers | Any required check remains unresolved for the requested stage; a pending mapping comparison blocks submission but not contract-based local preparation | Resolve every submission blocker before Data Loader preview; label local preparation separately | Yes |
 | COAMAP.031 | Mapping header | Error | find_mapping_definition | A duplicate mapping name is detected | Resolve GL_DUP_COA_MAPPING_NAME by selecting a distinct name or approved update path | Yes |
 | COAMAP.032 | Copy value | Error | resolve_value_set_max_size | Source value-set maximum size exceeds target value-set maximum size | Use another mapping method or a compatible target value set | Yes |
 | COAMAP.033 | Segment metadata | Error | resolve_segment_value_set | Segment metadata is not enabled or does not belong to the exact resolved COA | Correct the segment or COA selection | Yes |
-| COAMAP.034 | Segment method | Error | resolve_segment_map_method | Method code is not S, C, R, or template-proved U | Use a supported, evidence-backed method | Yes |
+| COAMAP.034 | Segment method | Error | resolve_segment_map_method | Method code is not S, C, or R for normal creation, or the selected-route contract is incompatible | Use a supported, evidence-backed method | Yes |
 | COAMAP.035 | Rollup rule | Error | resolve_mapping_values | Populated target value lacks source low or high value, Between range is reversed, or rules overlap | Correct bounds and remove or reconcile overlap | Yes |
 | COAMAP.036 | Constant, copy, or rollup rule | Error | find_value_set_definition | The segment-derived value set does not resolve to exactly one definition or its metadata is incompatible with the requested rule | Correct the verified value set or rule design | Yes |
 | COAMAP.037 | Constant target value | Error | find_value_set_values | Target value is absent, disabled, ineffective, ambiguous, or lacks required dependent-value context | Supply a valid target value for the accounting date | Yes |
@@ -102,4 +103,4 @@
 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|
-| COAMAP.ENFORCE | step | 8 | design_enforcement | valid->COAMAP.BULK | COAMAP.DEFAULT | stop | New mapping or approved update |
+| COAMAP.ENFORCE | step | 9 | design_enforcement | valid->COAMAP.BULK | COAMAP.DEFAULT | stop | New mapping, approved update, or local preparation with pending comparison |

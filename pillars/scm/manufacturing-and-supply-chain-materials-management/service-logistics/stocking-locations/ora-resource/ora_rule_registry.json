@@ -1,0 +1,443 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "ORA_RCL_STOCKING_LOCATIONS",
+      "task_name": "Stocking Locations",
+      "start_node": "RCL.SLOC.VALIDATE",
+      "nodes": [
+        {
+          "id": "RCL.SLOC.VALIDATE",
+          "node_type": "decision",
+          "sequence": 1,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "passed": "RCL.SLOC.PARENT",
+            "failed": "RCL.SLOC.ISSUES"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Validate captured operation and source using Operation Contract; no approval prerequisite",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 71
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RCL.SLOC.PARENT",
+          "node_type": "decision",
+          "sequence": 2,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "matched": "RCL.SLOC.ORGANIZATION",
+            "not_applicable": "RCL.SLOC.ORGANIZATION",
+            "absent": "RCL.SLOC.ORGANIZATION",
+            "failed": "RCL.SLOC.ISSUES"
+          },
+          "prerequisites": [
+            "RCL.SLOC.VALIDATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Execute resolve_stocking_location_by_exact_name except parent_create records not_applicable; verified zero on deletion records absent and noOp, never bypass failed reads",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 46
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RCL.SLOC.ORGANIZATION",
+          "node_type": "decision",
+          "sequence": 3,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "matched": "RCL.SLOC.SUBINVENTORY",
+            "not_applicable": "RCL.SLOC.SUBINVENTORY",
+            "failed": "RCL.SLOC.ISSUES"
+          },
+          "prerequisites": [
+            "RCL.SLOC.PARENT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Execute resolve_stocking_location_organization using create input or current parent's canonical references; absent deletion target only records not_applicable",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 47
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RCL.SLOC.SUBINVENTORY",
+          "node_type": "decision",
+          "sequence": 4,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "matched": "RCL.SLOC.IDENTITY",
+            "not_applicable": "RCL.SLOC.IDENTITY",
+            "failed": "RCL.SLOC.ISSUES"
+          },
+          "prerequisites": [
+            "RCL.SLOC.ORGANIZATION"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Execute resolve_stocking_location_subinventory within resolved organization; absent deletion target only records not_applicable",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 48
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RCL.SLOC.IDENTITY",
+          "node_type": "decision",
+          "sequence": 5,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "passed": "RCL.SLOC.TECHNICIAN",
+            "not_applicable": "RCL.SLOC.TECHNICIAN",
+            "failed": "RCL.SLOC.ISSUES"
+          },
+          "prerequisites": [
+            "RCL.SLOC.SUBINVENTORY"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Execute check_stocking_location_identity: parent_create requires absence, other present targets require matching existing key; absent deletion target only records not_applicable",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 49
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RCL.SLOC.TECHNICIAN",
+          "node_type": "decision",
+          "sequence": 6,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "absent": "RCL.SLOC.CHILDREN",
+            "not_applicable": "RCL.SLOC.CHILDREN",
+            "failed": "RCL.SLOC.ISSUES"
+          },
+          "prerequisites": [
+            "RCL.SLOC.IDENTITY"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Execute check_stocking_location_technician_assignment for present parent_update or parent_delete; require absent and verified visibility, assigned or unknown fails; other classes/noOp record not_applicable",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 50
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RCL.SLOC.CHILDREN",
+          "node_type": "decision",
+          "sequence": 7,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "absent": "RCL.SLOC.CHILD",
+            "not_applicable": "RCL.SLOC.CHILD",
+            "failed": "RCL.SLOC.ISSUES"
+          },
+          "prerequisites": [
+            "RCL.SLOC.TECHNICIAN"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Execute check_stocking_location_children for present parent_delete; zero complete results is absent; other classes/noOp record not_applicable",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 51
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RCL.SLOC.CHILD",
+          "node_type": "decision",
+          "sequence": 8,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "matched": "RCL.SLOC.TYPE",
+            "absent": "RCL.SLOC.TYPE",
+            "not_applicable": "RCL.SLOC.TYPE",
+            "failed": "RCL.SLOC.ISSUES"
+          },
+          "prerequisites": [
+            "RCL.SLOC.CHILDREN"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Execute resolve_site_dedicated_location_by_exact_identity for child_update or child_delete with present parent; capture sibling identities for deletion; zero only on delete sets noOp; other classes/absent parent record not_applicable",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 52
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RCL.SLOC.TYPE",
+          "node_type": "decision",
+          "sequence": 9,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "matched": "RCL.SLOC.CUSTOMER",
+            "not_applicable": "RCL.SLOC.CUSTOMER",
+            "failed": "RCL.SLOC.ISSUES"
+          },
+          "prerequisites": [
+            "RCL.SLOC.CHILD"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Execute resolve_stocking_location_type when parent_update supplies LocationTypeMeaning; otherwise record not_applicable; validate supplied code/meaning agreement against current metadata",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 53
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RCL.SLOC.CUSTOMER",
+          "node_type": "decision",
+          "sequence": 10,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "matched": "RCL.SLOC.SITE",
+            "not_applicable": "RCL.SLOC.SITE",
+            "failed": "RCL.SLOC.ISSUES"
+          },
+          "prerequisites": [
+            "RCL.SLOC.TYPE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Execute resolve_customer_party_site for child_create or child_update replacing customer/site; unrelated child update, deletes and parent operations record not_applicable",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 54
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RCL.SLOC.SITE",
+          "node_type": "decision",
+          "sequence": 11,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "absent": "RCL.SLOC.DEFAULT",
+            "unchanged": "RCL.SLOC.DEFAULT",
+            "not_applicable": "RCL.SLOC.DEFAULT",
+            "failed": "RCL.SLOC.ISSUES"
+          },
+          "prerequisites": [
+            "RCL.SLOC.CUSTOMER"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Execute check_site_dedication_duplicate for child_create or customer/site replacement; exclude only selected child on update; same pair is unchanged (noOp only if all requested fields already match); other operations record not_applicable",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 55
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RCL.SLOC.DEFAULT",
+          "node_type": "decision",
+          "sequence": 12,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "applied": "RCL.SLOC.GATE",
+            "not_applicable": "RCL.SLOC.GATE",
+            "failed": "RCL.SLOC.ISSUES"
+          },
+          "prerequisites": [
+            "RCL.SLOC.SITE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Evaluate defaults without changing captured records; explicit RestAction must already match operationClass; PATCH/DELETE never receive create defaults; a needed correction fails and requires a new immutable artifact",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 19
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RCL.SLOC.GATE",
+          "node_type": "decision",
+          "sequence": 13,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "passed": "RCL.SLOC.READY",
+            "no_op": "RCL.SLOC.NOOP",
+            "failed": "RCL.SLOC.ISSUES"
+          },
+          "prerequisites": [
+            "RCL.SLOC.DEFAULT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Require captured keys/action/values to match selected operation and all applicable checks; all rows noOp returns no_op, mixed noOp/actionable fails, otherwise passed; exact immutable artifact required; no approval prerequisite",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 70
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RCL.SLOC.READY",
+          "node_type": "terminal",
+          "sequence": 14,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "RCL.SLOC.GATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Captured-record validation passed; return results to Task Hook without requesting approval or authorizing submission",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 71
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RCL.SLOC.NOOP",
+          "node_type": "terminal",
+          "sequence": 15,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "RCL.SLOC.GATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "All captured targets verified no-op; return no-op results and stop without approval, upload or initiation",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 72
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RCL.SLOC.ISSUES",
+          "node_type": "step",
+          "sequence": 16,
+          "action_type": "error_handler",
+          "execution_route": "local",
+          "transitions": {
+            "reported": "RCL.SLOC.RETURN_ISSUES"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Routing, authentication, identity, mapping, source, or child contract validation failed",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 73
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RCL.SLOC.RETURN_ISSUES",
+          "node_type": "terminal",
+          "sequence": 17,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "RCL.SLOC.ISSUES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "An issue was reported",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 74
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

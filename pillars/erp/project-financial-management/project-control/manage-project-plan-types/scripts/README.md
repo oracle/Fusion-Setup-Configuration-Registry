@@ -7,7 +7,10 @@ silently defaulted. Local success leaves server validation `not_run`.
 
 Checks include calendar-dependent rate derivation, the separate conversion-date
 domain and budget/forecast target requirements. A synchronization buffer is
-optional; supplied active values must be integers. Rate mode belongs to each BU
+optional business input; preparation applies the 0-day save default when
+synchronization is Y and the effective buffer is empty. Supplied active values
+must be integers. The byte validator rejects an unmaterialized active blank;
+it never fills defaults. Rate mode belongs to each BU
 row, including actual-rate fallback schedules. Inactive retained rollup or rate
 settings are disclosed as deferred context, not silently reset; the assisted
 rules distinguish preserved values from requested changes to inactive controls.
@@ -59,6 +62,15 @@ The helper never overwrites a file. Changed exported members or columns require
 contract review, not a guessed mapping. Metadata is copied byte-for-byte.
 
 Create defaults cover PROJECT_PLAN/BUDGET/COST_ONLY and its COST child only.
+Separately, submitted create/update planning-options rows apply the conditional
+save default: SyncTaskTxnPlanDates Y plus an empty effective SyncTxnDateBuffer
+becomes 0 after explicit choices and retained values are merged. An explicit
+integer overrides the baseline; an omitted nonempty baseline buffer is retained.
+An explicit empty active buffer also defaults to 0. With synchronization N,
+the inactive buffer stays unchanged. Omitted options rows on parent-only updates
+are not added. Duplicate applies the same conditional rule after source merging.
+Each applied zero appears as conditional_save_default in defaultsApplied with
+before/after/reason for the Task Hook preview.
 No effective date, set, BU row, rate schedule, currency rate, DFF or translation
 is invented. Explicit choices, including N and blank required values, are not
 silently defaulted. The result reports applied defaults in the Task Hook change
@@ -83,6 +95,61 @@ The action requires a known cost rate type and date basis; none is defaulted.
 For independent attributes, omit the action and supply the applicable fields.
 There is no persistent checkbox column or `false` action.
 
+For source-form business input, retain the effective input object in the
+canonical request's optional `sourceInput`. `Curr_Set_Use_Conversion` accepts
+Boolean true/false or those strings. True materializes the existing copy action;
+false rejects a contradictory copy action and otherwise leaves independent
+attributes alone. Invalid nonblank values block. This preserves canonical-only
+callers and does not infer shared intent from equal rate values.
+Pass that same object as `finalData.sourceInput` when building the preview.
+The preview checks the actual persistent copy destinations before approval,
+so a source true value cannot disappear behind a schema-valid ZIP. It also
+adds explicit unverified warnings for each supplied profile, budget target
+and forecast target; local validation does not prove their target eligibility.
+
+### Check complete Business Unit evidence
+
+The workflow's existing core GET client owns transport and header selection.
+After its declared reference-acquisition step, save an evidence object with
+`intent`, `requestContext` and ordered `pages`. `requestContext` contains
+`targetOrigin`, `identity` (non-secret identity label), `language`, `runId`,
+`acquiredAt`, `q`, and actual outgoing `headers`. If the workflow deliberately
+uses the server default, retain `defaultFrameworkVersion` and its current
+`defaultVersionEvidence` instead. Each page is the actual response including
+items/count/offset/hasMore. Continue the same query/header/scope until hasMore
+is false; advance offset by actual returned count. Never put tokens in headers
+evidence; retain only the non-secret framework header.
+
+```bash
+python reference_evidence.py --input /absolute/project/artifacts/bu-evidence.json
+```
+
+The offline checker returns a unique visible active identity only after
+completeness checks pass. No-match means absence within that visible query
+scope. Existing FSM references require reconciliation with lookup visibility
+and active state; do not label an incomplete search globally missing or choose
+a similarly named BU automatically.
+
+### Retain an accepted execution receipt
+
+Before the authorized loader handoff, preflight the project artifacts directory
+and retain a separate copy of the task-approved envelope. Preserve the actual
+structured return value of the selected core adapter (including fileName,
+dataSetName, uploadStatus, initiationStatus, ContentId and RequestId). Then:
+
+```bash
+python execution_receipt.py --envelope /absolute/project/artifacts/retained-approval.json --result /absolute/project/artifacts/initiation-result.json --archive /absolute/project/artifacts/prepared.zip --output /absolute/project/artifacts/execution-receipt.json --dry-run
+```
+
+Repeat without `--dry-run` to write a new receipt, then register it with the
+existing project artifact/state services. The helper verifies local approval,
+Run Book binding, bytes, filename and accepted IDs. It allowlists receipt
+fields, refuses overwrite, never calls Fusion, and records initiated with
+completionVerified=false. Do not recreate lost approval evidence or substitute
+invented structured results. A receipt failure after acceptance permits local
+evidence recovery only, never another upload. A later results request checks
+this same accepted request before any fresh readback.
+
 An update changing multicurrency includes the exact retained options rows and
 propagates the parent choice, matching the task importer. Switching Y to N when
 retained currency rows exist blocks as `DESTRUCTIVE_CURRENCY_RESET_EXCLUDED`:
@@ -96,7 +163,8 @@ baseline. It merges only requested changes into those complete retained rows;
 unrequested child collections remain absent, except retained options rows needed
 for an explicit multicurrency or conversion-copy action. New children use
 `insertRows`. It never removes children or deletes records. Preserve existing
-data rather than using create defaults. Run the same preview and byte checks
+data rather than using create defaults; submitted active empty buffers still
+receive the conditional save default above. Run the same preview and byte checks
 for every output.
 
 ### Insert children on an existing type

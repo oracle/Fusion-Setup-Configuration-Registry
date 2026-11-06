@@ -19,11 +19,11 @@
           },
           "prerequisites": [],
           "on_failure": "stop",
-          "applies_when": "Every fully supplied create or explicit-merge update; reject unsupported lifecycle requests",
+          "applies_when": "Every create with required fields or explicit-merge update preserving nullable values; reject unsupported lifecycle requests",
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 51
+            "line": 59
           },
           "readiness": {
             "status": "ready",
@@ -145,7 +145,7 @@
             "EXMCR.LOOKUP_CURRENCY"
           ],
           "on_failure": "stop",
-          "applies_when": "Enforce fully supplied creates, complete merged updates, finite nonnegative ordered tolerances, verified references and preservation",
+          "applies_when": "Enforce source-required fields, nullable percentages, ordering when both populated, verified references and preservation",
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
@@ -170,7 +170,7 @@
             "EXMCR.CHECK_DESIGN"
           ],
           "on_failure": "stop",
-          "applies_when": "Supported complete-row create/update candidate, verified references, preservation and core preflight; return validation only before core approval",
+          "applies_when": "Supported create/update candidate with source-required fields and nullable percentages, verified references, preservation and core preflight; return validation only before core approval",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",

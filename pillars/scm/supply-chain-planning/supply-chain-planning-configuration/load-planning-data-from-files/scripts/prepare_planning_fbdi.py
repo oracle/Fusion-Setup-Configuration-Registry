@@ -20,6 +20,114 @@ from inspect_planning_fbdi_template import ContractError, sha256, supported_memb
 
 REPO = next(parent for parent in Path(__file__).resolve().parents if (parent / "AGENTS.md").is_file())
 
+# Operation semantics, not another file allowlist. Resolve the physical column
+# from the current worksheet-to-CTL mapping; never hardcode a column number.
+DELETE_TARGETS = {
+    "sourcing_rule": ("SourcingRules.csv", "DELETE_SOURCING_RULES"),
+    "sourcing_sources": ("SourcingRules.csv", "DELETE_SOURCES"),
+    "atp_rule": ("ATPRules.csv", "DELETED_FLAG"),
+    "atp_rule_assignment": ("ATPRuleAssignments.csv", "DELETED_FLAG"),
+}
+COMBINED_SOURCING_TARGETS = frozenset({"sourcing_rule", "sourcing_sources"})
+
+
+def deletion_columns(contract: dict) -> list[tuple[dict, str | None]]:
+    columns = []
+    for field in contract["field_mapping"]:
+        technical = field["worksheet_technical_name"].upper()
+        if not any(name.startswith("DELETE") for name in (technical, field["csv_header"].upper())):
+            continue
+        targets = [target for target, (member, marker) in DELETE_TARGETS.items()
+                   if member == contract["csv_member"] and marker == technical]
+        columns.append((field, targets[0] if targets else None))
+    return columns
+
+
+def deletion_effects(values: dict, contract: dict, row_number: int) -> list[dict]:
+    """Classify actual CSV flags and validate deletion identity without live calls."""
+    member = contract["csv_member"]
+    active = []
+    for field, target in deletion_columns(contract):
+        value = values.get(field["csv_header"])
+        value = "" if value is None else str(value)
+        if value.upper() not in {"", "YES", "NO"}:
+            raise ContractError(f"{member} row {row_number}: {field['csv_header']} requires Yes, No, or blank; not numeric flags.")
+        if value.upper() == "YES":
+            if target is None:
+                raise ContractError(f"{member} row {row_number}: unsupported deletion flag {field['csv_header']}.")
+            active.append((field, target))
+    if len(active) > 1 and not (
+            member == "SourcingRules.csv" and len(active) == 2
+            and {target for _field, target in active} == COMBINED_SOURCING_TARGETS):
+        raise ContractError(f"{member} row {row_number}: unsupported deletion flag combination.")
+    effects = []
+    for field, target in active:
+        validate_deletion_identity(values, member, target, row_number)
+        effects.append({"row_number": row_number, "target": target,
+                        "worksheet_flag": field["worksheet_technical_name"],
+                        "csv_flag": field["csv_header"], "position": field["position"]})
+    return effects
+
+
+def validate_deletion_identity(values: dict, member: str, target: str, row_number: int) -> None:
+    """Retain each scope's required keys, including both scopes in a combined row."""
+    required = ["SR_INSTANCE_CODE"]
+    if target in {"sourcing_rule", "sourcing_sources"}:
+        required.append("SOURCING_RULE_NAME")
+    elif target == "atp_rule":
+        required.append("RULE_NAME")
+    else:
+        required.extend(["ATP_RULE_NAME", "ASSIGNMENT_TYPE"])
+        assignment_keys = {"2": ["CATEGORY_NAME"], "3": ["ITEM_NAME"],
+                           "4": ["ORGANIZATION_CODE"], "5": ["ITEM_NAME", "ORGANIZATION_CODE"]}
+        assignment_type = str(values.get("ASSIGNMENT_TYPE", ""))
+        if assignment_type not in assignment_keys:
+            raise ContractError(f"{member} row {row_number}: deletion requires assignment type 2, 3, 4, or 5.")
+        required.extend(assignment_keys[assignment_type])
+    if target == "sourcing_sources":
+        required.extend(["EFFECTIVE_DATE", "SOURCE_TYPE", "RANK"])
+        source_type = str(values.get("SOURCE_TYPE", ""))
+        if source_type not in {"1", "2", "3"}:
+            raise ContractError(f"{member} row {row_number}: source deletion requires source type 1, 2, or 3.")
+        required.extend(["VENDOR_NAME"] if source_type == "3" else ["SOURCE_ORGANIZATION_CODE"])
+    missing = [key for key in required if values.get(key) is None or not str(values[key]).strip()]
+    if missing:
+        raise ContractError(f"{member} row {row_number}: deletion target requires {', '.join(missing)}.")
+
+
+def delete_values(record: dict, contract: dict) -> dict:
+    """Overlay only explicitly requested delete markers on an identified full row."""
+    baseline = record.get("baseline")
+    member = contract["csv_member"]
+    if set(record) == {"target", "baseline"}:
+        targets = [record["target"]]
+    elif set(record) == {"targets", "baseline"} and isinstance(record["targets"], list):
+        targets = record["targets"]
+    else:
+        raise ContractError(f"{member}: delete rows require target or targets, and baseline only.")
+    if (not targets or any(not isinstance(target, str) or target not in DELETE_TARGETS
+                          or DELETE_TARGETS[target][0] != member for target in targets)
+            or len(set(targets)) != len(targets)
+            or (len(targets) > 1 and set(targets) != COMBINED_SOURCING_TARGETS)):
+        raise ContractError(f"{member}: unsupported or duplicate deletion targets.")
+    fields = contract["ordered_headers"][:-1]
+    if not isinstance(baseline, dict) or set(baseline) != set(fields):
+        raise ContractError(f"{member}: delete baseline must contain every CTL input field.")
+    columns = deletion_columns(contract)
+    selected = []
+    for target in targets:
+        matching = [field for field, scope in columns if scope == target]
+        if len(matching) != 1:
+            raise ContractError(f"{member}: missing or ambiguous deletion marker in current worksheet/CTL contract.")
+        selected.append(matching[0]["csv_header"])
+    existing = deletion_effects(baseline, contract, 1)
+    if any(effect["target"] not in targets for effect in existing):
+        raise ContractError(f"{member}: baseline contains a different deletion scope.")
+    values = dict(baseline)
+    for field, _scope in columns:
+        values[field["csv_header"]] = "Yes" if field["csv_header"] in selected else "No"
+    return values
+
 
 def load_contracts(path: Path, run_id: str) -> tuple[dict, dict]:
     """Reuse parsed metadata, checking source digests rather than parsing XLSM again."""
@@ -149,6 +257,7 @@ def validate_csv(content: bytes, contract: dict, *, generated: bool) -> dict:
             raise ContractError(f"{member}: generated headers must use CTL order.")
     if not rows:
         raise ContractError(f"{member}: at least one data row is required.")
+    deletions = []
     for number, row in enumerate(rows, start=2 if has_header else 1):
         if len(row) != expected_count or (with_end and row[-1] != "END"):
             raise ContractError(f"{member} row {number}: field count or terminal END mismatch.")
@@ -156,9 +265,10 @@ def validate_csv(content: bytes, contract: dict, *, generated: bool) -> dict:
             raise ContractError(f"{member} row {number}: empty business row.")
         for value, field in zip(row, contract["field_mapping"]):
             check_value(value, field, member, number)
+        deletions.extend(deletion_effects(dict(zip(physical, row)), contract, number))
     return {"member": member, "row_count": len(rows), "field_count": expected_count,
             "end_marker": with_end, "header_match": "ctl" if header == contract["ordered_headers"] else "position",
-            "sha256": sha256(content)}
+            "sha256": sha256(content), "deletions": deletions}
 
 
 def generate_members(request: dict, contracts: dict) -> tuple[list[tuple[str, bytes]], dict]:
@@ -167,8 +277,8 @@ def generate_members(request: dict, contracts: dict) -> tuple[list[tuple[str, by
         raise ContractError("Request requires a members object keyed by supported CSV filename.")
     names = validate_members(list(members))
     operation = request.get("operation", "create")
-    if operation not in {"create", "update"}:
-        raise ContractError("Generation operation must be create or update.")
+    if operation not in {"create", "update", "delete"}:
+        raise ContractError("Generation operation must be create, update, or delete.")
     output, mappings = [], {}
     for supplied_name, name in zip(members, names):
         if name not in contracts:
@@ -186,7 +296,10 @@ def generate_members(request: dict, contracts: dict) -> tuple[list[tuple[str, by
         for record in records:
             if not isinstance(record, dict):
                 raise ContractError(f"{name}: each row must be an object.")
-            if operation == "update":
+            if operation == "delete":
+                values = delete_values(record, contract)
+                used.update(values)
+            elif operation == "update":
                 baseline, changes = record.get("baseline"), record.get("changes")
                 if set(record) != {"baseline", "changes"} or not isinstance(baseline, dict) or not isinstance(changes, dict):
                     raise ContractError(f"{name}: update rows require baseline and changes objects.")
@@ -207,6 +320,11 @@ def generate_members(request: dict, contracts: dict) -> tuple[list[tuple[str, by
                 if value is not None and not isinstance(value, (str, int, float)) or isinstance(value, bool):
                     raise ContractError(f"{name}: values must be strings, numbers, or null.")
                 row.append("" if value is None else str(value))
+            effects = deletion_effects(dict(zip(fields, row)), contract, 1)
+            if effects and operation != "delete":
+                raise ContractError(f"{name}: affirmative deletion flags require operation delete, not create/update.")
+            if operation == "delete" and not effects:
+                raise ContractError(f"{name}: delete request must produce a deletion marker.")
             writer.writerow(row + ["END"])
         output.append((name, stream.getvalue().encode("utf-8")))
         mappings[name] = [{"input": field, "position": fields.index(field) + 1} for field in fields if field in used]
@@ -292,6 +410,10 @@ def prepare(*, contracts: dict, evidence: dict, source: Path | None = None,
         "filtered": bool(excluded), "unchanged_source_zip": passthrough,
         "excluded_members": excluded, "ignored_platform_metadata": ignored,
         "members": validations, "source_to_output_mapping": mappings,
+        "contains_deletions": any(item["deletions"] for item in validations),
+        "deletion_row_count": sum(len({effect["row_number"] for effect in item["deletions"]})
+                                  for item in validations),
+        "deletion_action_count": sum(len(item["deletions"]) for item in validations),
         **evidence,
     }
 
@@ -300,7 +422,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     selection = parser.add_mutually_exclusive_group(required=True)
     selection.add_argument("--source", type=Path, help="supplied CSV or ZIP; preserved unchanged")
-    selection.add_argument("--request", type=Path, help="mapped create/update JSON")
+    selection.add_argument("--request", type=Path, help="mapped create/update/delete JSON")
     parser.add_argument("--contracts", type=Path, required=True)
     parser.add_argument("--run-id", required=True, help="current local preparation run, not Fusion runID")
     parser.add_argument("--output-zip", type=Path)

@@ -1,0 +1,264 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "ORA_INV_DEFAULT_CLASSIFICATION_GROUP",
+      "task_name": "Default Classification Group",
+      "start_node": "DCG.VALIDATE_INPUT",
+      "nodes": [
+        {
+          "id": "DCG.VALIDATE_INPUT",
+          "node_type": "step",
+          "sequence": 10,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "DCG.APPLY_UI_DEFAULTS",
+            "invalid": "DCG.HANDLE_ERROR"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Before normalizing Default Classification Group input for Data Loader",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 60
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "DCG.APPLY_UI_DEFAULTS",
+          "node_type": "step",
+          "sequence": 20,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "defaulted": "DCG.RESOLVE_CRITERIA_ENTITY",
+            "not_required": "DCG.RESOLVE_CRITERIA_ENTITY",
+            "blocked": "DCG.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "DCG.VALIDATE_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Before resolving classification criteria and Data Loader handoff",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 27
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "DCG.RESOLVE_CRITERIA_ENTITY",
+          "node_type": "decision",
+          "sequence": 30,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "DCG.RESOLVE_CRITERIA_CONDITION",
+            "not_required": "DCG.RESOLVE_CRITERIA_CONDITION",
+            "blocked": "DCG.HANDLE_ERROR",
+            "failure": "DCG.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "DCG.APPLY_UI_DEFAULTS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Validate or resolve a supplied or defaulted criteria entity",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 38
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "DCG.RESOLVE_CRITERIA_CONDITION",
+          "node_type": "decision",
+          "sequence": 40,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "DCG.RESOLVE_ITEM_CATALOG",
+            "not_required": "DCG.RESOLVE_ITEM_CATALOG",
+            "blocked": "DCG.HANDLE_ERROR",
+            "failure": "DCG.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "DCG.RESOLVE_CRITERIA_ENTITY"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Validate or resolve a supplied or defaulted criteria condition",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 39
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "DCG.RESOLVE_ITEM_CATALOG",
+          "node_type": "decision",
+          "sequence": 50,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "DCG.RESOLVE_EXISTING_GROUP",
+            "not_required": "DCG.RESOLVE_EXISTING_GROUP",
+            "blocked": "DCG.HANDLE_ERROR",
+            "failure": "DCG.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "DCG.RESOLVE_CRITERIA_CONDITION"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Resolve or validate current and target catalog identities",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 40
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "DCG.RESOLVE_EXISTING_GROUP",
+          "node_type": "decision",
+          "sequence": 55,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "DCG.DATA_LOADER_HANDOFF",
+            "not_required": "DCG.DATA_LOADER_HANDOFF",
+            "blocked": "DCG.HANDLE_ERROR",
+            "failure": "DCG.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "DCG.RESOLVE_ITEM_CATALOG"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Validate the existing group context for a group-header update or child operation",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 41
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "DCG.DATA_LOADER_HANDOFF",
+          "node_type": "decision",
+          "sequence": 60,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "DCG.DONE",
+            "blocked": "DCG.HANDLE_ERROR",
+            "failure": "DCG.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "DCG.RESOLVE_EXISTING_GROUP"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Before handing normalized group-header or child operations to core.data-loader",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 43
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "DCG.HANDLE_ERROR",
+          "node_type": "step",
+          "sequence": 70,
+          "action_type": "error_handler",
+          "execution_route": "local",
+          "transitions": {
+            "handled": "DCG.RETURN_ISSUES"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Any local validation, lookup, or Data Loader issue",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 44
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "DCG.RETURN_ISSUES",
+          "node_type": "terminal",
+          "sequence": 80,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "A blocking issue was classified and disclosed",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 45
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "DCG.DONE",
+          "node_type": "terminal",
+          "sequence": 90,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "DCG.DATA_LOADER_HANDOFF"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Local task rules passed and Data Loader owns final validation and execution",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 46
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

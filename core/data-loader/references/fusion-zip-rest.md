@@ -64,6 +64,16 @@ gates still apply.
 
 ## Sample XLSX and explicit DAT generation
 
+Workbook generation prefers the bundled `@oai/artifact-tool` writer, including
+the existing `DATA_LOADER_ARTIFACT_NODE` and `DATA_LOADER_ARTIFACT_NODE_MODULES`
+overrides. If Node, its module directory, or the package is missing, the helper
+automatically uses a Python standard-library XLSX writer. Both writers preserve
+the same files, including the attribute-details workbook for DAT samples; no
+`openpyxl` installation is required. A broken installed runtime, serialization
+failure, permission error, or output-validation failure remains an error and
+does not trigger fallback. Use the helper in Codex, Cursor, or Claude Code;
+missing spreadsheet tooling does not require manually authoring sample files.
+
 - Generate an `.xlsx` workbook by default. Emit a `.dat` file only when the user explicitly asks for one.
 - Run `python3 scripts/generate_sample_dat.py <business-object> [<business-object> ...] [--output-dir <directory>] [--operation update]`. Generated files default to the current directory, and `--output-dir` may name any writable directory. The default filename is `<top-discriminator>.xlsx`; use `--format dat` for the explicitly requested `<top-discriminator>.dat`. Omitted operation means create (`POST`).
 - For multiple registered business objects, pass every discriminator, UI name, or template filename as an ordered positional argument. Preserve requested business-object order, reject duplicate resolved roots, and validate the complete staged batch before atomically publishing it; a failure preserves existing targets and publishes no partial batch. `--populate-json` and `--mapping-edit` are limited to one business object.
@@ -89,6 +99,32 @@ gates still apply.
 - Exercise a comment-only UCM file with out-of-order components and assert synthesized sections are parent-before-child. Run the same file through upload validation and assert no POST is made.
 - Fail the test if sample generation invokes any non-GET operation or emits raw REST record values in its Markdown report.
 
+## XLSX SET commands
+
+An input workbook can supply control rows on visible sheets named `Set Commands`
+or `SetCommands`, matched case-insensitively with surrounding/inter-word
+whitespace normalized. Read `Parameter`/`Parameters` and `Value`/`Values` headers
+from the first row in either order, ignoring case and trimming whitespace.
+Trim names and values; ignore incomplete pairs, empty control sheets, missing
+required header columns, and hidden or very-hidden control sheets. Ordinary
+workbook structure, coordinate, header-width, and output-size checks still apply.
+
+For example, a `Parameters` / `Value` row containing `PURGE_FUTURE_CHANGES` / `Y`
+produces `SET PURGE_FUTURE_CHANGES Y` before the first `METADATA` line. Preserve
+parameter spelling and literal values without a parameter allowlist. Across
+recognized sheets in workbook order, use the last complete value for each
+case-sensitive parameter name, retaining first-occurrence order. Incomplete
+later rows do not overwrite complete values.
+
+Exclude these control sheets from business-object discovery, legacy-map coverage,
+attribute mapping, and ADF REST business-data date formatting. Required data
+sheets and rows remain required; the first visible business-data sheet identifies
+the root. Each workbook's commands prefix only its own generated DAT, including
+in existing multi-XLSX groups. Perform this conversion during preflight before
+Task Hook validation and approval; the saved artifact's existing digest binds
+the resulting bytes. Keep generated samples and submission interfaces unchanged.
+This does not add XLSX conversion inside supplied ZIPs.
+
 ## Archive preparation
 
 For ordinary CSV and XLSX sources, complete Mapping stage before archive preparation. FSM, CX, and FBDI classification occurs first and bypasses Mapping stage. DAT, TXT, and ordinary ZIP inputs are schema-validated without header mapping. Mapping decisions are stored beside the source when possible, with a protected repository-local fallback; source or live-schema changes invalidate them.
@@ -96,11 +132,12 @@ For ordinary CSV and XLSX sources, complete Mapping stage before archive prepara
 - Ignore every member beneath a case-insensitive `_MACOSX` or `__MACOSX` directory for normal, FSM, CX, and FBDI archive classification and validation. Do not let AppleDouble sidecars or copied marker filenames in those folders create duplicate mappings, opaque-member failures, or false source-type markers. Preserve the original archive bytes where normal, FSM, or FBDI pass-through requires them; CX uploads only the meaningful CSV member bytes.
 - Preserve supplied valid ZIP bytes and their exact original basename unchanged for UCM upload. This mandatory rule applies to ordinary, FSM, FBDI, and CX ZIP inputs. Persist that basename in preflight and reuse it unchanged after approval. A ZIP with a member whose basename is exactly `ASM_SETUP_CSV_METADATA.xml` is an FSM archive; do not transform or inspect its CSV/XML members as DAT content.
 - A prompt-declared `--cx-import` ZIP, or one containing a content-identified mapping CSV, is CX Import; filenames have no mapping semantics. Identify a mapping only when its first nonblank row contains `MAP NAME,MAP DESCRIPTION,IMPORT OBJECT,OBJECT DISPLAY NAME` and a later row contains `COLUMN HEADER,TARGET ATTRIBUTE CODE,TARGET ATTRIBUTE DISPLAY NAME,SOURCE ATTRIBUTE CODE`. Decode with optional UTF-8 BOM, trim header cells, compare case-insensitively, and require exact column order. Reject partial, reversed, reordered, or duplicate mapping headers. Reject an FSM marker combined with either CX signal. Require one ZIP containing only nonempty, path-safe CSV members with unique case-insensitive basenames, zero or one mapping CSV, and at least one non-mapping CSV. Nested safe paths are allowed. When no mapping CSV exists, ask `What is the CX Business Object code for this file?` and require the user-provided code; never infer it from filenames or context. Preserve every CSV byte and the original data-member order. CX Import bypasses every `dataLoaderBusinessObjects`, DAT-template, component, attribute, and business-object validation request.
-- Classify an otherwise unclassified ZIP with CSV members through paginated `GET dataLoaderBusinessObjects` using `q=ObjectType='FBDI'`, `expand=fbdiMetadata`, and `onlyData=true`. Match each CSV stem case insensitively against `DataFileNamePrefix`, counting each CSV once per Business Object. The object with the highest positive count supplies the route; preserve all original ZIP members, including unmatched CSVs. If no CSV matches, stop before upload. If several objects tie for the highest count, present their names and counts and require an exact `--business-object` selection on a fresh preflight run. Validate the selected object has one normalized UCM account and a consistent nonblank scalar `loadAdapterInterfaceId`; reject malformed or incomplete metadata, unsafe paths, duplicate case-insensitive basenames, and empty matched files. Persist the selected route and original ZIP bytes before approval, and reuse them unchanged after approval.
+- Classify an otherwise unclassified ZIP with CSV members using the [FBDI filename routing contract](../SKILL.md#fbdi-filename-routing). Describe the versioned resource first; use advertised `findFbdiObjectsByFileName` with CSV basenames and parse `BusObjFileDiscriminator` plus `DataFileNamePrefixes`, unwrapping `result` when present. Only when the action is absent, use paginated `GET dataLoaderBusinessObjects` with `q=ObjectType='FBDI'`, `expand=fbdiMetadata`, and `onlyData=true`; use the parent `BusObjTopDiscriminator` as identity and child `DataFileNamePrefix` for matching. Describe/action failures or malformed results block without fallback or retry. Match CSV stems case insensitively, counting each CSV once per Business Object. The object with the highest positive count supplies the route; preserve all original ZIP members, including unmatched CSVs. If no CSV matches, stop before upload. If several objects tie for the highest count, present their names and counts and require an exact `--business-object` selection on a fresh preflight run. Validate the selected object has one normalized UCM account and a consistent nonblank scalar `loadAdapterInterfaceId`; reject malformed or incomplete metadata, unsafe paths, duplicate case-insensitive basenames, and empty matched files. Persist the selected route and original ZIP bytes before approval, and reuse them unchanged after approval.
 - Package a DAT file unchanged inside `<stem>.zip` using its original DAT basename.
 - Treat a TXT file as preformatted UTF-8 Data Loader DAT content and package it inside `<stem>.zip` as `<stem>.dat`.
 - After live validation, parse a UTF-8 CSV using its first row as attributes and its filename stem exactly as the business-object discriminator, unless a single-CSV `--business-object` override supplies the validated discriminator. Emit `METADATA|<discriminator>|<attributes>` followed by one `MERGE|<discriminator>|<values>` record per nonempty row, then package `<discriminator>.dat` inside `<source-stem>.zip`.
-- For XLSX input, accept a valid `Data Loader Map` sheet as authoritative for mapped sections and the root business object; reject duplicate, stale, malformed, incomplete, or conflicting map entries. Without a map, resolve the first visible worksheet against the live top-object finder by case-sensitive exact discriminator first. Only when there is no exact match and the worksheet name is exactly 30 characters may it match discriminators longer than 30 characters by their first 30 characters. Reject shorter partial names and non-exact names longer than 30 characters. When that 30-character prefix matches multiple long discriminators, list the candidates and require `--business-object <exact-discriminator>` for a single-XLSX retry. Resolve remaining child/DFF sheets against the selected root schema by exact discriminator or unique prefix. Reject zero or multiple root matches, unknown or ambiguous sheet prefixes, a non-root first worksheet, or a root worksheet without a data row unless child/DFF data exists. Convert validated headers and nonempty rows to in-memory DAT records, retaining `METADATA` without `MERGE` for a header-only child/DFF sheet; package that DAT as `<validated-top-level-business-object>.dat`, and retain the source filename stem for the ZIP name.
+- For XLSX input, accept a valid `Data Loader Map` sheet as authoritative for mapped sections and the root business object; reject duplicate, stale, malformed, incomplete, or conflicting map entries. Without a map, resolve the first visible business-data worksheet against the live top-object finder by case-sensitive exact discriminator first. Only when there is no exact match and the worksheet name is exactly 30 characters may it match discriminators longer than 30 characters by their first 30 characters. Reject shorter partial names and non-exact names longer than 30 characters. When that 30-character prefix matches multiple long discriminators, list the candidates and require `--business-object <exact-discriminator>` for a single-XLSX retry. Resolve remaining child/DFF sheets against the selected root schema by exact discriminator or unique prefix. Reject zero or multiple root matches, unknown or ambiguous sheet prefixes, a non-root first business-data worksheet, or a root worksheet without a data row unless child/DFF data exists. Convert validated headers and nonempty rows to in-memory DAT records, retaining `METADATA` without `MERGE` for a header-only child/DFF sheet; package that DAT as `<validated-top-level-business-object>.dat`, and retain the source filename stem for the ZIP name.
+- Parse XLSX worksheets sparsely: skip empty row gaps while retaining physical Excel row numbers in diagnostics. Reject coordinates beyond row 1,048,576 or column 16,384 (XFD), duplicate cell coordinates, and populated cells beyond the header width. Empty or styled-only cells must not enlarge the output. Preserve a missing first-row header as an error; never promote a later row into the header. Bound each worksheet to 1,000,000 materialized output cells, including header cells. These checks run during existing preflight conversion before Task Hook validation and approval.
 - Accept internal XLSX relationship targets expressed relative to their source part or from the package root with a leading `/`. Normalize package-root targets to ZIP member paths while continuing to reject external relationships, parent traversal through `..`, empty targets, and targets that resolve outside the package.
 - Reject CSV files with no header, empty header names, no data rows, excess row values, malformed quoting, or fields containing DAT delimiters or line breaks.
 - Create generated archives once. For same-request auto-approval, retain the exact ZIP object in memory through upload. For later approval, atomically persist the immutable artifact and a restrictive internal preflight envelope that binds its integrity, filename, ordered sources, source type, environment, Run Book context, mappings, routing, and business objects. Base64-encode the complete ZIP bytes, not the original DAT, TXT, or CSV bytes. Do not expose or link internal artifact or envelope paths in user-facing reports.
@@ -123,8 +160,7 @@ REST-Framework-Version: 9
 
 The multipart form must contain exactly these parts:
 
-- `metadataValues`: UTF-8 JSON with `dDocAuthor` set to the authenticated
-  OAuth username, `dDocTitle` set to the ZIP basename, `dSecurityGroup` set to
+- `metadataValues`: UTF-8 JSON with `dDocTitle` set to the ZIP basename, `dSecurityGroup` set to
   `FAFusionImportExport`, and `dDocType` set to `Document`. Set `dDocAccount`
   to `setup$/functionalSetupManager$/import$` for an FSM archive (one with an
   `ASM_SETUP_CSV_METADATA.xml` member), to the exact mapped `ucmAccount` for an
@@ -135,7 +171,14 @@ The multipart form must contain exactly these parts:
 Do not base64 encode the ZIP. Continue only when the JSON response contains a
 nonblank top-level `dDocName`; use that value as the Data Loader `contentId`.
 
-For CX Import, accept either one CX ZIP or one direct group of CSV files. Resolve the object-specific `dDocAccount` before approval with `GET /crmRestApi/resources/11.13.18.05/objectMetadata/<url-encoded-ObjectCode>?fields=UcmAccount&onlyData=true`. Require a nonblank `UcmAccount` string and convert it to UCM account syntax; for example, `crm/accessGroups/import/` becomes `crm$/accessGroups$/import$`. Upload one multipart request per CSV. Upload the optional mapping CSV first, then data CSVs in ZIP-member or direct-source order, all to that recorded account. Direct groups require unique case-insensitive CSV basenames, at least one data CSV, and deterministic one-time packaging into an internal staging ZIP that preserves exact member bytes, roles, and order. After approval, extract those recorded members from the verified staging artifact without reading the original CSVs or resolving metadata again. Every upload uses the authenticated OAuth username as `dDocAuthor`, the CSV basename as `dDocTitle`, `CRM` as `dSecurityGroup`, `Document` as `dDocType`, and the exact CSV bytes as `primaryFile` with `text/csv`. Do not send `dDocName` for either mapping or data CSVs; require every response to return a nonblank generated `dDocName`. Retain those raw IDs when reporting created UCM documents. If an upload fails or omits its expected ID, stop without initiation, retry, or cleanup and report all documents already created. Retain the approved artifact and envelopes for reconciliation after partial or uncertain failures.
+Omit `dDocAuthor` from all upload metadata. Treat the access token as an opaque
+Bearer credential and never decode its claims for document authorship. If UCM
+rejects the upload, return the structured `ucm-upload` failure with redacted
+server error details; do not retry by adding an author or initiate the failed
+load. Preserve any previously confirmed uploads. Server-assigned author and
+audit identity must be verified separately in the target environment.
+
+For CX Import, accept either one CX ZIP or one direct group of CSV files. Resolve the object-specific `dDocAccount` before approval with `GET /crmRestApi/resources/11.13.18.05/objectMetadata/<url-encoded-ObjectCode>?fields=UcmAccount&onlyData=true`. Require a nonblank `UcmAccount` string and convert it to UCM account syntax; for example, `crm/accessGroups/import/` becomes `crm$/accessGroups$/import$`. Upload one multipart request per CSV. Upload the optional mapping CSV first, then data CSVs in ZIP-member or direct-source order, all to that recorded account. Direct groups require unique case-insensitive CSV basenames, at least one data CSV, and deterministic one-time packaging into an internal staging ZIP that preserves exact member bytes, roles, and order. After approval, extract those recorded members from the verified staging artifact without reading the original CSVs or resolving metadata again. Every upload uses the CSV basename as `dDocTitle`, `CRM` as `dSecurityGroup`, `Document` as `dDocType`, and the exact CSV bytes as `primaryFile` with `text/csv`. Do not send `dDocAuthor` or `dDocName` for either mapping or data CSVs; require every response to return a nonblank generated `dDocName`. Retain those raw IDs when reporting created UCM documents. If an upload fails or omits its expected ID, stop without initiation, retry, or cleanup and report all documents already created. Retain the approved artifact and envelopes for reconciliation after partial or uncertain failures.
 
 ## Initiate import and load
 

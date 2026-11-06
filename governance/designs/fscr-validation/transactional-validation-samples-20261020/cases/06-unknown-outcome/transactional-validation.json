@@ -1,0 +1,196 @@
+{
+  "run": {
+    "schema_version": "1.0",
+    "project_id": "demo-06-unknown-outcome",
+    "run_id": "sample-06-unknown-outcome",
+    "stage": "transactional-validation",
+    "environment": "DEMO-TEST",
+    "started_at": "2026-10-20T10:00:00Z",
+    "request": "ILLUSTRATIVE: run one reviewed draft-transaction check in DEMO-TEST using existing references. Preview the exact action before execution.",
+    "scope": "One fictional draft transaction with one intrinsic line. No submission, approval workflow, downstream processing or wider implementation certification.",
+    "scope_ref": "evidence.html#scope",
+    "requirement_version": "DEMO-1.0",
+    "redaction_reviewed": true,
+    "requirements": [
+      {
+        "requirement_id": "demo-r1",
+        "description": "Use an existing enabled business reference",
+        "source_ref": "evidence.html#scope",
+        "expected_setup": "DEMO-REFERENCE is enabled and retained on the draft.",
+        "task_refs": [
+          "DEMO-T1"
+        ],
+        "check_ids": [
+          "demo.single-draft-check"
+        ],
+        "owner": "Demo pillar SME (fictional)",
+        "required": true
+      },
+      {
+        "requirement_id": "demo-r2",
+        "description": "Save the intended one-line draft",
+        "source_ref": "evidence.html#scope",
+        "expected_setup": "One primary draft with one intrinsic line and quantity 1.",
+        "task_refs": [
+          "DEMO-T2"
+        ],
+        "check_ids": [
+          "demo.single-draft-check"
+        ],
+        "owner": "Demo pillar SME (fictional)",
+        "required": true
+      }
+    ],
+    "tasks": [
+      {
+        "task_id": "DEMO-T1",
+        "title": "Configure business reference",
+        "status": "completed",
+        "source_ref": "evidence.html#tasks",
+        "captured_at": "2026-10-20T09:50:00Z",
+        "environment": "DEMO-TEST",
+        "evidence_current": true,
+        "details": "Fictional task status only; correctness is assessed independently.",
+        "owner": "Demo implementer (fictional)",
+        "completed_at": "2026-10-20T09:10:00Z"
+      },
+      {
+        "task_id": "DEMO-T2",
+        "title": "Configure draft defaults",
+        "status": "completed",
+        "source_ref": "evidence.html#tasks",
+        "captured_at": "2026-10-20T09:50:00Z",
+        "environment": "DEMO-TEST",
+        "evidence_current": true,
+        "details": "Fictional task status only; correctness is assessed independently.",
+        "owner": "Demo implementer (fictional)",
+        "completed_at": "2026-10-20T09:20:00Z"
+      }
+    ],
+    "checks": [
+      {
+        "result_id": "demo-result-06-unknown-outcome",
+        "check_id": "demo.single-draft-check",
+        "check_version": "DEMO-1.0",
+        "title": "Create and verify one draft transaction",
+        "owner": "Demo pillar SME (fictional)",
+        "required": true,
+        "blocking": true,
+        "requirement_refs": [
+          "demo-r1",
+          "demo-r2"
+        ],
+        "task_refs": [
+          "DEMO-T1",
+          "DEMO-T2"
+        ],
+        "source_ref": "evidence.html#procedure",
+        "status": "INDETERMINATE",
+        "method": "manual-evidence",
+        "environment": "DEMO-TEST",
+        "observed_at": "2026-10-20T10:05:00Z",
+        "evidence_current": true,
+        "reason": "The fictional manual Save action timed out at 10:04 UTC. Subsequent confirmation was unavailable, so creation and stored values are unknown.",
+        "assertions": [
+          {
+            "assertion_id": "draft-created",
+            "expected": "One primary draft record exists with one intrinsic line.",
+            "observed": "",
+            "status": "NOT_OBSERVED",
+            "evidence_refs": []
+          },
+          {
+            "assertion_id": "reference-retained",
+            "expected": "The draft retains the existing enabled DEMO-REFERENCE.",
+            "observed": "",
+            "status": "NOT_OBSERVED",
+            "evidence_refs": []
+          },
+          {
+            "assertion_id": "quantity-correct",
+            "expected": "The saved line quantity is 1.",
+            "observed": "",
+            "status": "NOT_OBSERVED",
+            "evidence_refs": []
+          }
+        ],
+        "evidence_refs": [
+          "evidence.html#outcome"
+        ],
+        "performed_by": "Demo implementer (fictional)",
+        "next_action": "Reconcile the stable test key through the declared supported route. Do not retry Save or claim that zero records were created.",
+        "transaction": {
+          "test_key": "DEMO-STABLE-06-UNKNOWN-OUTCOME",
+          "record_id": "",
+          "request_id": "",
+          "new_primary_count": null,
+          "reused": false,
+          "approval_ref": "evidence.html#execution-approval",
+          "side_effects": [
+            "Primary record creation is unknown; no confirmed identity or cleanup outcome."
+          ],
+          "cleanup_status": "unknown",
+          "cleanup_evidence_refs": [],
+          "cleanup_owner": "Demo implementer (fictional)",
+          "cleanup_next_action": "Identify whether a record exists before planning separately authorized exact-record cleanup."
+        }
+      }
+    ],
+    "decisions": [
+      {
+        "decision_id": "demo-execution-approval",
+        "summary": "Fictional approval at 10:01 UTC for the displayed one-record draft action in DEMO-TEST. This sample is not real authorization.",
+        "owner": "Demo project owner (fictional)",
+        "source_ref": "evidence.html#execution-approval"
+      }
+    ],
+    "recommendations": [],
+    "errors": [
+      {
+        "stage": "transaction-save",
+        "failure_class": "transport_or_environment",
+        "message": "DEMO-TEST; manual Save; illustrative elapsed wait 60 seconds; no confirmed record or server request ID; no repeat attempt.",
+        "recommended_action": "Reconcile the stable test key through the declared supported route. Do not retry Save or claim that zero records were created.",
+        "artifact_refs": [
+          "evidence.html#outcome"
+        ],
+        "external_ids": []
+      }
+    ],
+    "limitations": [
+      "SYNTHETIC SAMPLE — no Fusion access, real approvals, transaction creation or deletion occurred.",
+      "Each example is an independent alternative with its own fictional project. The six cases are not a single project history or a batch execution.",
+      "This is an output illustration, not an executable Oracle API, screen, privilege or cleanup specification. A real pillar must provide the reviewed supported route.",
+      "Evidence is invented text in evidence.html. No real screenshot, API response, approval token or customer record is included.",
+      "Only one primary record and one intrinsic line are in scope. A successful check does not verify the whole implementation."
+    ]
+  },
+  "assessment": {
+    "readiness": "BLOCKED",
+    "readiness_scope": "transactional-validation",
+    "counts": {
+      "PASS": 0,
+      "FAIL": 0,
+      "BLOCKED": 0,
+      "INDETERMINATE": 1,
+      "SKIPPED": 0,
+      "NOT_RUN": 0,
+      "NOT_APPLICABLE": 0
+    },
+    "requirement_count": 2,
+    "task_count": 2,
+    "gaps": [
+      "demo.single-draft-check: unresolved INDETERMINATE",
+      "demo.single-draft-check: required verification incomplete, stale or attested only",
+      "demo.single-draft-check: cleanup unknown",
+      "No passing transaction observed in this invocation",
+      "Unresolved diagnostics require review"
+    ],
+    "blockers": [
+      "demo.single-draft-check: INDETERMINATE"
+    ],
+    "followups": [
+      "Demo pillar SME (fictional): Reconcile the stable test key through the declared supported route. Do not retry Save or claim that zero records were created."
+    ]
+  }
+}

@@ -19,7 +19,7 @@ source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 type: "planning"
 execution_mode: "hybrid"
 owner_team: "ERP financials pillar team"
-version: "0.18.1"
+version: "0.19.0"
 inputs:
   - "implementation_objective"
   - "deliverable_request"
@@ -57,6 +57,7 @@ depends_on:
   - "shared.validation.reference-data-validator"
   - "core.data-loader"
 uses_core:
+  - "core.fusion-api.rest-api-client"
   - "core.data-loader.task-hook"
   - "core.project-mgmt.artifact-version-manager"
   - "core.project-mgmt.artifact-registry-manager"
@@ -145,12 +146,30 @@ associations and unrelated rows; reject a selected card-enabled template/type
 as outside scope rather than silently converting it to cash-only. Use the
 fresh export to confirm these assumptions before packaging.
 
-This workbook format also has no account, tax, or project input. On every
-imported expense type, account-related values, Tax Classification Code, and Tax
+Expense Type Account accepts only the account number, as text with leading zeros
+preserved. Resolve the owning BU through `finBusinessUnitsLOV`, then its
+`PrimaryLedgerId` through `ledgersLOV`; serialize `LedgerName` and `Segment1`.
+Never ask the implementor for the ledger name. A blank account preserves the
+existing account on edits and leaves it unset on creates; clearing is unsupported.
+This workbook has no tax or project input. Tax Classification Code and Tax
 Product Category are blank; Projects is disabled, project receipt requirements
 are No, and the default project expenditure type is blank. Do not collect,
 infer, preserve as an intentional setting, or import project expenditure
 mappings in this flow.
+
+## Source-Backed Task Behavior
+
+- Resolve supplied categories from the destination EXM_EXPENSE_TYPE_CATEGORY
+  lookup, including valid codes unused in the task baseline. Resolve BU
+  existence through finBusinessUnitsLOV, independently of exported usage.
+- Accept Expense Type Account as account_number text and preserve leading
+  zeros. Derive LedgerName using the BU PrimaryLedgerId and ledgersLOV Name;
+  serialize account_number to Segment1. Omitted edit accounts preserve values.
+- Keep final candidate-local itemization references and baseline identity,
+  schema and preservation checks. They do not define an external value domain.
+- Follow references/destination-reference-contract.md for exact source paths,
+  evidence validation and failure behavior. Source and read-only evidence do
+  not certify a live import; core Data Loader approval remains mandatory.
 
 ## Resources and Plan
 
@@ -179,10 +198,10 @@ start intake, export, construction, approval, or import from Task Hook.
 
 ## Implementor Workflow
 
-### 1. Require the V3 workbook
+### 1. Require the current workbook
 
 Recognize template, type, or itemization changes. Require an Excel workbook
-matching `assets/ManageExpenseReportTemplates_Input.xlsx` and the current
+matching `assets/ManageExpenseReportTemplates_Input.xlsx` (intake v3.1) and the current
 `references/intake-fields.json` contract: Report
 Templates, Expense Types, and Expense Type Itemizations. Headers are on row 4,
 input starts on row 5, and the workbook has no Operation column. If no matching
@@ -204,7 +223,7 @@ no value. For an existing record, blank is unchanged; `Clear` explicitly
 removes only a nullable value. `Blank` selected in any field-behavior dropdown
 is normalized to a blank cell before target resolution: it preserves an
 existing behavior and does not satisfy a required behavior for a new record.
-Do not solicit, infer, or map account values. Do not infer missing reference
+Collect only the account number for Expense Type Account. Do not infer missing reference
 codes or required dates.
 
 Show missing/invalid fields with their object, cell, constraint and correction.
@@ -250,14 +269,15 @@ Once local intake is complete:
    do not infer mapping column names from the workbook. A schema-only export
    can establish headers but cannot replace the populated preservation
    baseline needed for target-identity and unchanged-value checks. This workflow
-   explicitly selects the baseline export as preparation; do not use an
-   undeclared lookup, browser, or direct REST alternative.
+   explicitly selects baseline export plus the read-only reference resolutions
+   declared in `ora_reference_lookups.md`, through the shared REST client.
 3. Resolve the operation from that exact export: an existing Business Unit +
    Template Name is an update, an existing Business Unit + Template Name +
    Expense Type Name is an update, and an absent identity is a create. Resolve
    itemization mappings from their complete relationship identity. Validate all
-   live references and supported fields against that exact
-   baseline. Run `scripts/inspect_fsm_schema.py --export-zip <fresh.zip>
+   destination reference values through the declared REST/LOV checks. The
+   baseline determines identity, schema and preservation, never the full
+   category/BU/ledger domain. Run `scripts/inspect_fsm_schema.py --export-zip <fresh.zip>
    --output <new-schema-report.json>` to verify every CSV against its XML
    metadata and the child parent paths. Read `references/fsm-schema-findings.md`
    for observed limitations, but never substitute its historic findings for
@@ -289,8 +309,9 @@ Once local intake is complete:
 A valid database value does not establish task-import support.
 Itemization controls supported on the type row can be imported. The builder
 adds itemization relationships and preserves existing Edit relationships using
-`references/child-mappings.md`. It sets all imported types to account and tax
-values null and Projects disabled. Project expenditure mappings are outside
+`references/child-mappings.md`. It resolves supplied account numbers to the BU's
+primary ledger, preserves omitted edit accounts, and sets tax values null and
+Projects disabled. Project expenditure mappings are outside
 this format and must be handled by a future, separately scoped workflow.
 Include No/removal and itemization end-dating remain specific route gaps.
 Explain them without rejecting supported itemization additions. A mapping-only

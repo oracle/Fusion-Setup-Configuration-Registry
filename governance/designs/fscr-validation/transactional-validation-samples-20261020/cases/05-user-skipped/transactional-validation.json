@@ -1,0 +1,180 @@
+{
+  "run": {
+    "schema_version": "1.0",
+    "project_id": "demo-05-user-skipped",
+    "run_id": "sample-05-user-skipped",
+    "stage": "transactional-validation",
+    "environment": "DEMO-TEST",
+    "started_at": "2026-10-20T10:00:00Z",
+    "request": "ILLUSTRATIVE: skip the offered transactional check for now and record its unverified scope.",
+    "scope": "One fictional draft transaction with one intrinsic line. No submission, approval workflow, downstream processing or wider implementation certification.",
+    "scope_ref": "evidence.html#scope",
+    "requirement_version": "DEMO-1.0",
+    "redaction_reviewed": true,
+    "requirements": [
+      {
+        "requirement_id": "demo-r1",
+        "description": "Use an existing enabled business reference",
+        "source_ref": "evidence.html#scope",
+        "expected_setup": "DEMO-REFERENCE is enabled and retained on the draft.",
+        "task_refs": [
+          "DEMO-T1"
+        ],
+        "check_ids": [
+          "demo.single-draft-check"
+        ],
+        "owner": "Demo pillar SME (fictional)",
+        "required": true
+      },
+      {
+        "requirement_id": "demo-r2",
+        "description": "Save the intended one-line draft",
+        "source_ref": "evidence.html#scope",
+        "expected_setup": "One primary draft with one intrinsic line and quantity 1.",
+        "task_refs": [
+          "DEMO-T2"
+        ],
+        "check_ids": [
+          "demo.single-draft-check"
+        ],
+        "owner": "Demo pillar SME (fictional)",
+        "required": true
+      }
+    ],
+    "tasks": [
+      {
+        "task_id": "DEMO-T1",
+        "title": "Configure business reference",
+        "status": "completed",
+        "source_ref": "evidence.html#tasks",
+        "captured_at": "2026-10-20T09:50:00Z",
+        "environment": "DEMO-TEST",
+        "evidence_current": true,
+        "details": "Fictional task status only; correctness is assessed independently.",
+        "owner": "Demo implementer (fictional)",
+        "completed_at": "2026-10-20T09:10:00Z"
+      },
+      {
+        "task_id": "DEMO-T2",
+        "title": "Configure draft defaults",
+        "status": "completed",
+        "source_ref": "evidence.html#tasks",
+        "captured_at": "2026-10-20T09:50:00Z",
+        "environment": "DEMO-TEST",
+        "evidence_current": true,
+        "details": "Fictional task status only; correctness is assessed independently.",
+        "owner": "Demo implementer (fictional)",
+        "completed_at": "2026-10-20T09:20:00Z"
+      }
+    ],
+    "checks": [
+      {
+        "result_id": "demo-result-05-user-skipped",
+        "check_id": "demo.single-draft-check",
+        "check_version": "DEMO-1.0",
+        "title": "Create and verify one draft transaction",
+        "owner": "Demo pillar SME (fictional)",
+        "required": true,
+        "blocking": true,
+        "requirement_refs": [
+          "demo-r1",
+          "demo-r2"
+        ],
+        "task_refs": [
+          "DEMO-T1",
+          "DEMO-T2"
+        ],
+        "source_ref": "evidence.html#procedure",
+        "status": "SKIPPED",
+        "method": "none",
+        "environment": "DEMO-TEST",
+        "observed_at": "2026-10-20T10:05:00Z",
+        "evidence_current": true,
+        "reason": "The fictional project owner chose to skip this required check. No prerequisite review, creation or cleanup was performed for this invocation.",
+        "assertions": [
+          {
+            "assertion_id": "draft-created",
+            "expected": "One primary draft record exists with one intrinsic line.",
+            "observed": "",
+            "status": "NOT_OBSERVED",
+            "evidence_refs": []
+          },
+          {
+            "assertion_id": "reference-retained",
+            "expected": "The draft retains the existing enabled DEMO-REFERENCE.",
+            "observed": "",
+            "status": "NOT_OBSERVED",
+            "evidence_refs": []
+          },
+          {
+            "assertion_id": "quantity-correct",
+            "expected": "The saved line quantity is 1.",
+            "observed": "",
+            "status": "NOT_OBSERVED",
+            "evidence_refs": []
+          }
+        ],
+        "evidence_refs": [
+          "evidence.html#outcome"
+        ],
+        "performed_by": "",
+        "next_action": "Project owner: accept the documented unverified scope or request this check later. Required route controls remain in force.",
+        "transaction": {
+          "test_key": "DEMO-STABLE-05-USER-SKIPPED",
+          "record_id": "",
+          "request_id": "",
+          "new_primary_count": 0,
+          "reused": false,
+          "approval_ref": "",
+          "side_effects": [
+            "No transaction was attempted and no new record was created by this invocation."
+          ],
+          "cleanup_status": "not-needed",
+          "cleanup_evidence_refs": [],
+          "cleanup_owner": "Demo implementer (fictional)",
+          "cleanup_next_action": ""
+        }
+      }
+    ],
+    "decisions": [
+      {
+        "decision_id": "demo-user-skip",
+        "summary": "The fictional project owner chose to skip this required check. No prerequisite review, creation or cleanup was performed for this invocation.",
+        "owner": "Demo project owner (fictional)",
+        "source_ref": "evidence.html#outcome"
+      }
+    ],
+    "recommendations": [],
+    "errors": [],
+    "limitations": [
+      "SYNTHETIC SAMPLE — no Fusion access, real approvals, transaction creation or deletion occurred.",
+      "Each example is an independent alternative with its own fictional project. The six cases are not a single project history or a batch execution.",
+      "This is an output illustration, not an executable Oracle API, screen, privilege or cleanup specification. A real pillar must provide the reviewed supported route.",
+      "Evidence is invented text in evidence.html. No real screenshot, API response, approval token or customer record is included.",
+      "Only one primary record and one intrinsic line are in scope. A successful check does not verify the whole implementation."
+    ]
+  },
+  "assessment": {
+    "readiness": "NEEDS_REVIEW",
+    "readiness_scope": "transactional-validation",
+    "counts": {
+      "PASS": 0,
+      "FAIL": 0,
+      "BLOCKED": 0,
+      "INDETERMINATE": 0,
+      "SKIPPED": 1,
+      "NOT_RUN": 0,
+      "NOT_APPLICABLE": 0
+    },
+    "requirement_count": 2,
+    "task_count": 2,
+    "gaps": [
+      "demo.single-draft-check: required verification incomplete, stale or attested only",
+      "No passing transaction observed in this invocation"
+    ],
+    "blockers": [],
+    "followups": [
+      "Demo pillar SME (fictional): Project owner: accept the documented unverified scope or request this check later. Required route controls remain in force."
+    ]
+  }
+}

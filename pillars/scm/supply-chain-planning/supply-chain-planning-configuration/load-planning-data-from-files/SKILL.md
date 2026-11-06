@@ -1,7 +1,7 @@
 ---
 skill_id: "scm.supply-chain-planning.supply-chain-planning-configuration.load-planning-data-from-files"
 name: "Load Planning Data from Files Setup Task Guidance"
-description: "Prepares and validates Planning FBDI ZIPs only for ATP rules (also requested as Backlog Planning rules), ATP rule assignments, sourcing rules, and sourcing assignment sets, using published XLSM/CTL contracts and the Planning Common FBDI business object through core.data-loader. Other Planning entities are out of scope."
+description: "Prepares and validates Planning FBDI ZIPs for ATP rules (including Backlog Planning rules), ATP rule assignments, sourcing rules, and sourcing assignment sets. Supports deletion of sourcing rules, sourcing sources, ATP rules, and ATP rule assignments through published XLSM/CTL flags and Planning Common via core.data-loader. Other Planning entities and assignment-set deletion are out of scope."
 layer: "pillar"
 pillar: "SCM"
 offering: "Supply Chain Planning"
@@ -19,13 +19,15 @@ source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 type: "import"
 execution_mode: "hybrid"
 owner_team: "SCM supply chain planning pillar team"
-version: "0.4.2"
+version: "0.5.1"
 inputs:
   - "implementation_objective"
   - "project_context"
   - "setup_task_scope"
   - "setup_data_artifacts"
   - "planning_collection_entity"
+  - "operation"
+  - "deletion_targets_and_baselines"
   - "source_system"
   - "collection_type"
   - "target_fusion_release"
@@ -37,6 +39,7 @@ outputs:
   - "csv_contract_validation_result"
   - "generated_fbdi_zip"
   - "fbdi_preview"
+  - "deletion_summary"
   - "core_data_loader_handoff"
   - "skill_run_record"
   - "token_usage_record"
@@ -201,6 +204,31 @@ and preserve unspecified values. Without a baseline, do not assume blanks mean
 "unchanged"; resolve the missing values or documented update semantics first.
 Do not retrieve Fusion state through an undeclared route.
 
+### Deletion requests
+
+Support exactly four deletion targets: entire sourcing rule, sourcing sources,
+ATP rule, and ATP-rule assignment. Use the deletion section of
+[CSV preparation](references/csv-preparation.md#deletion) for the flag mapping,
+target identity, and full-baseline request format. A source deletion must not
+be converted into a whole-rule deletion. AssignmentSets.csv deletion and sourcing
+exclusion deletion remain unsupported; do not add related deletions implicitly.
+
+When the user explicitly requests deletion of both a sourcing rule and its
+source, allow both published deletion flags on the same SourcingRules.csv row.
+Use the combined targets format in CSV preparation; keep the full baseline and
+source identity checks. Also accept both flags in supplied CSV/ZIP rows without
+rewriting them, and disclose both effects before Core approval. This is an
+allowed combination of the existing targets, not a fifth target or an exception
+for other flags. Leave combined-operation business validation and the actual
+deletion outcome to Fusion's load job; do not infer cascade behavior or success.
+
+Prompt deletions use the explicit delete operation, not create or update with
+hidden delete flags. Supplied CSVs/ZIPs are also inspected for deletion flags
+during the existing preparation pass, without rewriting their bytes. Review
+the report's deletion entries against the exact rows and user intent; resolve
+ambiguous targets before handoff. Preparation is not confirmation that the
+target exists or has been deleted in Fusion.
+
 ## Immutable Core handoff
 
 For a requested load, pass the exact ZIP path/name/bytes/SHA-256, member manifest,
@@ -216,7 +244,13 @@ Core's routing result is not a claim that it validated every member's schema;
 the pillar preparation evidence covers all selected CSVs.
 
 Before execution approval, disclose retained/excluded files, source system,
-the defaulted Net Change collection mode, and intended effect. Retain evidence
+the defaulted Net Change collection mode, and intended effect. For deletions,
+include the deletion summary and exact target identities (rule, local/global
+scope, source/effectivity or assignment level/keys) in Core's existing approval
+preview, including flags discovered in supplied files. Do not interpret a generic
+import approval as approval for undisclosed deletion or add a second approval
+gate. Do not promise automatic cascade behavior or remove related assignments
+without a separately supported, explicitly requested operation. Retain evidence
 that the source system was supplied for this request, not inferred. Approval
 binds to the final selected ZIP, never an original mixed ZIP. The collection-mode
 notice is an FYI, not a question or a second pillar approval gate.

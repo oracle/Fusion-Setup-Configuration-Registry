@@ -1,0 +1,43 @@
+{
+  "profile_id": "meals-single-currency-v2",
+  "observation_target": {
+    "environment": "cptcwxaqy",
+    "origin": "https://cptcwxaqy.fusionapps.ocs.oc-test.com",
+    "release": "11.13.27.01.0"
+  },
+  "parent_settings": {
+    "Status": "DRAFT",
+    "CurrencyOptionCode": "SINGLE",
+    "EnabledRoleFlag": "N",
+    "EnabledLocationFlag": "N"
+  },
+  "parent_domains": {
+    "SingleInstanceLimitFlag": ["Y", "N"],
+    "DailyLimitFlag": ["Y", "N"],
+    "PolicyEnforcementCode": ["UPPER", "VIOLATION"],
+    "PolicyViolationFlag": ["Y", "N"],
+    "DispWarningToUserFlag": ["Y", "N"],
+    "PreventSubmissionFlag": ["Y", "N"]
+  },
+  "parent_empty_fields": ["RatesSourceCode", "MealsRateSourceCode", "PolicyRoleCode", "LocationTypeCode", "ZoneTypeCode"],
+  "rate_empty_fields": ["CurrencyCode", "GeoLocName", "RoleName", "TypeOfRateCode", "ZoneCode", "InvalidCode", "RawCity", "RawCountry", "RawCounty", "RawState", "RoleCode", "GradeCode"],
+  "batch_extension": {
+    "authorization": "User requested multiple policies and multiple rates per policy.",
+    "identity": "Exact parent PolicyName and full portable rate key, including StartDate and EndDate. Existing keys remain immutable; an unmatched key requests CREATE, never rename.",
+    "date_encoding": "StartDate retains observed YYYY/MM/DD encoding. EndDate uses the same date-only encoding as a user-authorized engineering extension, not a live-observed outcome.",
+    "schedule_validation": "For each selected policy, validate all resulting rates including retained siblings; inclusive periods must not overlap and AltKey_NoStart must remain unique. At most one open-ended period; never automatically close or delete an existing rate.",
+    "qualification": "Batch operations and nonblank EndDate require live qualification; native approval authorizes an attempt only. No batch atomicity or rollback guarantee."
+  },
+  "evidence": {
+    "create_observation": "OBS-MS01 accepted-as-written",
+    "create_candidate_sha256": "95f21b894b89b339cc30d43fd5ccaf91ea47c75997b537bb826a1a959f57806f",
+    "create_export_sha256": "774b881095b94f52bfdc9a7198a93c1d2221c4d9de8eab7d1c6b1756d7b15ab3",
+    "update_observation": "OBS-MS02 accepted-as-written",
+    "update_candidate_sha256": "a057d9887a63d6949d425c6a6da89806cfe5f51848bb98851ca117c357a93cfd",
+    "update_export_sha256": "48af5a87acfb99a9a1a14071756bb7f01204f55a821052ee0333439eaa3c12ca",
+    "update_decision_review_sha256": "7ab78537382e0606ab47e2ab561916380a4bd29c4eacd89b25d526a7bce67d0c",
+    "business_outcome": "CREATE17nonblank inputs match; two hidden blank cells export N; audits generated. UPDATE40businesscells match,38preserved;1253non-targetfullrows unchanged;37orderedmetadatarecords unchanged.",
+    "promotion_authority": "User requested incorporating the accepted profile into ordinary runtime contracts and instructions, allowing user values instead of exact test vectors.",
+    "generalization_boundary": "User authorized broadening eligible single currencies, either/both limits, both enforcement modes and warning controls. Source-bound encodings, parent applicability and numeric/cross-field validators support generation. These expanded combinations are not yet live reconciled; candidates disclose requires_live_qualification instead of claiming new observed success. Native approval and reconciliation remain required. Existing currency/date/status/key changes remain unsupported."
+  }
+}

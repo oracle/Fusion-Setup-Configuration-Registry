@@ -23,7 +23,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 69
+            "line": 86
           },
           "readiness": {
             "status": "ready",
@@ -177,7 +177,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 70
+            "line": 87
           },
           "readiness": {
             "status": "ready",
@@ -202,7 +202,7 @@
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 39
+            "line": 40
           },
           "readiness": {
             "status": "ready",
@@ -227,7 +227,7 @@
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 54
+            "line": 55
           },
           "readiness": {
             "status": "ready",
@@ -244,17 +244,18 @@
             "equipment_rest_supported": "MRINST.EQUIPMENT_READY",
             "labor_rest_supported": "MRINST.LABOR_READY",
             "rest_unsupported": "MRINST.FSM_APPROVAL",
+            "fsm_selected": "MRINST.FSM_APPROVAL",
             "resource_type_invalid": "MRINST.BLOCKED"
           },
           "prerequisites": [
             "MRINST.DESIGN"
           ],
           "on_failure": "stop",
-          "applies_when": "REST preflight and Data Loader metadata evaluate the selected child operation.",
+          "applies_when": "All parent and domain checks have passed. Select the manifest dataloader_import_mode unless an explicit supported override is recorded: native FSM selects fsm_selected after task/package validation; REST retains its preflight and child metadata checks.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 62
+            "line": 63
           },
           "readiness": {
             "status": "ready",
@@ -276,7 +277,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 63
+            "line": 64
           },
           "readiness": {
             "status": "ready",
@@ -298,7 +299,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 64
+            "line": 65
           },
           "readiness": {
             "status": "ready",
@@ -319,11 +320,11 @@
             "MRINST.ROUTE_REST"
           ],
           "on_failure": "stop",
-          "applies_when": "REST metadata proves the selected child operation is unsupported.",
+          "applies_when": "The manifest default or an explicit supported override selects native FSM and CSVExportImportSupportedFlag is Y, or REST metadata proves the selected child operation is unsupported.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 65
+            "line": 66
           },
           "readiness": {
             "status": "ready",
@@ -341,11 +342,11 @@
             "MRINST.FSM_APPROVAL"
           ],
           "on_failure": "stop",
-          "applies_when": "core.data-loader validated the immutable FSM artifact and the user explicitly approved it.",
+          "applies_when": "core.data-loader validated the immutable FSM artifact and the user explicitly approved it, including artifact-bound same-request auto approval through the core workflow.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 66
+            "line": 67
           },
           "readiness": {
             "status": "ready",
@@ -365,7 +366,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 67
+            "line": 68
           },
           "readiness": {
             "status": "ready",

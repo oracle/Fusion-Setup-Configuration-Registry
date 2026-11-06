@@ -130,6 +130,18 @@ The historical name Budget Alternative  Profile contains two spaces between Alte
 
 ## Resolver Evaluation
 
+For BU acquisition, retain all page responses and the effective request scope
+in the input contract described in `scripts/README.md`. Run the offline
+`scripts/reference_evidence.py` checker before reporting a match or no-match.
+It rejects incomplete pagination, duplicate identities and a version-1 header
+combined with an expanded cross-attribute AND query. Headers/default-version
+evidence must come from the selected workflow preflight; this checker neither
+selects a version nor authorizes acquisition. A partial broad-search page is
+not an exhaustive alternatives list. If a fresh task export references the
+requested BU but the lookup returns zero, reconcile query compatibility,
+identity visibility and active status before suggesting a replacement; the
+export references alone do not establish current eligibility.
+
 These are executable assisted resolver instructions owned by this file's Task
 Nodes; no new Python runner or resource-local processor is required.
 

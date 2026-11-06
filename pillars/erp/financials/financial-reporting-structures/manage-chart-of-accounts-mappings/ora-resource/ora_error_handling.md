@@ -55,6 +55,10 @@
 | Before update | Field-level differences and fresh concurrency comparison |
 | Before account-rule action | Account-rule identity, source criteria, target combination, overlaps, effective precedence, FSM task-CSV contract evidence, and import mode |
 
+## Invalid Mapping Rule Recovery
+
+For GL_COA_MAPPING_INVALD_MAP_RULE / GL-781639, inspect the full ProcessLog and package contents. A successful CoaMapping detail with a failed parent does not prove transaction rollback: check current mapping state before reusing the name. A header with no child rules is not an acceptable create test. Resolve the complete enabled target-segment inventory and valid values, correct the design, and rerun local validation and Data Loader/Task Hook preflight. Do not infer a specific internal validation condition from the generic message or reuse a prior artifact approval for changed bytes.
+
 ## Refusal Rules
 
 | Situation | What Must Not Happen |
@@ -71,8 +75,11 @@
 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|
-| COAMAP.ERROR | step | 14 | error_handler | stop->COAMAP.STOPPED | COAMAP.EXECUTE | stop | Live execution or verification fails |
-| COAMAP.DONE_LIVE | terminal | 15 | terminal | none | COAMAP.VERIFY | stop | Read-only verification passes |
-| COAMAP.DONE_EXISTING | terminal | 16 | terminal | none | COAMAP.LOOKUP | stop | Existing definition is identical |
-| COAMAP.NEEDS_DIRECTION | terminal | 17 | terminal | none | COAMAP.LOOKUP | stop | Existing definition differs without approved direction |
-| COAMAP.STOPPED | terminal | 18 | terminal | none | none | stop | Approval is declined or an execution error requires stop |
+| COAMAP.ERROR | step | 15 | error_handler | stop->COAMAP.STOPPED | COAMAP.EXECUTE | stop | Live execution or verification fails |
+| COAMAP.DONE_LIVE | terminal | 16 | terminal | none | COAMAP.VERIFY | stop | Read-only verification passes |
+| COAMAP.DONE_EXISTING | terminal | 17 | terminal | none | COAMAP.LOOKUP | stop | Existing definition is identical |
+| COAMAP.NEEDS_DIRECTION | terminal | 18 | terminal | none | COAMAP.LOOKUP | stop | Existing definition differs without approved direction |
+| COAMAP.STOPPED | terminal | 19 | terminal | none | none | stop | Approval is declined or an execution error requires stop |
+| COAMAP.DONE_PREPARED | terminal | 20 | terminal | none | COAMAP.PREVIEW | stop | Local package prepared; current target mapping comparison pending; no submission approval or live mutation |
+| COAMAP.DONE_SUBMITTED | terminal | 21 | terminal | none | COAMAP.EXECUTE | stop | Data Loader accepted initiation; return its response immediately without polling or claiming import completion |
+| COAMAP.DONE_PENDING | terminal | 22 | terminal | none | COAMAP.VERIFY | stop | A user-requested result check is in progress or not available yet; return current status without automatic polling or resubmission |

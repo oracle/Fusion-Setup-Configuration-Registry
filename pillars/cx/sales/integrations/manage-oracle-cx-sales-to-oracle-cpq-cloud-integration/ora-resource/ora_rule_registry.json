@@ -1,0 +1,229 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "ORA_ZCA_OSC_CPQ_INTEGRATION",
+      "task_name": "Manage Oracle CX Sales to Oracle CPQ Cloud Integration",
+      "start_node": "CPQ.INT.VALIDATE",
+      "nodes": [
+        {
+          "id": "CPQ.INT.VALIDATE",
+          "node_type": "step",
+          "sequence": 1,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "success": "CPQ.INT.OFFERINGS",
+            "missing": "CPQ.INT.RETURN_MISSING"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Every FACPQ Sales integration request",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 79
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CPQ.INT.OFFERINGS",
+          "node_type": "step",
+          "sequence": 2,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "enabled": "CPQ.INT.PARAMETERS",
+            "blocked": "CPQ.INT.RETURN_MISSING",
+            "failed": "CPQ.INT.RETURN_FAILED"
+          },
+          "prerequisites": [
+            "CPQ.INT.VALIDATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Verify both required offerings through exact versioned Fusion Features item GETs",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 82
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CPQ.INT.PARAMETERS",
+          "node_type": "step",
+          "sequence": 3,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "resolved": "CPQ.INT.DEPENDENCIES",
+            "missing": "CPQ.INT.RETURN_MISSING"
+          },
+          "prerequisites": [
+            "CPQ.INT.OFFERINGS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Resolve FACPQ metadata and the action URL contract",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 83
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CPQ.INT.DEPENDENCIES",
+          "node_type": "step",
+          "sequence": 4,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "CPQ.INT.DESIGN",
+            "blocked": "CPQ.INT.RETURN_MISSING"
+          },
+          "prerequisites": [
+            "CPQ.INT.PARAMETERS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Before creating the FACPQ Sales configuration package",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 50
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CPQ.INT.DESIGN",
+          "node_type": "decision",
+          "sequence": 5,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "pass": "CPQ.INT.EXECUTION_GATE",
+            "blocked": "CPQ.INT.RETURN_MISSING"
+          },
+          "prerequisites": [
+            "CPQ.INT.DEPENDENCIES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Before the Fusion import handoff",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 51
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CPQ.INT.EXECUTION_GATE",
+          "node_type": "decision",
+          "sequence": 6,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "approved": "CPQ.INT.RETURN_READY",
+            "rejected": "CPQ.INT.RETURN_MISSING",
+            "failed": "CPQ.INT.RETURN_FAILED"
+          },
+          "prerequisites": [
+            "CPQ.INT.DESIGN"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Immediately before an approved Fusion import handoff",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 80
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CPQ.INT.RETURN_READY",
+          "node_type": "terminal",
+          "sequence": 7,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CPQ.INT.EXECUTION_GATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "FACPQ configuration is validated and approved for execution",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 81
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CPQ.INT.RETURN_MISSING",
+          "node_type": "terminal",
+          "sequence": 8,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "continue",
+          "applies_when": "Required FACPQ value, dependency, or approval is missing",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 82
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CPQ.INT.RETURN_FAILED",
+          "node_type": "terminal",
+          "sequence": 9,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "continue",
+          "applies_when": "Validation or Fusion execution failed",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 83
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

@@ -8,7 +8,7 @@ Source: HCMDS Assign Security Profiles to Role Skill, version 5.
 |---|---|
 | A data role create or update does not resolve to an active job role | Stop before preview. Display only: Unable to create the data role because the selected base role isn't an active job role. Please provide an active job role as the base role. |
 | Security profiles are requested for a Line Manager or Employee abstract role, or for a customer-defined existing role | Treat this as an acceptable direct security-profile assignment. Resolve the active existing role and its mappings; do not create or propose a data role solely for this assignment. |
-| A new data role requires an internally derived Role Code and no meaningful security-scope descriptor is supplied | Stop before preview. Ask the user to provide a meaningful scope descriptor. Do not prompt for a data-role Role Code or use one when supplied. Do not generate a generic identity. |
+| A new data role has neither a supplied Role Name nor a meaningful security-scope descriptor for deriving its name | Stop before preview. Ask the user to provide a meaningful scope descriptor. Do not prompt for a data-role Role Code or use one when supplied. Do not generate a generic identity. |
 | A derived Role Name or internally derived Role Code already exists, or the display name is 100 characters or more | Stop before preview. Ask the user for an alternate Role Name or scope descriptor. Do not prompt for a data-role Role Code or append numeric or timestamp suffixes. |
 | The inherited job role's hcmDataRoles result cannot be retrieved or its associated security-profile names cannot be determined for a new data-role create | Stop before preview; preserve sanitized diagnostics and resolve the inherited job-role access lookup. Do not infer that no security profiles are assigned. |
 | The inherited job role has associated security profiles | Before preview, show the associated security-profile names and explain that a data role created from this job role automatically inherits the configured access. Recommend revoking those security profiles from the job role. |
@@ -23,7 +23,7 @@ Source: HCMDS Assign Security Profiles to Role Skill, version 5.
 | Result Category | When Used | Next Action |
 |---|---|---|
 | Blocked | Required job role, role target, valid mapping, allowed security-profile type, exact profile match, acknowledgment, or FSM CSV package contract is unavailable | Correct the role target, selected profile types, or package contract, then restart validation |
-| Blocked | A derived data-role identity has no scope descriptor, exceeds the display-name limit, or collides with an existing role | Supply an alternate Role Name or a different scope descriptor, then restart identity validation; do not request a data-role Role Code |
+| Blocked | A data-role identity has neither a supplied Role Name nor a scope descriptor for deriving it, exceeds the display-name limit, or collides with an existing role | Supply an alternate Role Name or a different scope descriptor, then restart identity validation; do not request a data-role Role Code |
 | Ready | The correct role target was used, inherited access was acknowledged when required, every proposed security-profile type is returned, and each profile resolves exactly | Continue to the separately authorized preview and execution workflow |
 
 ## Disclosure Rules

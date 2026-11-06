@@ -5,7 +5,7 @@
 | Requirement Group | Accepted Fields | If Missing | How to Resolve | Applies When | Resolver |
 |---|---|---|---|---|---|
 | System control identity | Enterprise Name | Stop before package preparation | Provide the enterprise name. It is the system-control primary key and appears on Assets reports. | Always | |
-| Asset setup baseline | Oldest Date Placed in Service, Category Flexfield Structure, Location Flexfield Structure, Asset Key Flexfield Structure, Initial Asset Number | Stop before package preparation | Provide the date, the three Oracle Assets flexfield structures, and the initial asset number. | Confirmed create path | resolve_assets_flexfield_structures; resolve_system_controls_export_metadata |
+| Asset setup baseline | Oldest Date Placed in Service, Category Flexfield Structure, Location Flexfield Structure, Asset Key Flexfield Structure, Initial Asset Number | Stop before package preparation | Provide the date, the three Oracle Assets flexfield structures, and the initial asset number. | Confirmed create path | resolve_assets_flexfield_structures |
 | Asset-numbering policy | `PreventUserAssetNumberFlag` | Do not block package preparation | Validate only when the user supplies a value. | Confirmed create path | resolve_system_controls_export_metadata |
 
 ## Field Validation
@@ -61,4 +61,9 @@ Preview, and Post-Execution Verification Preview gates in the parent Fixed
 Assets skill. When one exact existing System Controls row is found, use only
 the prescribed read-only customer display from `ora_reference_lookups.md`.
 
+## Task Nodes
 
+| Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
+|---|---|---|---|---|---|---|---|
+| SYS.VALIDATE_INPUT | decision | 10 | validate_input | valid->SYS.LOOKUP_EXISTING;invalid->SYS.HANDLE_INPUT | none | stop | Enterprise Name is supplied |
+| SYS.COLLECT_CREATE_INPUTS | decision | 35 | validate_input | valid->SYS.RESOLVE_DEPENDENCIES;invalid->SYS.HANDLE_INPUT | SYS.LOOKUP_EXISTING | stop | Existing System Controls absence is confirmed |

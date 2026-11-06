@@ -64,6 +64,7 @@
           "transitions": {
             "match": "MAC.DONE_MATCH",
             "absent": "MAC.APPLY_DEFAULTS",
+            "update_selected": "MAC.APPLY_DEFAULTS",
             "existing_different": "MAC.HANDLE_EXISTING_DIFFERENT",
             "ambiguous": "MAC.HANDLE_LOOKUP",
             "failure": "MAC.HANDLE_LOOKUP"
@@ -76,7 +77,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 234
+            "line": 269
           },
           "readiness": {
             "status": "ready",
@@ -100,7 +101,7 @@
           "source": {
             "file": "ora_defaulting_rules.md",
             "anchor": "task-nodes",
-            "line": 133
+            "line": 132
           },
           "readiness": {
             "status": "ready",
@@ -121,7 +122,7 @@
             "MAC.APPLY_DEFAULTS"
           ],
           "on_failure": "stop",
-          "applies_when": "Read-only validation is complete; the surrounding Data Loader workflow owns approval, submission, polling, and target-state verification.",
+          "applies_when": "Read-only validation is complete; the calling workflow follows parent approval gates, uses core.data-loader for submission, and returns accepted imports to the Fixed Assets parent for verification and dependent-task progression.",
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
@@ -150,7 +151,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 89
+            "line": 95
           },
           "readiness": {
             "status": "ready",
@@ -174,7 +175,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 90
+            "line": 96
           },
           "readiness": {
             "status": "ready",
@@ -198,7 +199,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 91
+            "line": 97
           },
           "readiness": {
             "status": "ready",
@@ -222,7 +223,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 92
+            "line": 98
           },
           "readiness": {
             "status": "ready",
@@ -246,7 +247,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 93
+            "line": 99
           },
           "readiness": {
             "status": "ready",
@@ -270,7 +271,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 94
+            "line": 100
           },
           "readiness": {
             "status": "ready",
@@ -294,7 +295,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 95
+            "line": 101
           },
           "readiness": {
             "status": "ready",
@@ -316,7 +317,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 96
+            "line": 102
           },
           "readiness": {
             "status": "ready",
@@ -338,7 +339,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 97
+            "line": 103
           },
           "readiness": {
             "status": "ready",
@@ -358,7 +359,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 98
+            "line": 104
           },
           "readiness": {
             "status": "ready",

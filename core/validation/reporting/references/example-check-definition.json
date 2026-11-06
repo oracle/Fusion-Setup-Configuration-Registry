@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.0",
+  "check_id": "synthetic.manual.single-record",
+  "version": "1.0.0",
+  "title": "Synthetic bounded check",
+  "owner": "Pilot SME",
+  "reviewer": "Pillar lead",
+  "pillar": "Synthetic",
+  "offering": "Synthetic",
+  "purpose": "Illustrate the common contract",
+  "exclusions": [
+    "Not an executable product test"
+  ],
+  "applicability": [
+    "Synthetic fixtures only"
+  ],
+  "kind": "transactional",
+  "source_kind": "pillar-check",
+  "source_ref": "synthetic-reviewed-procedure",
+  "supported_releases": [
+    "Synthetic"
+  ],
+  "requirement_refs": [
+    "req-1"
+  ],
+  "task_refs": [
+    "task-1"
+  ],
+  "required": false,
+  "blocking": false,
+  "prerequisites": [
+    "Existing synthetic reference"
+  ],
+  "privileges": [
+    "Defined by the real pillar contribution"
+  ],
+  "inputs": [
+    {
+      "name": "reference",
+      "required": true,
+      "constraints": [
+        "Must already exist"
+      ],
+      "source_strategy": "Explicit reviewed reference"
+    }
+  ],
+  "execution": {
+    "method": "manual",
+    "workflow_ref": "synthetic-manual-procedure",
+    "client_ref": "",
+    "operation": "Illustrative manual verification",
+    "steps": [
+      "Demonstration only; do not execute this fixture."
+    ],
+    "timeout_seconds": 60,
+    "poll_interval_seconds": 5
+  },
+  "assertions": [
+    {
+      "assertion_id": "created",
+      "expected": "One marked draft exists",
+      "verification": "Inspect its identity and expected fields"
+    }
+  ],
+  "limits": {
+    "max_new_primary_records": 1,
+    "mandatory_child_bounds": [],
+    "payload_enforcement": "Real pillar must supply actual enforcement",
+    "test_marker": "IMP_TEST",
+    "stable_key_strategy": "One stable key per selected check/project",
+    "duplicate_lookup": "Resolve prior attempt before create"
+  },
+  "side_effects": [
+    "One representative draft"
+  ],
+  "cleanup": {
+    "policy": "manual",
+    "workflow_ref": "synthetic-manual-cleanup",
+    "instructions": "Real pillar must define supported cleanup or retention",
+    "owner": "Implementer"
+  },
+  "references": [
+    "synthetic-source"
+  ]
+}

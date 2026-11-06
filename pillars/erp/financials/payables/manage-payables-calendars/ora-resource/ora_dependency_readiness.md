@@ -22,3 +22,9 @@
 |---|---|---|
 | Satisfied | Exact parent identity and package linkage are supplied | No lookup is implied |
 | Blocked | Package linkage or field lifecycle semantics are missing | No; stop before preview |
+
+## Task Nodes
+
+| Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
+|---|---|---|---|---|---|---|---|
+| CALENDAR.CHECK_DEPENDENCIES | step | 17 | resolve_dependency | ready->CALENDAR.ENFORCE_DESIGN;blocked->CALENDAR.INPUT_BLOCKED | CALENDAR.CHECK_LOCAL_VALUES | stop | Always; verify applicable parent linkage and bounded field lifecycle contracts before design enforcement |

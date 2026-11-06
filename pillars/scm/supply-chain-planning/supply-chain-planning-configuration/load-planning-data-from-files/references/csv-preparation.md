@@ -127,8 +127,8 @@ identify the intended row. Explicit null writes a blank CSV field; omitted
 changes preserve the baseline value. Do not assume a blank clears a Fusion
 value unless the import's documented update semantics say so. If the baseline
 is unavailable, ask for it or resolve documented
-update semantics; never invent the current state. Do not use this helper to
-delete rows or silently turn an update into a create.
+update semantics; never invent the current state. Use the explicit delete
+operation below for deletions; never disguise one as an update or create.
 
 ~~~text
 python scripts/prepare_planning_fbdi.py --request <mapped-request.json> --contracts <contracts.json> --run-id <same-local-run-id> --output-zip <new.zip> --report <preparation.json>
@@ -137,6 +137,92 @@ python scripts/prepare_planning_fbdi.py --request <mapped-request.json> --contra
 This replaces per-request generation scripts. It writes the CSV members
 directly into the ZIP; no filled XLSM, macro run, workbook rendering, or extra
 CSV copy is needed. To show CSV content, read the generated ZIP member.
+
+## Deletion
+
+Use operation "delete" with an explicit target and a trustworthy full baseline
+per row. For an explicitly requested sourcing-rule-and-source deletion, use
+both targets on the same row as shown below.
+Reuse an authorized existing CSV row or prior preparation artifact when available;
+otherwise obtain the target row from the user or an explicitly routed read
+workflow. Do not invent current values or perform undeclared live lookups.
+
+| Target | CSV | Worksheet technical field | Paired CTL field in 26D |
+|---|---|---|---|
+| sourcing_rule | SourcingRules.csv | DELETE_SOURCING_RULES | DELETED_FLAG |
+| sourcing_sources | SourcingRules.csv | DELETE_SOURCES | DELETE_SOURCES |
+| atp_rule | ATPRules.csv | DELETED_FLAG | DELETED_FLAG |
+| atp_rule_assignment | ATPRuleAssignments.csv | DELETED_FLAG | DELETED_FLAG |
+
+The helper locates the worksheet field in the same-run position mapping and
+writes to its paired CTL column. It does not assume identical XLSM/CTL names or
+fixed positions. Published flags accept Yes/No; the CTL translates them to 1/2.
+Do not put numeric 1/2 or booleans in CSV deletion fields. Empty means no deletion.
+These semantics were verified against the public
+[26D sourcing workbook](https://www.oracle.com/webfolder/technetwork/docs/fbdi-26d/fbdi/xlsm/ScpSourcingImportTemplate.xlsm)
+and [26D ATP workbook](https://www.oracle.com/webfolder/technetwork/docs/fbdi-26d/fbdi/xlsm/ScpATPRulesImportTemplate.xlsm),
+with their SourcingRules.ctl, ATPRules.ctl, and ATPRuleAssignments.ctl files under
+the same release's controlfiles directory. Continue resolving the current
+applicable release per the normal template workflow.
+
+Mapped request shape (baseline placeholder is not executable data):
+
+~~~text
+{
+  "operation": "delete",
+  "members": {
+    "SourcingRules.csv": [
+      {"target": "sourcing_sources", "baseline": {all CTL input fields}}
+    ]
+  }
+}
+~~~
+
+For deletion of both the rule and its identified source, replace `target` with
+`"targets": ["sourcing_rule", "sourcing_sources"]` on that row. Do not pass
+`target` and `targets` together. The only multi-target combination is this pair;
+an empty list, duplicates, unrelated targets or unsupported flags still block.
+
+Use the same prepare command and output-location rules as create/update. The
+helper sets each explicitly selected deletion flag to Yes and unselected deletion
+flags to No, preserves all non-deletion baseline values, and adds the full-width
+END column. Thus the combined row carries DELETE_SOURCES=Yes and the CTL field
+paired with DELETE_SOURCING_RULES (DELETED_FLAG in 26D)=Yes. An existing affirmative
+flag for a scope not explicitly requested blocks instead of being silently
+replaced. Changes objects are not accepted in delete rows. Split
+unrelated updates/creates from prompt deletions rather than combining intents.
+
+This combined flag allowance also applies to supplied CSV/ZIP rows. Keep both
+flags and their bytes unchanged; do not split into same-key rows or clear one
+flag. Apply the identity checks for both targets, including the source keys.
+This is a skill policy permitting explicit user intent, not a guarantee of
+Oracle cascade or combined-operation semantics. Fusion's load job owns the
+final business validation and outcome; Core's normal approval remains required.
+
+Identify the exact target before generation:
+
+- Every deletion requires the explicitly supplied Source System for this
+  request and its matching SR_INSTANCE_CODE; never copy a different source
+  system from an old baseline.
+- Sourcing rule: rule name and explicit local organization or global scope.
+  In a full baseline, blank ORGANIZATION_CODE represents global, not unknown.
+- Sourcing sources: preserve the rule identity, owning organization, effective
+  date, source type and rank. For Make at/Transfer from retain the source
+  organization; for Buy from retain supplier and the existing supplier site
+  and site source-system values. Preserve quantity ranges, subinventories and
+  other distinguishing values. Ask if a request such as "delete the source"
+  matches several rows; never broaden it to all sources or the entire rule.
+- ATP rule: SR_INSTANCE_CODE and RULE_NAME.
+- ATP-rule assignment: ATP_RULE_NAME, ASSIGNMENT_TYPE and its scope keys:
+  2 = category, 3 = item, 4 = organization, 5 = item and organization.
+  Deleting an assignment does not request deletion of the ATP rule.
+
+The helper checks nonblank target keys and supported source/assignment types;
+the mapping review still resolves conditional values and unique target identity.
+It does not query Fusion or prove referential validity, deletion success, or
+cascade behavior. No AssignmentSets.csv deletion or sourcing exclusion deletion
+is supported. Unsupported flag combinations or deletion markers,
+missing identities and active flags in create/update requests block publication.
 
 ## Supplied CSV or ZIP
 
@@ -150,6 +236,13 @@ regenerate supplied CSV data or add END to supplied files. A supplied file may
 have the full CTL width with or without a consistent terminal END. Recognized
 XLSM labels/technical names are accepted at their paired CTL positions without
 requiring identical column names. Reordered or unknown headers block.
+
+The same pass detects deletion flags and applies the deletion identity/scope
+checks above. Mixed non-delete and supported delete rows are retained unchanged
+and reported, not silently treated as ordinary create/update data. Unsupported
+deletion flags in a supported member block the package; they are not grounds to
+silently exclude or rewrite that member. Supplied input needs no mapped baseline
+JSON because each full-width CSV row already supplies its fields.
 
 File contents do not replace the explicit Source System intake. During the
 existing mapping/content review, compare retained rows' source-system values
@@ -177,6 +270,16 @@ the XLSM. It validates each CSV once, builds/selects the ZIP, and reopens newly
 created ZIPs to verify exact member bytes/order. The report binds the ZIP hash,
 member hashes/counts, mapping positions, exclusions, and template provenance.
 Its READY_FOR_CORE_DATA_LOADER status means local preparation only.
+
+The report includes contains_deletions, deletion_row_count, deletion_action_count and per-member
+deletions (row number, target, worksheet flag, paired CSV flag and position).
+One combined sourcing row has two deletion entries but counts as one deletion
+row and two deletion actions. Show both scopes in the approval summary.
+These entries omit business values so redacted metadata can be persisted.
+Use the referenced immutable CSV rows to show the exact deletion targets in
+Core's existing approval preview; pass the deletion summary with the preparation
+evidence. An unchanged ZIP with deletion flags still requires disclosure of its
+destructive intent. Approval must cover those targets and that exact ZIP.
 
 For a load request, reuse this evidence through Core preflight and Task Hook.
 Carry the explicit Source System and defaulted Net Change mode into the handoff.

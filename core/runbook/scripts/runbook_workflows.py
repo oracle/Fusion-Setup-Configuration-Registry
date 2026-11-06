@@ -12,7 +12,6 @@ from typing import Any, Callable, IO, Optional
 from data_loader_handoff import stamp_run_id
 from runbook_client import (
     ApiError,
-    DEFAULT_PAGE_SIZE,
     IndeterminateWriteError,
     RunbookClient,
     SuccessResponseError,
@@ -874,7 +873,7 @@ def add_task(
     normalized_journey_id = str(positive_int64(journey_id, "WorkerJourneyId"))
     sequence = task_input.get("sequence")
     if sequence is None:
-        current_tasks = client.list_tasks(normalized_journey_id, DEFAULT_PAGE_SIZE)
+        current_tasks = client.list_tasks(normalized_journey_id)
         sequence = _next_task_sequence(current_tasks)
     payload = _build_add_task_payload(
         normalized_journey_id,

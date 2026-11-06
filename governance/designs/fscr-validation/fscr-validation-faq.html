@@ -1,0 +1,240 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FSCR Validation Frequently Asked Questions</title><style>
+    :root{color-scheme:light}*{box-sizing:border-box}body{margin:0;font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:#202833;background:#f6f7f9}a{color:#245986}header{background:white;padding:64px max(32px,calc((100vw - 1120px)/2));}header h1{font-size:38px;line-height:1.2;margin:0 0 18px;max-width:850px;color:#000}header p{margin:10px 0;max-width:850px}.meta{font-size:14px;color:#455262}.layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:48px;max-width:1200px;margin:auto;padding:42px 32px 80px}nav{align-self:start;position:sticky;top:20px;font-size:13px;line-height:1.45}nav ol{padding-left:22px}nav li{margin:9px 0}nav a{text-decoration:none}main{min-width:0}section{background:white;padding:34px 38px;margin:0 0 28px;border:1px solid #e2e5e9;border-radius:4px;scroll-margin-top:20px}h2{font-size:26px;line-height:1.25;color:#000;margin:0 0 22px}h3{font-size:18px;line-height:1.3;margin:28px 0 10px;color:#000}p{margin:0 0 16px}ul{padding-left:22px;margin:14px 0}li{margin:8px 0}table{width:100%;border-collapse:collapse;margin:20px 0 22px;font-size:14px;line-height:1.5;table-layout:fixed}td,th{border:1px solid #d9d9d9;padding:11px 12px;text-align:left;vertical-align:middle;overflow-wrap:anywhere}th{background:#34495e;color:white;font-weight:600}tbody tr:nth-child(even){background:#f6f8fa}pre{font:12px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;padding:16px 0;margin:18px 0;color:#152c40}figure{margin:24px 0}figure img{display:block;width:100%;height:auto}figcaption{font-size:13px;color:#4c5763;margin-top:12px}.sources a{overflow-wrap:anywhere}footer{font-size:13px;color:#5a6570;margin:24px 0} @media(max-width:950px){.layout{display:block;padding:24px 16px}nav{position:static;margin-bottom:30px}section{padding:28px 22px}header{padding:40px 26px}header h1{font-size:32px}} @media print{@page{size:A4;margin:20mm}body{background:white;font-size:10pt;line-height:1.45}header{padding:0 0 20px}header h1{font-size:25pt}.layout{display:block;padding:0}nav{position:static;break-after:page}nav li{margin:4px 0}section{border:0;padding:0;margin:0;break-before:page}h2{font-size:18pt}h3{font-size:12pt;break-after:avoid}tr,figure{break-inside:avoid}table{font-size:9pt}td,th{padding:6px}pre{font-size:8pt}a{color:inherit;text-decoration:none}footer{display:none}}
+    </style></head><body>
+<header><h1>FSCR Validation Frequently Asked Questions</h1><p>Triggers evidence ownership and worked conversations</p><p class="meta">Version 1.1 · 20 October 2026 · FSCR Framework Team</p><p>Practical answers and illustrative conversations for pillar teams, framework engineers and implementers.</p></header><div class="layout"><nav aria-label="Contents"><strong>Contents</strong><ol>
+<li><a href="#section-1">What validation means</a></li>
+<li><a href="#section-2">When validation starts and what to say</a></li>
+<li><a href="#section-3">Projects skipping and repeated prevalidation runs</a></li>
+<li><a href="#section-4">How Data Loader readiness is checked</a></li>
+<li><a href="#section-5">How scope identity and access are checked</a></li>
+<li><a href="#section-6">Run Book task correctness and completion</a></li>
+<li><a href="#section-7">Where evidence comes from and how values are checked</a></li>
+<li><a href="#section-8">Missing pillar skills and the handover</a></li>
+<li><a href="#section-9">Reports and the meaning of a pass</a></li>
+<li><a href="#section-10">Hallucination risk and evidence safeguards</a></li>
+<li><a href="#section-11">Play story for prevalidation and a corrected issue</a></li>
+<li><a href="#section-12">Play story for implementation review and one transaction</a></li>
+<li><a href="#section-13">Play story when a check cannot run automatically</a></li>
+<li><a href="#section-14">What teams must finish before a live pilot</a></li>
+<li><a href="#section-15">Executive reports and evidence boundaries</a></li>
+</ol></nav><main>
+<section id="section-1"><h2>1 What validation means</h2>
+<h3>Q1 What are the three validation stages</h3>
+<table><colgroup><col style="width:22.76%"><col style="width:42.28%"><col style="width:34.96%"></colgroup><thead><tr><th scope="col">Stage</th><th scope="col">Question it answers</th><th scope="col">What it does not prove</th></tr></thead><tbody>
+<tr><td>Prevalidation</td><td>Can the selected environment support the planned implementation workflow?</td><td>That customer setup is correct or that tasks are complete.</td></tr>
+<tr><td>Implementation Review</td><td>Do requirements, task and load outcomes, and observed setup agree?</td><td>That every possible business transaction works.</td></tr>
+<tr><td>Transactional validation</td><td>Does one selected basic business scenario work with the existing setup?</td><td>Bulk readiness, exhaustive testing or production release approval.</td></tr>
+</tbody></table>
+<p>Task completion, successful loading and correct business values are separate facts. A successful task can still create the wrong association. A successful API response can still fail a business assertion. Reports keep these facts separate.</p>
+<h3>Q2 What is implemented today</h3>
+<p>The repository supplies assisted review and coordination skills, a hybrid prevalidation workflow, reusable core clients and executable local report tools. It does not contain a universal live evidence collector, generic transaction runner, bundled pillar tests or a Playwright or SVF adapter. Some steps are skill instructions that select existing services; they are not one executable end-to-end validation program.</p>
+<p>The reporting tools check the consistency of supplied sanitized evidence and calculate readiness. They make no Fusion calls. A live result must come from an executed supported route or attributed manual evidence. A report file by itself is not proof that a live check ran.</p>
+<p>This FAQ describes the validation design and its scoped reporting update reviewed on 20 October 2026. Check the owning skills in the branch you are using before assuming a capability is installed; validation development and core service contracts may have different release histories. Proposed behavior and current integration gaps are called out explicitly. The example conversations are illustrative; no Fusion operations were performed to produce them.</p>
+</section>
+<section id="section-2"><h2>2 When validation starts and what to say</h2>
+<h3>Q3 How is prevalidation triggered and when</h3>
+<p>For a new implementation created from a requirements document, the Implementation Router selects Prevalidation. The workflow first reads the requirements, resolves catalog-backed scope and task mapping, and prepares the local project with Oracle Run Book creation deferred. It then honors an explicit Run or Skip choice, asking only if that choice is missing. Silence is not a skip.</p>
+<p>A standalone environment-readiness request can also select Prevalidation. It is not a background monitor and does not run automatically after every setup task.</p>
+<h3>Q4 When are post implementation checks triggered</h3>
+<p>A request to review completeness, correctness or gaps selects Implementation Review. It can run during implementation; unfinished work becomes a finding. A transaction check requires a separate explicit request. Completion of a Run Book or review may suggest a check but does not authorize its execution. A standalone transaction need not wait for unrelated tasks, but its prerequisites and project mutation gates still apply.</p>
+<h3>Q5 What natural language prompts can a human use</h3>
+<table><colgroup><col style="width:21.14%"><col style="width:78.86%"></colgroup><thead><tr><th scope="col">Intent</th><th scope="col">Sample single line prompt</th></tr></thead><tbody>
+<tr><td>Prevalidation before creation</td><td>Create project Atlas from this requirements document and run prevalidation before creating its Oracle Run Book.</td></tr>
+<tr><td>Standalone assessment</td><td>Check TEST readiness for SCM Order Management; create a local evidence workspace if needed, but do not create an implementation Run Book.</td></tr>
+<tr><td>Review with live refresh</td><td>Review Atlas against its approved requirements, refresh its Run Book and Data Loader status in TEST, verify setup where supported, and report gaps.</td></tr>
+<tr><td>One transaction</td><td>Run one applicable transactional validation for Atlas in TEST and show the exact action before creating anything.</td></tr>
+<tr><td>Report only</td><td>Generate the validation report for Atlas from existing evidence without refreshing live state.</td></tr>
+<tr><td>Executive report only</td><td>Create an executive validation summary for Atlas from these existing report artifacts; keep stages and scopes separate and do not refresh live state or run tests.</td></tr>
+</tbody></table>
+<p>These are intent prompts, not special command syntax. Codex resolves the project and environment and asks for genuinely missing inputs. A request to generate a report alone does not implicitly refresh live state.</p>
+</section>
+<section id="section-3"><h2>3 Projects skipping and repeated prevalidation runs</h2>
+<h3>Q6 Can prevalidation run without a project</h3>
+<p>Yes, without a previously existing implementation project or Oracle Run Book. No, without any local evidence workspace. The workflow initializes a local project to preserve scope, reports and audit history, with Oracle Run Book creation deferred. It needs a real offering and catalog-resolved task mapping; it must not invent tasks merely to make a connectivity test work.</p>
+<p>If no name is supplied, it uses the repository draft-project convention and reports the corresponding folder ID. If the user forbids even a local workspace, or the scope cannot be mapped, the skill stops with that prerequisite. A general setup explanation can still be given without running an assessment.</p>
+<h3>Q7 Is a standalone environment assessment fully available</h3>
+<p>Its supported read checks can run. However, standalone full_readiness includes an isolated Run Book write-verification check. The current core service lacks a non-binding assessment-create mode, so that check is BLOCKED and full readiness cannot be claimed. The workflow must not ask approval for this unsupported action or create an ordinary implementation Run Book as a substitute.</p>
+<p>The artifact-led pre_runbook stage intentionally excludes Run Book writes. It can return stage-specific READY with the required write category marked NOT APPLICABLE. That does not prove write privileges. The chosen stage must always be visible.</p>
+<h3>Q8 Can I skip prevalidation and continue</h3>
+<p>Yes. Say: “Skip prevalidation for Atlas, record readiness as unverified, and continue with normal Run Book planning and creation checks.” The workflow saves SKIPPED and readiness unverified, then resumes the original request through core.runbook. It still needs valid inputs, authentication, privileges, catalog/payload checks and the owning approval gates. Data Loader submissions still require the appropriate active Run Book. Skipping is not PASS or a guarantee that creation will succeed.</p>
+<h3>Q9 Can I rerun it after fixing an issue</h3>
+<p>Yes. Say: “I fixed the Data Loader access issue; rerun prevalidation for Atlas in TEST with the same scope and assessment stage and preserve the previous report.” Each run gets a new ID and report directory. Earlier failures remain visible. Rerunning read assessment is different from resending an uncertain create request; a lost mutation response requires read reconciliation, not blind recreation.</p>
+</section>
+<section id="section-4"><h2>4 How Data Loader readiness is checked</h2>
+<h3>Q10 How does it determine whether Data Loader is available</h3>
+<p>It tests scoped service access and the metadata required by the planned implementation. The check is more specific than whether a Data Loader page exists or a URL responds.</p>
+<ul><li>Collect every businessObject or businessObjects identity declared by the selected pillar skills, keeping the source task and skill reference.</li><li>Retrieve the complete paginated, unfiltered dataLoaderBusinessObjects collection through the declared core REST route. An incomplete page set cannot prove an object is missing.</li><li>For each required object, require exactly one case-sensitive match on BusObjTopDiscriminator. Similar names and aliases do not count; duplicate identities are ambiguous.</li><li>Use the matched BusinessObjectId to check metadata and UCM template access, components, parent relationships, and attribute pages through strict core read helpers.</li><li>Compare required fields, types and keys with explicit skill requirements or a supplied versioned baseline. Report registration, access and compatibility independently.</li></ul>
+<h3>Q11 Does a pass prove a future data load will succeed</h3>
+<p>No. Prevalidation does not create a sample, refresh metadata, upload a file, validate a load or submit a job. It establishes the selected metadata and access readiness. Actual input values, business rules and runtime jobs can still fail later.</p>
+<p>If no compatibility baseline exists, accessibility and internal metadata coherence may pass, but requirement-level compatibility remains unproven. If pillar guidance is missing, the workflow cannot interpret missing business-object declarations as proof that no objects are needed.</p>
+<table><colgroup><col style="width:34.96%"><col style="width:65.04%"></colgroup><thead><tr><th scope="col">Illustrative finding</th><th scope="col">Meaning</th></tr></thead><tbody>
+<tr><td>Registered and accessible</td><td>The required object exists and its selected metadata can be read.</td></tr>
+<tr><td>Registered but inaccessible</td><td>A catalog entry exists, but its template or schema could not be read.</td></tr>
+<tr><td>Missing</td><td>No exact match exists in a successfully completed catalog retrieval.</td></tr>
+<tr><td>Ambiguous or schema incompatible</td><td>Identity is not unique, or the retrieved schema contradicts an explicit baseline.</td></tr>
+</tbody></table>
+</section>
+<section id="section-5"><h2>5 How scope identity and access are checked</h2>
+<h3>Q12 Does scope mean implementation scope or OAuth scope</h3>
+<p>Both matter, and they are checked separately. Implementation scope means the selected pillar, offering, areas, features, tasks and dependencies. OAuth scope means the service access requested during authentication.</p>
+<h3>Q13 How is implementation scope validated</h3>
+<p>The workflow compares approved requirements and catalog-resolved identities against the complete effective repository catalogs and supported live catalog relationships. It preserves dependencies and repeated task occurrences. It checks actual enabled or opted-in state separately from catalog availability. A visible offering row does not prove that the required feature is enabled. Missing state fields or the absence of a supported read route become BLOCKED.</p>
+<h3>Q14 How does it check OAuth scopes and privileges</h3>
+<table><colgroup><col style="width:21.95%"><col style="width:78.05%"></colgroup><thead><tr><th scope="col">Check</th><th scope="col">What is verified</th></tr></thead><tbody>
+<tr><td>Service selection</td><td>Select the exact configured scope for the requested service: scope for standard, boss_scope for BOSS, and fusion_common_scope for Fusion Common. Missing or blank values block the selected service.</td></tr>
+<tr><td>Target and trust</td><td>Reconcile the selected project/environment, HTTPS base URL and trusted authentication profile. Bind cached access to the approved client, issuer, target and requested scope.</td></tr>
+<tr><td>Authentication</td><td>Use the owning authentication workflow for the selected service. Never substitute another service scope to force login.</td></tr>
+<tr><td>Observed access</td><td>Record the results of the specific supported service operations actually attempted, along with safe status and diagnostic references.</td></tr>
+</tbody></table>
+<p>Successful login does not prove that the user has all business roles, data access or write permissions. A 403 alone does not identify a particular missing role. The current implementation does not universally inspect all IAM grants or compare returned token scope with every business privilege. Report confirmed failures and unverified access separately; do not claim that all scopes and roles are automatically certified.</p>
+<p>Passwords, tokens, private trust contents and credential configuration must not appear in the FAQ, evidence report or project artifacts. Authentication diagnosis begins with FSCR Onboarding and delegates execution to the owning auth workflow.</p>
+</section>
+<section id="section-6"><h2>6 Run Book task correctness and completion</h2>
+<h3>Q15 How does it know that the right tasks were created</h3>
+<p>Three comparisons are needed: approved requirements against the task mapping; the mapping against the canonical Run Book plan; and the intended plan/payload against the actual created task instances. Compare identity, occurrence, offering context, ordering and dependencies. Matching task counts alone is insufficient.</p>
+<p>Prevalidation before Run Book creation checks planned identities and relationships against live catalogs. It cannot check a Run Book that does not exist yet. Core creation builds from the canonical plan, reports skipped-task warnings and reads back the dashboard. A complete deterministic plan-versus-live task reconciliation is still a framework pilot integration item; current create success must not be presented as proof of that full comparison.</p>
+<h3>Q16 How does it check whether all tasks are complete</h3>
+<p>For a requested live refresh, core Run Book reads retrieve all task pages and individual task details using explicit journey/task identities. Preserve repeated catalog tasks as separate Run Book occurrences. Evaluate each status, exceptions and coverage, rather than trusting a single completed count.</p>
+<table><colgroup><col style="width:13.01%"><col style="width:32.52%"><col style="width:54.47%"></colgroup><thead><tr><th scope="col">Current raw status</th><th scope="col">Meaning</th><th scope="col">Review treatment</th></tr></thead><tbody>
+<tr><td>COM</td><td>Completed</td><td>Execution status only; still verify relevant setup.</td></tr>
+<tr><td>CWE</td><td>Completed with Exceptions</td><td>Preserve exceptions; never flatten into clean success.</td></tr>
+<tr><td>REJ</td><td>Not Applicable</td><td>Keep separate from successful completion.</td></tr>
+<tr><td>Unknown</td><td>Unknown or unrecognized status</td><td>Keep unknown and investigate; do not infer completed.</td></tr>
+</tbody></table>
+<p>The current dashboard completedCount includes COM, CWE and REJ. “Ten completed” can therefore include exceptions and not-applicable tasks. The validation adapter must explicitly map source statuses to its result vocabulary.</p>
+<h3>Q17 Where does the completion time come from</h3>
+<p>The raw Run Book client requests CompletionDate, but current sanitized dashboard/task models omit it. The framework must complete the supported normalization into completed_at and preserve the source timezone and task occurrence identity. If the supplied evidence has no valid completion time, show Not recorded. Never substitute capture, last-update or report-generation time.</p>
+</section>
+<section id="section-7"><h2>7 Where evidence comes from and how values are checked</h2>
+<h3>Q18 Does validation read folders or call live APIs</h3>
+<p>It can use both, with an explicit distinction. Existing-evidence review reads the approved requirement baseline, task/load evidence and previous observations in the project. A requested live refresh delegates to supported Run Book and Data Loader read operations. Every finding must show its source, environment, observation time and freshness. An old local report is not proof of current Fusion state.</p>
+<table><colgroup><col style="width:26.83%"><col style="width:73.17%"></colgroup><thead><tr><th scope="col">Question</th><th scope="col">Evidence source</th></tr></thead><tbody>
+<tr><td>What should exist</td><td>Approved requirements, design decisions and pillar assertions.</td></tr>
+<tr><td>What was planned</td><td>Catalog-resolved task mapping and canonical Run Book plan.</td></tr>
+<tr><td>Did a task finish</td><td>Live Run Book status/details when refresh is requested, or clearly dated saved evidence.</td></tr>
+<tr><td>Did a load finish cleanly</td><td>Linked Data Loader dataset and error details; applicable object/failed-line evidence and ESS logs.</td></tr>
+<tr><td>Are actual business values right</td><td>Pillar-defined read-back through a supported route, or attributed manual evidence.</td></tr>
+</tbody></table>
+<p>Data Loader status checks use dataLoaderDataSets and dataSetErrors even when a top-level status says success. Non-FSM loads also inspect failed lines and object results; FBDI checks include the ESS job hierarchy and available logs. Missing dataset evidence means unavailable or pending, not success. A request ID alone does not establish completion. Prevalidation metadata checks do not perform this post-load assessment. Status refresh must be explicitly requested and routed through the owning core service; report generation does not automatically monitor a newly initiated load.</p>
+<h3>Q19 Does it go into Fusion to check actual values</h3>
+<p>Yes, where the pillar supplies the correctness rule and a declared supported read-only route. For example, compare an observed business-unit association with the approved expected association. Keep expected value, observed value, assertion result and evidence together. Valid input files and successful loads cannot substitute for this read-back.</p>
+<p>If the route is missing, report BLOCKED. If an authored application-only procedure exists, offer it to the implementer and record the performer and evidence, or identify attestation explicitly. Do not invent an endpoint, infer a correct value from the live environment, or silently control the application through a browser.</p>
+</section>
+<section id="section-8"><h2>8 Missing pillar skills and the handover</h2>
+<h3>Q20 What if no pillar implementation skill exists</h3>
+<table><colgroup><col style="width:26.02%"><col style="width:73.98%"></colgroup><thead><tr><th scope="col">Missing item</th><th scope="col">What happens</th></tr></thead><tbody>
+<tr><td>Implementation task skill</td><td>For an identified catalog task, core.runbook can route to shared.common.manual-tasks for human guidance from supplied documentation or valid product guidance. The missing skill is not proof that the live task is absent.</td></tr>
+<tr><td>Setup correctness check</td><td>Review still reports available requirements, task and load evidence. The missing business verification remains a gap owned by the pillar; it cannot become PASS.</td></tr>
+<tr><td>Transactional check or supported route</td><td>The requested automated test is BLOCKED. An explicitly authored applicable manual alternative may be selected; the framework must not invent one.</td></tr>
+</tbody></table>
+<p>Generic manual task guidance does not create a transaction-validation definition, business assertion or cleanup contract. If source guidance is insufficient, the responsible administrator or pillar must supply it.</p>
+<h3>Q21 How does the framework hand over to the pillar</h3>
+<p>At runtime this is a skill and contract handover, not an automatic email, chat or Jira assignment. The framework resolves the project, offering and requirement version, discovers reviewed checks under pillars/&lt;pillar&gt;/&lt;existing-offering-slug&gt;/implementation-validation/, selects one, and checks its definition and execution prerequisites.</p>
+<p>The handover carries the check ID/version, project/environment, requirement and task references, safe input references, expected assertions, declared route, limits and cleanup policy. The pillar procedure or supported core adapter performs the business-specific work. Its result returns to the shared run contract with observed assertions, evidence, safe record/request identifiers, side effects and cleanup status. The framework publishes the common report.</p>
+<h3>Q22 Who builds what</h3>
+<p>The framework team owns routing, contracts, normalization, common limits, report assembly and history. Core service owners own supported adapters, authentication and their execution/approval gates. Pillar teams own product correctness, test definitions, applicability, API/manual procedures and cleanup. Implementers select, approve and supply manual evidence; project owners accept documented gaps and decide progression.</p>
+</section>
+<section id="section-9"><h2>9 Reports and the meaning of a pass</h2>
+<h3>Q23 What does the overall output contain</h3>
+<p>There are separate prevalidation, implementation-review and transactional report families. The two post-implementation stages each produce HTML and JSON for a fresh run. The executive report uses an explicit manifest of selected existing project artifacts and recalculates source assessments locally. It keeps stage, environment, scope and requirement version visible, links detailed reports, and performs no live refresh or test execution.</p>
+<ul><li>Project, environment, run identity and time, followed immediately by the Run Book task list: task ID, name, status and actual completion time.</li><li>Scope, approved requirement version, requirement-to-task-to-check mapping and evidence coverage.</li><li>Task/load outcomes, errors, evidence source, capture time, freshness and owners.</li><li>Each check result, expected versus observed assertions, evidence references, gaps and manual checks.</li><li>For a transaction: selected check/version, method, safe record/request identity, actual creation count or uncertainty, effects and separate cleanup outcome.</li><li>Decisions, recommended next actions, accountable owners, limitations and diagnostics.</li><li>For the executive index: the selected source reports and their recalculated outcomes, historical run/check counts, unresolved findings, owners and next actions. Counts are not a project success score.</li></ul>
+<table><colgroup><col style="width:42.28%"><col style="width:17.89%"><col style="width:39.84%"></colgroup><thead><tr><th scope="col">Illustrative task</th><th scope="col">Status</th><th scope="col">Completed at</th></tr></thead><tbody>
+<tr><td>T001 Configure demo organization</td><td>completed</td><td>2026-10-16T09:30:00+01:00</td></tr>
+<tr><td>T002 Associate business unit</td><td>completed</td><td>Not recorded</td></tr>
+<tr><td>T003 Verify effective access</td><td>pending</td><td>Not completed</td></tr>
+</tbody></table>
+<p>Prevalidation reports instead lead with stage, environment and scoped area/task counts, then the eight assessment categories, evidence, blockers and handoff decision. In pre_runbook there may be no created Run Book to list. A skipped prevalidation produces a decision record with readiness unverified, not a passing assessment.</p>
+<h3>Q24 Does PASS mean the project is ready for production</h3>
+<p>No. PASS belongs to a specific evidenced check. Post-implementation readiness is BLOCKED, NEEDS_REVIEW or READY_WITHIN_VERIFIED_SCOPE. The last means only the stated scope was verified. Prevalidation has its own READY, READY WITH WARNINGS and NOT READY decisions. Project acceptance and production release remain separate human decisions. A transaction can pass while unresolved cleanup still requires review.</p>
+</section>
+<section id="section-10"><h2>10 Hallucination risk and evidence safeguards</h2>
+<h3>Q25 Can hallucinations or incorrect conclusions happen</h3>
+<p>Yes. An absolute zero-hallucination guarantee would be misleading. Language-model interpretation can misread a requirement, propose a wrong mapping or misunderstand evidence. The design aims to constrain those errors and make them visible rather than assume they cannot occur.</p>
+<ul><li>Use approved expectations and exact catalog/check identities. Never copy observed values into the expected values merely to produce a match.</li><li>Use reviewed pillar procedures and declared supported execution routes. Missing guidance or routes remain explicit gaps.</li><li>Keep environment, source/version, observation time, freshness, performer and evidence references with results.</li><li>Require observed passing assertions and evidence references for PASS. Preserve BLOCKED, NOT_RUN, SKIPPED, NOT_APPLICABLE and INDETERMINATE honestly.</li><li>Use deterministic schema/consistency checks and readiness calculation. Keep human acceptance separate from recorded failures.</li><li>Review the pilot against known good and known bad examples, including false success, incomplete pagination, exceptions and unknown mutation outcomes.</li><li>Keep accepted requests, Run Book status, terminal load/job results, row/object outcomes and actual-value assertions separate; partial or conflicting evidence never becomes PASS through aggregation.</li></ul>
+<h3>Q26 What can the report tool not protect against</h3>
+<p>A well-formed JSON record can still contain a wrong or fabricated observation. The renderer validates internal consistency; it does not independently call Fusion, open every evidence reference, verify that approval truly occurred, or certify business correctness. It is also not a secret scanner. Evidence collection, execution controls, redaction and reviewer judgment remain necessary.</p>
+<p>A report should say “verified by a supported live read at this time,” “reviewed from saved evidence,” “reported by the user,” or “not verified,” as applicable. If the only evidence is an old project file or an unsupported inference, Codex must not describe the current Fusion environment as verified.</p>
+<p>No live checks were run for this FAQ. The conversations below show expected interaction patterns and require the stated routes and pillar definitions to exist before the successful paths can execute.</p>
+</section>
+<section id="section-11"><h2>11 Play story for prevalidation and a corrected issue</h2>
+<p>Illustrative scenario: Atlas is a new SCM project in TEST. Names, object identities, findings and outcomes below are examples, not observations from a live system.</p>
+<p>Human: “Create Atlas from this requirements document and run prevalidation before creating its Oracle Run Book.”</p>
+<p>Codex: “I have resolved the requirements and task mapping and prepared the local workspace with Oracle Run Book creation deferred. Your prompt already chooses Run, so I will assess pre_runbook for the selected TEST environment and scope through its supported read routes.”</p>
+<p>Codex after the hypothetical reads: “Prevalidation is NOT READY. The required demo business object is registered, but its metadata template could not be read. Registration and access are separate findings. The report includes the failed read, safe diagnostics and the owning action. Run Book creation is on hold. Write verification is NOT APPLICABLE at this stage.”</p>
+<p>Human: “The administrator has fixed that access issue. Rerun the same prevalidation.”</p>
+<p>Codex: “I will create a new assessment run and preserve the first report. I will refresh the applicable evidence for the same environment and scope. I will not assume the fix worked because it was reported.”</p>
+<p>Codex after the hypothetical successful reassessment: “The applicable read checks now pass and pre_runbook readiness is READY. This does not verify write permission or business setup correctness. I will resume the original Run Book workflow and its required planning and approval gates.”</p>
+<p>Codex: “I will now resume the original authorized Run Book creation through core.runbook, applying its prerequisites and operation-specific permission. The initial-creation workflow does not add a second payload-preview confirmation.”</p>
+<p>Codex after the hypothetical creation: “The core workflow returned the Run Book identifier and task evidence. I will retain any skipped-task or creation warnings. Full plan-to-created-task reconciliation must be supplied by the supported integration before I claim the entire created task set is verified.”</p>
+<h3>Alternative if the human skips</h3>
+<p>Human: “Skip prevalidation and continue.” Codex: “I have recorded SKIPPED and readiness unverified, preserving any earlier failures. I will resume normal Run Book planning and creation checks. The skip does not waive authentication, payload validity or approval.”</p>
+</section>
+<section id="section-12"><h2>12 Play story for implementation review and one transaction</h2>
+<p>Illustrative success path: a reviewed pillar setup check and one executable transaction check already exist, with supported routes and valid project prerequisites. The example is not a ready-made product API specification.</p>
+<p>Human: “Review Atlas in TEST, refresh task and load status, verify setup where supported, and report gaps.”</p>
+<p>Codex: “I will use the approved requirements as the expectation. I will refresh Run Book and linked Data Loader evidence through the selected read routes and keep task completion separate from setup correctness.”</p>
+<p>Codex after the hypothetical checks: “The association task is completed, but the observed association differs from the approved requirement. That required blocking assertion is FAIL, so review readiness is BLOCKED. The report shows the expected value, observed value, source and corrective owner. I have not changed the configuration.”</p>
+<p>Human: “We corrected the association through the implementation workflow. Review it again.”</p>
+<p>Codex after a new hypothetical read: “The current observation now matches the approved expectation. The new report preserves the earlier failure in history. This result applies to the stated verified scope.”</p>
+<p>Human: “Run one basic transaction check for this offering.”</p>
+<p>Codex: “The reviewed Demo Contact Check version 1 applies. Its existing reference is available. It permits at most one marked test contact and defines read-back assertions and cleanup. I will now show the exact TEST target, operation, payload, generated values, side effects and evidence plan before mutation.”</p>
+<p>At this point the real workflow must show the complete concrete approval preview from the selected route. The example name is illustrative; no endpoint, payload or privilege is invented here.</p>
+<p>Human: “Approve the displayed single-record action.”</p>
+<p>Codex after the hypothetical execution: “One record was created and its read-back assertions passed. I captured evidence before cleanup. Here is the supported cleanup operation for that exact record; approve it or choose an allowed documented retention option.”</p>
+<p>Human: “Approve the displayed cleanup.”</p>
+<p>Codex after the hypothetical verification: “Removal is verified. The transactional HTML and JSON record the check result, observed values, evidence and cleanup separately, with the Run Book task table at the top. This does not automatically close other review gaps or approve the project for release.”</p>
+</section>
+<section id="section-13"><h2>13 Play story when a check cannot run automatically</h2>
+<h3>No pillar check exists</h3>
+<p>Human: “Run a transaction check for this offering.”</p>
+<p>Codex: “No reviewed matching check is available in the offering’s implementation-validation folder. Transactional execution is BLOCKED. The pillar needs to provide the scenario, assertions, supported API or manual procedure, bounds and cleanup. I can still produce the available implementation evidence report and identify this missing coverage.”</p>
+<h3>A manual alternative exists</h3>
+<p>Codex: “The automated route is unavailable, but the pillar has supplied an applicable reviewed manual procedure. You can select it or skip the optional test.”</p>
+<p>Human: “Use the manual procedure.”</p>
+<p>Codex: “Here are the exact authored steps, input limits, expected result and evidence requirements. Perform them in TEST, capture evidence before cleanup, and provide the safe record identifier, performer and observed result.” In a real run, the selected pillar procedure must supply the actual product steps.</p>
+<p>Human: “I completed it; here is the redacted evidence and the record reference.”</p>
+<p>Codex: “I will record the result as manual-evidence and identify you as the performer. If only a statement is supplied, it will be user-attestation, not live API verification. Required attestation-only coverage still needs review. Cleanup remains a separate recorded action.”</p>
+<h3>The user bypasses an optional check</h3>
+<p>Human: “Skip this test and continue.” Codex: “I will record SKIPPED and your reason if supplied. It will not be counted as a pass. The project owner can decide whether the unverified scope is acceptable; other execution gates still apply.”</p>
+<h3>An API response is lost</h3>
+<p>Codex: “The creation outcome is INDETERMINATE. The record count is unknown. I have preserved the safe request reference and known effects. The next step is read reconciliation by the stable test key through the declared route. I will not blindly send the create again.”</p>
+<h3>Cleanup is unavailable or fails</h3>
+<p>Codex: “The business assertions passed, but cleanup is unresolved. The report preserves PASS for the transaction, records the residual record and cleanup owner, and keeps overall readiness at NEEDS_REVIEW. It does not claim removal.”</p>
+</section>
+<section id="section-14"><h2>14 What teams must finish before a live pilot</h2>
+<p>Use the FAQ and design document as a handoff specification. The following work must be verified in a pilot before teams describe the entire process as automatic.</p>
+<table><colgroup><col style="width:70.73%"><col style="width:29.27%"></colgroup><thead><tr><th scope="col">Deliverable</th><th scope="col">Owner</th></tr></thead><tbody>
+<tr><td>Reviewed business assertions and one bounded API or manual transaction check per pilot scenario</td><td>Pillar lead and developer</td></tr>
+<tr><td>Supported routes and enforcement of identity privileges payload limits approvals and reconciliation</td><td>Core service owner with pillar developer</td></tr>
+<tr><td>Plan versus created Run Book task reconciliation, preserving repeated task instances and dependencies</td><td>Framework and Run Book service owners</td></tr>
+<tr><td>Source status normalization, exception handling and CompletionDate to completed_at mapping</td><td>Framework and Run Book service owners</td></tr>
+<tr><td>Evidence collection, freshness, linked load identifiers and reviewed check-version binding</td><td>Framework engineering with pillar reviewer</td></tr>
+<tr><td>Non-binding isolated assessment-create support before claiming full_readiness write verification</td><td>Core Run Book owner</td></tr>
+<tr><td>Known-good and known-bad cases, manual/skip/timeout/cleanup behavior, and reviewer sign-off</td><td>QA with framework and pillar leads</td></tr>
+</tbody></table>
+<h3>Repository references</h3>
+<ul><li>router/implementation-router/SKILL.md and router/next-action-planner/SKILL.md</li><li>shared/validation/prevalidation/SKILL.md and its references/execution-contract.md and report-contract.md</li><li>shared/validation/configuration-completeness-validator/SKILL.md and transactional-validation-coordinator/SKILL.md</li><li>shared/validation/references/pillar-check-contract.md and validation-workflow.md</li><li>core/validation/reporting/SKILL.md, references/report-contract.md and scripts/validation_report.py</li><li>core/runbook/scripts/runbook_client.py, runbook_service.py, runbook_workflows.py and status_catalog.py</li><li>core/data-loader/SKILL.md and scripts/data_loader_metadata.py</li><li>core/getting-started/onboarding/SKILL.md and core/auth/fusion-oauth-authentication/SKILL.md</li><li>shared/common/manual-tasks/SKILL.md</li><li>core/validation/reporting executive-summary contract and local helper, as declared by its current SKILL.md</li></ul>
+<p>These sources define the current repository behavior. Product endpoint and release details must be checked through the declared workflow before live execution. The accompanying functional and technical design provides the fuller contracts, persistence layout and acceptance criteria.</p>
+</section>
+<section id="section-15"><h2>15 Executive reports and evidence boundaries</h2>
+<h3>Q27 Can the framework produce a report similar to implementation-partner feedback</h3>
+<p>Yes. The common report should make each gap actionable: affected requirement and task, expected result, actual observation, dated evidence, impact, owner and next action. Separate observed implementation defects from missing framework routes and missing pillar checks. Reuse existing core status and validation services; a readable report does not require a new testing platform or a duplicate loader.</p>
+<p>For a summary of existing work, the executive-report route accepts an explicit list of existing project artifacts, recalculates their assessments and produces a local index with source references. It does not discover arbitrary customer files, collect new evidence, execute checks or silently select the newest report as the whole-project truth.</p>
+<h3>Q28 What do the executive counts and readiness labels mean</h3>
+<p>Counts describe the historical reports and checks selected in the manifest. They are not a percentage of project success or unique requirement coverage across unrelated scopes. Prevalidation, Implementation Review and each single-check transactional invocation keep their own outcomes. Environment, requirement version, scope and evidence time remain visible. A later passing transaction does not clear an earlier blocked implementation review.</p>
+<p>Example: a 10:00 review finds an inactive supplier site and an unfinished prerequisite. A separate 12:00 transaction can run only after the needed corrections are evidenced. Its single check may pass while the earlier report remains BLOCKED in history. The summary shows both; it does not average them into project readiness.</p>
+<h3>Q29 What happens when task load and actual-value results disagree</h3>
+<table><colgroup><col style="width:36.59%"><col style="width:63.41%"></colgroup><thead><tr><th scope="col">Signal</th><th scope="col">Report treatment</th></tr></thead><tbody>
+<tr><td>Task completed but no terminal load result</td><td>Keep task completion; load completion remains unverified.</td></tr>
+<tr><td>Request accepted but no dataset yet</td><td>Keep accepted request evidence; do not invent a completed job or zero errors.</td></tr>
+<tr><td>Top-level success with failed rows or downstream job errors</td><td>Retain the reported status and contradictory error evidence; flag the affected scope for review.</td></tr>
+<tr><td>Clean job but wrong or ignored business value</td><td>The actual-value assertion fails or remains unverified, even if the job passed.</td></tr>
+<tr><td>Manual check or user bypass</td><td>Attribute supplied evidence or attestation; record a skip/waiver explicitly without converting it into PASS.</td></tr>
+</tbody></table>
+<p>A supported core route owns each lookup. Data Loader metadata and Task Hook rules can supply declared source/reference checks, but their available coverage must be stated. Metadata cannot prove a referenced record exists. Pillar definitions supply supported read-back and operation-specific business expectations; missing routes or rules remain gaps with owners.</p>
+<h3>Q30 Does reporting save Data Loader previews or approve cleanup</h3>
+<p>No. Follow the selected core Data Loader contract without changing its execution, preview, approval or persistence rules. Reporting must not copy or reconstruct internal payloads, hashes, execution plans, previews or approval objects as validation artifacts, restore workflows retired by the selected core version, or automatically poll after initiation. A report request authorizes sanitized report artifacts, not export of internal loader state. Use supported safe summaries and explicitly requested diagnostics; disclose missing durable evidence.</p>
+<p>Transactional reports still cover exactly one selected pillar check per invocation and at most one new primary transaction with bounded intrinsic children. Capture authorized evidence before cleanup. Deletion or cancellation requires its own supported route and applicable immediate authorization; a cleanup recommendation is not approval. Show test outcome and cleanup outcome separately. An executive index never batches or dispatches these tests.</p>
+</section>
+<footer>FSCR Framework Team · FAQ version 1.1 · Companion to the functional and technical design.</footer></main></div></body></html>

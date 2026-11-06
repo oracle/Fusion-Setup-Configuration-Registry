@@ -1,0 +1,24 @@
+{
+  "contract_id": "adaptive-search-publish-source-serialization-v1",
+  "business_object": "publish",
+  "rest_payload": {
+    "entities": "array<string>",
+    "publishType": "optional string"
+  },
+  "data_loader_source": {
+    "entities": {
+      "metadata_type": "string",
+      "serialization": "canonical-json-array-text",
+      "example": "[\"ConsolidatedAsset\",\"SerializedAsset\"]"
+    },
+    "publishType": {
+      "metadata_type": "string",
+      "serialization": "plain-text-optional"
+    }
+  },
+  "validation": {
+    "reject_if_entities_metadata_type_is_not": "string",
+    "reject_if_decoded_entities_do_not_exactly_match_approval_bound_entities": true,
+    "reject_unknown_or_extra_source_fields": true
+  }
+}

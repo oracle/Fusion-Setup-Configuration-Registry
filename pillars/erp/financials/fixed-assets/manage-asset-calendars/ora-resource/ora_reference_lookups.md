@@ -4,13 +4,14 @@
 
 | Resolver | Runs When | Source Values | Match Rule | Values to Fill | If No Match or Many Matches |
 |---|---|---|---|---|---|
-| resolve_existing_asset_calendar_by_name | An explicit reuse request names one calendar | BOSS `assetCalendarsView` and `assetCalendarPeriodsView` through `core.fusion-api.rest-api-client` | Page both views completely. Match the exact Calendar Name and retain its linked Fiscal Year and all period rows. | Exact calendar identity, linked Fiscal Year, and complete period rows. | No exact name, duplicate name, incomplete paging, or incomplete period rows blocks reuse. Do not request a Fiscal Year or offer create/update. |
-| resolve_existing_asset_calendar | Before create and immediately before import | BOSS `assetCalendarsView` and `assetCalendarPeriodsView` through `core.fusion-api.rest-api-client` | Page `GET /api/boss/data/objects/ora/erpCore/fixedAssetsSetup/v1/assetCalendarsView` and `GET /api/boss/data/objects/ora/erpCore/fixedAssetsSetup/v1/assetCalendarPeriodsView` completely. Match exact Calendar Name, Fiscal Year Name, and requested periods. | Existing definition and differences | A complete BOSS no-data result permits create. One exact match permits verified reuse. One complete different definition requires the customer to choose update or create new. Multiple matches, incomplete paging, or an unavailable lookup block. |
+| derive_periods_from_fiscal_year_cycle | After exact fiscal-year validation and period-count validation | Complete selected fiscal-year rows already validated in this task, requested periods per year, and an explicitly supplied generation pattern when needed | Apply Generated periods in ora_input_validation.md to the validated task evidence; this is a local calculation with no new lookup. | Complete generated calendar period rows, names, numbers, and dates | Missing validated rows or a required generation pattern blocks generation; do not guess. |
 
 ## Live Lookups
 
 | Resolver | Runs When | Request | Match Rule | Values to Fill | If No Match or Many Matches |
 |---|---|---|---|---|---|
+| resolve_existing_asset_calendar_by_name | An explicit reuse request names one calendar | BOSS `assetCalendarsView` and `assetCalendarPeriodsView` through `core.fusion-api.rest-api-client` | Page both views completely. Match the exact Calendar Name and retain its linked Fiscal Year and all period rows. | Exact calendar identity, linked Fiscal Year, and complete period rows. | No exact name, duplicate name, incomplete paging, or incomplete period rows blocks reuse. Do not request a Fiscal Year or offer create/update. |
+| resolve_existing_asset_calendar | Before create and immediately before import | BOSS `assetCalendarsView` and `assetCalendarPeriodsView` through `core.fusion-api.rest-api-client`, or the validated same-target data export under Complete Lookup Source Selection | Compare complete parent and period sets. Match exact Calendar Name, Fiscal Year Name, and requested periods. Use the governed export fallback when BOSS returns 403 or the first page hasMore=true. | Existing definition and differences, or validated empty Calendar setup | Complete BOSS no-data or a validated zero-row data export permits new-calendar preparation. One exact match permits verified reuse. One complete different definition requires the customer to choose update or create new. Multiple matches or unresolved source completeness block. |
 | resolve_qualifying_fiscal_years_for_calendar | Fiscal Year Name is omitted after the Input Preview | `assetFiscalYearDatesView` through `core.fusion-api.rest-api-client` | Page all rows. Group rows by exact `fiscalYearName`; retain only names with complete, contiguous date rows that can satisfy the supplied calendar cycle, Start Fiscal Year, and period count. | Every qualifying exact Fiscal Year Name and its complete coverage. | No qualifying name requires Fiscal Year creation or extension details through `FA_MANAGE_FISCAL_YEAR`. Incomplete paging, unavailable data, or ambiguous coverage blocks; do not select a name. |
 | resolve_calendar_date_basis_from_fiscal_year | Before deriving calendar period rows from a selected fiscal year | `assetFiscalYearDatesView` and the selected Start Fiscal Year | Page complete fiscal-year rows; match `fiscalYearName` and `assetFiscalYear` exactly and case-sensitively. Retain the selected row and later contiguous rows only. | Calendar Start Basis, Calendar End Basis, selected Start Fiscal Year, and retained fiscal-year rows. | Missing or ambiguous fiscal-year rows, an unavailable selected Start Fiscal Year row, or noncontiguous retained rows block. |
 | resolve_fiscal_year_for_calendar | Before create or update | [Verified BOSS Request Contract](#verified-boss-request-contract) | Apply its exact-name and full-date-row comparison. | Existence and date-row comparison | Apply [BOSS Verification and Lookup Outcomes](#boss-verification-and-lookup-outcomes). |
@@ -23,14 +24,18 @@
 
 Start each BOSS collection with `$limit=1000`. When its first response has
 `hasMore: false`, use that complete BOSS result. When it has `hasMore: true`,
-stop BOSS pagination and obtain the current, same-target populated FSM export
+stop BOSS pagination and obtain the current, same-target FSM data export
 as the complete lookup source. Do not request a second BOSS page for that
 collection. This is a bulk-read optimization, not a partial-result shortcut.
+When either Calendar BOSS view returns 403, use this same governed export
+fallback after the permitted authentication recovery. Access denial alone does
+not block preparation when the fallback validates successfully.
 
 Use an FSM snapshot only after all of the following pass:
 
 1. The export completed successfully for the same target environment and was
-   requested for the current validation or pre-import recheck.
+   requested for the current validation or pre-import recheck. It must be an
+   unfiltered setup-data export, not a template-only or specification export.
 2. The `FA_MANAGE_CALENDAR` export contains `FA_CALENDAR.csv` and
    `ORA_FA_CALENDAR_PERIOD.csv`; their headers, parent/period relationships,
    and row shapes parse successfully.
@@ -41,6 +46,15 @@ Use an FSM snapshot only after all of the following pass:
    period sets. Missing members, unparseable rows, ambiguous duplicate keys, or
    incomplete scope block the lookup; they do not permit use of the first BOSS
    page as if it were complete.
+
+When both validated members have headers and zero data rows, classify the
+result as **empty Calendar setup** and satisfy the existing-calendar check.
+With fiscal-year validation passed, continue to the Calendar Design Preview
+through the existing defaulting and design checks. Do not introduce a
+seeded-data blocker or require a waiver solely because this data export is
+empty. This establishes the Calendar create path, not that all setup in the
+environment is empty. Zero parents with nonzero periods, missing members,
+filtered scope, failed export, or malformed/inconsistent data remain blockers.
 
 After selecting the required snapshot path, compare all matching calendar
 parents and their complete period rows from the export. Do not merge a partial
@@ -58,7 +72,7 @@ outcomes separate:
 
 | Result | Required handling |
 |---|---|
-| Complete no-data result | Continue with the proposed new calendar. |
+| Complete no-data result, including a validated unfiltered data export with zero parent and period rows | Classify as empty Calendar setup and continue with the proposed new calendar; no seeded-data waiver is required. |
 | One exact matching definition | Report verified reuse; do not create or update. |
 | One complete different definition | Show the exact differences and ask the customer to choose **update the existing calendar** or **create a new calendar**. Do not select either path automatically. |
 | Multiple candidates, incomplete paging, unavailable source, or incomplete period rows | Treat as unresolved lookup evidence and stop. Do not offer update or create-new until the exact existing state is known. |
@@ -262,3 +276,13 @@ Page all required source results and create one exact lookup result per
 supplied Ledger Name, Fiscal Year Name, and Calendar Name: exact match, no
 match, multiple match, or lookup failure. Do not reuse partial matches, a
 prior row's result, or failed lookup evidence for another calendar.
+
+## Task Nodes
+
+| Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
+|---|---|---|---|---|---|---|---|
+| CAL.LOOKUP_EXISTING_REUSE | decision | 2 | reference_lookup | match->CAL.DONE_REUSE;absent_or_incomplete->CAL.HANDLE_LOOKUP | CAL.CLASSIFY_REQUEST | stop | An explicit reuse request names one Calendar |
+| CAL.DISCOVER_FISCAL_YEARS | decision | 8 | reference_lookup | candidates_found->CAL.CONFIRM_FISCAL_YEAR;no_qualifying_candidate->CAL.HANDLE_INPUT;unresolved->CAL.HANDLE_LOOKUP | CAL.ROUTE_FISCAL_YEAR | stop | Fiscal Year Name is missing after the Input Preview |
+| CAL.VALIDATE_FISCAL_YEAR | decision | 10 | reference_lookup | valid->CAL.VALIDATE_INPUT;start_year_unavailable->CAL.HANDLE_DEPENDENCY;invalid_or_unresolved->CAL.HANDLE_DEPENDENCY | CAL.ROUTE_FISCAL_YEAR | stop | Use resolve_fiscal_year_for_calendar and resolve_calendar_date_basis_from_fiscal_year to validate the supplied or customer-selected exact fiscal year and Start Fiscal Year. If the start row is unavailable, stop and request an exact available row or fiscal-year extension; never substitute a nearest year. |
+| CAL.LOOKUP_EXISTING | decision | 30 | reference_lookup | absent->CAL.APPLY_DEFAULTS;match->CAL.DONE_EXISTS;different->CAL.DECIDE_UPDATE_OR_NEW;unresolved->CAL.HANDLE_LOOKUP | CAL.RESOLVE_DEPENDENCIES | stop | Dependencies are ready |
+| CAL.DECIDE_UPDATE_OR_NEW | decision | 35 | evaluate_result | update_selected->CAL.APPLY_DEFAULTS;create_new_selected->CAL.NEW_INPUT_REQUIRED;unresolved->CAL.HANDLE_INPUT | CAL.LOOKUP_EXISTING | stop | Complete existing-state evidence differs from the proposal; evaluate the customer update-or-create-new choice. Update continues; create-new returns for exact new Calendar Name collection and fresh validation; an unanswered choice is missing input, not a lookup failure. |

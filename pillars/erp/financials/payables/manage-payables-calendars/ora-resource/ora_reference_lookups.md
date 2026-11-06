@@ -16,3 +16,9 @@
 | CalendarType is supplied as any other value | Stop before candidate generation; no supported alternate code is evidenced. |
 | PeriodFrequency or PeriodNameFormat is supplied | Preserve the exact supplied package code. Do not query a UI proxy, infer an allowed value, or derive a replacement. |
 | Fusion later rejects a preserved PeriodFrequency or PeriodNameFormat value | Retain the sanitized FSM diagnostic as evidence and request a corrected business value; do not retry automatically. |
+
+## Task Nodes
+
+| Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
+|---|---|---|---|---|---|---|---|
+| CALENDAR.CHECK_LOCAL_VALUES | step | 15 | reference_lookup | ready->CALENDAR.CHECK_DEPENDENCIES;blocked->CALENDAR.INPUT_BLOCKED | CALENDAR.VALIDATE_INPUT | stop | Always; apply only the Local Lookups rules for supplied calendar fields, preserve codes without a task-owned allowlist, and make no live lookup calls |

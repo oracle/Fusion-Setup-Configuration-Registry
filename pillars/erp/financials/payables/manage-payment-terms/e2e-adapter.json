@@ -1677,7 +1677,10 @@
         "requiredArguments": [
           "baseline",
           "package"
-        ]
+        ],
+        "conditionalArguments": {
+          "reference-evidence": "Required for a ZIP containing AP_TERM_SUBSCRIPTION rows or nonblank AP_TERM_LINE.Calendar values; produced by resolve_reference_prerequisites.py --package for the exact ZIP."
+        }
       }
     },
     "governance": {

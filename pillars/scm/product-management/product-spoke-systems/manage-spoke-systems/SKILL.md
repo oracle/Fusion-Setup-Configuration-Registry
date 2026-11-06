@@ -21,7 +21,7 @@ source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 type: "planning"
 execution_mode: "assisted"
 owner_team: "SCM product management pillar team"
-version: "0.1.0"
+version: "0.1.1"
 inputs:
   - "implementation_objective"
   - "project_context"
@@ -115,6 +115,24 @@ Provides task-specific setup planning, routing, export, import, and validation g
 ## Usage
 
 Use this skill when planning, sequencing, exporting, importing, or validating setup data for `Manage Spoke Systems` under `Product Spoke Systems`.
+
+## Live Metadata Mapping
+
+For requests to configure or change spoke-system options, use the
+`spokeSystemImportOptions` and `spokeSystemPublicationOptions` business objects
+available in the selected environment for metadata mapping through
+`core.data-loader`'s live registered-business-object and schema workflows.
+Select the owning business object and map the requested settings, values, and
+identity keys from its live metadata. Do not require the user to repeat this
+instruction or supply technical field names or a pre-existing sample workbook.
+Do not hardcode setting-specific mappings or enum values.
+
+A missing static task-specific mapping is not itself an incomplete contract:
+first attempt the declared live metadata mapping. If the live contract remains
+missing or ambiguous, report the exact unresolved field or identity requirement
+and stop. Continue through the existing Data Loader validation and approval
+workflow only after mapping succeeds; metadata discovery does not authorize a
+write or establish that a requested setting was saved.
 
 ## Setup Task Metadata
 

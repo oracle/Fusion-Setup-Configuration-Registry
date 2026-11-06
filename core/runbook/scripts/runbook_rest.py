@@ -14,7 +14,6 @@ from typing import Any, IO, Optional, Sequence
 from data_loader_handoff import read_run_id, stamp_run_id
 from runbook_client import (
     ApiError,
-    DEFAULT_PAGE_SIZE,
     RunbookClient,
 )
 from runbook_service import (
@@ -96,6 +95,9 @@ def build_authenticated_client(
     callback_timeout: Optional[int] = None,
     force_login: bool = False,
     open_browser: bool = True,
+    total_record_fetch_limit: int = 2500,
+    pagination_record_limit: int = 500,
+    pagination_limit: int = 50,
     auth_module: Any = None,
 ) -> RunbookClient:
     """Build a Run Book client by delegating authentication to core auth."""
@@ -153,6 +155,9 @@ def build_authenticated_client(
         return f"Bearer {access_token}"
 
     return RunbookClient(
+        total_record_fetch_limit=total_record_fetch_limit,
+        pagination_record_limit=pagination_record_limit,
+        pagination_limit=pagination_limit,
         base_url=properties["restBaseUrl"].rstrip("/"),
         authorization=authorization(refresh=False),
         refresh_authorization=(
@@ -203,7 +208,7 @@ def task_percentage_int(value: str) -> int:
 
 def add_journey_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--journey-id")
-    parser.add_argument("--page-size", type=positive_int, default=DEFAULT_PAGE_SIZE)
+    parser.add_argument("--offset", type=nonnegative_int, default=0)
 
 
 def add_task_id_arguments(parser: argparse.ArgumentParser) -> None:
@@ -212,7 +217,10 @@ def add_task_id_arguments(parser: argparse.ArgumentParser) -> None:
 
 
 def add_oauth_arguments(parser: argparse.ArgumentParser) -> None:
-    """Add the shared core-auth options used by other Fusion skills."""
+    """Add authentication and collection limits used by remote commands."""
+    parser.add_argument("--total-record-fetch-limit", type=positive_int, default=2500)
+    parser.add_argument("--pagination-record-limit", type=positive_int, default=500)
+    parser.add_argument("--pagination-limit", type=positive_int, default=50)
 
     parser.add_argument(
         "--properties",
@@ -310,10 +318,8 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     documents_command = commands.add_parser(
         "get-documents", help="Retrieve raw task documents.", allow_abbrev=False
     )
+    documents_command.add_argument("--offset", type=nonnegative_int, default=0)
     add_task_id_arguments(documents_command)
-    documents_command.add_argument(
-        "--page-size", type=positive_int, default=DEFAULT_PAGE_SIZE
-    )
 
     summary_command = commands.add_parser(
         "summary", help="Retrieve and summarize all task statuses.", allow_abbrev=False
@@ -340,6 +346,8 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     )
     detail_command.add_argument("--journey-id", required=True)
     add_task_id_arguments(detail_command)
+    for collection in ("attachments", "comments", "documents"):
+        detail_command.add_argument(f"--{collection}-offset", type=nonnegative_int, default=0)
     add_task_command = commands.add_parser(
         "add-task",
         help="Add one ad hoc task and format its details as Markdown.",
@@ -679,6 +687,9 @@ def main(
             if args.command == "create-runbook":
                 create_stage = "authentication"
             oracle = oracle or build_authenticated_client(
+                total_record_fetch_limit=args.total_record_fetch_limit,
+                pagination_record_limit=args.pagination_record_limit,
+                pagination_limit=args.pagination_limit,
                 properties_path=args.properties,
                 token_cache_path=args.token_cache,
                 access_token=args.access_token,
@@ -694,7 +705,7 @@ def main(
                 create_stage = "preflight"
         if args.command == "list-tasks":
             assert oracle is not None
-            result = oracle.list_tasks(args.journey_id, args.page_size)
+            result = oracle.list_tasks(args.journey_id, **({"offset": args.offset} if args.offset else {}))
         elif args.command == "list-runbooks":
             assert oracle is not None
             query = stdin.read() if args.query_stdin else None
@@ -721,23 +732,24 @@ def main(
             result = oracle.get_documents(
                 args.parent_worker_journey_id,
                 args.worker_journey_task_id,
-                args.page_size,
+                **({"offset": args.offset} if args.offset else {}),
             )
         elif args.command == "summary":
             assert service is not None
             result = service.get_summary(
                 args.journey_id,
-                page_size=args.page_size,
+                **({"offset": args.offset} if args.offset else {}),
             )
         elif args.command == "dashboard":
             assert service is not None
             dashboard = service.get_dashboard(
                 args.journey_id,
-                page_size=args.page_size,
                 include_indexes=args.include_task_index,
+                **({"offset": args.offset} if args.offset else {}),
             )
             stamp_run_id(DATA_LOADER_CONFIG, args.journey_id)
             result = {
+                **({"pagination": dashboard["pagination"]} if "pagination" in dashboard else {}),
                 "summary": dashboard["summary"],
                 "counts": dashboard["counts"],
                 "journeyTitle": dashboard["runbook"]["journeyTitle"],
@@ -752,8 +764,10 @@ def main(
                 args.parent_worker_journey_id,
                 args.worker_journey_task_id,
                 worker_journey_id=args.journey_id,
+                **{f"{name}_offset": getattr(args, f"{name}_offset") for name in ("attachments", "comments", "documents") if getattr(args, f"{name}_offset")},
             )
             result = {
+                **({"pagination": task["pagination"]} if "pagination" in task else {}),
                 "name": task["name"],
                 "status": task["status"],
                 "type": task["type"],

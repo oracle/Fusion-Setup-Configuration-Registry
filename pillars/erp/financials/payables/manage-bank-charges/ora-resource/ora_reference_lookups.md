@@ -30,6 +30,22 @@ or Transferring/Receiving for bank/country/branch. endpointPath is the exact
 table path without query parameters. evidence identifies a sanitized workflow
 diagnostic; do not include response bodies, credentials or headers.
 
+A successful result uses the same fields with status `verified`, failureClass
+`""`, httpStatus `200`, plus matchCount `1` and hasMore `false`. Record success
+only after checking the returned record against the supplied values using the
+resolver's match rule below; HTTP 200 alone is insufficient. The offline adapter
+validates the recorded outcome and requestContext; it does not repeat the lookup.
+
+Without an unavailable-check warning or an explicit offline waiver, create
+preparation requires verified results for currency, a named legal entity, each
+Specific bank and Specific branch, and each supplied bank country, separately
+for each bank side. All-scope choices require no entity/bank/branch lookup.
+
+`assess-intake` reports reference_validation_verified and retains successful
+reference_validation_evidence. The create helper preserves this evidence and
+reports VERIFIED only with complete successful coverage. Mixed outcomes retain
+availability warnings and are not reported as fully verified.
+
 Accepted failures are auth_authz (401/403), endpoint_unavailable
 (404/405/410/501) and transport_environment (null for network/timeout failure,
 408/429/500/502/503/504). A 400/422 rejection, successful no-match response or
@@ -69,7 +85,7 @@ transferring and receiving bank and branch references independently.
 | resolve_legal_entity | A legal-entity name or identifier is supplied | LegalEntityName, LegalEntityIdentifier | `GET /fscmRestApi/resources/11.13.18.05/legalEntitiesLOV`; `All` is a local sentinel choice | LegalEntityId, LegalEntityIdentifier, Name, EffectiveFrom, EffectiveTo | `All` requires a blank identifier; otherwise require one exact name/identifier match with a nonblank identifier | LegalEntityName and LegalEntityIdentifier; never serialize `-99` | Stop on no exact match, ambiguity or conflicting name/identifier |
 | resolve_currency | CurrencyCode is supplied | CurrencyCode | `GET /fscmRestApi/resources/11.13.18.05/currenciesLOV` | CurrencyCode, Name, EnabledFlag, CurrencyFlag, StartDateActive, EndDateActive | Require one exact CurrencyCode match | CurrencyCode | Stop on no exact match or ambiguity |
 | resolve_bank | The corresponding bank option is Specific bank | BankName, BankNumber, BankCountry | `GET /fscmRestApi/resources/11.13.18.05/cashBanksLOV` | BankPartyId, BankName, BankNumber | Require one exact post-filtered match for every supplied value | Corresponding BankName, BankNumber and BankCountry context; BankPartyId is evidence only | Stop on no exact match or ambiguity |
-| resolve_bank_country | Specific bank or branch resolution uses country context | BankCountry | `GET /fscmRestApi/resources/11.13.18.05/territoriesLOV` | TerritoryCode, TerritoryShortName, EnabledFlag, ObsoleteFlag | Require one exact TerritoryCode match | Corresponding BankCountry code | Stop on no exact match or ambiguity |
+| resolve_bank_country | A bank country is supplied for the corresponding side, including All banks or All branches | BankCountry | `GET /fscmRestApi/resources/11.13.18.05/territoriesLOV` | TerritoryCode, TerritoryShortName, EnabledFlag, ObsoleteFlag | Require one exact TerritoryCode match | Corresponding BankCountry code | Stop on no exact match or ambiguity |
 | resolve_bank_branch | The corresponding branch option is Specific branch | BankName, BankCountry, BranchName, BranchNumber | `GET /fscmRestApi/resources/11.13.18.05/cashBankBranchesLOV` | BranchPartyId, BankBranchName, BranchNumber, BankName, BankNumber | Require one exact post-filtered match for bank, branch and every supplied number | Corresponding BranchName and BranchNumber context; BranchPartyId is evidence only | Stop on no exact match or ambiguity |
 | resolve_header_dff | Never | Native header DFF scalar | No lookup | None | Supplied values receive native type checks during input validation; Fusion may apply additional validation at import | Preserve supplied value | No lookup result required |
 | resolve_line_dff | Never | Native line DFF scalar | No lookup | None | Supplied values receive native type checks during input validation; Fusion may apply additional validation at import | Preserve supplied value | No lookup result required |

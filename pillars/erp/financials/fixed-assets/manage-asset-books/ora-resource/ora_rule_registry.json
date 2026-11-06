@@ -23,7 +23,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 138
+            "line": 156
           },
           "readiness": {
             "status": "ready",
@@ -38,6 +38,7 @@
           "execution_route": "fusion-rest",
           "transitions": {
             "absent": "FA_BOOK.TARGET_DEPENDENCIES_RESOLVED",
+            "update_selected": "FA_BOOK.TARGET_DEPENDENCIES_RESOLVED",
             "identical": "FA_BOOK.EXISTS_IDENTICAL",
             "different": "FA_BOOK.EXISTS_DIFFERENT",
             "blocked": "FA_BOOK.RETURN_ISSUES"
@@ -50,7 +51,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 93
+            "line": 91
           },
           "readiness": {
             "status": "ready",
@@ -71,11 +72,11 @@
             "FA_BOOK.EXISTENCE_CHECKED"
           ],
           "on_failure": "stop",
-          "applies_when": "An absent requested book requires exact target calendar-period, assignment, ledger, and account evidence.",
+          "applies_when": "A verified create candidate or one exact existing book with a fully compared, explicitly selected update requires current target calendar-period, assignment, ledger, and account evidence. Preserve unchanged update state and apply all remaining design, ZIP-creation, final-artifact, and submission gates.",
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 94
+            "line": 92
           },
           "readiness": {
             "status": "ready",
@@ -150,7 +151,7 @@
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 137
+            "line": 134
           },
           "readiness": {
             "status": "ready",
@@ -200,7 +201,7 @@
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 138
+            "line": 135
           },
           "readiness": {
             "status": "ready",
@@ -225,7 +226,7 @@
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 139
+            "line": 136
           },
           "readiness": {
             "status": "ready",

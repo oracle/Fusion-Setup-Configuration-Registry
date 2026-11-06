@@ -88,6 +88,7 @@ required_setup_tasks:
   - "ORA_REDWOOD_MANUFACTURING_RESOURCE_INSTANCES"
   - "ORA_REDWOOD_MANUFACTURING_WORK_ORDER_STATUSES"
   - "ORA_WIE_WORK_ORDER_GROUPS"
+  - "ORA_WIE_SMART_OPERATIONS_CONFIGURATIONS"
 applicability:
   industries:
     - "All"
@@ -129,6 +130,7 @@ Use this functional-area skill after Manufacturing and Supply Chain Materials Ma
 10. [Manufacturing Resource Instances](manufacturing-resource-instances/SKILL.md) (`ORA_REDWOOD_MANUFACTURING_RESOURCE_INSTANCES`)
 11. [Manufacturing and Maintenance Work Order Statuses](manufacturing-and-maintenance-work-order-statuses/SKILL.md) (`ORA_REDWOOD_MANUFACTURING_WORK_ORDER_STATUSES`)
 12. [Manufacturing Work Order Groups](manufacturing-work-order-groups/SKILL.md) (`ORA_WIE_WORK_ORDER_GROUPS`)
+13. [Smart Operations Configurations](smart-operations-configurations/SKILL.md) (`ORA_WIE_SMART_OPERATIONS_CONFIGURATIONS`)
 
 ## Inputs
 

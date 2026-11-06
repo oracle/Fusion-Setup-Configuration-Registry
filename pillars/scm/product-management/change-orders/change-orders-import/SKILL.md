@@ -1,7 +1,7 @@
 ---
 skill_id: "scm.product-management.change-orders.change-orders-import"
 name: "Change Orders Import Setup Task Guidance"
-description: "Prepares a validated immutable Change Order FBDI ZIP from the current public Oracle template and hands it unchanged to core.data-loader."
+description: "Prepares a validated immutable Change Order Import FBDI ZIP from the current public Oracle template and hands it unchanged to core.data-loader."
 layer: "pillar"
 pillar: "SCM"
 offering: "Product Management"
@@ -19,7 +19,7 @@ source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 type: "import"
 execution_mode: "hybrid"
 owner_team: "SCM product management pillar team"
-version: "0.3.2"
+version: "0.3.5"
 inputs:
   - "implementation_objective"
   - "project_context"
@@ -90,7 +90,7 @@ applicability:
 side_effects:
   - "Reads the current public Oracle template page, workbook, and linked control files over the network."
   - "Creates transient CSV members and one ZIP for source-data input; reads but does not replace a supplied ZIP."
-  - "Writes two redacted target-local final records and delegates artifact registration, project state, run history, and token-usage updates to the declared core services."
+  - "Writes redacted preparation, validation, and handoff evidence and delegates artifact registration, project state, run history, and token-usage updates to the declared core services."
 required_privileges: []
 ---
 
@@ -98,10 +98,10 @@ required_privileges: []
 
 ## Purpose
 
-Prepare an Oracle Change Order Import FBDI package from customer-supplied data.
-Fetch the current public `ChangeOrderImportTemplate.xlsm`, map and validate the
-data against that template, generate one ordered immutable ZIP, and hand the
-exact same ZIP to `core.data-loader` for any later loader operation.
+Prepare an Oracle Change Order Import FBDI package from customer-supplied data. Fetch
+the current public Oracle `ChangeOrderImportTemplate.xlsm`, map and validate the data
+against that template, generate one ordered immutable ZIP, and hand the exact
+same ZIP to `core.data-loader` for any later loader operation.
 
 ## Setup Task Skill Contract
 
@@ -113,58 +113,49 @@ exact same ZIP to `core.data-loader` for any later loader operation.
 
 ## Preparation and Validation Workflow
 
-Read `ora-resource/ora_fbdi_processing.md`, `ora-resource/ora_input_validation.md`,
+Read [FBDI preparation](references/fbdi-processing.md), `ora-resource/ora_input_validation.md`,
 `ora-resource/ora_dependency_readiness.md`,
-`ora-resource/ora_defaulting_rules.md`, `ora-resource/ora_error_handling.md`,
-`ora-resource/ora_rest_execution.md`, and
+`ora-resource/ora_defaulting_rules.md`,
+`ora-resource/ora_error_handling.md`, and
 `ora-resource/ora_rule_registry.json` before preparing a package.
 
-1. Accept customer Change Order data or a prebuilt FBDI ZIP. Treat supplied
-   Change Order facts as evidence, not as Oracle-ready mappings; treat a
-   supplied ZIP as the archive to validate and hand off unchanged.
-2. Fetch the current public `ChangeOrderImportTemplate.xlsm` for this run.
+1. Accept customer Change Order data or a prebuilt FBDI ZIP. Treat supplied facts as
+   evidence, not as Oracle-ready mappings.
+2. Fetch the current public Oracle `ChangeOrderImportTemplate.xlsm` for this run.
    Record its public page and workbook URLs, retrieval time, SHA-256 digest,
    and sheet sequence. Never use remembered or stale layout details.
-3. For Change Order source-data input, map each source fact to the current
-   template. Resolve every required or ambiguous business value before
-   generating CSV files. Apply documented defaults only where the task
-   resources permit them.
-4. For Change Order source-data input, generate headerless CSV members using
-   the template's prescribed filenames, columns, field order, encoding, and
-   ZIP-member order. Create the ZIP only in a customer-approved or controlled
-   transient location. Do not regenerate a supplied prebuilt ZIP.
+3. Map each source fact to the current template. Resolve every required or
+   ambiguous business value before generating CSV files. Apply documented
+   defaults only where the task resources permit them.
+4. Generate headerless CSV members using the template's prescribed filenames,
+   columns, field order, encoding, and ZIP-member order. Create the ZIP only
+   in a customer-approved or controlled transient location.
 5. Reopen and validate the ZIP against the same template: safe root-level
    members, exact member names and order, field counts including trailing empty
    fields, data types and constraints, coherent references, one numeric Batch
-   ID, and a SHA-256-bound preview.
+   ID, and SHA-256-bound preview.
 6. Hand the validated ZIP unchanged to `core.data-loader` with task context,
-   task business object `Change Order`, template provenance, ZIP digest,
-   member manifest, row counts, mapping preview, and Batch ID.
+   task business object `Change Order`, template provenance, ZIP digest, member
+   manifest, row counts, mapping preview, and Batch ID.
 
-## One-Pass Preparation
+## Preflight
 
-Select and record one current public workbook and linked control-file set for a
-run. Use those exact bytes for mapping, CSV generation, ZIP validation, and
-handoff evidence. Do not inspect historic or release-specific templates,
-retired local exporters, or Git history as candidate run inputs.
+Before creating CSV files, confirm the source or supplied ZIP is readable,
+the current public template and control-file contract are recorded, required
+values are unambiguous, and the destination is a controlled transient path
+without an overwrite conflict. Before handoff, require the ZIP shape, values,
+references, Batch ID, and immutable evidence checks in
+`ora-resource/ora_input_validation.md` to pass. Validate a supplied ZIP in place
+without replacing it.
 
-For unchanged source data, generate one package. For an unchanged supplied
-prebuilt FBDI ZIP, do not generate a replacement package; validate and retain
-the supplied archive unchanged. In either path, with the selected
-workbook/control-file set, perform one local validation and
-`core.data-loader` preflight. Do not refetch or reparse the template, rebuild
-the ZIP, repeat preflight or Task Hook validation, or create intermediate
-evidence after successful validation. If the source, selected workbook/control
-files, or ZIP changes, or validation detects template drift, stop the current
-cycle and start a fresh current-template cycle; never fall back to an older
-template.
+## Error Handling and Redaction
 
-Write exactly two target-local final records once: a redacted
-`configuration-blueprint.json` containing the template provenance, mapping
-preview, and immutable handoff summary, plus `validation-result.json`. Do not
-create separate template-provenance, normalized-mapping, or handoff files.
-For a later approval, `core.data-loader` must reuse its own persisted preflight
-envelope and the exact validated ZIP under its workflow.
+Stop on invalid inputs, template drift, public-source transport errors, or
+artifact-persistence failure. Follow `ora-resource/ora_error_handling.md` for
+failure classification, recovery, and sanitized project diagnostics. Public
+downloads have a maximum 60-second timeout per request and no automatic retry.
+Redact credentials, secrets, tokens, authorization headers, and customer rows
+from diagnostics and durable evidence; retain only safe preparation metadata.
 
 ## Immutable Handoff Boundary
 
@@ -178,21 +169,6 @@ not invoke a product-specific loader or construct transport parameters.
 `core.data-loader` exclusively owns any subsequent validation, approval,
 upload, import initiation, monitoring, and diagnostics.
 
-## Preflight, Failure Handling, and Redaction
-
-Before generating a ZIP, verify the readable source, current-template
-provenance, complete mapping, validation results, and controlled transient
-output location. Stop before handoff when any check fails. Classify local
-failures as `input_validation`, `catalog_or_metadata_mismatch`,
-`transport_or_environment`, or `artifact_persistence`, following
-`ora-resource/ora_error_handling.md`. A failed public download is not evidence
-of template drift: stop without automatic retry or stale-template fallback,
-report the redacted diagnostic and next action, and start a new cycle only
-after the issue is resolved. Never
-print or persist credentials, tokens, authorization headers, UCM details, raw
-customer rows, or intermediate CSV data; redact the mapping preview and handoff
-evidence.
-
 ## Outputs
 
 Return local validation results and the immutable handoff evidence. Do not
@@ -204,5 +180,5 @@ data, or the generated ZIP in the repository or project workspace.
 - Use Change Order Import FBDI; do not route through FSM CSV import.
 - Do not invent missing customer values or silently discard source facts.
 - Do not expose credentials, tokens, authorization headers, or UCM details.
-- Use the parent skill `scm.product-management.change-orders` for
-  functional-area sequencing and scope decisions.
+- Use the parent skill `scm.product-management.change-orders` for functional-area
+  sequencing and scope decisions.

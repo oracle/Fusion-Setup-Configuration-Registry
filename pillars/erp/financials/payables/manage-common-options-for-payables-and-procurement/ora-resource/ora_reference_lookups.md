@@ -72,7 +72,31 @@ carry them into Data Loader's immutable preview and approval record.
 
 ## Receipt Binding Contract
 
-Every required resolver receipt is bound to the operation, entity, field, exact requested value, resolver, and result context. The adapter requires the following extra context:
+Every required successful resolver receipt is bound to the operation, entity,
+field, exact requested value, resolver, and result context. Before lookup, record
+referenceContext in the design with exactly environment, baseUrl,
+baselineSha256, runId and startedAt. Select these from the configured target and
+fresh exact-task export: environment must equal ProcessEnv, baseUrl must be the
+canonical HTTPS origin, and baselineSha256 must match that export. Use a stable,
+nonblank safe runId and a timezone-aware ISO startedAt that is not in the future.
+Current preparation requires the run to have started within the last 24 hours.
+
+Each successful receipt must contain requestContext equal to that complete
+referenceContext and a timezone-aware ISO observedAt from the actual response,
+at or after startedAt and no later than now. For SOAP, retain the producer's
+observedAt; map its request.environment and request.baseUrl only after checking
+they match the selected target. Successful REST lookup records must retain the
+same observed target and response time. Never replace an old observation time
+or automatically rebind a receipt to another run, environment or export.
+
+Historical reconciliation and checking the original forward plan during
+rollback retain identity and observation-order checks without applying the
+24-hour preparation limit. New rollback preparation requires a fresh
+referenceContext supplied through --reference-context and fresh --prerequisites
+for the current export and rollback operations. The unavailable supplemental
+REST receipt contract above remains unchanged.
+
+The adapter also requires the following resolver-specific context:
 
 | Resolver | Required bound context |
 |---|---|

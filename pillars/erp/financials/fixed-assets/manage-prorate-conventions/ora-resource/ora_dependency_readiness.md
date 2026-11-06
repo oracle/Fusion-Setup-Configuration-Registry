@@ -24,7 +24,7 @@ finding without convention checks, export, generation, or approvals.
 ## Parent Workflow Continuation
 
 After create/update or existing-ZIP task validation succeeds, immediately read and follow the parent's
-[Shared ZIP Creation and Review Gates](../../SKILL.md#shared-zip-creation-and-review-gates)
+[Shared Fixed Assets Preview and Approval Gates](../../SKILL.md#shared-fixed-assets-preview-and-approval-gates)
 and [CSV Encoding Fidelity](../../SKILL.md#csv-encoding-fidelity).
 Supply verified values, defaults, dates, target, current-state evidence, and
 export-backed mappings. Execute the parent's package preparation in the same run
@@ -50,18 +50,14 @@ for evidence reuse, fresh requests, and target changes.
 
 ## Parent Workflow Handoff
 
-Task-local validation results are not proof of ZIP creation, approval,
-submission, or post-import verification. A create, update, or existing-ZIP
-result proceeds to the parent Final ZIP Preview, Data Loader execution gate,
-and parent-owned verification. This child skill stops at accepted initiation
-with `accepted — pending parent verification`; it does not poll the import or
-start the next dependent task.
+Use [Parent Import Handoff](ora_error_handling.md#parent-import-handoff)
+for execution ownership. Task validation alone is not import completion.
 
 | Terminal | Parent Workflow Continuation |
 |---|---|
 | PRC.IMPORT_GATE | Submit only the exact immutable ZIP approved by the parent/Core gate, then hand off the accepted request. |
 | PRC.HANDED_OFF_TO_PARENT | Report `accepted — pending parent verification`; parent/Core owns status, ProcessLog, and fresh target read-back. |
-| PRC.DONE_EXISTS | Report that the equivalent convention already exists. No package or approval is needed. |
+| PRC.DONE_EXISTS | Report Convention name already exists and ask only for a different Name. Creation stops; no equivalence claim, package, or approval. |
 | PRC.DONE_FISCAL_YEARS | Complete the read-only inquiry route from Required Dependency Order, using Disclosure Rules for the requested finding. |
 | PRC.ISSUES | Use Error Situations and Conversation State and Resume. |
 
@@ -71,13 +67,13 @@ start the next dependent task.
 |---|---|---|---|---|---|---|---|---|---|
 | operation_route | Requested operation | Yes | Before task-specific work | Satisfied | Completed input-validation result | | Select the applicable workflow without collecting unrelated inputs | Complete operation intake | operation route |
 | existing_import_archive | Existing immutable FSM ZIP | Conditional | Existing-ZIP import | Satisfied | Completed import-artifact intake and validated immutable-archive context returned by the existing import-validation flow | | Preserve the supplied artifact and provide task-local comparison context | Use the input-validation import contract | archive reference, fingerprint, ProrateConventionCode or Name, SetCode, FiscalYearName, every archive date row, and the optional basis hint |
-| reference_data_set_validity | Reference Data Set validity | Yes | Create/update | Lookup | Live result | validate_reference_data_set_name | Verify the supplied dropdown value | Use the owning invalid-input or mapping-gap response | Validity and retained code result |
 | fiscal_year_range | Fiscal-year selection or inquiry result | Yes | Create/update, existing-ZIP date validation, or read-only fiscal-year inquiry | Lookup | Current result under Fiscal-Year Lookup Freshness | resolve_prorate_fiscal_year_range | Supply the applicable finding or per-year generation context | Use the resolver's result or owning failure response | Resolved exact name and fiscal_year_date_rows for generation, or the requested inquiry finding |
-| reference_data_set | Reference Data Set code | Yes | Create/update after reference_data_set_validity | Lookup | Same completed result as reference_data_set_validity | validate_reference_data_set_name | Supply package identity without another request | Consume the retained result | SetCode |
+| reference_data_set | Reference Data Set identity and code | Yes | Create/update | Lookup | One complete live result | validate_reference_data_set_name | Verify the selected dropdown name and resolve its exact code together | Use the resolver's invalid-name or mapping-gap result | Verified name and SetCode |
 | import_metadata | Manage Prorate Conventions FSM export contract | Yes | Create or update after Reference Data Set and Fiscal Year verification, before the first preview | Lookup | Fresh same-target task export acquired through shared.setup-export.task-level-export | resolve_prorate_export_metadata | Package shape and technical mapping must match the target export contract | Resolve during the automatic verification phase above | resolved current export contract |
 | convention_info_mapping | Convention Info DFF values | Conditional | Before the first preview when Convention Info is supplied | Lookup | Local lookup result | resolve_convention_info_mapping | Every supplied optional value needs a proven target column | Resolve automatically during verification | resolved Convention Info mapping |
-| existing_parent | Existing parent row | Yes | Before defaults and the first preview | Lookup | BOSS `assetProrateConventionsView` | resolve_existing_prorate_parent | Defaults and create/update behavior must use the exact current parent state | Resolve automatically. For an explicit create whose Name is already used by a different definition, state that the Name already exists and ask only for a different Name. | resolved parent-state result |
-| existing_convention | Completed parent and generated-row comparison | Yes | After generation, before the first preview | Lookup | Resolved BOSS parent/date-row result | resolve_existing_prorate_convention | Distinguish a new create, equivalent existing state, a create-name conflict, and a valid update | Resolve automatically; do not create a duplicate convention or ask a generic create-versus-update question | completed comparison and package decision |
+| existing_parent | Existing parent row | Yes | Before defaults and the first preview | Lookup | BOSS `assetProrateConventionsView` | resolve_existing_prorate_parent | Defaults and create/update behavior must use the exact current parent state | Resolve automatically. For an explicit create whose exact Name is already used, state that the Name already exists and ask only for a different Name. | resolved parent-state result |
+| existing_date_rows | Complete existing parent-owned dates | Conditional | Update only, before same-parent comparison and audit preservation | Lookup | Fresh same-target populated task export | resolve_existing_prorate_dates | Compare existing date tuples and preserve exact existing audit values | Acquire the declared export directly; stop if it fails or is incomplete | Complete parent-owned date inventory and source evidence |
+| existing_convention | Completed create-name check or update definition comparison | Yes | After generation, before the first preview | Lookup | Resolved name check; update also requires parent-owned date rows | resolve_existing_prorate_convention | For create, check name availability only; for update, compare existing definition rows | Resolve automatically; do not create a duplicate convention or ask a generic create-versus-update question | completed comparison and package decision |
 
 ## Dependency Classification
 
@@ -111,7 +107,7 @@ and child-row summarization. Response wording belongs to
 | Reference data set | SetCode |
 | Description | Description |
 | Fiscal year name | FiscalYearName |
-| Deprecation When Acquired | DeprWhenAcquiredFlag |
+| Depreciate when placed in service | DeprWhenAcquiredFlag |
 | Prorate basis | Resolved Prorate basis variant for this convention, not a list of choices |
 | Convention Info | Supplied or changed Convention Info values with their business labels |
 
@@ -130,4 +126,4 @@ unmapped DFF column names and omitted blank Convention Info columns internal.
 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|
-| PRC.RESOLVE_PACKAGE | decision | 30 | resolve_dependency | create_verified->PRC.IMPORT_GATE;update_verified->PRC.IMPORT_GATE;existing_zip_validated->PRC.IMPORT_GATE;already_exists->PRC.DONE_EXISTS;blocked->PRC.HANDLE_PACKAGE | PRC.ENFORCE_DESIGN | stop | Consume the applicable Dependency Rules and Design Enforcement result, then resolve_existing_prorate_convention for create/update. Any technical package gap selects blocked. Successful package-required outcomes proceed to the parent Final ZIP Preview and import gate. |
+| PRC.RESOLVE_PACKAGE | decision | 30 | resolve_dependency | create_verified->PRC.IMPORT_GATE;update_verified->PRC.IMPORT_GATE;existing_zip_validated->PRC.IMPORT_GATE;blocked->PRC.HANDLE_PACKAGE | PRC.ENFORCE_DESIGN | stop | Consume the applicable Dependency Rules and Design Enforcement result, then resolve_existing_prorate_convention for create/update. Any technical package gap selects blocked. Successful package-required outcomes proceed to the parent Final ZIP Preview and import gate. |

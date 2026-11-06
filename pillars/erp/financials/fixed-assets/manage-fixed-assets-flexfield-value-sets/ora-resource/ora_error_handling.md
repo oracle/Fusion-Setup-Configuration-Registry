@@ -35,7 +35,7 @@
 |---|---|
 | Import readiness | required files/columns, derived values and sources, unresolved gaps, readiness status, approval state |
 | Lookup failure | environment, read-only purpose, failure class, sanitized message, next action |
-| Post-import handoff | Owner: `core.data-loader`; state: `accepted — pending parent verification`; immutable archive fingerprint, target, requested ValueSetCode and scope, and request ID. |
+| Post-import handoff | Owner: Fixed Assets parent; state: `accepted — pending parent verification`; immutable archive fingerprint, target, requested ValueSetCode and scope, and request ID. |
 
 ## Refusal Rules
 
@@ -44,14 +44,17 @@
 | Missing parent or package-source evidence | Do not generate a child value or guessed default. A template package is usable only with validated reference-parent evidence. |
 | Live import | Do not execute without explicit approval immediately before the operation. |
 | Failed import | Do not change defaults by trial-and-error or automatically resubmit the package. |
-| Accepted import | Do not report the value set as created. `core.data-loader` owns terminal-status polling, process-log review, and fresh target read-back. |
+| Accepted import | Do not report the value set as created. The Fixed Assets parent applies fresh target-state verification and controls continuation; `core.data-loader` retrieves terminal status and ProcessLog. |
 
 ## Approved Import Execution and Handoff
 
 After the approved immutable Value Sets package is accepted, report it as
 `accepted — pending parent verification` and hand off its archive identity,
-target, and request ID to `core.data-loader`. This task does not perform
-post-import verification. A dependent task may reuse only the parent-verified
+target, request ID, and definition/value verification criteria to the Fixed
+Assets parent. The parent routes status and ProcessLog retrieval through
+`core.data-loader`, applies fresh target-state verification, shows the
+Post-Execution Verification Preview, and controls dependent-task progression.
+This task does not perform post-import verification. A dependent task may reuse only the parent-verified
 ValueSetCode and approved value scope; it must not create or infer context from
 an accepted-but-unverified request.
 
@@ -66,7 +69,7 @@ an accepted-but-unverified request.
 | VSET.HANDLE_VALUES | step | 95 | error_handler | handled->VSET.ISSUES | VSET.CHECK_VALUE_SCOPE | stop | Requested value scope cannot be verified or safely added to the existing definition |
 | VSET.HANDLE_DESIGN | step | 100 | error_handler | handled->VSET.ISSUES | VSET.ENFORCE_DESIGN | stop | Design rule blocks the package |
 | VSET.HANDLE_APPROVAL | step | 110 | error_handler | handled->VSET.ISSUES | VSET.IMPORT_GATE | stop | Approval is absent |
-| VSET.HANDED_OFF_TO_PARENT | terminal | 120 | terminal | none | VSET.IMPORT_GATE | continue | Accepted — pending parent verification. `core.data-loader` owns terminal polling, process-log review, and fresh target read-back. |
+| VSET.HANDED_OFF_TO_PARENT | terminal | 120 | terminal | none | VSET.IMPORT_GATE | continue | Accepted — pending parent verification. The Fixed Assets parent applies fresh target-state verification and controls dependent-task progression; core.data-loader retrieves terminal status and ProcessLog. |
 | VSET.DONE_MATCH | terminal | 125 | terminal | none | VSET.CHECK_VALUE_SCOPE | stop | Existing definition matches and the request is definition-only; no import is needed |
 | VSET.DONE_VALUES | terminal | 126 | terminal | none | VSET.CHECK_VALUE_SCOPE | stop | Existing definition and every requested value/parent/material field already match current verified state; no import is needed |
 | VSET.ISSUES | terminal | 130 | terminal | none | none | stop | A blocker is handled |

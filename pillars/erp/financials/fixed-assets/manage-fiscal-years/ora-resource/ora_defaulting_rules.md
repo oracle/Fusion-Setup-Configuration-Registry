@@ -4,8 +4,8 @@
 
 | Field | Internal | Resolved value | Applies When | User Override | Resolver |
 |---|---|---|---|---|---|
-| Start fiscal year | No | When the user asks to create from Oldest DPIS and does not supply a start year, identify the fiscal-year cycle row whose inclusive range contains Oldest DPIS (`Start Date <= Oldest DPIS <= End Date`) and use it as the first fiscal year. For a ledger-derived request, retain the earliest complete ledger fiscal year unless the user explicitly requests Oldest-DPIS-based creation. | Setup explicitly based on Oldest DPIS without a supplied start year | Yes | resolve_ledger_periods + resolve_oldest_in_service_date_from_system_controls |
-| End fiscal year | No | Fiscal year that starts in the next calendar year | Initial setup without supplied end coverage | Yes | resolve_next_calendar_year_start |
+| Start fiscal year | No | When the selected start basis is Oldest DPIS, including a user-defined request without a supplied start year, identify the fiscal-year cycle row whose inclusive range contains Oldest DPIS (`Start Date <= Oldest DPIS <= End Date`) and use it as the first fiscal year. For a ledger-derived request, retain the earliest complete ledger fiscal year unless the user explicitly requests Oldest-DPIS-based creation. | Oldest-DPIS-based setup, including user-defined creation without a supplied start year | Yes | resolve_oldest_in_service_date_from_system_controls |
+| End fiscal year | No | Fiscal year that starts in the next calendar year | Initial setup without supplied end coverage | Yes |  |
 | Description | No | Human-readable sentence-case form of Fiscal Year Name | User leaves it blank for a new definition | Yes | |
 | Midyear Start | No | Blank | No approved group-asset half-year rule and export does not require it | Yes | resolve_fiscal_year_export_metadata |
 | System-managed WHO columns (`CreatedBy`, `CreationDate`, `LastUpdatedBy`, `LastUpdateDate`, `LastUpdateLogin`) | Yes | Do not populate, derive, copy, or modify the fields. Preserve the export header and use its prescribed blank or system-managed representation. | Before package generation, for every parent, translation, and fiscal-year-date CSV row. | No | resolve_fiscal_year_export_metadata |
@@ -43,6 +43,6 @@ For every create-new request, render a Design Preview after the equivalent-year 
 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|
-| FY.APPLY_DEFAULTS | step | 60 | apply_default | applied->FY.ENFORCE_DESIGN;blocked->FY.HANDLE_DEPENDENCY | FY.VALIDATE_DPIS_CONTAINMENT | stop | User selected create-new and the pre-decision exact-name check found no existing fiscal year. |
+| FY.APPLY_DEFAULTS | step | 60 | apply_default | applied->FY.ENFORCE_DESIGN;blocked->FY.HANDLE_DEPENDENCY | FY.VALIDATE_DPIS_CONTAINMENT | stop | User selected create-new and the exact selected name is confirmed absent. Reuse a current pre-decision name check only for the same unchanged name and target; otherwise complete the selected-name check after the decision before applying defaults. |
 
 

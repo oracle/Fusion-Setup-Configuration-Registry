@@ -48,6 +48,13 @@ user-requested read query, the LLM may perform an additional read-only Fusion
 Fusion API contract; do not guess an unsupported endpoint, parameter, field, or
 request method. Never bypass the shared client with a direct Fusion call.
 
+For requests to `dataLoaderBusinessObjects`, `dataLoaderDataSets`, or
+`dataSetErrors`, pass `--header REST-Framework-Version=9` on every delegated
+client invocation. This includes their Describe, finder, child-resource, action,
+and pagination requests, for both `latest` and versioned resource URLs, and
+every retry permitted by the existing policy. This header requirement does not
+authorize additional operations or retries.
+
 `resolve-task-rules` is the gate. A user may explicitly waive any task-validation
 failure, including missing or incomplete registry readiness, by using
 `--allow-readiness-override`. The resulting preview must include an overridden

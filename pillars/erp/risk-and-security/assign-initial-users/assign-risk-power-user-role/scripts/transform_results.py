@@ -70,7 +70,7 @@ def authenticated_identity(responses: dict[str, Any]) -> tuple[str | None, dict[
 
 def role_members(payload: Any) -> set[str]:
     role = exactly_one(payload, "role_members")
-    members = role.get("members") if role else None
+    members = role.get("members", []) if role else None
     if not isinstance(members, list):
         raise ValueError("Risk Power User role membership response is missing or invalid")
     return {str(member["value"]) for member in members if isinstance(member, dict) and member.get("value")}
@@ -517,6 +517,9 @@ def main() -> int:
     transforms = {"discovery": discovery, "preflight": preflight, "poll": poll, "verify": verify, "continuation": continuation}
     output = transforms[args.stage](payload, responses)
     write_json(Path(args.output), output)
+    if args.stage in {"discovery", "preflight"} and output.get("status") not in {"blocked", "awaiting_core_results"} and "role_members" in responses:
+        if not role_members(responses["role_members"]):
+            print("No people are currently assigned to the Risk Power User role.\n")
     print(consultant_status(args.stage, output))
     return 0
 

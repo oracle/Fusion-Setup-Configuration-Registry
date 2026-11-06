@@ -83,4 +83,8 @@ the resolved fiscal-year start and end bases. Require the first and last
 calendar periods to align to them unless an explicit approved exception is
 recorded.
 
+## Task Nodes
 
+| Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
+|---|---|---|---|---|---|---|---|
+| CAL.APPLY_DEFAULTS | step | 40 | apply_default | applied->CAL.ENFORCE_DESIGN;blocked->CAL.HANDLE_DEPENDENCY | CAL.LOOKUP_EXISTING | stop | No equal existing calendar was found |

@@ -82,6 +82,7 @@ required_setup_tasks:
   - "EXM_MANAGE_EXPENSES_SYSTEM_OPTIONS"
   - "EXM_MANAGE_TAX_FIELDS"
   - "ORA_EXM_MANAGE_AUTO_SUBMISSION_AND_MATCHING_OPTIONS"
+  - "ORA_EXM_MANAGE_POLICIES_BY_EXPENSE_CATEGORY"
 applicability:
   industries:
     - "All"
@@ -117,6 +118,7 @@ Use this functional-area skill after Financials scope is confirmed and the proje
 4. [Manage Tax Fields](manage-tax-fields/SKILL.md) (`EXM_MANAGE_TAX_FIELDS`)
 5. [Manage Auto Submission and Matching Options](manage-auto-submission-and-matching-options/SKILL.md) (`ORA_EXM_MANAGE_AUTO_SUBMISSION_AND_MATCHING_OPTIONS`)
 6. [Manage Conversion Rates and Policies](manage-conversion-rates-and-policies/SKILL.md) (`EXM_MANAGE_CONVERSION_RATES_AND_POLICIES`)
+7. [Manage Policies by Expense Category](manage-policies-by-expense-category/SKILL.md) (`ORA_EXM_MANAGE_POLICIES_BY_EXPENSE_CATEGORY`)
 
 For Report Templates, System Options, and Conversion Rates and Policies, use each linked skill's task-local
 input workbook and setup contract.

@@ -152,6 +152,7 @@
     "procedure": [
       "Preserve the unchanged customer request outside the business blueprint.",
       "Use the selected task skill and compiled ora_rule_registry.json to resolve task semantics and blockers.",
+      "For AP_SYSTEM_PARAMETER creates, reuse the sibling Invoice Options CREATE_FLAG_DEFAULTS and CREATE_UI_DEFAULTS in the normalized values, preview and actual CSV. Require those exact defaults in saved create blueprints and physical uploaded create rows. Do not add them to updates or allow other Invoice-owned changes.",
       "Write only explicit operations, target keys, requested values, resolved scope, defaults, prerequisites, preservation assertions, and warnings into the normalized design input.",
       "Apply every known deterministic validation first; when an update field remains explicitly evidence-unresolved, disclose the gap and offer the implementor the exact governed application-validation override without relabeling the field as supported.",
       "Run the normalize command to validate the design and emit the portable blueprint, complete preview, and stable requirements list."
@@ -1463,17 +1464,17 @@
           "BankChargeDeductionTypeDes": {
             "allowedValues": [
               {
-                "code": "S",
+                "code": "Standard",
                 "label": "Standard",
                 "synonyms": []
               },
               {
-                "code": "N",
+                "code": "Negotiated",
                 "label": "Negotiated",
                 "synonyms": []
               },
               {
-                "code": "X",
+                "code": "None",
                 "label": "None",
                 "synonyms": []
               }
@@ -1557,7 +1558,8 @@
           "errors",
           "warnings",
           "unresolvedWarnings",
-          "businessSummary"
+          "businessSummary",
+          "uploadValidationContext"
         ]
       },
       "preview": {
@@ -1747,7 +1749,10 @@
         "requiredArguments": [
           "baseline",
           "package"
-        ]
+        ],
+        "conditionalArguments": {
+          "validation-context": "Saved build report (or its uploadValidationContext object) required for uploaded creates; exact task, ZIP and baseline hashes must match."
+        }
       }
     },
     "governance": {

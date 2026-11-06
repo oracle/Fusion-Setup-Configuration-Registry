@@ -22,7 +22,7 @@
           "source": {
             "file": "ora_defaulting_rules.md",
             "anchor": "task-nodes",
-            "line": 127
+            "line": 149
           },
           "readiness": {
             "status": "ready",
@@ -47,7 +47,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 49
+            "line": 50
           },
           "readiness": {
             "status": "ready",
@@ -100,7 +100,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 50
+            "line": 89
           },
           "readiness": {
             "status": "ready",
@@ -124,7 +124,7 @@
           "source": {
             "file": "ora_defaulting_rules.md",
             "anchor": "task-nodes",
-            "line": 128
+            "line": 150
           },
           "readiness": {
             "status": "ready",
@@ -149,7 +149,7 @@
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 30
+            "line": 31
           },
           "readiness": {
             "status": "ready",
@@ -174,7 +174,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 95
+            "line": 103
           },
           "readiness": {
             "status": "ready",
@@ -198,7 +198,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 96
+            "line": 104
           },
           "readiness": {
             "status": "ready",
@@ -222,7 +222,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 97
+            "line": 105
           },
           "readiness": {
             "status": "ready",
@@ -246,7 +246,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 98
+            "line": 106
           },
           "readiness": {
             "status": "ready",
@@ -270,7 +270,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 99
+            "line": 107
           },
           "readiness": {
             "status": "ready",
@@ -294,7 +294,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 100
+            "line": 108
           },
           "readiness": {
             "status": "ready",
@@ -312,11 +312,11 @@
             "KFF.IMPORT_GATE"
           ],
           "on_failure": "continue",
-          "applies_when": "Key Flexfields import is accepted — pending parent verification. The Fixed Assets parent owns status, process-log review, and fresh target read-back. A dependent task may reuse only parent-verified KFF context.",
+          "applies_when": "Accepted \u2014 pending parent verification. The Fixed Assets parent owns status, process-log review, and fresh target read-back.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 101
+            "line": 109
           },
           "readiness": {
             "status": "ready",
@@ -338,7 +338,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 103
+            "line": 110
           },
           "readiness": {
             "status": "ready",
@@ -358,7 +358,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 104
+            "line": 111
           },
           "readiness": {
             "status": "ready",

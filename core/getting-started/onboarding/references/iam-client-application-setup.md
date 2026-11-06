@@ -67,32 +67,98 @@ HTTPS. Do not enable unrelated grant types merely because they are shown.
 
 ## 5. Add resource scopes
 
+### Mandatory scopes
+
 In **Token issuance policy**, enable **Add resources**. Use **Add scope** to add
-these resource scopes from the selected Fusion Applications environment:
+all four scopes that the 26D document identifies as mandatory for FSCR setup:
 
 | Resource named in the 26D document | Property |
 | --- | --- |
-| Oracle Applications Cloud (Fusion) | `scope` |
-| Oracle Fusion AI Cloud (Spectra) | `ai_scope` |
-| Oracle Boss Cloud (Spectra) | `boss_scope` |
-| spectra-fusion-common | `fusion_common_scope` |
+| **Oracle Applications Cloud (Fusion)** or **Fusion Applications Cloud Service** | `scope` |
+| **Oracle Fusion AI Cloud (Spectra)** | `ai_scope` |
+| **Oracle Boss Cloud (Spectra)** | `boss_scope` |
+| **spectra-fusion-common** | `fusion_common_scope` |
 
-The document also lists optional product scopes to add when the implementation
-requires them:
+Resource names are indicative and may vary by environment. Consult the Fusion
+domain administrator when needed to identify the correct resources and enable
+their scopes.
 
-| Optional resource | Property |
+![Token issuance policy and mandatory Fusion resource scopes](../assets/oauth-setup-26d/07-resource-scopes.png)
+
+### Optional product properties and scopes
+
+Add the following scopes only when the corresponding products or modules are part
+of the FSCR implementation. Field Service and CX Unity also need their own base URLs:
+
+| Optional resource | Properties |
 | --- | --- |
-| Risk Cloud | `rmc_scope` |
-| spectra-knowledge-management | `km_scope` |
-| CPQ | `cpq_scope` |
-| Oracle Fusion Field Service | `fs_scope` |
-| Oracle Unity | `cdp_scope` |
+| **Risk Cloud** | `rmc_scope` |
+| **spectra-knowledge-management** | `km_scope` |
+| **Oracle CPQ Applications Cloud (Spectra)** | `cpq_scope` |
+| **Field Service** | `fs_scope`, `fs_restBaseUrl` |
+| **CDP App** | `cdp_scope`, `cdp_restBaseUrl` |
 
-Record the exact environment-specific values in the resource table, then click
-**Submit**. Do not reconstruct a scope from a pod name or copy identifiers from a
-screenshot. Each login uses the selected service's scope, not every listed scope.
+#### Risk Cloud and Knowledge Management
 
-![Token issuance policy and Fusion resource scopes](../assets/oauth-setup-26d/07-resource-scopes.png)
+Add the Risk Cloud scope for `rmc_scope` and the Knowledge Management scope for
+`km_scope` when those modules are required.
+
+![Optional Risk Cloud and Knowledge Management scopes](../assets/oauth-setup-26d/09-risk-knowledge-management-scopes.png)
+
+#### CPQ (Configure Price Quote)
+
+If the implementation includes Fusion CPQ, add its scope to the Mobile Application
+and record it as `cpq_scope`. The source highlights **Oracle CPQ Applications Cloud
+(Spectra)**; the resource name and scope value may differ in your environment.
+
+![Optional CPQ resource scope highlighted in OAuth configuration](../assets/oauth-setup-26d/10-cpq-scope.png)
+
+#### Field Service
+
+If the implementation includes Field Service, add its scope to the Mobile
+Application and record `fs_scope`. The source highlights the scope ending in
+`field-service-common/`; copy the exact approved value from your environment.
+The updated guide specifies that, although Field Service offers multiple scopes,
+FSCR uses only this highlighted scope during implementation. Add that scope to the
+Mobile Application; the other displayed Field Service scopes are not required
+for this setup.
+
+![Field Service scope highlighted in the resource list](../assets/oauth-setup-26d/11-field-service-scope.png)
+
+Find `fs_restBaseUrl` in the **Field Service Resource App** under **Oracle Cloud
+Services** in the Fusion Identity Domain console. In **OAuth configuration >
+General Information**, the source highlights **Post-logout redirect URL** as the
+location of the Field Service base URL. Record the service base URL, not an OAuth
+callback or logout endpoint.
+
+![Field Service Resource App showing the base URL in Post-logout redirect URL](../assets/oauth-setup-26d/12-field-service-base-url.png)
+
+#### CX Unity (CDP)
+
+If the implementation includes CX Unity, add its scope to the Mobile Application
+and record `cdp_scope`. The source highlights the **CDP App** scope ending in
+`unitycxunity`; use your environment's corresponding approved value.
+The updated guide specifies that, although CX Unity offers multiple scopes,
+FSCR uses only this highlighted scope during implementation. Add that scope to the
+Mobile Application; the other displayed CX Unity scopes are not required for
+this setup.
+
+![CX Unity scope highlighted in the CDP App resource list](../assets/oauth-setup-26d/13-cx-unity-scope.png)
+
+Find `cdp_restBaseUrl` in the **CDP Resource App** under **Oracle Cloud Services**
+in the Fusion Identity Domain console. In **OAuth configuration > General
+Information**, the source highlights **Post-logout redirect URL** as the location
+of the CX Unity base URL. These resource-app screenshots identify service URLs;
+the FSCR client remains the Mobile Application created in step 2.
+
+![CDP Resource App showing the CX Unity base URL in Post-logout redirect URL](../assets/oauth-setup-26d/14-cx-unity-base-url.png)
+
+Once all mandatory and applicable optional scopes are added, click **Submit**.
+Record the exact environment-specific scope values, including any trailing `/`
+shown in the Mobile Application's **OAuth configuration**. Do not strip an existing
+slash or append one to a scope that has none. Do not reconstruct scopes from pod
+names or copy identifiers from screenshots. Each login uses the selected service's
+scope, not every scope registered on the application.
 
 ## 6. Activate and record the Client ID
 
@@ -105,15 +171,19 @@ verify the resulting active status before attempting login.
 ## 7. Configure fusionEnv.properties
 
 Populate `core/auth/fusionEnv.properties` using the selected environment's values.
-The 26D document provides this configuration as text, not a screenshot. The
-following synthetic example preserves its property names:
+The updated 26D document includes this properties-file screenshot:
+
+![Sample fusionEnv.properties with mandatory and optional scope groups](../assets/oauth-setup-26d/15-fusion-environment-properties.png)
+
+The following synthetic example preserves its property names. Replace the scope
+placeholders with exact registered values, retaining trailing `/` where present:
 
 ```properties
 environment=YOUR_FUSION_ENVIRONMENT_NAME
 restBaseUrl=https://fusion.example.invalid
 clientId=YOUR_IAM_MOBILE_APPLICATION_CLIENT_ID
 redirectUrl=http://127.0.0.1:8765/oauth/callback
-# FSCR scopes: replace each placeholder with the registered value
+# Mandatory FSCR scopes: copy exact values, including trailing / where present
 scope=YOUR_FUSION_SCOPE
 ai_scope=YOUR_FUSION_AI_SCOPE
 boss_scope=YOUR_BOSS_SCOPE
@@ -158,13 +228,14 @@ it appears in the source document.
 
 ## Source and screenshot index
 
-Source: user-provided **OAuth Setup for Oracle Fusion Setup and Configuration
-Skills Registry (FSCR) Version 26D**, file
-`OAuth Setup for Oracle Fusion Setup and Configuration Skills Registry 26D.docx`.
-The bundled document and all eight extracted PNGs preserve the supplied bytes.
+Source: updated user-provided **OAuth Setup for Oracle Fusion Setup and
+Configuration Skills Registry (FSCR) Version 26D**, bundled as
+[oauth-setup-fscr-26d.docx](../assets/oauth-setup-fscr-26d.docx).
+All 15 extracted PNGs preserve the source image bytes. The original eight asset
+filenames are retained; seven new assets are numbered 09–15. Source image numbers
+below refer to `word/media/imageN.png` within the updated document.
 Source SHA-256:
-`f62d57208b0a476e6d356a4cd7f833ee161bb9c4d92614a44302b9a884706941`.
-This source replaces the previous ClientApp guide and its nine-image set.
+`72017ed6a7bfefd3f5b3a2fe69f27967b316d2b1a449214bce031d887a5ed22b`.
 
 | Source image | Source context | Reference step |
 | --- | --- | --- |
@@ -174,8 +245,15 @@ This source replaces the previous ClientApp guide and its nine-image set.
 | 4 | Application details and tabs | 3 |
 | 5 | Edit OAuth configuration | 3 |
 | 6 | Authorization code and callback | 4 |
-| 7 | Token issuance policy / resource scopes | 5 |
-| 8 | Activate application | 6 |
+| 7 | Token issuance policy / mandatory scopes (`07-resource-scopes.png`) | 5 |
+| 8 | Risk and Knowledge Management scopes (`09-risk-knowledge-management-scopes.png`) | 5 |
+| 9 | CPQ scope (`10-cpq-scope.png`) | 5 |
+| 10 | Field Service scope (`11-field-service-scope.png`) | 5 |
+| 11 | Field Service base URL (`12-field-service-base-url.png`) | 5 |
+| 12 | CX Unity scope (`13-cx-unity-scope.png`) | 5 |
+| 13 | CX Unity base URL (`14-cx-unity-base-url.png`) | 5 |
+| 14 | Activate application (`08-activate-application.png`) | 6 |
+| 15 | Properties file (`15-fusion-environment-properties.png`) | 7 |
 
 The screenshots contain source example identifiers, with some values masked.
 They are navigation aids, not configuration values for another environment.

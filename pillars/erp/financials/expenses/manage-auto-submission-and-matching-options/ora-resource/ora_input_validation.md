@@ -27,7 +27,7 @@ These rules are reusable across target environments. Planner readiness means the
 
 ## Package field inventory
 
-The table distinguishes source-proven field roles from candidate CSV serialization. Apply the shipped organization-setting transport profile to its exact schema/release; framework qualification of populated EXM_SETUP_OPTION aliases remains required when setup-option writes remain after verified baseline comparison. Create means inserting an expense setting for a verified scope, never creating a business unit. Update retains the same setting/option code and scope; changing a key is not a rename operation.
+The table distinguishes source-proven field roles from candidate CSV serialization. Apply the shipped organization-setting transport profile to its exact schema; framework qualification of populated EXM_SETUP_OPTION aliases remains required when setup-option writes remain after verified baseline comparison. Create means inserting an expense setting for a verified scope, never creating a business unit. Update retains the same setting/option code and scope; changing a key is not a rename operation.
 
 | Entity | CSV column | Type | Position | Create | Update | Evidence |
 |---|---|---|---|---|---|---|

@@ -1,14 +1,26 @@
 # Organization-setting transport profile
 
-Profile `org-settings-11.13.27.01-v1` supports explicit reviewed
-EXM_ORG_SETTING insert/update values on the exact task schema and release
-11.13.27.01.0. Use `scripts/fsm_transport.py` with core's captured template and
-normalized intent after fresh same-target baseline comparison. It checks task,
-release, members, exact field membership, attribute types, XML paths, sequence and
-batch. It preserves the fresh target CSV header order when serializing by field
-name. A mismatch requires a maintained profile refresh, not a customer-created
-import ZIP. This profile is source-backed and has one independently checked successful FSM
-import. It is not certification of every environment or release.
+Profile `org-settings-schema-v1` accepts a fresh same-target task export based
+on its schema, without a release-number allowlist. Exact task identity, object
+type, member identities, fields, attribute types, XML paths, sequence and batch
+must match the supported contract. Unknown release labels are acceptable when
+these checks pass; schema drift still fails closed.
+
+`ProcessRelease` must have one nonempty value and is retained unchanged for
+diagnostics and audit evidence. It does not select a profile or prove deployed
+behavior. The candidate/dry-run report always sets `profile_live_import_verified`
+and `live_result_verified` to false: schema compatibility alone is not live
+verification. The historical import evidence below remains a separate account
+of the tested deployment, not a certification of a newly selected target.
+
+Use `scripts/fsm_transport.py` with the captured template and normalized intent
+after fresh same-target baseline comparison. Target metadata and CSV header
+order are preserved. The normal Data Loader workflow, Task Hook and exact-artifact
+approval remain required. Verify terminal results and requested/preserved values
+through the declared status and read-back workflow before claiming live success.
+Populated option-alias writes remain blocked in the ordinary customer route.
+The separate `identical-option-aliases-schema-candidate-v1` qualification path
+still requires its declared non-production workflow and exact-artifact approval.
 
 ## Evidence and its limits
 
@@ -68,8 +80,9 @@ insert/update breakdown or independently read back the resulting values.
 
 No production/customer rows, private hostnames, credentials, local paths or
 request identifiers are included in this reusable evidence summary. The
-profile evidence flag describes this historical test; `live_result_verified`
-remains false for a newly composed target until that run is actually verified.
+historical test is documented separately from candidate evidence flags. Both
+`profile_live_import_verified` and `live_result_verified` are always false in
+a newly composed candidate; record later live verification in its run evidence.
 
 ## Serialization
 

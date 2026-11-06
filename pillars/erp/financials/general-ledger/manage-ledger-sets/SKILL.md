@@ -250,7 +250,7 @@ The registry validates inputs and the exact prepared package before the loader s
 
 ## Controlled Import Patterns
 
-The following patterns have succeeded through the FSM/Data Loader route in a test environment. They are preparation examples, not unconditional acceptance rules for another release, tenant, ledger family or field combination. Apply all current template, reference, relationship, classification and persisted-state checks before using them.
+The success and round-trip observations below are historical reports; their target releases and qualification receipts are not recorded in this reusable package and have not been independently verified here. Treat them as preparation examples, not proof of qualification for another release, tenant, ledger family or field combination. Apply all current template, reference, relationship, classification and persisted-state checks; historical receipts are not a runtime prerequisite.
 
 | Pattern | Package and validation guidance |
 |---|---|

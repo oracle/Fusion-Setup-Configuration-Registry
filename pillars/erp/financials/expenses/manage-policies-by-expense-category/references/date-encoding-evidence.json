@@ -1,0 +1,14 @@
+{
+  "claim": "The selected Meals rate create submitted date-only YYYY/MM/DD StartDate and persisted that calendar date.",
+  "boundary": "Encoding evidence only, not combined-create support, general field acceptance, date overlap/identity semantics or EndDate behavior.",
+  "source_label": "cptcwxaqy export release11.13.27.01.0",
+  "csv_date_format": "%Y/%m/%d",
+  "entities": [
+    "ORA_EXM_MEALS_POLICY_LINE"
+  ],
+  "candidate_sha256": "7b09557c803120d6bfa3d031948111ef1a5cdaa345f2302117a2f4b6cf44e1c9",
+  "reconciliation_sha256": "efe8ed6394fd7f2ad326d8c3abcdd7cada473a2eefa8029aab6187d2b18721cc",
+  "acceptance_sha256": "96481d17ce82c47e61584bb345912509d0ffeaf54180f43c8f969a887a1ff5df",
+  "raw_batch_status_retained": "PARTIAL_OR_MISMATCH_STOP",
+  "selected_observations": "Meals date encoding matched in the original multi-category batch; original partial/mismatch classification and hashes retained without broadening its acceptance."
+}

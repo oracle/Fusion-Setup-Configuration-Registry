@@ -1,0 +1,1018 @@
+{
+  "schema_version": "1.0",
+  "task_code": "ORA_EXM_MANAGE_POLICIES_BY_EXPENSE_CATEGORY",
+  "status": "ready_for_single_currency_meals_with_expanded_input_validation",
+  "sources": {
+    "EO-MealsPolicy": {
+      "path": "fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/MealsPolicyEO.xml",
+      "sha256": "73189dcd4ba42b57d61e237e644e253f93cc058d5f78eb35a06661dff6a5d38f",
+      "series": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64",
+      "label": "261013.0000.S",
+      "claim_scope": "Declared keys and validators only; not target import qualification"
+    },
+    "EO-MealsPolLine": {
+      "path": "fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/MealsPolLineEO.xml",
+      "sha256": "2a263951051c6d0b43a2f80aaf3e1c86bd2f8e6400100d32b1e59e3c85cdf598",
+      "series": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64",
+      "label": "261013.0000.S",
+      "claim_scope": "Declared keys and validators only; not target import qualification"
+    },
+    "SEED-EXM-YES-NO": {
+      "path": "fusionapps/fin/exm/noship/cdrautoapply/db/data/StandardLookupTypeSD.xml",
+      "sha256": "d24881704d048a4e6f3a67d7115abe6c7cbbe3c5fabe3a69bae543b18340f162",
+      "label": "261013.0000.S",
+      "claim_scope": "Pinned seed code/meaning mapping only; not current target lookup or CSV operation acceptance"
+    },
+    "UI-MealsPolicy-Boolean": {
+      "path": "fusionapps/fin/components/payables/exm/policy/meals/model/src/oracle/apps/financials/expenses/policy/meals/uiModel/view/MealsPolicyVO.xml",
+      "sha256": "47615c42cfe287fafad6aa6980b5feb2ec497b72d8357b5d30f3ff40d1cdc6bf",
+      "label": "261013.0000.S",
+      "claim_scope": "Explicit field to EXM_YES_NO binding only; no target-release or operation promotion"
+    },
+    "LIVE-SELECTED-RATE-STARTDATE-ENCODING": {
+      "path": "references/date-encoding-evidence.json",
+      "sha256": "bdc84bad0c60c648648b13803f5fb6b6a5da237a13f4759a95d93f570feaa784",
+      "claim_scope": "Exact observed selected-rate StartDate serialization only; no general operation promotion"
+    },
+    "LIVE-ACCEPTED-MEALS-PROFILE": {
+      "path": "references/accepted-meals-profile.json",
+      "sha256": "bfe14692614fa6ca4cc407250d955f8d66521e226d7867bf29bd3426881a96ef",
+      "evidence": {
+        "create_observation": "OBS-MS01 accepted-as-written",
+        "create_candidate_sha256": "95f21b894b89b339cc30d43fd5ccaf91ea47c75997b537bb826a1a959f57806f",
+        "create_export_sha256": "774b881095b94f52bfdc9a7198a93c1d2221c4d9de8eab7d1c6b1756d7b15ab3",
+        "update_observation": "OBS-MS02 accepted-as-written",
+        "update_candidate_sha256": "a057d9887a63d6949d425c6a6da89806cfe5f51848bb98851ca117c357a93cfd",
+        "update_export_sha256": "48af5a87acfb99a9a1a14071756bb7f01204f55a821052ee0333439eaa3c12ca",
+        "update_decision_review_sha256": "7ab78537382e0606ab47e2ab561916380a4bd29c4eacd89b25d526a7bce67d0c",
+        "business_outcome": "CREATE17nonblank inputs match; two hidden blank cells export N; audits generated. UPDATE40businesscells match,38preserved;1253non-targetfullrows unchanged;37orderedmetadatarecords unchanged.",
+        "promotion_authority": "User requested incorporating the accepted profile into ordinary runtime contracts and instructions, allowing user values instead of exact test vectors.",
+        "generalization_boundary": "User authorized broadening eligible single currencies, either/both limits, both enforcement modes and warning controls. Source-bound encodings, parent applicability and numeric/cross-field validators support generation. These expanded combinations are not yet live reconciled; candidates disclose requires_live_qualification instead of claiming new observed success. Native approval and reconciliation remain required. Existing currency/date/status/key changes remain unsupported."
+      },
+      "claim_scope": "Accepted core observations plus user-authorized expanded inputs and batch capability. Expanded combinations and effective-dated batches remain pending live reconciliation. No import approval.",
+      "batch_extension": {
+        "authorization": "User requested multiple policies and multiple rates per policy.",
+        "identity": "Exact parent PolicyName and full portable rate key, including StartDate and EndDate. Existing keys remain immutable; an unmatched key requests CREATE, never rename.",
+        "date_encoding": "StartDate retains observed YYYY/MM/DD encoding. EndDate uses the same date-only encoding as a user-authorized engineering extension, not a live-observed outcome.",
+        "schedule_validation": "For each selected policy, validate all resulting rates including retained siblings; inclusive periods must not overlap and AltKey_NoStart must remain unique. At most one open-ended period; never automatically close or delete an existing rate.",
+        "qualification": "Batch operations and nonblank EndDate require live qualification; native approval authorizes an attempt only. No batch atomicity or rollback guarantee."
+      }
+    },
+    "MEALS-EXPANDED-INPUTS": {
+      "path": "references/accepted-meals-profile.json",
+      "sha256": "bfe14692614fa6ca4cc407250d955f8d66521e226d7867bf29bd3426881a96ef",
+      "source_ids": [
+        "EO-MealsPolicy",
+        "EO-MealsPolLine",
+        "SEED-EXM-YES-NO",
+        "UI-MealsPolicy-Boolean"
+      ],
+      "claim_scope": "Local input acceptance and cross-field validation; not a new live outcome or general helper qualification."
+    }
+  },
+  "entities": {
+    "ORA_EXM_MEALS_POLICY": {
+      "ready": true,
+      "review_status": "accepted_core_source_validated_expansion_live_pending",
+      "identity_fields": [
+        "PolicyName"
+      ],
+      "nullable_identity_fields": [],
+      "identity_match": "exact",
+      "operations": [
+        "create",
+        "update"
+      ],
+      "required_fields": {
+        "create": [
+          "PolicyName",
+          "CurrencyCode",
+          "CurrencyOptionCode",
+          "Status",
+          "SingleInstanceLimitFlag",
+          "DailyLimitFlag",
+          "PolicyEnforcementCode",
+          "PolicyViolationFlag",
+          "DispWarningToUserFlag",
+          "PreventSubmissionFlag"
+        ],
+        "update": [
+          "PolicyName",
+          "CurrencyCode",
+          "CurrencyOptionCode",
+          "Status",
+          "SingleInstanceLimitFlag",
+          "DailyLimitFlag",
+          "PolicyEnforcementCode",
+          "PolicyViolationFlag",
+          "DispWarningToUserFlag",
+          "PreventSubmissionFlag"
+        ]
+      },
+      "fields": {
+        "PolicyName": {
+          "create": "supported",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE",
+            "MEALS-EXPANDED-INPUTS"
+          ],
+          "max_length": 80,
+          "length_unit": "characters"
+        },
+        "Description": {
+          "create": "supported",
+          "update": "supported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE",
+            "MEALS-EXPANDED-INPUTS"
+          ],
+          "max_length": 240,
+          "length_unit": "characters"
+        },
+        "Status": {
+          "create": "consumer-managed",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ],
+          "allowed_values": [
+            "DRAFT"
+          ]
+        },
+        "RatesSourceCode": {
+          "create": "unsupported",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "MealsRateSourceCode": {
+          "create": "unsupported",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "RateIncludeMealsFlag": {
+          "create": "unsupported",
+          "update": "unsupported",
+          "source_ids": [
+            "UI-MealsPolicy-Boolean",
+            "SEED-EXM-YES-NO",
+            "EO-MealsPolicy",
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "RateIncludeOtherFlag": {
+          "create": "unsupported",
+          "update": "unsupported",
+          "source_ids": [
+            "UI-MealsPolicy-Boolean",
+            "SEED-EXM-YES-NO",
+            "EO-MealsPolicy",
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "SingleInstanceLimitFlag": {
+          "create": "supported",
+          "update": "supported",
+          "source_ids": [
+            "UI-MealsPolicy-Boolean",
+            "SEED-EXM-YES-NO",
+            "EO-MealsPolicy",
+            "LIVE-ACCEPTED-MEALS-PROFILE",
+            "MEALS-EXPANDED-INPUTS"
+          ],
+          "allowed_values": [
+            "Y",
+            "N"
+          ],
+          "value_mapping": {
+            "Yes": "Y",
+            "No": "N"
+          }
+        },
+        "DailyLimitFlag": {
+          "create": "supported",
+          "update": "supported",
+          "source_ids": [
+            "UI-MealsPolicy-Boolean",
+            "SEED-EXM-YES-NO",
+            "EO-MealsPolicy",
+            "LIVE-ACCEPTED-MEALS-PROFILE",
+            "MEALS-EXPANDED-INPUTS"
+          ],
+          "allowed_values": [
+            "Y",
+            "N"
+          ],
+          "value_mapping": {
+            "Yes": "Y",
+            "No": "N"
+          }
+        },
+        "CurrencyOptionCode": {
+          "create": "supported",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE",
+            "MEALS-EXPANDED-INPUTS"
+          ],
+          "allowed_values": [
+            "SINGLE"
+          ]
+        },
+        "CurrencyCode": {
+          "create": "supported",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE",
+            "MEALS-EXPANDED-INPUTS"
+          ]
+        },
+        "EnabledRoleFlag": {
+          "create": "consumer-managed",
+          "update": "unsupported",
+          "source_ids": [
+            "UI-MealsPolicy-Boolean",
+            "SEED-EXM-YES-NO",
+            "EO-MealsPolicy",
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ],
+          "allowed_values": [
+            "N"
+          ]
+        },
+        "PolicyRoleCode": {
+          "create": "unsupported",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "EnabledLocationFlag": {
+          "create": "consumer-managed",
+          "update": "unsupported",
+          "source_ids": [
+            "UI-MealsPolicy-Boolean",
+            "SEED-EXM-YES-NO",
+            "EO-MealsPolicy",
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ],
+          "allowed_values": [
+            "N"
+          ]
+        },
+        "LocationTypeCode": {
+          "create": "unsupported",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "ZoneTypeCode": {
+          "create": "unsupported",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "PolicyEnforcementCode": {
+          "create": "supported",
+          "update": "supported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE",
+            "MEALS-EXPANDED-INPUTS"
+          ],
+          "allowed_values": [
+            "UPPER",
+            "VIOLATION"
+          ]
+        },
+        "PolicyViolationFlag": {
+          "create": "supported",
+          "update": "supported",
+          "source_ids": [
+            "UI-MealsPolicy-Boolean",
+            "SEED-EXM-YES-NO",
+            "EO-MealsPolicy",
+            "LIVE-ACCEPTED-MEALS-PROFILE",
+            "MEALS-EXPANDED-INPUTS"
+          ],
+          "allowed_values": [
+            "Y",
+            "N"
+          ],
+          "value_mapping": {
+            "Yes": "Y",
+            "No": "N"
+          }
+        },
+        "WarningTolerance": {
+          "create": "supported",
+          "update": "supported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE",
+            "MEALS-EXPANDED-INPUTS"
+          ]
+        },
+        "DispWarningToUserFlag": {
+          "create": "supported",
+          "update": "supported",
+          "source_ids": [
+            "UI-MealsPolicy-Boolean",
+            "SEED-EXM-YES-NO",
+            "EO-MealsPolicy",
+            "LIVE-ACCEPTED-MEALS-PROFILE",
+            "MEALS-EXPANDED-INPUTS"
+          ],
+          "allowed_values": [
+            "Y",
+            "N"
+          ],
+          "value_mapping": {
+            "Yes": "Y",
+            "No": "N"
+          }
+        },
+        "PreventSubmissionFlag": {
+          "create": "supported",
+          "update": "supported",
+          "source_ids": [
+            "UI-MealsPolicy-Boolean",
+            "SEED-EXM-YES-NO",
+            "EO-MealsPolicy",
+            "LIVE-ACCEPTED-MEALS-PROFILE",
+            "MEALS-EXPANDED-INPUTS"
+          ],
+          "allowed_values": [
+            "Y",
+            "N"
+          ],
+          "value_mapping": {
+            "Yes": "Y",
+            "No": "N"
+          }
+        },
+        "ErrorTolerance": {
+          "create": "supported",
+          "update": "supported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE",
+            "MEALS-EXPANDED-INPUTS"
+          ]
+        },
+        "CreationDate": {
+          "create": "system-managed",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "CreatedBy": {
+          "create": "system-managed",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "LastUpdateDate": {
+          "create": "system-managed",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "LastUpdatedBy": {
+          "create": "system-managed",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "LastUpdateLogin": {
+          "create": "system-managed",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        }
+      },
+      "cross_field_rules": [
+        {
+          "kind": "nonnegative_decimal",
+          "field": "WarningTolerance",
+          "source_ids": [
+            "EO-MealsPolicy",
+            "MEALS-EXPANDED-INPUTS"
+          ]
+        },
+        {
+          "kind": "nonnegative_decimal",
+          "field": "ErrorTolerance",
+          "source_ids": [
+            "EO-MealsPolicy",
+            "MEALS-EXPANDED-INPUTS"
+          ]
+        },
+        {
+          "kind": "strict_decimal_order",
+          "lower": "WarningTolerance",
+          "upper": "ErrorTolerance",
+          "source_ids": [
+            "EO-MealsPolicy",
+            "MEALS-EXPANDED-INPUTS"
+          ]
+        }
+      ],
+      "create_managed_fields": {
+        "Status": {
+          "value": "DRAFT",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "EnabledRoleFlag": {
+          "value": "N",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "EnabledLocationFlag": {
+          "value": "N",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        }
+      },
+      "create_empty_fields": {
+        "PolicyName": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "Description": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "RatesSourceCode": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "MealsRateSourceCode": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "RateIncludeMealsFlag": {
+          "behavior": "observed_server_normalization",
+          "expected_export_value": "N",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "RateIncludeOtherFlag": {
+          "behavior": "observed_server_normalization",
+          "expected_export_value": "N",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "SingleInstanceLimitFlag": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "DailyLimitFlag": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "CurrencyOptionCode": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "CurrencyCode": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "PolicyRoleCode": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "LocationTypeCode": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "ZoneTypeCode": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "PolicyEnforcementCode": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "PolicyViolationFlag": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "WarningTolerance": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "DispWarningToUserFlag": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "PreventSubmissionFlag": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "ErrorTolerance": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "CreationDate": {
+          "behavior": "system_generated",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "CreatedBy": {
+          "behavior": "system_generated",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "LastUpdateDate": {
+          "behavior": "system_generated",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "LastUpdatedBy": {
+          "behavior": "system_generated",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "LastUpdateLogin": {
+          "behavior": "system_generated",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        }
+      },
+      "ownership_source_ids": [
+        "LIVE-ACCEPTED-MEALS-PROFILE"
+      ],
+      "identity_source_ids": [
+        "LIVE-ACCEPTED-MEALS-PROFILE"
+      ],
+      "required_fields_source_ids": [
+        "LIVE-ACCEPTED-MEALS-PROFILE"
+      ],
+      "operations_source_ids": [
+        "LIVE-ACCEPTED-MEALS-PROFILE"
+      ],
+      "cross_field_source_ids": [
+        "LIVE-ACCEPTED-MEALS-PROFILE"
+      ],
+      "reference_fields": [
+        "CurrencyCode"
+      ],
+      "validate_retained_reference_fields": [
+        "CurrencyCode"
+      ]
+    },
+    "ORA_EXM_MEALS_POLICY_LINE": {
+      "ready": true,
+      "review_status": "accepted_core_source_validated_expansion_live_pending",
+      "identity_fields": [
+        "ORA_EXM_MEALS_POLICY.PolicyName",
+        "CurrencyCode",
+        "EndDate",
+        "GeoLocName",
+        "RoleName",
+        "StartDate",
+        "TypeOfRateCode",
+        "ZoneCode"
+      ],
+      "nullable_identity_fields": [
+        "CurrencyCode",
+        "EndDate",
+        "GeoLocName",
+        "RoleName",
+        "TypeOfRateCode",
+        "ZoneCode"
+      ],
+      "identity_match": "exact",
+      "operations": [
+        "create",
+        "update"
+      ],
+      "required_fields": {
+        "create": [
+          "ORA_EXM_MEALS_POLICY.PolicyName",
+          "StartDate",
+          "Status"
+        ],
+        "update": [
+          "ORA_EXM_MEALS_POLICY.PolicyName",
+          "StartDate",
+          "Status"
+        ]
+      },
+      "fields": {
+        "ORA_EXM_MEALS_POLICY.PolicyName": {
+          "create": "supported",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE",
+            "MEALS-EXPANDED-INPUTS"
+          ]
+        },
+        "CurrencyCode": {
+          "create": "unsupported",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "EndDate": {
+          "create": "supported",
+          "update": "unsupported",
+          "source_ids": [
+            "EO-MealsPolLine",
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ],
+          "csv_date_format": "%Y/%m/%d"
+        },
+        "GeoLocName": {
+          "create": "unsupported",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "RoleName": {
+          "create": "unsupported",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "StartDate": {
+          "create": "supported",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-SELECTED-RATE-STARTDATE-ENCODING",
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ],
+          "csv_date_format": "%Y/%m/%d"
+        },
+        "TypeOfRateCode": {
+          "create": "unsupported",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "ZoneCode": {
+          "create": "unsupported",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "CreatedBy": {
+          "create": "system-managed",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "CreationDate": {
+          "create": "system-managed",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "DailyLimit": {
+          "create": "supported",
+          "update": "supported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE",
+            "MEALS-EXPANDED-INPUTS"
+          ]
+        },
+        "InvalidCode": {
+          "create": "unsupported",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "LastUpdateDate": {
+          "create": "system-managed",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "LastUpdateLogin": {
+          "create": "system-managed",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "LastUpdatedBy": {
+          "create": "system-managed",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "RawCity": {
+          "create": "unsupported",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "RawCountry": {
+          "create": "unsupported",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "RawCounty": {
+          "create": "unsupported",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "RawState": {
+          "create": "unsupported",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "SingleInstanceLimit": {
+          "create": "supported",
+          "update": "supported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE",
+            "MEALS-EXPANDED-INPUTS"
+          ]
+        },
+        "Status": {
+          "create": "consumer-managed",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "RoleCode": {
+          "create": "unsupported",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "GradeCode": {
+          "create": "unsupported",
+          "update": "unsupported",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        }
+      },
+      "cross_field_rules": [
+        {
+          "kind": "nonnegative_decimal",
+          "field": "SingleInstanceLimit",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        {
+          "kind": "nonnegative_decimal",
+          "field": "DailyLimit",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        }
+      ],
+      "create_managed_fields": {
+        "Status": {
+          "value": "DRAFT",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        }
+      },
+      "create_empty_fields": {
+        "ORA_EXM_MEALS_POLICY.PolicyName": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "CurrencyCode": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "EndDate": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "GeoLocName": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "RoleName": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "StartDate": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "TypeOfRateCode": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "ZoneCode": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "CreatedBy": {
+          "behavior": "system_generated",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "CreationDate": {
+          "behavior": "system_generated",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "DailyLimit": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "InvalidCode": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "LastUpdateDate": {
+          "behavior": "system_generated",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "LastUpdateLogin": {
+          "behavior": "system_generated",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "LastUpdatedBy": {
+          "behavior": "system_generated",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "RawCity": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "RawCountry": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "RawCounty": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "RawState": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "SingleInstanceLimit": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "RoleCode": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        },
+        "GradeCode": {
+          "behavior": "remains_empty",
+          "source_ids": [
+            "LIVE-ACCEPTED-MEALS-PROFILE"
+          ]
+        }
+      },
+      "ownership_source_ids": [
+        "LIVE-ACCEPTED-MEALS-PROFILE"
+      ],
+      "identity_source_ids": [
+        "LIVE-ACCEPTED-MEALS-PROFILE"
+      ],
+      "required_fields_source_ids": [
+        "LIVE-ACCEPTED-MEALS-PROFILE"
+      ],
+      "operations_source_ids": [
+        "LIVE-ACCEPTED-MEALS-PROFILE"
+      ],
+      "cross_field_source_ids": [
+        "LIVE-ACCEPTED-MEALS-PROFILE"
+      ],
+      "parent": {
+        "entity": "ORA_EXM_MEALS_POLICY",
+        "parent_field": "PolicyName",
+        "child_field": "ORA_EXM_MEALS_POLICY.PolicyName",
+        "source_ids": [
+          "LIVE-ACCEPTED-MEALS-PROFILE"
+        ]
+      }
+    }
+  },
+  "executable_profile": "meals-single-currency-v2",
+  "package": {
+    "strategy": "sparse_selected_rows",
+    "unsubmitted_rows": "preserve",
+    "source_ids": [
+      "LIVE-ACCEPTED-MEALS-PROFILE"
+    ]
+  }
+}

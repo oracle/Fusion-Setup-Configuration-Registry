@@ -1,0 +1,157 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "ORA_RCL_RETURN_ROUTING_RULES",
+      "task_name": "Return Routing Rules",
+      "start_node": "RRR.VALIDATE_INPUT",
+      "nodes": [
+        {
+          "id": "RRR.VALIDATE_INPUT",
+          "node_type": "step",
+          "sequence": 1,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "RRR.LOOKUP_VALUES",
+            "invalid": "RRR.RETURN_REFUSAL"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "When Return Routing Rules setup data is prepared",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 18
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RRR.LOOKUP_VALUES",
+          "node_type": "step",
+          "sequence": 2,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "resolved": "RRR.RESOLVE_DEPENDENCIES",
+            "unresolved": "RRR.RETURN_REFUSAL"
+          },
+          "prerequisites": [
+            "RRR.VALIDATE_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "When supplied values or an existing rule key require local reference checks; resolve organization and catalog before dependent subinventory and category values",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 52
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RRR.RESOLVE_DEPENDENCIES",
+          "node_type": "step",
+          "sequence": 3,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "RRR.EXECUTION_GATE",
+            "blocked": "RRR.RETURN_REFUSAL"
+          },
+          "prerequisites": [
+            "RRR.LOOKUP_VALUES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "After local reference checks, confirm each supplied subinventory or category belongs to its selected parent",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 24
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RRR.EXECUTION_GATE",
+          "node_type": "decision",
+          "sequence": 4,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "RRR.RETURN_PREPARED",
+            "blocked": "RRR.RETURN_REFUSAL"
+          },
+          "prerequisites": [
+            "RRR.RESOLVE_DEPENDENCIES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "After input and applicable lookup checks and before Data Loader handoff",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 29
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RRR.RETURN_PREPARED",
+          "node_type": "terminal",
+          "sequence": 5,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "RRR.EXECUTION_GATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Validation and handoff checks passed; no import has occurred",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 30
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RRR.RETURN_REFUSAL",
+          "node_type": "terminal",
+          "sequence": 6,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "continue",
+          "applies_when": "Required Business Object contract, reference value, or approval is missing",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 31
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

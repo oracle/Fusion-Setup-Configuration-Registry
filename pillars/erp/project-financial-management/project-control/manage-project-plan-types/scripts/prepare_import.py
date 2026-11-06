@@ -4,6 +4,7 @@
 Inputs use already-resolved CSV attributes. This helper never resolves LOVs,
 approves, uploads or calls Fusion. Create defaults cover PROJECT_PLAN/BUDGET/
 COST_ONLY only. Updates merge exact retained rows without create defaults.
+Submitted synchronized options with an empty buffer receive the save default 0.
 """
 from __future__ import annotations
 
@@ -18,7 +19,8 @@ from urllib.parse import urlsplit
 import xml.etree.ElementTree as ET
 import zipfile
 
-from validate_import import COLUMNS, PARENT, CHILD, CURRENCY, LINK, META, TASK, validate_archive
+from validate_import import (COLUMNS, PARENT, CHILD, CURRENCY, LINK, META, TASK,
+                             validate_archive, shared_conversion_intent, validate_source_intent)
 
 # Explicit values from ora_defaulting_rules.md; never derive defaults from
 # column spelling, required-field lists, row frequency or another record.
@@ -160,8 +162,16 @@ def read_package(content: bytes):
 
 
 def prepare_archive(template: bytes, baseline: bytes, request: dict, *, target_origin: str):
-    if not isinstance(request, dict) or set(request) - {'operation', 'rows', 'insertRows', 'rename', 'duplicateFrom', 'copyChildren', 'copyConversionAttributes'}:
-        raise ValueError('Request accepts operation, rows, optional insertRows, rename, duplicateFrom, copyChildren and copyConversionAttributes=true.')
+    if not isinstance(request, dict) or set(request) - {'operation', 'rows', 'insertRows', 'rename', 'duplicateFrom', 'copyChildren', 'copyConversionAttributes', 'sourceInput'}:
+        raise ValueError('Request accepts operation, rows, optional insertRows, rename, duplicateFrom, copyChildren, sourceInput and copyConversionAttributes=true.')
+    request = dict(request)
+    shared_intent = shared_conversion_intent(request.get('sourceInput'))
+    if shared_intent is True:
+        if 'copyConversionAttributes' in request and request['copyConversionAttributes'] is not True:
+            raise ValueError('SOURCE_INTENT_MISMATCH: Requested shared conversion conflicts with the canonical action.')
+        request['copyConversionAttributes'] = True
+    elif shared_intent is False and request.get('copyConversionAttributes'):
+        raise ValueError('SOURCE_INTENT_MISMATCH: Independent conversion intent conflicts with the copy action.')
     if 'copyConversionAttributes' in request and request['copyConversionAttributes'] is not True:
         raise ValueError('copyConversionAttributes is an explicit true action, not a persistent UI checkbox. Supply independent role attributes without this action.')
     operation, supplied = request.get('operation'), request.get('rows')
@@ -436,6 +446,19 @@ def prepare_archive(template: bytes, baseline: bytes, request: dict, *, target_o
                     if row[LINK] == retained_rate_parent and row['ShortCode'] == effective['ShortCode']), {})
         validate_requested_rates(effective, patch, options[0] if len(options) == 1 else {},
                                  operation='update' if source_parent and old else operation, retained=old)
+    # Match the task UI's save-time null default after explicit choices and
+    # retained values have been merged. This is not a general create default:
+    # keep nonempty values (including zero/negative overrides), disabled values
+    # and omitted options rows unchanged. Invalid nonempty values still fail
+    # byte validation rather than being replaced with zero.
+    for row in output[CHILD]:
+        if row.get('SyncTaskTxnPlanDates') == 'Y' and row.get('SyncTxnDateBuffer', '') == '':
+            before = row.get('SyncTxnDateBuffer')
+            row['SyncTxnDateBuffer'] = '0'
+            changes.append({'member':CHILD, 'attribute':'SyncTxnDateBuffer', 'value':'0',
+                'source':'conditional_save_default', 'path':CHILD+'.SyncTxnDateBuffer',
+                'before':before, 'after':'0',
+                'reason':'Synchronization is enabled and the effective buffer is empty; apply the task save default of 0 days. Explicit and retained nonempty buffers take precedence.'})
     stream = io.BytesIO()
     with zipfile.ZipFile(stream, 'w', compression=zipfile.ZIP_DEFLATED) as archive:
         for member, header in headers.items():
@@ -449,6 +472,7 @@ def prepare_archive(template: bytes, baseline: bytes, request: dict, *, target_o
     validation = validate_archive(content, operation=operation)
     if validation['taskContractValidation']['status'] != 'passed':
         raise ValueError(json.dumps(validation, ensure_ascii=False))
+    validate_source_intent(content, request.get('sourceInput'))
     return content, {'operation':operation, 'name':name, 'exportEnvironment':environment,
         'archiveSha256':hashlib.sha256(content).hexdigest(),
         'rowCounts':{member:len(values) for member,values in output.items()},

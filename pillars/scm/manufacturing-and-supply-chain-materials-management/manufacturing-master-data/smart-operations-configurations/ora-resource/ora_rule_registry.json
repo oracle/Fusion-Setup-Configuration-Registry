@@ -1,0 +1,331 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "ORA_WIE_SMART_OPERATIONS_CONFIGURATIONS",
+      "task_name": "Smart Operations Configurations",
+      "start_node": "SOC.VALIDATE_SCOPE",
+      "nodes": [
+        {
+          "id": "SOC.VALIDATE_SCOPE",
+          "node_type": "step",
+          "sequence": 10,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "SOC.VERIFY_ARTIFACT",
+            "blocked": "SOC.HANDLE_ERROR"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "A Smart Operations Configurations request is received; check presence of Required Groups only. Archive/shape/hash validation is performed by SOC.VERIFY_ARTIFACT.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 23
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "SOC.VERIFY_ARTIFACT",
+          "node_type": "step",
+          "sequence": 20,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "matched": "SOC.VERIFY_CSV_SUPPORT",
+            "blocked": "SOC.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "SOC.VALIDATE_SCOPE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Apply Field Validation to actual supplied local template/prepared archives and their named provenance records under verify_fsm_artifact_contract; record member/header/hash/row-shape checks. No Fusion call, export or archive preparation.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 24
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "SOC.VERIFY_CSV_SUPPORT",
+          "node_type": "step",
+          "sequence": 30,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "supported": "SOC.VERIFY_BUSINESS_OBJECTS",
+            "blocked": "SOC.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "SOC.VERIFY_ARTIFACT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Apply only verify_smart_operations_csv_support for current selected-target task CSV flags; this does not establish Business Object associations.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 36
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "SOC.VERIFY_BUSINESS_OBJECTS",
+          "node_type": "step",
+          "sequence": 35,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "SOC.VERIFY_UOM",
+            "blocked": "SOC.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "SOC.VERIFY_CSV_SUPPORT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Apply only verify_smart_operations_business_objects through the declared BOSS contract; incomplete coverage, missing/ambiguous required associations or unknown identities stop without inferring definitions.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 37
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "SOC.VERIFY_UOM",
+          "node_type": "step",
+          "sequence": 40,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "SOC.VERIFY_ORGANIZATION",
+            "blocked": "SOC.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "SOC.VERIFY_BUSINESS_OBJECTS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Apply only verify_uom for the selected target and UOMCode.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 38
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "SOC.VERIFY_ORGANIZATION",
+          "node_type": "step",
+          "sequence": 50,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "SOC.VERIFY_MANUFACTURING_PLANT",
+            "blocked": "SOC.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "SOC.VERIFY_UOM"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Apply only verify_organizations for the selected target and OrganizationCode.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 39
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "SOC.VERIFY_MANUFACTURING_PLANT",
+          "node_type": "step",
+          "sequence": 60,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "SOC.CHECK_DEPENDENCIES",
+            "blocked": "SOC.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "SOC.VERIFY_ORGANIZATION"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Apply only verify_manufacturing_plant using the same resolved organization identity.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 40
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "SOC.CHECK_DEPENDENCIES",
+          "node_type": "step",
+          "sequence": 70,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "SOC.ENFORCE_DESIGN",
+            "blocked": "SOC.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "SOC.VERIFY_MANUFACTURING_PLANT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Evaluate Dependency Rules against all preceding current lookup results; prerequisite setup remains separate.",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 34
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "SOC.ENFORCE_DESIGN",
+          "node_type": "decision",
+          "sequence": 80,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "SOC.CHECK_APPROVAL_BOUNDARY",
+            "blocked": "SOC.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "SOC.CHECK_DEPENDENCIES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Evaluate Design Rules for the proposed task configuration; no Run Book selection or cross-task sequencing is owned here.",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 36
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "SOC.CHECK_APPROVAL_BOUNDARY",
+          "node_type": "decision",
+          "sequence": 90,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "delegated": "SOC.DONE",
+            "blocked": "SOC.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "SOC.ENFORCE_DESIGN"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Verify exact immutable-archive identity and second-reviewer findings and the mandatory delegation of POST-task-validation administrator approval to the existing core.data-loader Task Hook/preflight workflow. Do not request an approval envelope before all task rules pass; return these validation findings without performing a write.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 37
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "SOC.DONE",
+          "node_type": "terminal",
+          "sequence": 100,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "SOC.CHECK_APPROVAL_BOUNDARY"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Required task-rule checks, immutable-package/second-review checks and delegated approval boundary passed; return their results only. Actual subsequent administrator approval and submission remain with core.data-loader; never claim approval, completed import, saved values or task completion from this terminal.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 38
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "SOC.HANDLE_ERROR",
+          "node_type": "step",
+          "sequence": 110,
+          "action_type": "error_handler",
+          "execution_route": "local",
+          "transitions": {
+            "handled": "SOC.BLOCKED"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "A preceding node reports blocked or failed; disclose the exact issue and safe next action.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 39
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "SOC.BLOCKED",
+          "node_type": "terminal",
+          "sequence": 120,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "SOC.HANDLE_ERROR"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return the identified unresolved contract or task-rule failure without mutation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 40
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

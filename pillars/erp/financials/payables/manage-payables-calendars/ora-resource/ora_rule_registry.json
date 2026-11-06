@@ -14,7 +14,7 @@
           "action_type": "validate_input",
           "execution_route": "local",
           "transitions": {
-            "valid": "CALENDAR.ENFORCE_DESIGN",
+            "valid": "CALENDAR.CHECK_LOCAL_VALUES",
             "invalid": "CALENDAR.INPUT_BLOCKED"
           },
           "prerequisites": [],
@@ -23,7 +23,57 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 40
+            "line": 42
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CALENDAR.CHECK_LOCAL_VALUES",
+          "node_type": "step",
+          "sequence": 15,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "ready": "CALENDAR.CHECK_DEPENDENCIES",
+            "blocked": "CALENDAR.INPUT_BLOCKED"
+          },
+          "prerequisites": [
+            "CALENDAR.VALIDATE_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Always; apply only the Local Lookups rules for supplied calendar fields, preserve codes without a task-owned allowlist, and make no live lookup calls",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 24
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CALENDAR.CHECK_DEPENDENCIES",
+          "node_type": "step",
+          "sequence": 17,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "CALENDAR.ENFORCE_DESIGN",
+            "blocked": "CALENDAR.INPUT_BLOCKED"
+          },
+          "prerequisites": [
+            "CALENDAR.CHECK_LOCAL_VALUES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Always; verify applicable parent linkage and bounded field lifecycle contracts before design enforcement",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 30
           },
           "readiness": {
             "status": "ready",
@@ -41,7 +91,7 @@
             "blocked": "CALENDAR.DESIGN_BLOCKED"
           },
           "prerequisites": [
-            "CALENDAR.VALIDATE_INPUT"
+            "CALENDAR.CHECK_DEPENDENCIES"
           ],
           "on_failure": "stop",
           "applies_when": "Always",

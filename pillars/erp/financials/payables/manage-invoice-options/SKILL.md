@@ -36,7 +36,10 @@ depends_on:
   - "shared.validation.setup-data-validator"
   - "shared.validation.reference-data-validator"
   - "core.data-loader"
+  - "erp.financials.payables.manage-payment-options"
 uses_core:
+  - "core.auth.fusion-oauth-authentication"
+  - "core.fusion-api.ucm-rest-client"
   - "core.project-mgmt.artifact-version-manager"
   - "core.project-mgmt.artifact-registry-manager"
   - "core.project-mgmt.project-state-manager"
@@ -213,3 +216,120 @@ submit a second full-row package with a different baseline or values. A
 Payment-only request remains a Manage Payment Options package.
 
 Use the parent functional-area skill `erp.financials.payables` for functional-area sequencing and scope decisions. Track token usage for any generated project artifact or skill-run record using the manifest policy.
+
+Account segment serialization and blank-position rules: see `ora-resource/ora_input_validation.md`, “Account segment package format”.
+
+For account changes, ledger changes affecting an existing account, or enabling
+interest invoices, run `scripts/resolve_lookup_prerequisites.py --baseline
+<fresh-export.zip>` before normalization. It uses the task-owned
+`scripts/interest_account_validation.py` and the unchanged core OAuth/HTTP client. Require a positive existing
+CCID with `DynamicInsertion=No`; invalid or unavailable validation blocks the
+candidate. Preserve receipt bindings to operation, BU, ledger, ordered segments
+and baseline. Never create a GL combination. Keep the builder's JSON report
+with a generated ZIP. For offline `validate-upload`, pass that report through
+`--validation-context <build-report.json>`. It ties the original requests and
+lookup results to the exact ZIP and baseline, including interest-account
+checks. For a separately prepared upload, `--prerequisites` still accepts
+upload-specific preflight receipts. Missing evidence blocks account changes.
+Account serialization remains the native 30-slot LF vector.
+
+## Narrow Post-Import Interest Verification
+
+This check applies only when a nonblank Interest Expense Distribution was
+requested and Create Interest Invoices (`AutoCalculateInterestFlag`) is `Y` in
+the effective submitted row. Reject a nonblank requested account before building
+a package when this flag is not `Y`; preserve the exported flag for an update
+unless the requester changes it. Disabling interest invoices clears the account
+and tolerance; do not expect account retention in that case.
+
+After the approved import completes, inspect its status/errors through Data
+Loader, obtain a fresh same-task setup-data export through Task Level Export,
+then run the task-owned command:
+
+```text
+python3 scripts/fsm_task_adapter.py verify-interest --baseline <before.zip> --candidate <approved.zip> --blueprint <blueprint.json> --export <fresh-after.zip> --report <verification.json> --verification-evidence <observations.json> --environment <selected-environment> --base-url <selected-https-origin> --import-request-id <completed-import-request>
+```
+
+Use the environment, HTTPS origin and import request selected by the governed
+workflow. The observation file must come from that workflow's actual Data Loader
+status/error checks and completed Task Level Export, with file hashes and times.
+Do not create success observations from matching CSV values or copied ZIP
+metadata. See [Error Handling](ora-resource/ora_error_handling.md#post-import-readback-evidence)
+for the observation fields and checks. Missing or mismatched proof leaves
+verification `PENDING`; do not describe the account as saved.
+
+The task workflow must complete this follow-up before claiming the requested
+interest account was configured. `PASS` means the requested ordered account
+segments persisted on the exact BU with interest enabled; a blank or different
+account is `FAIL`. Missing/unreadable readback is `PENDING`: report "Import
+completed; interest account verification pending." With no requested account,
+this check is `NOT_APPLICABLE`. Compare leading zeros and blank segment positions
+using the existing canonical multiline format. Do not compare unrelated fields
+or BUs, audit values, defaults or derived fields. Full `reconcile` remains an
+optional diagnostic. Do not retry imports or restore values automatically.
+
+Data Loader's import result remains separate. `SUCCESS.DONE` in the pre-import
+Task Hook registry means pre-import readiness, not persisted configuration.
+
+## Verifying Changes After Import
+
+`reconcile` can report `PASS` only after the workflow has observed a successful
+import and a later completed export from the same task and environment. Supply
+`--verification-evidence <observations.json> --environment <selected-environment>
+--base-url <selected-https-origin> --import-request-id <completed-import-request>`
+along with the baseline, approved candidate, blueprint, requirements and export.
+Missing, stale or mismatched evidence leaves verification `PENDING`; say that
+saved changes have not yet been verified.
+
+For an offline file comparison, use `reconcile --compare-only`. Its result is
+`MATCH` or `DIFFERENT`, with `persistenceVerification=NOT_PERFORMED`. A file match
+does not prove that an import occurred. Package building and import approval
+are unchanged. See [Error Handling](ora-resource/ora_error_handling.md#reconciliation-evidence)
+for the required observations.
+
+
+## Reference Lookup Evidence
+
+When a design or uploaded ZIP uses lookup receipts, follow
+[Reference evidence provenance](references/reference-evidence-provenance.md).
+Keep the selected target separate from evidence, require matching environment
+and HTTPS origin, and rerun preflight for missing, malformed, future, or
+more-than-24-hour-old observations. The same provenance checks apply to
+unavailable lookup warnings. An offline receipt does not authorize a live call
+or prove that Fusion imported the ZIP.
+
+
+## Uploaded Package Compatibility
+
+Before reporting an uploaded ZIP as valid, supply `validate-upload` with
+`--target-context <selected-target.json>` from the independently selected
+workflow target. Both baseline and uploaded metadata must match its environment
+and release. Read [Uploaded package compatibility](references/uploaded-package-compatibility.md)
+for the contract and migration boundary. Matching schemas alone do not establish
+source/target compatibility.
+
+
+## Source Manifest Labels and Origins
+
+When producing a source manifest or verifying post-import observations, follow
+[Manifest labels and HTTPS origins](references/manifest-labels-and-origins.md).
+A source manifest's environment must match its ZIP metadata; keep migration
+destination information separate. Use a credential-free HTTPS origin without
+an API path, query or fragment. A template-only label requires an empty package.
+
+
+## Sibling Runtime Dependency
+
+Invoice Options imports the Payment Options descriptor and runtime to validate
+Payment-owned fields in the shared AP_SYSTEM_PARAMETER row. It calls the Payment
+field-contract entry point, never the full Payment Options workflow or blueprint
+validator.
+
+The sibling ID in `depends_on` is a required code/component dependency. Package
+both skill folders, including their SKILL.md, e2e-adapter.json and script files,
+under the same Payables parent directory. Preserve the sibling directory names
+used by the loaders. The reciprocal declarations describe mutual runtime
+requirements, not an execution order or a request to run both workflows.
+Dependency collection should include each skill once. A missing sibling runtime
+or descriptor blocks validation with an actionable error; do not replace it with
+weaker local checks. Keep both components together when distributing this pair.

@@ -1,5 +1,15 @@
 # Manage Expense Report Templates Reference Lookups
 
+Read [destination-reference-contract.md](../references/destination-reference-contract.md)
+before candidate preparation. This workflow selects core REST GETs for the
+EXM_EXPENSE_TYPE_CATEGORY lookup, finBusinessUnitsLOV and optional ledgersLOV.
+Validate their complete, fresh, destination-bound evidence with
+`scripts/reference_values.py` and pass it to `build_import_candidate.py` via
+`--reference-evidence`. The export establishes schema/identity/preservation;
+it never supplies a complete reference-value dictionary. Categories may be
+valid without existing expense-type usage. Resolve LedgerName automatically
+from the BU PrimaryLedgerId when account_number is supplied.
+
 ## Legacy Category Reference (not an intake path)
 
 These tables are retained only for legacy candidate-builder compatibility.
@@ -51,11 +61,13 @@ unchanged when updating seed values.
 
 | Resolver | Runs When | Source Values | Request Path or URL | Requested Fields | Match Rule | Values to Fill | If No Match or Many Matches |
 |---|---|---|---|---|---|---|---|
+| destination_reference_evidence | After fresh baseline and before candidate construction | Exact environment, baseline SHA-256, requested BUs/categories and optional account numbers | Core REST GET standardLookups/EXM_EXPENSE_TYPE_CATEGORY/child/lookupCodes, finBusinessUnitsLOV and optional ledgersLOV; see destination-reference-contract.md | LookupCode, Meaning, enabled/effective dates; BusinessUnitId, BusinessUnitName, ActiveFlag, PrimaryLedgerId; LedgerId, Name | Complete fresh result sets; exact unique BU and ledger matches; exact active category code or unique Meaning | Category code; automatically derived LedgerName; account_number maps to Segment1 | Stop on failed/unverified evidence, zero or multiple exact matches; never constrain values to baseline usage |
 | export_preservation_baseline | Local intake is complete and preparation preflight passed | Exact environment; TaskCode EXM_MANAGE_EXPENSE_REPORT_TEMPLATES; per-template business units and worksheet identities | shared.setup-export.task-level-export delegates POST setupTaskCSVExports, GET the same ProcessId and its FileContent enclosure | ProcessId; completion/result status; FileContent; retrieval time | Classify a unique existing template/type/mapping identity as update; classify an absent identity as create; stop on multiple matches; verify supported headers/references; preserve unrelated rows | ProcessId; timestamp; ZIP SHA-256; CSV inventory/hashes; identities; schema; derived-operation evidence; preservation evidence | Stop preparation, disclose failed assertion and correct identity or missing reference; never build against an ambiguous target |
 
 ## Lookup Execution Rules
 
-Use the shared exporter for all request mechanics and authentication. Export
+Use the shared exporter for export mechanics and the shared REST client for
+the reference GETs declared above, with core-managed authentication. Export
 does not import or mutate expense configuration. The workflow selects it as
 preparation; no separate contract or candidate-build approval is needed.
 

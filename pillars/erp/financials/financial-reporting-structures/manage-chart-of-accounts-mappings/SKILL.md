@@ -17,7 +17,7 @@ source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 type: "planning"
 execution_mode: "assisted"
 owner_team: "ERP financials pillar team"
-version: "0.1.0"
+version: "0.1.1"
 inputs:
   - "implementation_objective"
   - "project_context"
@@ -160,17 +160,17 @@ Use only the existing FDOS authentication path and core FSM REST client as share
 ## Lifecycle
 
 1. Validate business inputs and intended accounting date.
-2. Obtain the current Oracle Chart of Accounts Mapping Rules XLSM template and supported read-only mapping evidence.
-3. Resolve technical columns, internal codes, identifiers, and defaults from the current template, same-task exports, supported metadata, Oracle functional documentation, then Oracle EDM documentation.
+2. Select FSM for standard segment, single-source rollup, and account rules. Obtain a current target-environment template/spec ZIP through shared.setup-export.task-level-export (the default template-only route) whenever needed, independently of mapping inputs, COA resolution, or comparison. Require the Oracle XLSM only for a selected FBDI route.
+3. For FSM, follow the Template Contract Review and FSM Package Preparation procedures in ora-resource/ora_reference_lookups.md using the current ZIP and the Reviewed FSM Schema and Reviewed FSM Field Semantics sections in ora-resource/ora_reference_lookups.md. This contract is reference data for source/target semantics and S/C/R methods, not an executable dependency; a populated full-task export is not required. Resolve environment-specific identifiers separately. Stop on incompatible headers or metadata rather than guessing.
 4. Validate source and target charts, segments, referenced values, hierarchies, hierarchy versions, and deployment readiness.
-5. Find the mapping header and compare its complete requested definition.
+5. Find the mapping header using current target-environment evidence and compare its complete requested definition. Template acquisition does not depend on this comparison or on COA resolution. With no current mapping evidence, keep comparison pending and permit local package preparation only; never infer absence from an empty template or another environment's export.
 6. Stop on an identical mapping, or show field-level differences and obtain direction for a changed mapping.
-7. Validate segment, rollup, multiple-source, and account rules as one parent-and-children design.
+7. Validate segment, rollup, multiple-source, and account rules as one parent-and-children design. A create requires an actual rule definition; never submit a header-only smoke test. A segment-rule design must cover every enabled target segment exactly once, using current verified target metadata and valid values.
 8. Generate the source mapping, validation result, default-derivation record, and import-readiness record.
-9. Preview the exact action. Require explicit approval for create, update, Replace, upload, import, or delete.
-10. Import segment and rollup rules using Increment by default; manage account rules through the application.
-11. Reread the mapping before an approved update and detect concurrent changes.
-12. Verify the result with the Chart of Accounts Mapping Rules Report or equivalent read-only review.
+9. Preview local preparation separately from submission readiness. A pending comparison terminates at prepared-only; do not route it to Data Loader approval. Require all applicable checks before a live preview.
+10. Route every import through core.data-loader and its Task Hook, immutable artifact, and approval workflow. Use Increment by default. Account rules use the verified FSM CSV contract, not FBDI.
+11. Check concurrency during preapproval validation for updates. Follow Data Loader's persisted approval-bound artifact procedure after approval; do not rebuild the artifact or duplicate its approval gate.
+12. A successful Data Loader initiation is terminal for that request. On a requested result check, verify through its status workflow and the Chart of Accounts Mapping Rules Report or equivalent read-only review.
 
 ## Inputs
 
@@ -178,7 +178,8 @@ Use only the existing FDOS authentication path and core FSM REST client as share
 - `project_context`
 - `mapping_definition`
 - `intended_accounting_date`
-- `current_fbdi_template`
+- `current_fsm_template` (FSM route)
+- `current_fbdi_template` (FBDI route only)
 - `existing_mapping_evidence`
 
 ## Outputs
@@ -205,6 +206,16 @@ Persist supported implementation artifacts under:
 - Do not use failed live imports as default discovery.
 - Do not perform a mutating Fusion action without explicit approval.
 - Do not proceed when the current mapping changed after the comparison baseline.
+
+## FSM Preparation and Evidence
+
+No task-specific executable is required. Use the existing shared task-level exporter, setup-data and reference-data validation workflows, and core.data-loader. Follow the task's explicit procedures in ora-resource/ora_reference_lookups.md for template review, current segment/value evidence, exact-name mapping comparison, and package preparation. The agent evaluates these rules and records the evidence in Task Hook ruleResults before the existing Data Loader preview/approval workflow.
+
+Read the Reviewed FSM Schema and Reviewed FSM Field Semantics sections in ora-resource/ora_reference_lookups.md as the reviewed schema reference. Compare current CSV headers, metadata attribute types, object paths, sequence, and batch names before using their field/code meanings. These sections contain no customer setup rows and do not establish current environment state.
+
+Obtain template/spec exports whenever needed. Obtain current name-scoped mapping evidence separately for duplicate/update checks; templates and foreign or old snapshots cannot establish absence. Both template and data exports can have ProcessType=EXPORT, so retain the originating operation, target environment, scope, timestamp, and artifact fingerprint.
+
+Reject header-only creation, missing target-segment coverage, unverified values, and broken parent-child links before live preview. Preserve string values and leading zeros, leave unwritable audit fields blank, and prepare an immutable ZIP containing only the requested mapping data. Registry readiness means graph validity; package validity and live submission readiness require separate evaluated evidence.
 
 ## Existing Skill Refinement Notes
 

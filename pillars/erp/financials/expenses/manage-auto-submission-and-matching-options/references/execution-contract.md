@@ -86,6 +86,45 @@ choice resolves the earlier conflict; reuse that confirmation rather than asking
 again. Baseline values are evidence, never implicit permission to override the
 user's choice. Verify the confirmed code is enabled through the declared lookup.
 
+## Verify the BU schedule display before approval
+
+For every BU schedule request, including already-satisfied schedule values,
+obtain the BU `ENABLE_AUTO_SUB_DA_EXP` fact from both complete option aliases
+in the fresh baseline. Reconcile aliases before deciding that a row is absent;
+a missing lookup or incomplete export is not evidence of inheritance. Pass the
+reconciled option facts along with organization facts, or use
+`option_alias_baseline`, even when no option write was originally requested.
+
+The candidate report's `schedule_visibility` uses `assess_schedule_visibility`
+on the original requested controls and the verified baseline, before no-op
+suppression. Evaluate this result in AUTO_DEPENDENCIES and AUTO_DESIGN:
+
+- Explicit BU Y: the reviewed UI selects the BU schedule and enables controls.
+- Explicit BU N: it selects the BU schedule but disables controls. Do not claim
+  automatic submission is enabled.
+- Absent or other inherited BU value: the reviewed UI selects inherited
+  frequency/time rather than the saved BU frequency/time. A global Y or N does
+  not turn this into an explicit BU option.
+
+If `requires_user_resolution` is true, explain that storing BU schedule rows
+alone will not make that schedule appear as the BU override. Before building
+Task Hook approval, obtain either an explicit Yes/No choice or explicit intent
+to store the schedule while retaining inheritance. Reuse an already explicit
+choice. Record the decision and visibility evidence in ordered ruleResults;
+unresolved intent blocks the handoff. Never default enablement to Yes, broaden
+to global scope, or reject an intentionally dormant schedule. A newly requested
+option write still follows the existing alias qualification gate.
+
+For read-back, compare the requested schedule values AND the BU enablement
+selection; successful OrgSetting rows alone prove storage, not effective/UI
+behavior. `live_ui_verified` remains false until actual UI evidence exists.
+Do not open setup UI as a read-only shortcut because initialization can write.
+
+Source: SRC-UI-DA-PAGE, FinExmSetupOptionsDigitalAssistant.jsff, reviewed lines
+849–898: ValueCodeE2 equal to Y/N selects BU frequency/time; other values select
+inherited controls. Source links are in ora_reference_lookups.md. This is a
+source-backed prediction; deployed UI parity still requires verification.
+
 ## Avoid rewriting settings already satisfied
 
 After a fresh same-target data export, compare each normalized logical
@@ -134,9 +173,9 @@ report no setup mutation needed instead of submitting an empty import.
 
 | Code | Passing condition | Failure and next action |
 |---|---|---|
-| FSM_SCHEMA_MISMATCH | Exact task ObjectShortName, TASK object type, supported member identities, CSV field membership/types and captured header order and expected XML paths | Preserve target evidence and request a source-backed contract refresh for the changed release |
+| FSM_SCHEMA_MISMATCH | Exact task ObjectShortName, TASK object type, supported member identities, CSV field membership/types and captured header order and expected XML paths | Preserve target evidence and request a source-backed contract refresh for the changed schema |
 | FSM_ALIAS_COLLISION | No setup-option changes remain and both alias CSVs stay header-only, or only one eligible setup-option alias maps to the root XML node/sequence, or an owning contract plus verified same-task import evidence defines a deterministic strategy for the deployed implementation | When setup-option writes are needed and both EXM_SETUP_OPTION and EXM_CASH_ADV_SETUP_AND_POLICY share the node/sequence, stop. Do not infer from MigrateFlag/order, duplicate rows or edit metadata. An FSM-owner contract/fix or a verified import and resulting values is required |
-| FSM_SERIALIZATION_UNQUALIFIED | Organization-only rows match the shipped source-backed org-settings-11.13.27.01-v1 profile; omitted controls produce no row | A schema/release or operation outside that profile needs repository-owner qualification. Do not request a prior import ZIP as routine customer input or claim an export alone proves import behavior |
+| FSM_SERIALIZATION_UNQUALIFIED | Organization-only rows match org-settings-schema-v1 and all exact schema checks in fsm-transport-profile.md; ProcessRelease is diagnostic only; omitted controls produce no row | A schema or operation outside that profile needs repository-owner qualification. Do not request a prior import ZIP as routine customer input or claim an export alone proves import behavior |
 | TIME_ZONE_NOT_VERIFIED | The declared timezonesLOV lookup returns one enabled exact TimezoneCode and its semantics match the user's fixed-offset/region intent | Use resolve_time_zone_evidence through the standard core REST client; return its precise lookup failure if unavailable. Do not replace fixed offset with a daylight-saving region |
 | FEATURE_CONTRACT_REQUIRED | Request changes only this task's reviewed controls, or the owning feature workflow has independently qualified additional prerequisites | Return only the requested feature's missing contract; ordinary schedule/matching requests do not depend on enabling Agent features |
 
@@ -182,7 +221,7 @@ At `awaiting_task_input`, send one newline-terminated JSON object with:
 
 Input stays in memory. The helper preserves no-op controls in its result,
 rejects unresolved enable/disable writes, and validates the exact template
-schema/release. It preserves original metadata bytes and target headers and
+schema. It preserves original metadata bytes and target headers and
 emits only requested changes. Ordinary option aliases remain header-only.
 `--dry-run` checks the same input and template without creating files; it
 does not require `--output`. An entirely satisfied request exits without

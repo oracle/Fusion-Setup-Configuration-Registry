@@ -23,7 +23,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 49
+            "line": 58
           },
           "readiness": {
             "status": "ready",
@@ -48,7 +48,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 38
+            "line": 78
           },
           "readiness": {
             "status": "ready",
@@ -62,7 +62,7 @@
           "action_type": "resolve_dependency",
           "execution_route": "local",
           "transitions": {
-            "success": "DESIGN.ENFORCE",
+            "success": "DEFAULT.APPLY",
             "failure": "ERROR.BLOCK"
           },
           "prerequisites": [
@@ -73,7 +73,32 @@
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 48
+            "line": 56
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "DEFAULT.APPLY",
+          "node_type": "step",
+          "sequence": 30,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "success": "DESIGN.ENFORCE",
+            "failure": "ERROR.BLOCK"
+          },
+          "prerequisites": [
+            "DEP.CHECK"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Always; apply documented create defaults and omitted interest allocation when explicitly enabling interest; preserve explicit choices and unrelated update values",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 36
           },
           "readiness": {
             "status": "ready",
@@ -91,14 +116,14 @@
             "failure": "ERROR.BLOCK"
           },
           "prerequisites": [
-            "DEP.CHECK"
+            "DEFAULT.APPLY"
           ],
           "on_failure": "stop",
           "applies_when": "Always",
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 39
+            "line": 57
           },
           "readiness": {
             "status": "ready",
@@ -110,7 +135,7 @@
           "node_type": "step",
           "sequence": 60,
           "action_type": "execution_gate",
-          "execution_route": "core.data-loader",
+          "execution_route": "local",
           "transitions": {
             "approved_preview": "SUCCESS.DONE",
             "not_ready": "INVOICE.EXECUTION_BLOCKED"
@@ -122,7 +147,8 @@
           "applies_when": "A governed execution request exists",
           "source": {
             "file": "ora_error_handling.md",
-            "anchor": "task-nodes"
+            "anchor": "task-nodes",
+            "line": 55
           },
           "readiness": {
             "status": "ready",
@@ -142,7 +168,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 34
+            "line": 56
           },
           "readiness": {
             "status": "ready",
@@ -154,14 +180,15 @@
           "node_type": "terminal",
           "sequence": 75,
           "action_type": "terminal",
-          "execution_route": "core.data-loader",
+          "execution_route": "local",
           "transitions": {},
           "prerequisites": [],
           "on_failure": "stop",
           "applies_when": "Execution approval or preview is absent",
           "source": {
             "file": "ora_error_handling.md",
-            "anchor": "task-nodes"
+            "anchor": "task-nodes",
+            "line": 57
           },
           "readiness": {
             "status": "ready",
@@ -183,7 +210,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 35
+            "line": 58
           },
           "readiness": {
             "status": "ready",

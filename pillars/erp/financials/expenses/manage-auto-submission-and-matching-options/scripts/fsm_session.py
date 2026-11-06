@@ -7,6 +7,7 @@ Read one normalized JSON object from stdin. Core owns approval and submission.
 from __future__ import annotations
 
 import argparse
+import csv
 import hashlib
 import io
 import json
@@ -17,8 +18,8 @@ import zipfile
 
 from input_contract import (InputError, TASK_CODE, _unique_json_object,
                             combine_requests, split_verified_noops,
-                            validate_environment_binding)
-from fsm_transport import prepare_members, reconcile_option_baseline, OPTION_CANDIDATE_ID
+                            validate_environment_binding, assess_schedule_visibility)
+from fsm_transport import prepare_members, reconcile_option_baseline, qualify_template, METADATA
 
 TASK_NAME = 'Manage Auto Submission and Matching Options'
 
@@ -43,6 +44,7 @@ def validate_input(value, *, qualification_run=False):
     elif qualification_run and any(row['entity'] == 'EXM_SETUP_OPTION' for row in changes):
         raise InputError('FSM_ALIAS_BASELINE_CONFLICT: qualification requires both complete option alias baselines.')
     result = split_verified_noops(changes, baseline)
+    result['schedule_visibility'] = assess_schedule_visibility(changes, baseline)
     # Block all required option writes before core setup. Satisfied enablement
     # stays visible in already_satisfied and is never serialized to either alias.
     if not qualification_run and any(row['entity'] != 'EXM_ORG_SETTING' for row in result['changes']):
@@ -64,8 +66,13 @@ def prepare_candidate(template, value, output=None, *, dry_run=False, qualificat
     template = Path(template)
     members = prepare_members(template.read_bytes(), result['changes'], qualification_run=qualification_run)
     report['members'] = [name for name, _ in members]
-    if qualification_run:
-        report['task_profile'] = OPTION_CANDIDATE_ID
+    content_by_name = dict(members)
+    profile = qualify_template(content_by_name[METADATA].decode('utf-8-sig'), {
+        name: tuple(next(csv.reader(io.StringIO(content.decode('utf-8-sig')))))
+        for name, content in members if name != METADATA
+    })
+    report['transport_profile'] = profile
+    report['task_profile'] = profile['option_candidate'] if qualification_run else profile['profile']
     if dry_run:
         return {**report, 'state': 'dry_run'}
     if output is None:

@@ -103,6 +103,7 @@ required_setup_tasks:
   - "EGP_MANAGE_PRODUCT_VALUE_SETS"
   - "EGP_ITEM_CLASS_DFFS"
   - "EGI_MANAGE_IMPORT_MAPS"
+  - "CUSTOM_EGP_FBDI_IMPORT_REF_ORG_ITEMS"
 applicability:
   industries:
     - "All"
@@ -159,6 +160,7 @@ Use this functional-area skill after Product Management scope is confirmed and t
 25. [Manage Item Class Descriptive Flexfields](manage-item-class-descriptive-flexfields/SKILL.md) (`EGP_ITEM_CLASS_DFFS`)
 26. [Manage Attachment Categories for Product Management](manage-attachment-categories-for-product-management/SKILL.md) (`ORA_EGP_MANAGE_ATTACH_CAT_FOR_PIM`)
 27. [Manage Import Maps](manage-import-maps/SKILL.md) (`EGI_MANAGE_IMPORT_MAPS`)
+28. [Reference Organization Items Import](reference-organization-items-import/SKILL.md) (`CUSTOM_EGP_FBDI_IMPORT_REF_ORG_ITEMS`)
 
 ## Inputs
 

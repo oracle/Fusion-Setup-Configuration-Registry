@@ -27,6 +27,7 @@ depends_on:
   - "shared.implementation-planning.task-dependency-resolver"
   - "shared.setup-export.functional-area-export"
 uses_core:
+  - "core.data-loader"
   - "core.fusion-api.apps-common.lookups"
   - "core.project-mgmt.artifact-version-manager"
   - "core.project-mgmt.artifact-registry-manager"

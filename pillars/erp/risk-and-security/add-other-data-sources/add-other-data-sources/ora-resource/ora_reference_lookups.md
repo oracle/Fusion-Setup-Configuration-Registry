@@ -10,7 +10,7 @@
 
 | Resolver | Runs When | Source Values | Request Path or URL | Requested Fields | Match Rule | Values to Fill | If No Match or Many Matches |
 |---|---|---|---|---|---|---|---|
-| verify_oci_seeded_source | Resolved source type is OCI and BOSS OAuth readiness is confirmed | Resolved sourceTypeName OCI | POST /api/boss/data/objects/ora/riskMgmtRisk/dataIntegration/v1/connectorDefinitions/$query | Collection response and returned connector-definition fields | Apply exactly sourceTypeName='OCI'; preserve returned collection without broadening the filter | Seeded connector collection; connector ID; OCI seeded-source readiness | Multiple records or hasMore true indicate seeded readiness; one active completed record indicates seeded readiness; one unready record or an empty collection blocks downstream work |
+| verify_oci_seeded_source | Resolved source type is OCI and BOSS OAuth readiness is confirmed | Centrally resolved sourceTypeName; OCI for this prerequisite | GET /api/boss/data/objects/ora/riskMgmtRisk/dataIntegration/v1/connectorDefinitions?$filter=creationStatus='COMPLETED' and connectorStatus='ACTIVE' and sourceTypeName='<source_type_name>'&$includeTotalItems=true&$limit=1&$fields=id | items containing id | Only sourceTypeName is dynamic; other parameters remain fixed; encode query values through the approved Core client | Matching id; predefined-source readiness | At least one returned record confirms setup; empty items stops downstream work; failed or malformed responses block readiness |
 
 ## Lookup Execution Rules
 
@@ -18,8 +18,10 @@
 |---|---|
 | The resolved source type is OCI | Continue to the conditional OCI seeded-source readiness dependency. |
 | The resolved source type is USER-DEFINED | Skip the OCI seeded-source readiness dependency. |
-| The OCI query returns multiple records, hasMore true, or one active completed record | Treat OCI seeded-source readiness as verified. |
-| The OCI query returns one unready record or an empty collection | Stop downstream work and report OCI seeded-source readiness is not satisfied. |
+| The successful filtered GET returns at least one record with an id | Treat predefined-source readiness as verified; status fields need not be projected because the server filter establishes readiness. No pagination or unique-match requirement applies to this existence check. |
+| The filtered GET returns an empty items array | No ready match was found. Stop and request setup in the Data Integration UI; do not infer that pending connectors are absent. |
+| The request fails, items is missing or malformed, or a record lacks an id | Block readiness. Neither hasMore nor a total count alone establishes setup. |
+| Recovering a newly registered connector | The predefined-source existence check cannot verify the exact registration or authorize recreation; follow the separate registration recovery contract in SKILL.md. |
 
 ## Task Nodes
 

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="630" viewBox="0 0 1000 630">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#5A6570"/></marker></defs>
+<rect width="100%" height="100%" fill="white"/>
+<polyline points="370.0,82 370.0,94.0 370.0,94.0 370.0,106" fill="none" stroke="#5A6570" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="370.0,168 370.0,180.0 370.0,180.0 370.0,192" fill="none" stroke="#5A6570" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="370.0,254 370.0,266.0 370.0,266.0 370.0,278" fill="none" stroke="#5A6570" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="370.0,340 370.0,352.0 370.0,352.0 370.0,364" fill="none" stroke="#5A6570" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="370.0,426 370.0,438.0 370.0,438.0 370.0,450" fill="none" stroke="#5A6570" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="370.0,512 370.0,524.0 370.0,524.0 370.0,536" fill="none" stroke="#5A6570" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="690,223.0 735,226.0" fill="none" stroke="#5A6570" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="735,480.0 690,481.0" fill="none" stroke="#5A6570" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="50" y="20" width="640" height="62" rx="8" fill="#FFF2DF" stroke="#A8B5C1" stroke-width="1.4"/>
+<text x="370.0" y="46.5" text-anchor="middle" fill="#121C27" font-family="Arial,sans-serif" font-size="19" font-weight="bold">Requirements and selected project</text>
+<text x="370.0" y="70.5" text-anchor="middle" fill="#303B47" font-family="Arial,sans-serif" font-size="16">Project owner and implementer</text>
+<rect x="50" y="106" width="640" height="62" rx="8" fill="#EAF0F7" stroke="#A8B5C1" stroke-width="1.4"/>
+<text x="370.0" y="132.5" text-anchor="middle" fill="#121C27" font-family="Arial,sans-serif" font-size="19" font-weight="bold">Resolve scope and prepare local plans</text>
+<text x="370.0" y="156.5" text-anchor="middle" fill="#303B47" font-family="Arial,sans-serif" font-size="16">Framework and core   |   no Oracle Run Book yet</text>
+<rect x="50" y="192" width="640" height="62" rx="8" fill="#EAF0F7" stroke="#A8B5C1" stroke-width="1.4"/>
+<text x="370.0" y="218.5" text-anchor="middle" fill="#121C27" font-family="Arial,sans-serif" font-size="19" font-weight="bold">Run prevalidation or record explicit skip</text>
+<text x="370.0" y="242.5" text-anchor="middle" fill="#303B47" font-family="Arial,sans-serif" font-size="16">Framework assesses   |   implementer chooses</text>
+<rect x="50" y="278" width="640" height="62" rx="8" fill="#F0EFF8" stroke="#A8B5C1" stroke-width="1.4"/>
+<text x="370.0" y="304.5" text-anchor="middle" fill="#121C27" font-family="Arial,sans-serif" font-size="19" font-weight="bold">Create Run Book and execute implementation</text>
+<text x="370.0" y="328.5" text-anchor="middle" fill="#303B47" font-family="Arial,sans-serif" font-size="16">Core services and pillar workflows   |   own approval gates</text>
+<rect x="50" y="364" width="640" height="62" rx="8" fill="#EAF0F7" stroke="#A8B5C1" stroke-width="1.4"/>
+<text x="370.0" y="390.5" text-anchor="middle" fill="#121C27" font-family="Arial,sans-serif" font-size="19" font-weight="bold">Review requirements tasks and actual setup</text>
+<text x="370.0" y="414.5" text-anchor="middle" fill="#303B47" font-family="Arial,sans-serif" font-size="16">Framework assembles   |   pillars define correctness</text>
+<rect x="50" y="450" width="640" height="62" rx="8" fill="#EAF3EC" stroke="#A8B5C1" stroke-width="1.4"/>
+<text x="370.0" y="476.5" text-anchor="middle" fill="#121C27" font-family="Arial,sans-serif" font-size="19" font-weight="bold">Optionally run one transaction check</text>
+<text x="370.0" y="500.5" text-anchor="middle" fill="#303B47" font-family="Arial,sans-serif" font-size="16">Explicit request   |   pillar procedure and operation gates</text>
+<rect x="50" y="536" width="640" height="62" rx="8" fill="#FFF2DF" stroke="#A8B5C1" stroke-width="1.4"/>
+<text x="370.0" y="562.5" text-anchor="middle" fill="#121C27" font-family="Arial,sans-serif" font-size="19" font-weight="bold">Publish evidence and decide next action</text>
+<text x="370.0" y="586.5" text-anchor="middle" fill="#303B47" font-family="Arial,sans-serif" font-size="16">Framework reports   |   project owner accepts gaps</text>
+<rect x="735" y="172" width="230" height="108" rx="8" fill="#FFF2DF" stroke="#A8B5C1" stroke-width="1.4"/>
+<text x="850.0" y="201.5" text-anchor="middle" fill="#121C27" font-family="Arial,sans-serif" font-size="17" font-weight="bold">Prevalidation scope</text>
+<text x="850.0" y="225.5" text-anchor="middle" fill="#303B47" font-family="Arial,sans-serif" font-size="16">NOT READY holds handoff</text>
+<text x="850.0" y="245.5" text-anchor="middle" fill="#303B47" font-family="Arial,sans-serif" font-size="16">An explicit skip leaves</text>
+<text x="850.0" y="265.5" text-anchor="middle" fill="#303B47" font-family="Arial,sans-serif" font-size="16">readiness unverified</text>
+<rect x="735" y="430" width="230" height="100" rx="8" fill="#FFF2DF" stroke="#A8B5C1" stroke-width="1.4"/>
+<text x="850.0" y="455.5" text-anchor="middle" fill="#121C27" font-family="Arial,sans-serif" font-size="17" font-weight="bold">Standalone request</text>
+<text x="850.0" y="479.5" text-anchor="middle" fill="#303B47" font-family="Arial,sans-serif" font-size="16">May enter transaction</text>
+<text x="850.0" y="499.5" text-anchor="middle" fill="#303B47" font-family="Arial,sans-serif" font-size="16">validation independently</text>
+<text x="850.0" y="519.5" text-anchor="middle" fill="#303B47" font-family="Arial,sans-serif" font-size="16">Prerequisites still apply</text>
+</svg>
