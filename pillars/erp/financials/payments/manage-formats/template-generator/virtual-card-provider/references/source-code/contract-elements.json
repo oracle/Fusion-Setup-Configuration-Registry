@@ -1,0 +1,33 @@
+{
+  "retrieved": "2026-08-20",
+  "outbound": {
+    "root": "OutboundPaymentInstruction",
+    "record": "OutboundPayment",
+    "virtual_card_children": ["PaymentInstrument", "CardProgramDetails", "DigitalPaymentAccount"],
+    "conditional_elements": {
+      "PaymentInstrument/BankDetails/BankCountry": "JPM virtual-card extract opt-in branch",
+      "CardProgramDetails/ExtMCCGroupCode": "JPM virtual-card extract opt-in branch"
+    }
+  },
+  "acknowledgment": {
+    "source_revision": "/st_fusionapps_pt-v2mibfphdev/6",
+    "root": "AckResponse",
+    "header": ["MsgId", "MsgSts", "MsgStsCd", "MsgErrCd", "MsgErrDet"],
+    "record": "PmtDetls",
+    "record_elements": ["PmtRef", "PmtSts", "PmtStsCd", "PmtMsgErrCd", "PmtMsgErrDet", "PmtClearingNum", "InvHoldCd"],
+    "consumer_truncation": {"MsgErrDet": 254, "PmtMsgErrDet": 254}
+  },
+  "payment_response": {
+    "source_revision": "/st_fusionapps_pt-v2mibfphdev/44",
+    "root": "records",
+    "record": "record",
+    "record_elements": ["paymentRefNum", "bepStatus", "bepTrxnResponseId", "bepErrorCode", "bepErrorMessage", "invHoldCode"],
+    "consumer_truncation": {"bepErrorCode": 29, "bepErrorMessage": 254}
+  },
+  "reconciliation": {
+    "source_revision": "/st_fusionapps_pt-v2mibfphdev/4",
+    "root": "reconRcrd",
+    "record": "reconDetls",
+    "record_elements": ["authCode", "paymentRef", "settlmntDate", "acquirerRef", "settlmntCurr", "transactionAmt", "transactionDate", "transactionId"]
+  }
+}

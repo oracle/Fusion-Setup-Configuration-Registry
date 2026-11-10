@@ -1,0 +1,157 @@
+{
+  "version": "2026-07-15",
+  "purpose": "Bank-neutral OutboundPaymentInstruction source XML scenarios for ISO 20022 template validation.",
+  "usage": [
+    "Use these scenarios as neutral starting fixtures, not as bank-specific expected inputs.",
+    "For each runtime bank specification, derive bank-specific validation XMLs by applying the resolved country/rail matrix.",
+    "Do not infer bank requirements from these fixtures. The bank specification and country/rail matrix remain authoritative."
+  ],
+  "dynamic_override_fields": [
+    "PaymentMethod/PaymentMethodFormatValue",
+    "PaymentReason/PaymentReasonCode",
+    "PaymentReason/Meaning",
+    "LogicalGrouping/LogicalGroupReference",
+    "InstructionReferenceNumber",
+    "PaymentAmount/Currency/Code",
+    "PaymentCurrency/Code",
+    "PayeeSite/Address/Country",
+    "PayeeSite/Address/State",
+    "PayeeSite/Address/PostalCode",
+    "PayeeBankAccount/BankAccountNumber",
+    "PayeeBankAccount/IBANNumber",
+    "PayeeBankAccount/BankAccountCurrency/Code",
+    "PayeeBankAccount/BankNumber",
+    "PayeeBankAccount/BranchNumber",
+    "PayeeBankAccount/BankBranch/SwiftCode",
+    "PayeeBankAccount/BankBranch/BankName",
+    "IntermediaryBankAccount/BankAccountNumber",
+    "IntermediaryBankAccount/BankNumber",
+    "IntermediaryBankAccount/BranchNumber",
+    "IntermediaryBankAccount/BankBranch/SwiftCode",
+    "PaymentSystemAccount/BankAccountNumber",
+    "PaymentSystemAccount/BankAccountCurrency/Code",
+    "PaymentSystemAccount/BankBranch/SwiftCode"
+  ],
+  "scenarios": [
+    {
+      "id": "us_ach_ccd_usd",
+      "fixture": "assets/validation/source-xml/synthetic-scenarios/synthetic_positive_us_ach_ccd_usd_masked.xml",
+      "intent": "US domestic ACH CCD-style credit transfer.",
+      "profile": {
+        "service_level": "NURG",
+        "delivery_channel": "CCD",
+        "debtor_country": "US",
+        "creditor_country": "US",
+        "currency": "USD",
+        "account_identifier": "local_account",
+        "agent_identifier": "local_clearing",
+        "postal_address": "US state and ZIP"
+      }
+    },
+    {
+      "id": "us_ach_ccd_plus_usd",
+      "fixture": "assets/validation/source-xml/synthetic-scenarios/synthetic_positive_us_ach_ccd_plus_usd_masked.xml",
+      "intent": "US domestic ACH CCD+ style credit transfer with remittance-capable delivery channel.",
+      "profile": {
+        "service_level": "NURG",
+        "delivery_channel": "CCD+",
+        "debtor_country": "US",
+        "creditor_country": "US",
+        "currency": "USD",
+        "account_identifier": "local_account",
+        "agent_identifier": "local_clearing",
+        "postal_address": "US state and ZIP"
+      }
+    },
+    {
+      "id": "us_wire_swift_usd",
+      "fixture": "assets/validation/source-xml/synthetic-scenarios/synthetic_positive_us_wire_swift_usd_masked.xml",
+      "intent": "US urgent wire/SWIFT-style credit transfer.",
+      "profile": {
+        "service_level": "URGP",
+        "delivery_channel": "TRF",
+        "debtor_country": "US",
+        "creditor_country": "US",
+        "currency": "USD",
+        "account_identifier": "local_account",
+        "agent_identifier": "BIC or local clearing per bank matrix",
+        "postal_address": "US state and ZIP"
+      }
+    },
+    {
+      "id": "ca_wire_local_cad",
+      "fixture": "assets/validation/source-xml/synthetic-scenarios/synthetic_positive_ca_wire_local_cad_masked.xml",
+      "intent": "Canada CAD credit transfer with local clearing identifiers.",
+      "profile": {
+        "service_level": "URGP",
+        "delivery_channel": "TRF",
+        "debtor_country": "US",
+        "creditor_country": "CA",
+        "currency": "CAD",
+        "account_identifier": "local_account",
+        "agent_identifier": "Canadian clearing member ID or BIC per bank matrix",
+        "postal_address": "Canadian province and postal code"
+      }
+    },
+    {
+      "id": "au_wire_local_aud",
+      "fixture": "assets/validation/source-xml/synthetic-scenarios/synthetic_positive_au_wire_local_aud_masked.xml",
+      "intent": "Australia AUD credit transfer with BSB-style local clearing.",
+      "profile": {
+        "service_level": "URGP",
+        "delivery_channel": "TRF",
+        "debtor_country": "US",
+        "creditor_country": "AU",
+        "currency": "AUD",
+        "account_identifier": "local_account",
+        "agent_identifier": "Australian BSB or BIC per bank matrix",
+        "postal_address": "Australian state and postal code"
+      }
+    },
+    {
+      "id": "nz_wire_local_nzd",
+      "fixture": "assets/validation/source-xml/synthetic-scenarios/synthetic_positive_nz_wire_local_nzd_masked.xml",
+      "intent": "New Zealand NZD credit transfer with NCC-style local clearing.",
+      "profile": {
+        "service_level": "URGP",
+        "delivery_channel": "TRF",
+        "debtor_country": "US",
+        "creditor_country": "NZ",
+        "currency": "NZD",
+        "account_identifier": "local_account",
+        "agent_identifier": "New Zealand NCC or BIC per bank matrix",
+        "postal_address": "New Zealand postal code"
+      }
+    },
+    {
+      "id": "eu_iban_eur",
+      "fixture": "assets/validation/source-xml/synthetic-scenarios/synthetic_positive_eu_iban_eur_masked.xml",
+      "intent": "EUR IBAN credit transfer for SEPA or CGI IBAN branches.",
+      "profile": {
+        "service_level": "URGP or SEPA-specific service level per bank matrix",
+        "delivery_channel": "TRF",
+        "debtor_country": "US",
+        "creditor_country": "FR",
+        "currency": "EUR",
+        "account_identifier": "IBAN",
+        "agent_identifier": "BIC or omitted per bank matrix",
+        "postal_address": "European postal address"
+      }
+    },
+    {
+      "id": "cross_border_swift_usd",
+      "fixture": "assets/validation/source-xml/synthetic-scenarios/synthetic_positive_cross_border_swift_usd_masked.xml",
+      "intent": "Cross-border USD credit transfer with SWIFT/BIC routing.",
+      "profile": {
+        "service_level": "URGP",
+        "delivery_channel": "TRF",
+        "debtor_country": "US",
+        "creditor_country": "FR",
+        "currency": "USD",
+        "account_identifier": "local_account",
+        "agent_identifier": "BIC",
+        "postal_address": "Cross-border postal address"
+      }
+    }
+  ]
+}

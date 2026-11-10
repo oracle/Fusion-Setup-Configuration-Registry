@@ -1,0 +1,1373 @@
+{
+  "schemaVersion": "mps-reference-contracts-v1",
+  "requirements": [
+    {
+      "requirement_id": "RESOLVER-MPS-BANK",
+      "resolver": "BankPVO.BankNameValidationCriteria",
+      "setup_type": "Bank",
+      "resolution_mode": "fsm_import_resolved",
+      "resolver_source_kind": "table_or_view",
+      "value_population": "customer_configured",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Approved supported read-only lookup/UI verification, then separately authorized FSM import resolution",
+      "public_preflight_policy": "optional_when_fsm_import_confirmed",
+      "applicable_attributes": [
+        "IBY_PAYMENT_SYSTEM.BankName",
+        "IBY_PAYMENT_SYSTEM.HomeCountry"
+      ],
+      "input_keys": [
+        "BankName",
+        "HomeCountry"
+      ],
+      "method": "Read-only finder used by FSM import resolver",
+      "exact_path": "BankPVO.BankNameValidationCriteria",
+      "query_keys": [
+        "bindBankName",
+        "bindHomeCountryCode"
+      ],
+      "response_fields": [
+        "BankPartyId -> BankId"
+      ],
+      "match_rule": "Bank name uses UpperColumns=1; country uses its criterion; composite match.",
+      "value_mapping": "BankPartyId -> BankId",
+      "zero_match_behavior": "Remove parent from import XML and report BankId cannot be resolved.",
+      "multiple_match_behavior": "Same rejection as zero matches.",
+      "failure_behavior": "Remove parent from import XML and report BankId cannot be resolved.",
+      "read_only": "Yes",
+      "evidence_source_ids": [
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-ADE-016"
+      ],
+      "status": "Confirmed",
+      "limitations": "Source mechanism confirmed; current environment values and public GET contract remain separate verification. No live import performed.",
+      "next_action": "Complete exact public preflight documentation and target-value verification before execution."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-BU",
+      "resolver": "BusinessUnitPVO.findBusinessUnitByName",
+      "setup_type": "Business Unit",
+      "resolution_mode": "fsm_import_resolved",
+      "resolver_source_kind": "table_or_view",
+      "value_population": "customer_configured",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Approved supported read-only lookup/UI verification, then separately authorized FSM import resolution",
+      "public_preflight_policy": "optional_when_fsm_import_confirmed",
+      "applicable_attributes": [
+        "ORA_IBY_PAYMENT_SYSTEM_ACC_VAL.BuName"
+      ],
+      "input_keys": [
+        "AccountOptionCode=BU_NAME",
+        "BuName"
+      ],
+      "method": "Read-only finder used by FSM import resolver",
+      "exact_path": "BusinessUnitPVO.findBusinessUnitByName",
+      "query_keys": [
+        "Name"
+      ],
+      "response_fields": [
+        "BusinessUnitId -> AccountOptionValue"
+      ],
+      "match_rule": "Exact finder Name search as configured; special handling only for BU_NAME.",
+      "value_mapping": "BusinessUnitId -> AccountOptionValue",
+      "zero_match_behavior": "Remove account-value row and report BuId cannot be resolved.",
+      "multiple_match_behavior": "Import uses first(); no explicit duplicate rejection in reviewed hook.",
+      "failure_behavior": "Remove account-value row and report BuId cannot be resolved.",
+      "read_only": "Yes",
+      "evidence_source_ids": [
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-ADE-017"
+      ],
+      "status": "Confirmed",
+      "limitations": "Source mechanism confirmed; current environment values and public GET contract remain separate verification. No live import performed.",
+      "next_action": "Complete exact public preflight documentation and target-value verification before execution."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-OPTION-002",
+      "resolver": "LOV_TokenCreateCurrency",
+      "setup_type": "Payment system account option ACCT_TOKEN_CREATE_CURRENCY",
+      "resolution_mode": "ui_assisted_only",
+      "resolver_source_kind": "table_or_view",
+      "value_population": "mixed",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Inspect the corresponding choice list in Manage Payment Systems for the selected account/setting; manual completion must be separately recorded. No REST, SQL or automatic name-to-ID conversion is authorized by this contract.",
+      "public_preflight_policy": "not_applicable",
+      "applicable_attributes": [
+        "ORA_IBY_PAYMENT_SYSTEM_ACC_VAL.AccountOptionValue"
+      ],
+      "input_keys": [
+        "Owning payment system",
+        "AccountOptionCode=ACCT_TOKEN_CREATE_CURRENCY",
+        "Requested business choice"
+      ],
+      "method": "Read-only UI choice inspection; manual completion only",
+      "exact_path": "oracle.apps.financials.generalLedger.currencies.manageRate.publicView.CurrencyPVO",
+      "query_keys": [
+        "Target identity"
+      ],
+      "response_fields": [
+        "CurrencyCodeAndName",
+        "CurrencyCode"
+      ],
+      "match_rule": "Human verifies exact intended display choice and recorded context/filter in the target UI. Zero or ambiguous choices remain unresolved and must not produce a CSV value.",
+      "value_mapping": "UI ListBinding maps the chosen display field to the documented canonical code/ID. FSCR must omit this setting row from automated CSV until a separate supported machine resolver is qualified.",
+      "zero_match_behavior": "Do not invent a target code or ID; request prerequisite setup or correct choice.",
+      "multiple_match_behavior": "Disambiguate using target context; do not silently take the first match.",
+      "failure_behavior": "",
+      "read_only": "Yes",
+      "evidence_source_ids": [
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-OPTION-007"
+      ],
+      "status": "Partial",
+      "limitations": "Source-backed UI/manual boundary established; automated resolver remains unqualified. Automated preflight/CSV value resolution is NOT qualified. UI maps to CurrencyCode; the inspected generic import setter assigns string AccountOptionValue. No equivalent setting-specific name-to-value translation was found in the reviewed import hook. Source follow-up distinguishes unapplied criteria from selected filters; target availability is a runtime prerequisite, not an unresearched source contract. No MPS accessor criteria; named active/monetary criteria are not automatically effective.",
+      "next_action": "Complete through the supported UI, or extend the declarative resolver policy only after exact public/service contract and target qualification. Do not downgrade this manual boundary because the record is Confirmed."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-OPTION-003",
+      "resolver": "LOV_FDAckFormat",
+      "setup_type": "Payment system account option FD_ACK_FORMAT",
+      "resolution_mode": "ui_assisted_only",
+      "resolver_source_kind": "table_or_view",
+      "value_population": "mixed",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Inspect the corresponding choice list in Manage Payment Systems for the selected account/setting; manual completion must be separately recorded. No REST, SQL or automatic name-to-ID conversion is authorized by this contract.",
+      "public_preflight_policy": "not_applicable",
+      "applicable_attributes": [
+        "ORA_IBY_PAYMENT_SYSTEM_ACC_VAL.AccountOptionValue"
+      ],
+      "input_keys": [
+        "Owning payment system",
+        "AccountOptionCode=FD_ACK_FORMAT",
+        "Requested business choice"
+      ],
+      "method": "Read-only UI choice inspection; manual completion only",
+      "exact_path": "oracle.apps.financials.payments.sharedSetup.formats.publicView.FormatPVO",
+      "query_keys": [
+        "'IBY_DISBURSEMENT_ACK'"
+      ],
+      "response_fields": [
+        "FormatName",
+        "FormatCode"
+      ],
+      "match_rule": "Human verifies exact intended display choice and recorded context/filter in the target UI. Zero or ambiguous choices remain unresolved and must not produce a CSV value.",
+      "value_mapping": "UI ListBinding maps the chosen display field to the documented canonical code/ID. FSCR must omit this setting row from automated CSV until a separate supported machine resolver is qualified.",
+      "zero_match_behavior": "Do not invent a target code or ID; request prerequisite setup or correct choice.",
+      "multiple_match_behavior": "Disambiguate using target context; do not silently take the first match.",
+      "failure_behavior": "",
+      "read_only": "Yes",
+      "evidence_source_ids": [
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-OPTION-007"
+      ],
+      "status": "Partial",
+      "limitations": "Source-backed UI/manual boundary established; automated resolver remains unqualified. Automated preflight/CSV value resolution is NOT qualified. UI maps to FormatCode; the inspected generic import setter assigns string AccountOptionValue. No equivalent setting-specific name-to-value translation was found in the reviewed import hook. Source follow-up distinguishes unapplied criteria from selected filters; target availability is a runtime prerequisite, not an unresearched source contract. ByFormatTypeCode is applied; IsActive is not applied in MPS accessor.",
+      "next_action": "Complete through the supported UI, or extend the declarative resolver policy only after exact public/service contract and target qualification. Do not downgrade this manual boundary because the record is Confirmed."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-OPTION-004",
+      "resolver": "LOV_FDAckPayRegFormat",
+      "setup_type": "Payment system account option FD_PAY_FILE_REG_FORMAT",
+      "resolution_mode": "ui_assisted_only",
+      "resolver_source_kind": "table_or_view",
+      "value_population": "mixed",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Inspect the corresponding choice list in Manage Payment Systems for the selected account/setting; manual completion must be separately recorded. No REST, SQL or automatic name-to-ID conversion is authorized by this contract.",
+      "public_preflight_policy": "not_applicable",
+      "applicable_attributes": [
+        "ORA_IBY_PAYMENT_SYSTEM_ACC_VAL.AccountOptionValue"
+      ],
+      "input_keys": [
+        "Owning payment system",
+        "AccountOptionCode=FD_PAY_FILE_REG_FORMAT",
+        "Requested business choice"
+      ],
+      "method": "Read-only UI choice inspection; manual completion only",
+      "exact_path": "oracle.apps.financials.payments.sharedSetup.formats.publicView.FormatPVO",
+      "query_keys": [
+        "'IBY_FD_PI_REGISTER'"
+      ],
+      "response_fields": [
+        "FormatName",
+        "FormatCode"
+      ],
+      "match_rule": "Human verifies exact intended display choice and recorded context/filter in the target UI. Zero or ambiguous choices remain unresolved and must not produce a CSV value.",
+      "value_mapping": "UI ListBinding maps the chosen display field to the documented canonical code/ID. FSCR must omit this setting row from automated CSV until a separate supported machine resolver is qualified.",
+      "zero_match_behavior": "Do not invent a target code or ID; request prerequisite setup or correct choice.",
+      "multiple_match_behavior": "Disambiguate using target context; do not silently take the first match.",
+      "failure_behavior": "",
+      "read_only": "Yes",
+      "evidence_source_ids": [
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-OPTION-007"
+      ],
+      "status": "Partial",
+      "limitations": "Source-backed UI/manual boundary established; automated resolver remains unqualified. Automated preflight/CSV value resolution is NOT qualified. UI maps to FormatCode; the inspected generic import setter assigns string AccountOptionValue. No equivalent setting-specific name-to-value translation was found in the reviewed import hook. Source follow-up distinguishes unapplied criteria from selected filters; target availability is a runtime prerequisite, not an unresearched source contract. ByFormatTypeCode is applied; IsActive is not applied in MPS accessor.",
+      "next_action": "Complete through the supported UI, or extend the declarative resolver policy only after exact public/service contract and target qualification. Do not downgrade this manual boundary because the record is Confirmed."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-OPTION-005",
+      "resolver": "LOV_FDAckTransConfig",
+      "setup_type": "Payment system account option FD_ACK_TRANS_CONFIG",
+      "resolution_mode": "ui_assisted_only",
+      "resolver_source_kind": "table_or_view",
+      "value_population": "customer_configured",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Inspect the corresponding choice list in Manage Payment Systems for the selected account/setting; manual completion must be separately recorded. No REST, SQL or automatic name-to-ID conversion is authorized by this contract.",
+      "public_preflight_policy": "not_applicable",
+      "applicable_attributes": [
+        "ORA_IBY_PAYMENT_SYSTEM_ACC_VAL.AccountOptionValue"
+      ],
+      "input_keys": [
+        "Owning payment system",
+        "AccountOptionCode=FD_ACK_TRANS_CONFIG",
+        "Requested business choice"
+      ],
+      "method": "Read-only UI choice inspection; manual completion only",
+      "exact_path": "oracle.apps.financials.payments.sharedSetup.paymentSystems.publicModel.view.FDAckTransmitConfigVVO",
+      "query_keys": [
+        "Target identity"
+      ],
+      "response_fields": [
+        "TransmitConfigurationName",
+        "TransmitConfigurationId"
+      ],
+      "match_rule": "Human verifies exact intended display choice and recorded context/filter in the target UI. Zero or ambiguous choices remain unresolved and must not produce a CSV value.",
+      "value_mapping": "UI ListBinding maps the chosen display field to the documented canonical code/ID. FSCR must omit this setting row from automated CSV until a separate supported machine resolver is qualified.",
+      "zero_match_behavior": "Do not invent a target code or ID; request prerequisite setup or correct choice.",
+      "multiple_match_behavior": "Disambiguate using target context; do not silently take the first match.",
+      "failure_behavior": "",
+      "read_only": "Yes",
+      "evidence_source_ids": [
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-OPTION-007"
+      ],
+      "status": "Partial",
+      "limitations": "Source-backed UI/manual boundary established; automated resolver remains unqualified. Automated preflight/CSV value resolution is NOT qualified. UI maps to TransmitConfigurationId; the inspected generic import setter assigns string AccountOptionValue. No equivalent setting-specific name-to-value translation was found in the reviewed import hook. Source follow-up distinguishes unapplied criteria from selected filters; target availability is a runtime prerequisite, not an unresearched source contract. Query joins protocol and configuration with no end-date filter.",
+      "next_action": "Complete through the supported UI, or extend the declarative resolver policy only after exact public/service contract and target qualification. Do not downgrade this manual boundary because the record is Confirmed."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-OPTION-006",
+      "resolver": "LOV_LBTransConfig",
+      "setup_type": "Payment system account option LB_TRANS_CONFIG_ID",
+      "resolution_mode": "ui_assisted_only",
+      "resolver_source_kind": "table_or_view",
+      "value_population": "customer_configured",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Inspect the corresponding choice list in Manage Payment Systems for the selected account/setting; manual completion must be separately recorded. No REST, SQL or automatic name-to-ID conversion is authorized by this contract.",
+      "public_preflight_policy": "not_applicable",
+      "applicable_attributes": [
+        "ORA_IBY_PAYMENT_SYSTEM_ACC_VAL.AccountOptionValue"
+      ],
+      "input_keys": [
+        "Owning payment system",
+        "AccountOptionCode=LB_TRANS_CONFIG_ID",
+        "Requested business choice"
+      ],
+      "method": "Read-only UI choice inspection; manual completion only",
+      "exact_path": "oracle.apps.financials.payments.sharedSetup.paymentSystems.publicModel.view.FDAckTransmitConfigVVO",
+      "query_keys": [
+        "Target identity"
+      ],
+      "response_fields": [
+        "TransmitConfigurationName",
+        "TransmitConfigurationId"
+      ],
+      "match_rule": "Human verifies exact intended display choice and recorded context/filter in the target UI. Zero or ambiguous choices remain unresolved and must not produce a CSV value.",
+      "value_mapping": "UI ListBinding maps the chosen display field to the documented canonical code/ID. FSCR must omit this setting row from automated CSV until a separate supported machine resolver is qualified.",
+      "zero_match_behavior": "Do not invent a target code or ID; request prerequisite setup or correct choice.",
+      "multiple_match_behavior": "Disambiguate using target context; do not silently take the first match.",
+      "failure_behavior": "",
+      "read_only": "Yes",
+      "evidence_source_ids": [
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-OPTION-007"
+      ],
+      "status": "Partial",
+      "limitations": "Source-backed UI/manual boundary established; automated resolver remains unqualified. Automated preflight/CSV value resolution is NOT qualified. UI maps to TransmitConfigurationId; the inspected generic import setter assigns string AccountOptionValue. No equivalent setting-specific name-to-value translation was found in the reviewed import hook. Source follow-up distinguishes unapplied criteria from selected filters; target availability is a runtime prerequisite, not an unresearched source contract. Query joins protocol and configuration with no end-date filter.",
+      "next_action": "Complete through the supported UI, or extend the declarative resolver policy only after exact public/service contract and target qualification. Do not downgrade this manual boundary because the record is Confirmed."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-OPTION-007",
+      "resolver": "LOV_LBTransFormat",
+      "setup_type": "Payment system account option LB_TRANSMISSION_FORMAT_ID",
+      "resolution_mode": "ui_assisted_only",
+      "resolver_source_kind": "table_or_view",
+      "value_population": "seeded",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Inspect the corresponding choice list in Manage Payment Systems for the selected account/setting; manual completion must be separately recorded. No REST, SQL or automatic name-to-ID conversion is authorized by this contract.",
+      "public_preflight_policy": "not_applicable",
+      "applicable_attributes": [
+        "ORA_IBY_PAYMENT_SYSTEM_ACC_VAL.AccountOptionValue"
+      ],
+      "input_keys": [
+        "Owning payment system",
+        "AccountOptionCode=LB_TRANSMISSION_FORMAT_ID",
+        "Requested business choice"
+      ],
+      "method": "Read-only UI choice inspection; manual completion only",
+      "exact_path": "oracle.apps.financials.payments.sharedSetup.paymentSystems.publicModel.view.LBTransmissionFormatVVO",
+      "query_keys": [
+        "Target identity"
+      ],
+      "response_fields": [
+        "FormatName",
+        "TransmissionFormatId"
+      ],
+      "match_rule": "Human verifies exact intended display choice and recorded context/filter in the target UI. Zero or ambiguous choices remain unresolved and must not produce a CSV value.",
+      "value_mapping": "UI ListBinding maps the chosen display field to the documented canonical code/ID. FSCR must omit this setting row from automated CSV until a separate supported machine resolver is qualified.",
+      "zero_match_behavior": "Do not invent a target code or ID; request prerequisite setup or correct choice.",
+      "multiple_match_behavior": "Disambiguate using target context; do not silently take the first match.",
+      "failure_behavior": "",
+      "read_only": "Yes",
+      "evidence_source_ids": [
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-OPTION-007"
+      ],
+      "status": "Partial",
+      "limitations": "Source-backed UI/manual boundary established; automated resolver remains unqualified. Automated preflight/CSV value resolution is NOT qualified. UI maps to TransmissionFormatId; the inspected generic import setter assigns string AccountOptionValue. No equivalent setting-specific name-to-value translation was found in the reviewed import hook. UI query restricts to application-seeded rows. Source follow-up distinguishes unapplied criteria from selected filters; target availability is a runtime prerequisite, not an unresearched source contract.",
+      "next_action": "Complete through the supported UI, or extend the declarative resolver policy only after exact public/service contract and target qualification. Do not downgrade this manual boundary because the record is Confirmed."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-OPTION-008",
+      "resolver": "LOV_OBTransmitConfig",
+      "setup_type": "Payment system account option CE_OB_TRANS_CONFIG_ID",
+      "resolution_mode": "ui_assisted_only",
+      "resolver_source_kind": "table_or_view",
+      "value_population": "customer_configured",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Inspect the corresponding choice list in Manage Payment Systems for the selected account/setting; manual completion must be separately recorded. No REST, SQL or automatic name-to-ID conversion is authorized by this contract.",
+      "public_preflight_policy": "not_applicable",
+      "applicable_attributes": [
+        "ORA_IBY_PAYMENT_SYSTEM_ACC_VAL.AccountOptionValue"
+      ],
+      "input_keys": [
+        "Owning payment system",
+        "AccountOptionCode=CE_OB_TRANS_CONFIG_ID",
+        "Requested business choice"
+      ],
+      "method": "Read-only UI choice inspection; manual completion only",
+      "exact_path": "oracle.apps.financials.payments.sharedSetup.paymentSystems.publicModel.view.FDAckTransmitConfigVVO",
+      "query_keys": [
+        "Target identity"
+      ],
+      "response_fields": [
+        "TransmitConfigurationName",
+        "TransmitConfigurationId"
+      ],
+      "match_rule": "Human verifies exact intended display choice and recorded context/filter in the target UI. Zero or ambiguous choices remain unresolved and must not produce a CSV value.",
+      "value_mapping": "UI ListBinding maps the chosen display field to the documented canonical code/ID. FSCR must omit this setting row from automated CSV until a separate supported machine resolver is qualified.",
+      "zero_match_behavior": "Do not invent a target code or ID; request prerequisite setup or correct choice.",
+      "multiple_match_behavior": "Disambiguate using target context; do not silently take the first match.",
+      "failure_behavior": "",
+      "read_only": "Yes",
+      "evidence_source_ids": [
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-OPTION-007"
+      ],
+      "status": "Partial",
+      "limitations": "Source-backed UI/manual boundary established; automated resolver remains unqualified. Automated preflight/CSV value resolution is NOT qualified. UI maps to TransmitConfigurationId; the inspected generic import setter assigns string AccountOptionValue. No equivalent setting-specific name-to-value translation was found in the reviewed import hook. Source follow-up distinguishes unapplied criteria from selected filters; target availability is a runtime prerequisite, not an unresearched source contract. Query joins protocol and configuration with no end-date filter.",
+      "next_action": "Complete through the supported UI, or extend the declarative resolver policy only after exact public/service contract and target qualification. Do not downgrade this manual boundary because the record is Confirmed."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-OPTION-009",
+      "resolver": "LOV_OBTurnKeyDocFormat",
+      "setup_type": "Payment system account option CE_TURNKEY_DOC_FORMAT_ID",
+      "resolution_mode": "ui_assisted_only",
+      "resolver_source_kind": "table_or_view",
+      "value_population": "mixed",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Inspect the corresponding choice list in Manage Payment Systems for the selected account/setting; manual completion must be separately recorded. No REST, SQL or automatic name-to-ID conversion is authorized by this contract.",
+      "public_preflight_policy": "not_applicable",
+      "applicable_attributes": [
+        "ORA_IBY_PAYMENT_SYSTEM_ACC_VAL.AccountOptionValue"
+      ],
+      "input_keys": [
+        "Owning payment system",
+        "AccountOptionCode=CE_TURNKEY_DOC_FORMAT_ID",
+        "Requested business choice"
+      ],
+      "method": "Read-only UI choice inspection; manual completion only",
+      "exact_path": "oracle.apps.financials.payments.sharedSetup.formats.publicView.FormatPVO",
+      "query_keys": [
+        "'IBY_FD_PAYMENT'"
+      ],
+      "response_fields": [
+        "FormatName",
+        "FormatCode"
+      ],
+      "match_rule": "Human verifies exact intended display choice and recorded context/filter in the target UI. Zero or ambiguous choices remain unresolved and must not produce a CSV value.",
+      "value_mapping": "UI ListBinding maps the chosen display field to the documented canonical code/ID. FSCR must omit this setting row from automated CSV until a separate supported machine resolver is qualified.",
+      "zero_match_behavior": "Do not invent a target code or ID; request prerequisite setup or correct choice.",
+      "multiple_match_behavior": "Disambiguate using target context; do not silently take the first match.",
+      "failure_behavior": "",
+      "read_only": "Yes",
+      "evidence_source_ids": [
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-OPTION-007"
+      ],
+      "status": "Partial",
+      "limitations": "Source-backed UI/manual boundary established; automated resolver remains unqualified. Automated preflight/CSV value resolution is NOT qualified. UI maps to FormatCode; the inspected generic import setter assigns string AccountOptionValue. No equivalent setting-specific name-to-value translation was found in the reviewed import hook. Source follow-up distinguishes unapplied criteria from selected filters; target availability is a runtime prerequisite, not an unresearched source contract. ByFormatTypeCode is applied; IsActive is not applied in MPS accessor.",
+      "next_action": "Complete through the supported UI, or extend the declarative resolver policy only after exact public/service contract and target qualification. Do not downgrade this manual boundary because the record is Confirmed."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-OPTION-010",
+      "resolver": "LOV_FDAckVoidInvAction",
+      "setup_type": "Payment system account option FD_ACK_VOID_INVOICE_ACTION",
+      "resolution_mode": "ui_assisted_only",
+      "resolver_source_kind": "lookup_type",
+      "value_population": "unknown",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Inspect the corresponding choice list in Manage Payment Systems for the selected account/setting; manual completion must be separately recorded. No REST, SQL or automatic name-to-ID conversion is authorized by this contract.",
+      "public_preflight_policy": "not_applicable",
+      "applicable_attributes": [
+        "ORA_IBY_PAYMENT_SYSTEM_ACC_VAL.AccountOptionValue"
+      ],
+      "input_keys": [
+        "Owning payment system",
+        "AccountOptionCode=FD_ACK_VOID_INVOICE_ACTION",
+        "Requested business choice"
+      ],
+      "method": "Read-only UI choice inspection; manual completion only",
+      "exact_path": "oracle.apps.financials.payments.sharedSetup.paymentSystems.publicModel.view.InvActionLookupVO",
+      "query_keys": [
+        "'PAYMENT_VOID_ACTION_TYPE'"
+      ],
+      "response_fields": [
+        "DisplayedField",
+        "LookupCode"
+      ],
+      "match_rule": "Human verifies exact intended display choice and recorded context/filter in the target UI. Zero or ambiguous choices remain unresolved and must not produce a CSV value.",
+      "value_mapping": "UI ListBinding maps the chosen display field to the documented canonical code/ID. FSCR must omit this setting row from automated CSV until a separate supported machine resolver is qualified.",
+      "zero_match_behavior": "Do not invent a target code or ID; request prerequisite setup or correct choice.",
+      "multiple_match_behavior": "Disambiguate using target context; do not silently take the first match.",
+      "failure_behavior": "",
+      "read_only": "Yes",
+      "evidence_source_ids": [
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-OPTION-007"
+      ],
+      "status": "Partial",
+      "limitations": "Source-backed UI/manual boundary established; automated resolver remains unqualified. Automated preflight/CSV value resolution is NOT qualified. UI maps to LookupCode; the inspected generic import setter assigns string AccountOptionValue. No equivalent setting-specific name-to-value translation was found in the reviewed import hook. Source follow-up distinguishes unapplied criteria from selected filters; target availability is a runtime prerequisite, not an unresearched source contract.",
+      "next_action": "Complete through the supported UI, or extend the declarative resolver policy only after exact public/service contract and target qualification. Do not downgrade this manual boundary because the record is Confirmed."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-OPTION-011",
+      "resolver": "LOV_Token2FA",
+      "setup_type": "Payment system account option ACCT_TOKEN_2FA",
+      "resolution_mode": "public_preflight_only",
+      "resolver_source_kind": "lookup_type",
+      "value_population": "seeded",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Read-only published standard lookup GET in selected target; follow all pages before deciding uniqueness; no SQL.",
+      "public_preflight_policy": "required",
+      "applicable_attributes": [
+        "ORA_IBY_PAYMENT_SYSTEM_ACC_VAL.AccountOptionValue"
+      ],
+      "input_keys": [
+        "Lookup type ORA_IBY_TOKEN_OTP",
+        "Requested exact LookupCode or exact localized Meaning",
+        "Effective date and response language"
+      ],
+      "method": "GET",
+      "exact_path": "/fscmRestApi/resources/11.13.18.05/standardLookups/ORA_IBY_TOKEN_OTP/child/lookupCodes",
+      "query_keys": [
+        "LookupType path parameter",
+        "fields=LookupCode,Meaning,EnabledFlag,StartDateActive,EndDateActive",
+        "limit",
+        "offset"
+      ],
+      "response_fields": [
+        "LookupCode",
+        "Meaning",
+        "EnabledFlag",
+        "StartDateActive",
+        "EndDateActive"
+      ],
+      "match_rule": "Match exact requested code or exact localized meaning within the fixed lookup type. Require exactly one enabled, date-effective row; ambiguous display meanings fail closed.",
+      "value_mapping": "Return LookupCode as AccountOptionValue for this exact account option only, after MPS sensitivity policy permits the row. No import-time name conversion assumed.",
+      "zero_match_behavior": "Block candidate setting; do not invent code or create a lookup.",
+      "multiple_match_behavior": "Block and require an unambiguous canonical code/context; never choose first.",
+      "failure_behavior": "",
+      "read_only": "Yes",
+      "evidence_source_ids": [
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-OPTION-007",
+        "SRC-MPS-DOC-LOOKUPS",
+        "SRC-MPS-RESOLVER-004"
+      ],
+      "status": "Confirmed",
+      "limitations": "Published 26D GET and system seed/type mapping establish source contract. Runtime privileges, availability and target response are not yet qualified. UI fallback remains manual.",
+      "next_action": "Qualify target GET before any candidate relying on this resolver; preserve effective-date and language evidence."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-OPTION-012",
+      "resolver": "LOV_SingleUseToken",
+      "setup_type": "Payment system account option ACCT_SINGLE_USE_TOKEN",
+      "resolution_mode": "public_preflight_only",
+      "resolver_source_kind": "lookup_type",
+      "value_population": "seeded",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Read-only published standard lookup GET in selected target; follow all pages before deciding uniqueness; no SQL.",
+      "public_preflight_policy": "required",
+      "applicable_attributes": [
+        "ORA_IBY_PAYMENT_SYSTEM_ACC_VAL.AccountOptionValue"
+      ],
+      "input_keys": [
+        "Lookup type ORA_IBY_TOKEN_OTP",
+        "Requested exact LookupCode or exact localized Meaning",
+        "Effective date and response language"
+      ],
+      "method": "GET",
+      "exact_path": "/fscmRestApi/resources/11.13.18.05/standardLookups/ORA_IBY_TOKEN_OTP/child/lookupCodes",
+      "query_keys": [
+        "LookupType path parameter",
+        "fields=LookupCode,Meaning,EnabledFlag,StartDateActive,EndDateActive",
+        "limit",
+        "offset"
+      ],
+      "response_fields": [
+        "LookupCode",
+        "Meaning",
+        "EnabledFlag",
+        "StartDateActive",
+        "EndDateActive"
+      ],
+      "match_rule": "Match exact requested code or exact localized meaning within the fixed lookup type. Require exactly one enabled, date-effective row; ambiguous display meanings fail closed.",
+      "value_mapping": "Return LookupCode as AccountOptionValue for this exact account option only, after MPS sensitivity policy permits the row. No import-time name conversion assumed.",
+      "zero_match_behavior": "Block candidate setting; do not invent code or create a lookup.",
+      "multiple_match_behavior": "Block and require an unambiguous canonical code/context; never choose first.",
+      "failure_behavior": "",
+      "read_only": "Yes",
+      "evidence_source_ids": [
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-OPTION-007",
+        "SRC-MPS-DOC-LOOKUPS",
+        "SRC-MPS-RESOLVER-004"
+      ],
+      "status": "Confirmed",
+      "limitations": "Published 26D GET and system seed/type mapping establish source contract. Runtime privileges, availability and target response are not yet qualified. UI fallback remains manual.",
+      "next_action": "Qualify target GET before any candidate relying on this resolver; preserve effective-date and language evidence."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-OPTION-013",
+      "resolver": "LOV_EmailDisbAckDetails",
+      "setup_type": "Payment system account option EMAIL_DISB_ACK_DETAILS",
+      "resolution_mode": "ui_assisted_only",
+      "resolver_source_kind": "lookup_type",
+      "value_population": "unknown",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Inspect the corresponding choice list in Manage Payment Systems for the selected account/setting; manual completion must be separately recorded. No REST, SQL or automatic name-to-ID conversion is authorized by this contract.",
+      "public_preflight_policy": "not_applicable",
+      "applicable_attributes": [
+        "ORA_IBY_PAYMENT_SYSTEM_ACC_VAL.AccountOptionValue"
+      ],
+      "input_keys": [
+        "Owning payment system",
+        "AccountOptionCode=EMAIL_DISB_ACK_DETAILS",
+        "Requested business choice"
+      ],
+      "method": "Read-only UI choice inspection; manual completion only",
+      "exact_path": "oracle.apps.fnd.applcore.lookups.model.publicView.LookupPVO",
+      "query_keys": [
+        "'YES_NO'"
+      ],
+      "response_fields": [
+        "Meaning",
+        "LookupCode"
+      ],
+      "match_rule": "Human verifies exact intended display choice and recorded context/filter in the target UI. Zero or ambiguous choices remain unresolved and must not produce a CSV value.",
+      "value_mapping": "UI ListBinding maps the chosen display field to the documented canonical code/ID. FSCR must omit this setting row from automated CSV until a separate supported machine resolver is qualified.",
+      "zero_match_behavior": "Do not invent a target code or ID; request prerequisite setup or correct choice.",
+      "multiple_match_behavior": "Disambiguate using target context; do not silently take the first match.",
+      "failure_behavior": "",
+      "read_only": "Yes",
+      "evidence_source_ids": [
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-OPTION-007"
+      ],
+      "status": "Partial",
+      "limitations": "Source-backed UI/manual boundary established; automated resolver remains unqualified. Automated preflight/CSV value resolution is NOT qualified. UI maps to LookupCode; the inspected generic import setter assigns string AccountOptionValue. No equivalent setting-specific name-to-value translation was found in the reviewed import hook. Source follow-up distinguishes unapplied criteria from selected filters; target availability is a runtime prerequisite, not an unresearched source contract.",
+      "next_action": "Complete through the supported UI, or extend the declarative resolver policy only after exact public/service contract and target qualification. Do not downgrade this manual boundary because the record is Confirmed."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-OPTION-014",
+      "resolver": "LOV_FdAckAutoVoidOption",
+      "setup_type": "Payment system account option FD_ACK_AUTO_VOID_OPTION",
+      "resolution_mode": "ui_assisted_only",
+      "resolver_source_kind": "lookup_type",
+      "value_population": "unknown",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Inspect the corresponding choice list in Manage Payment Systems for the selected account/setting; manual completion must be separately recorded. No REST, SQL or automatic name-to-ID conversion is authorized by this contract.",
+      "public_preflight_policy": "not_applicable",
+      "applicable_attributes": [
+        "ORA_IBY_PAYMENT_SYSTEM_ACC_VAL.AccountOptionValue"
+      ],
+      "input_keys": [
+        "Owning payment system",
+        "AccountOptionCode=FD_ACK_AUTO_VOID_OPTION",
+        "Requested business choice"
+      ],
+      "method": "Read-only UI choice inspection; manual completion only",
+      "exact_path": "oracle.apps.fnd.applcore.lookups.model.publicView.LookupPVO",
+      "query_keys": [
+        "'YES_NO'"
+      ],
+      "response_fields": [
+        "Meaning",
+        "LookupCode"
+      ],
+      "match_rule": "Human verifies exact intended display choice and recorded context/filter in the target UI. Zero or ambiguous choices remain unresolved and must not produce a CSV value.",
+      "value_mapping": "UI ListBinding maps the chosen display field to the documented canonical code/ID. FSCR must omit this setting row from automated CSV until a separate supported machine resolver is qualified.",
+      "zero_match_behavior": "Do not invent a target code or ID; request prerequisite setup or correct choice.",
+      "multiple_match_behavior": "Disambiguate using target context; do not silently take the first match.",
+      "failure_behavior": "",
+      "read_only": "Yes",
+      "evidence_source_ids": [
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-OPTION-007"
+      ],
+      "status": "Partial",
+      "limitations": "Source-backed UI/manual boundary established; automated resolver remains unqualified. Automated preflight/CSV value resolution is NOT qualified. UI maps to LookupCode; the inspected generic import setter assigns string AccountOptionValue. No equivalent setting-specific name-to-value translation was found in the reviewed import hook. Source follow-up distinguishes unapplied criteria from selected filters; target availability is a runtime prerequisite, not an unresearched source contract.",
+      "next_action": "Complete through the supported UI, or extend the declarative resolver policy only after exact public/service contract and target qualification. Do not downgrade this manual boundary because the record is Confirmed."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-OPTION-015",
+      "resolver": "LOV_PPTransmitConfig",
+      "setup_type": "Payment system account option POSITIVE_PAY_TRANSMIT_CONFIG",
+      "resolution_mode": "ui_assisted_only",
+      "resolver_source_kind": "table_or_view",
+      "value_population": "customer_configured",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Inspect the corresponding choice list in Manage Payment Systems for the selected account/setting; manual completion must be separately recorded. No REST, SQL or automatic name-to-ID conversion is authorized by this contract.",
+      "public_preflight_policy": "not_applicable",
+      "applicable_attributes": [
+        "ORA_IBY_PAYMENT_SYSTEM_ACC_VAL.AccountOptionValue"
+      ],
+      "input_keys": [
+        "Owning payment system",
+        "AccountOptionCode=POSITIVE_PAY_TRANSMIT_CONFIG",
+        "Requested business choice"
+      ],
+      "method": "Read-only UI choice inspection; manual completion only",
+      "exact_path": "oracle.apps.financials.payments.sharedSetup.paymentSystems.publicModel.view.FDAckTransmitConfigVVO",
+      "query_keys": [
+        "Target identity"
+      ],
+      "response_fields": [
+        "TransmitConfigurationName",
+        "TransmitConfigurationId"
+      ],
+      "match_rule": "Human verifies exact intended display choice and recorded context/filter in the target UI. Zero or ambiguous choices remain unresolved and must not produce a CSV value.",
+      "value_mapping": "UI ListBinding maps the chosen display field to the documented canonical code/ID. FSCR must omit this setting row from automated CSV until a separate supported machine resolver is qualified.",
+      "zero_match_behavior": "Do not invent a target code or ID; request prerequisite setup or correct choice.",
+      "multiple_match_behavior": "Disambiguate using target context; do not silently take the first match.",
+      "failure_behavior": "",
+      "read_only": "Yes",
+      "evidence_source_ids": [
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-OPTION-007"
+      ],
+      "status": "Partial",
+      "limitations": "Source-backed UI/manual boundary established; automated resolver remains unqualified. Automated preflight/CSV value resolution is NOT qualified. UI maps to TransmitConfigurationId; the inspected generic import setter assigns string AccountOptionValue. No equivalent setting-specific name-to-value translation was found in the reviewed import hook. Source follow-up distinguishes unapplied criteria from selected filters; target availability is a runtime prerequisite, not an unresearched source contract. Query joins protocol and configuration with no end-date filter.",
+      "next_action": "Complete through the supported UI, or extend the declarative resolver policy only after exact public/service contract and target qualification. Do not downgrade this manual boundary because the record is Confirmed."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-OPTION-016",
+      "resolver": "LOV_VcpNotificationTransConfig",
+      "setup_type": "Payment system account option VCP_NOTIF_TRANS_CONFIG",
+      "resolution_mode": "ui_assisted_only",
+      "resolver_source_kind": "table_or_view",
+      "value_population": "customer_configured",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Inspect the corresponding choice list in Manage Payment Systems for the selected account/setting; manual completion must be separately recorded. No REST, SQL or automatic name-to-ID conversion is authorized by this contract.",
+      "public_preflight_policy": "not_applicable",
+      "applicable_attributes": [
+        "ORA_IBY_PAYMENT_SYSTEM_ACC_VAL.AccountOptionValue"
+      ],
+      "input_keys": [
+        "Owning payment system",
+        "AccountOptionCode=VCP_NOTIF_TRANS_CONFIG",
+        "Requested business choice"
+      ],
+      "method": "Read-only UI choice inspection; manual completion only",
+      "exact_path": "oracle.apps.financials.payments.sharedSetup.transmissions.publicModel.view.TransmissionConfigurationVO",
+      "query_keys": [
+        "'CES_INBOUND'"
+      ],
+      "response_fields": [
+        "TransmitConfigurationName",
+        "TransmitConfigurationId"
+      ],
+      "match_rule": "Human verifies exact intended display choice and recorded context/filter in the target UI. Zero or ambiguous choices remain unresolved and must not produce a CSV value.",
+      "value_mapping": "UI ListBinding maps the chosen display field to the documented canonical code/ID. FSCR must omit this setting row from automated CSV until a separate supported machine resolver is qualified.",
+      "zero_match_behavior": "Do not invent a target code or ID; request prerequisite setup or correct choice.",
+      "multiple_match_behavior": "Disambiguate using target context; do not silently take the first match.",
+      "failure_behavior": "",
+      "read_only": "Yes",
+      "evidence_source_ids": [
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-OPTION-007"
+      ],
+      "status": "Partial",
+      "limitations": "Source-backed UI/manual boundary established; automated resolver remains unqualified. Automated preflight/CSV value resolution is NOT qualified. UI maps to TransmitConfigurationId; the inspected generic import setter assigns string AccountOptionValue. No equivalent setting-specific name-to-value translation was found in the reviewed import hook. Source follow-up distinguishes unapplied criteria from selected filters; target availability is a runtime prerequisite, not an unresearched source contract. ActiveStatus is an optional unbound criterion here; do not silently add an active-only predicate.",
+      "next_action": "Complete through the supported UI, or extend the declarative resolver policy only after exact public/service contract and target qualification. Do not downgrade this manual boundary because the record is Confirmed."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-OPTION-017",
+      "resolver": "LOV_VcpSubscribeTransConfig",
+      "setup_type": "Payment system account option VCP_SUBSCRIBE_TRANS_CONFIG",
+      "resolution_mode": "ui_assisted_only",
+      "resolver_source_kind": "table_or_view",
+      "value_population": "customer_configured",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Inspect the corresponding choice list in Manage Payment Systems for the selected account/setting; manual completion must be separately recorded. No REST, SQL or automatic name-to-ID conversion is authorized by this contract.",
+      "public_preflight_policy": "not_applicable",
+      "applicable_attributes": [
+        "ORA_IBY_PAYMENT_SYSTEM_ACC_VAL.AccountOptionValue"
+      ],
+      "input_keys": [
+        "Owning payment system",
+        "AccountOptionCode=VCP_SUBSCRIBE_TRANS_CONFIG",
+        "Requested business choice"
+      ],
+      "method": "Read-only UI choice inspection; manual completion only",
+      "exact_path": "oracle.apps.financials.payments.sharedSetup.transmissions.publicModel.view.TransmissionConfigurationVO",
+      "query_keys": [
+        "'CES_OUTBOUND'"
+      ],
+      "response_fields": [
+        "TransmitConfigurationName",
+        "TransmitConfigurationId"
+      ],
+      "match_rule": "Human verifies exact intended display choice and recorded context/filter in the target UI. Zero or ambiguous choices remain unresolved and must not produce a CSV value.",
+      "value_mapping": "UI ListBinding maps the chosen display field to the documented canonical code/ID. FSCR must omit this setting row from automated CSV until a separate supported machine resolver is qualified.",
+      "zero_match_behavior": "Do not invent a target code or ID; request prerequisite setup or correct choice.",
+      "multiple_match_behavior": "Disambiguate using target context; do not silently take the first match.",
+      "failure_behavior": "",
+      "read_only": "Yes",
+      "evidence_source_ids": [
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-OPTION-007"
+      ],
+      "status": "Partial",
+      "limitations": "Source-backed UI/manual boundary established; automated resolver remains unqualified. Automated preflight/CSV value resolution is NOT qualified. UI maps to TransmitConfigurationId; the inspected generic import setter assigns string AccountOptionValue. No equivalent setting-specific name-to-value translation was found in the reviewed import hook. Source follow-up distinguishes unapplied criteria from selected filters; target availability is a runtime prerequisite, not an unresearched source contract. ActiveStatus is an optional unbound criterion here; do not silently add an active-only predicate.",
+      "next_action": "Complete through the supported UI, or extend the declarative resolver policy only after exact public/service contract and target qualification. Do not downgrade this manual boundary because the record is Confirmed."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-OPTION-018",
+      "resolver": "LOV_VcpSetupTransConfig",
+      "setup_type": "Payment system account option VCP_SETUP_TRANS_CONFIG",
+      "resolution_mode": "ui_assisted_only",
+      "resolver_source_kind": "table_or_view",
+      "value_population": "customer_configured",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Inspect the corresponding choice list in Manage Payment Systems for the selected account/setting; manual completion must be separately recorded. No REST, SQL or automatic name-to-ID conversion is authorized by this contract.",
+      "public_preflight_policy": "not_applicable",
+      "applicable_attributes": [
+        "ORA_IBY_PAYMENT_SYSTEM_ACC_VAL.AccountOptionValue"
+      ],
+      "input_keys": [
+        "Owning payment system",
+        "AccountOptionCode=VCP_SETUP_TRANS_CONFIG",
+        "Requested business choice"
+      ],
+      "method": "Read-only UI choice inspection; manual completion only",
+      "exact_path": "oracle.apps.financials.payments.sharedSetup.transmissions.publicModel.view.TransmissionConfigurationVO",
+      "query_keys": [
+        "'CES_OUTBOUND'"
+      ],
+      "response_fields": [
+        "TransmitConfigurationName",
+        "TransmitConfigurationId"
+      ],
+      "match_rule": "Human verifies exact intended display choice and recorded context/filter in the target UI. Zero or ambiguous choices remain unresolved and must not produce a CSV value.",
+      "value_mapping": "UI ListBinding maps the chosen display field to the documented canonical code/ID. FSCR must omit this setting row from automated CSV until a separate supported machine resolver is qualified.",
+      "zero_match_behavior": "Do not invent a target code or ID; request prerequisite setup or correct choice.",
+      "multiple_match_behavior": "Disambiguate using target context; do not silently take the first match.",
+      "failure_behavior": "",
+      "read_only": "Yes",
+      "evidence_source_ids": [
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-OPTION-007"
+      ],
+      "status": "Partial",
+      "limitations": "Source-backed UI/manual boundary established; automated resolver remains unqualified. Automated preflight/CSV value resolution is NOT qualified. UI maps to TransmitConfigurationId; the inspected generic import setter assigns string AccountOptionValue. No equivalent setting-specific name-to-value translation was found in the reviewed import hook. Source follow-up distinguishes unapplied criteria from selected filters; target availability is a runtime prerequisite, not an unresearched source contract. ActiveStatus is an optional unbound criterion here; do not silently add an active-only predicate.",
+      "next_action": "Complete through the supported UI, or extend the declarative resolver policy only after exact public/service contract and target qualification. Do not downgrade this manual boundary because the record is Confirmed."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-OPTION-019",
+      "resolver": "LOV_VcpUiGenericSupplierMod",
+      "setup_type": "Payment system account option VCP_UI_GENERIC_SUPPLIER_MOD",
+      "resolution_mode": "public_preflight_only",
+      "resolver_source_kind": "lookup_type",
+      "value_population": "seeded",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Read-only published standard lookup GET in selected target; follow all pages before deciding uniqueness; no SQL.",
+      "public_preflight_policy": "required",
+      "applicable_attributes": [
+        "ORA_IBY_PAYMENT_SYSTEM_ACC_VAL.AccountOptionValue"
+      ],
+      "input_keys": [
+        "Lookup type ORA_IBY_VCP_UI_SUPPLIER_MOD",
+        "Requested exact LookupCode or exact localized Meaning",
+        "Effective date and response language"
+      ],
+      "method": "GET",
+      "exact_path": "/fscmRestApi/resources/11.13.18.05/standardLookups/ORA_IBY_VCP_UI_SUPPLIER_MOD/child/lookupCodes",
+      "query_keys": [
+        "LookupType path parameter",
+        "fields=LookupCode,Meaning,EnabledFlag,StartDateActive,EndDateActive",
+        "limit",
+        "offset"
+      ],
+      "response_fields": [
+        "LookupCode",
+        "Meaning",
+        "EnabledFlag",
+        "StartDateActive",
+        "EndDateActive"
+      ],
+      "match_rule": "Match exact requested code or exact localized meaning within the fixed lookup type. Require exactly one enabled, date-effective row; ambiguous display meanings fail closed.",
+      "value_mapping": "Return LookupCode as AccountOptionValue for this exact account option only, after MPS sensitivity policy permits the row. No import-time name conversion assumed.",
+      "zero_match_behavior": "Block candidate setting; do not invent code or create a lookup.",
+      "multiple_match_behavior": "Block and require an unambiguous canonical code/context; never choose first.",
+      "failure_behavior": "",
+      "read_only": "Yes",
+      "evidence_source_ids": [
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-OPTION-007",
+        "SRC-MPS-DOC-LOOKUPS",
+        "SRC-MPS-RESOLVER-004"
+      ],
+      "status": "Confirmed",
+      "limitations": "Published 26D GET and system seed/type mapping establish source contract. Runtime privileges, availability and target response are not yet qualified. UI fallback remains manual.",
+      "next_action": "Qualify target GET before any candidate relying on this resolver; preserve effective-date and language evidence."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-OPTION-020",
+      "resolver": "LOV_VcpUiCompanyMod",
+      "setup_type": "Payment system account option VCP_UI_COMPANY_MOD",
+      "resolution_mode": "public_preflight_only",
+      "resolver_source_kind": "lookup_type",
+      "value_population": "seeded",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Read-only published standard lookup GET in selected target; follow all pages before deciding uniqueness; no SQL.",
+      "public_preflight_policy": "required",
+      "applicable_attributes": [
+        "ORA_IBY_PAYMENT_SYSTEM_ACC_VAL.AccountOptionValue"
+      ],
+      "input_keys": [
+        "Lookup type ORA_IBY_VCP_UI_COMPANY_MOD",
+        "Requested exact LookupCode or exact localized Meaning",
+        "Effective date and response language"
+      ],
+      "method": "GET",
+      "exact_path": "/fscmRestApi/resources/11.13.18.05/standardLookups/ORA_IBY_VCP_UI_COMPANY_MOD/child/lookupCodes",
+      "query_keys": [
+        "LookupType path parameter",
+        "fields=LookupCode,Meaning,EnabledFlag,StartDateActive,EndDateActive",
+        "limit",
+        "offset"
+      ],
+      "response_fields": [
+        "LookupCode",
+        "Meaning",
+        "EnabledFlag",
+        "StartDateActive",
+        "EndDateActive"
+      ],
+      "match_rule": "Match exact requested code or exact localized meaning within the fixed lookup type. Require exactly one enabled, date-effective row; ambiguous display meanings fail closed.",
+      "value_mapping": "Return LookupCode as AccountOptionValue for this exact account option only, after MPS sensitivity policy permits the row. No import-time name conversion assumed.",
+      "zero_match_behavior": "Block candidate setting; do not invent code or create a lookup.",
+      "multiple_match_behavior": "Block and require an unambiguous canonical code/context; never choose first.",
+      "failure_behavior": "",
+      "read_only": "Yes",
+      "evidence_source_ids": [
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-OPTION-007",
+        "SRC-MPS-DOC-LOOKUPS",
+        "SRC-MPS-RESOLVER-004"
+      ],
+      "status": "Confirmed",
+      "limitations": "Published 26D GET and system seed/type mapping establish source contract. Runtime privileges, availability and target response are not yet qualified. UI fallback remains manual.",
+      "next_action": "Qualify target GET before any candidate relying on this resolver; preserve effective-date and language evidence."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-OPTION-021",
+      "resolver": "LOV_BAValidationReqFormat",
+      "setup_type": "Payment system account option BA_VAL_REQ_FORMAT",
+      "resolution_mode": "ui_assisted_only",
+      "resolver_source_kind": "table_or_view",
+      "value_population": "mixed",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Inspect the corresponding choice list in Manage Payment Systems for the selected account/setting; manual completion must be separately recorded. No REST, SQL or automatic name-to-ID conversion is authorized by this contract.",
+      "public_preflight_policy": "not_applicable",
+      "applicable_attributes": [
+        "ORA_IBY_PAYMENT_SYSTEM_ACC_VAL.AccountOptionValue"
+      ],
+      "input_keys": [
+        "Owning payment system",
+        "AccountOptionCode=BA_VAL_REQ_FORMAT",
+        "Requested business choice"
+      ],
+      "method": "Read-only UI choice inspection; manual completion only",
+      "exact_path": "oracle.apps.financials.payments.sharedSetup.formats.publicView.FormatPVO",
+      "query_keys": [
+        "'IBY_BA_VALIDATION_REQUEST'"
+      ],
+      "response_fields": [
+        "FormatName",
+        "FormatCode"
+      ],
+      "match_rule": "Human verifies exact intended display choice and recorded context/filter in the target UI. Zero or ambiguous choices remain unresolved and must not produce a CSV value.",
+      "value_mapping": "UI ListBinding maps the chosen display field to the documented canonical code/ID. FSCR must omit this setting row from automated CSV until a separate supported machine resolver is qualified.",
+      "zero_match_behavior": "Do not invent a target code or ID; request prerequisite setup or correct choice.",
+      "multiple_match_behavior": "Disambiguate using target context; do not silently take the first match.",
+      "failure_behavior": "",
+      "read_only": "Yes",
+      "evidence_source_ids": [
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-OPTION-007"
+      ],
+      "status": "Partial",
+      "limitations": "Source-backed UI/manual boundary established; automated resolver remains unqualified. Automated preflight/CSV value resolution is NOT qualified. UI maps to FormatCode; the inspected generic import setter assigns string AccountOptionValue. No equivalent setting-specific name-to-value translation was found in the reviewed import hook. Source follow-up distinguishes unapplied criteria from selected filters; target availability is a runtime prerequisite, not an unresearched source contract. ByFormatTypeCode is applied; IsActive is not applied in MPS accessor.",
+      "next_action": "Complete through the supported UI, or extend the declarative resolver policy only after exact public/service contract and target qualification. Do not downgrade this manual boundary because the record is Confirmed."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-OPTION-022",
+      "resolver": "LOV_BAValidationRespFormat",
+      "setup_type": "Payment system account option BA_VAL_RESP_FORMAT",
+      "resolution_mode": "ui_assisted_only",
+      "resolver_source_kind": "table_or_view",
+      "value_population": "mixed",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Inspect the corresponding choice list in Manage Payment Systems for the selected account/setting; manual completion must be separately recorded. No REST, SQL or automatic name-to-ID conversion is authorized by this contract.",
+      "public_preflight_policy": "not_applicable",
+      "applicable_attributes": [
+        "ORA_IBY_PAYMENT_SYSTEM_ACC_VAL.AccountOptionValue"
+      ],
+      "input_keys": [
+        "Owning payment system",
+        "AccountOptionCode=BA_VAL_RESP_FORMAT",
+        "Requested business choice"
+      ],
+      "method": "Read-only UI choice inspection; manual completion only",
+      "exact_path": "oracle.apps.financials.payments.sharedSetup.formats.publicView.FormatPVO",
+      "query_keys": [
+        "'IBY_BA_VALIDATION_RESPONSE'"
+      ],
+      "response_fields": [
+        "FormatName",
+        "FormatCode"
+      ],
+      "match_rule": "Human verifies exact intended display choice and recorded context/filter in the target UI. Zero or ambiguous choices remain unresolved and must not produce a CSV value.",
+      "value_mapping": "UI ListBinding maps the chosen display field to the documented canonical code/ID. FSCR must omit this setting row from automated CSV until a separate supported machine resolver is qualified.",
+      "zero_match_behavior": "Do not invent a target code or ID; request prerequisite setup or correct choice.",
+      "multiple_match_behavior": "Disambiguate using target context; do not silently take the first match.",
+      "failure_behavior": "",
+      "read_only": "Yes",
+      "evidence_source_ids": [
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-OPTION-007"
+      ],
+      "status": "Partial",
+      "limitations": "Source-backed UI/manual boundary established; automated resolver remains unqualified. Automated preflight/CSV value resolution is NOT qualified. UI maps to FormatCode; the inspected generic import setter assigns string AccountOptionValue. No equivalent setting-specific name-to-value translation was found in the reviewed import hook. Source follow-up distinguishes unapplied criteria from selected filters; target availability is a runtime prerequisite, not an unresearched source contract. ByFormatTypeCode is applied; IsActive is not applied in MPS accessor.",
+      "next_action": "Complete through the supported UI, or extend the declarative resolver policy only after exact public/service contract and target qualification. Do not downgrade this manual boundary because the record is Confirmed."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-OPTION-023",
+      "resolver": "LOV_BAValidationUsageRule",
+      "setup_type": "Payment system account option BA_VAL_USAGE_RULE",
+      "resolution_mode": "public_preflight_only",
+      "resolver_source_kind": "lookup_type",
+      "value_population": "seeded",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Read-only published standard lookup GET in selected target; follow all pages before deciding uniqueness; no SQL.",
+      "public_preflight_policy": "required",
+      "applicable_attributes": [
+        "ORA_IBY_PAYMENT_SYSTEM_ACC_VAL.AccountOptionValue"
+      ],
+      "input_keys": [
+        "Lookup type ORA_IBY_BA_VAL_USAGE_RULE",
+        "Requested exact LookupCode or exact localized Meaning",
+        "Effective date and response language"
+      ],
+      "method": "GET",
+      "exact_path": "/fscmRestApi/resources/11.13.18.05/standardLookups/ORA_IBY_BA_VAL_USAGE_RULE/child/lookupCodes",
+      "query_keys": [
+        "LookupType path parameter",
+        "fields=LookupCode,Meaning,EnabledFlag,StartDateActive,EndDateActive",
+        "limit",
+        "offset"
+      ],
+      "response_fields": [
+        "LookupCode",
+        "Meaning",
+        "EnabledFlag",
+        "StartDateActive",
+        "EndDateActive"
+      ],
+      "match_rule": "Match exact requested code or exact localized meaning within the fixed lookup type. Require exactly one enabled, date-effective row; ambiguous display meanings fail closed.",
+      "value_mapping": "Return LookupCode as AccountOptionValue for this exact account option only, after MPS sensitivity policy permits the row. No import-time name conversion assumed.",
+      "zero_match_behavior": "Block candidate setting; do not invent code or create a lookup.",
+      "multiple_match_behavior": "Block and require an unambiguous canonical code/context; never choose first.",
+      "failure_behavior": "",
+      "read_only": "Yes",
+      "evidence_source_ids": [
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-OPTION-007",
+        "SRC-MPS-DOC-LOOKUPS",
+        "SRC-MPS-RESOLVER-004"
+      ],
+      "status": "Confirmed",
+      "limitations": "Published 26D GET and system seed/type mapping establish source contract. Runtime privileges, availability and target response are not yet qualified. UI fallback remains manual.",
+      "next_action": "Qualify target GET before any candidate relying on this resolver; preserve effective-date and language evidence."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-OPTION-024",
+      "resolver": "LOV_BAValidationTransConfig",
+      "setup_type": "Payment system account option BA_VAL_TRANS_CONFIG",
+      "resolution_mode": "ui_assisted_only",
+      "resolver_source_kind": "table_or_view",
+      "value_population": "customer_configured",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Inspect the corresponding choice list in Manage Payment Systems for the selected account/setting; manual completion must be separately recorded. No REST, SQL or automatic name-to-ID conversion is authorized by this contract.",
+      "public_preflight_policy": "not_applicable",
+      "applicable_attributes": [
+        "ORA_IBY_PAYMENT_SYSTEM_ACC_VAL.AccountOptionValue"
+      ],
+      "input_keys": [
+        "Owning payment system",
+        "AccountOptionCode=BA_VAL_TRANS_CONFIG",
+        "Requested business choice"
+      ],
+      "method": "Read-only UI choice inspection; manual completion only",
+      "exact_path": "oracle.apps.financials.payments.sharedSetup.transmissions.publicModel.view.TransmissionConfigurationVO",
+      "query_keys": [
+        "Target identity"
+      ],
+      "response_fields": [
+        "TransmitConfigurationName",
+        "TransmitConfigurationId"
+      ],
+      "match_rule": "Human verifies exact intended display choice and recorded context/filter in the target UI. Zero or ambiguous choices remain unresolved and must not produce a CSV value.",
+      "value_mapping": "UI ListBinding maps the chosen display field to the documented canonical code/ID. FSCR must omit this setting row from automated CSV until a separate supported machine resolver is qualified.",
+      "zero_match_behavior": "Do not invent a target code or ID; request prerequisite setup or correct choice.",
+      "multiple_match_behavior": "Disambiguate using target context; do not silently take the first match.",
+      "failure_behavior": "",
+      "read_only": "Yes",
+      "evidence_source_ids": [
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-OPTION-007"
+      ],
+      "status": "Partial",
+      "limitations": "Source-backed UI/manual boundary established; automated resolver remains unqualified. Automated preflight/CSV value resolution is NOT qualified. UI maps to TransmitConfigurationId; the inspected generic import setter assigns string AccountOptionValue. No equivalent setting-specific name-to-value translation was found in the reviewed import hook. Source follow-up distinguishes unapplied criteria from selected filters; target availability is a runtime prerequisite, not an unresearched source contract. ActiveStatus is an optional unbound criterion here; do not silently add an active-only predicate.",
+      "next_action": "Complete through the supported UI, or extend the declarative resolver policy only after exact public/service contract and target qualification. Do not downgrade this manual boundary because the record is Confirmed."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-VALIDATOR-001",
+      "resolver": "BepTypeVA",
+      "setup_type": "IBY_BEP_TYPE",
+      "resolution_mode": "fsm_import_validated",
+      "resolver_source_kind": "lookup_type",
+      "value_population": "seeded",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Receiving EO list validator during governed import; optional read-only UI/public preflight in the selected target",
+      "public_preflight_policy": "optional_when_fsm_import_confirmed",
+      "applicable_attributes": [
+        "IBY_PAYMENT_SYSTEM.BepType"
+      ],
+      "input_keys": [
+        "LookupCode"
+      ],
+      "method": "EO ListValidationBean against ViewAccessor",
+      "exact_path": "/ade/lmallick_fphdev/fusionapps/fin/components/payables/iby/sharedSetup/paymentSystems/publicModel/src/oracle/apps/financials/payments/sharedSetup/paymentSystems/publicModel/entity/PaymentSystemInfoEO.xml#BepTypeVA",
+      "query_keys": [
+        "LookupCode"
+      ],
+      "response_fields": [
+        "LookupCode"
+      ],
+      "match_rule": "Provided exact code must be accepted by the named list validator; this validates membership and does not translate a display name.",
+      "value_mapping": "Already canonical input code retained in package; no code lookup result synthesized.",
+      "zero_match_behavior": "FND:::FND_CMN_INVALID_ATTRB_API_SERV",
+      "multiple_match_behavior": "Membership validation, not a name-to-single-ID resolution; no arbitrary first-result selection specified here.",
+      "failure_behavior": "Receiving EO rejects nonmember value with FND:::FND_CMN_INVALID_ATTRB_API_SERV; import diagnostics must be checked.",
+      "read_only": true,
+      "evidence_source_ids": [
+        "SRC-MPS-ADE-004"
+      ],
+      "status": "Confirmed",
+      "limitations": "Source proves declaration of import-time list validation, not target rows, access rights or successful end-to-end execution.",
+      "next_action": "Qualify positive and invalid-code cases in the separately approved nonproduction campaign."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-VALIDATOR-002",
+      "resolver": "LanguagePVA",
+      "setup_type": "Installed language",
+      "resolution_mode": "fsm_import_validated",
+      "resolver_source_kind": "table_or_view",
+      "value_population": "mixed",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Receiving EO list validator during governed import; optional read-only UI/public preflight in the selected target",
+      "public_preflight_policy": "optional_when_fsm_import_confirmed",
+      "applicable_attributes": [
+        "IBY_PAYMENT_SYSTEM.NlsLanguage"
+      ],
+      "input_keys": [
+        "LanguageCode"
+      ],
+      "method": "EO ListValidationBean against ViewAccessor",
+      "exact_path": "/ade/lmallick_fphdev/fusionapps/fin/components/payables/iby/sharedSetup/paymentSystems/publicModel/src/oracle/apps/financials/payments/sharedSetup/paymentSystems/publicModel/entity/PaymentSystemInfoEO.xml#LanguagePVA",
+      "query_keys": [
+        "LanguageCode"
+      ],
+      "response_fields": [
+        "LanguageCode"
+      ],
+      "match_rule": "Provided exact code must be accepted by the named list validator; this validates membership and does not translate a display name.",
+      "value_mapping": "Already canonical input code retained in package; no code lookup result synthesized.",
+      "zero_match_behavior": "FND:::FND_CMN_INVALID_ATTRB_API_SERV",
+      "multiple_match_behavior": "Membership validation, not a name-to-single-ID resolution; no arbitrary first-result selection specified here.",
+      "failure_behavior": "Receiving EO rejects nonmember value with FND:::FND_CMN_INVALID_ATTRB_API_SERV; import diagnostics must be checked.",
+      "read_only": true,
+      "evidence_source_ids": [
+        "SRC-MPS-ADE-004"
+      ],
+      "status": "Confirmed",
+      "limitations": "Source proves declaration of import-time list validation, not target rows, access rights or successful end-to-end execution.",
+      "next_action": "Qualify positive and invalid-code cases in the separately approved nonproduction campaign."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-VALIDATOR-003",
+      "resolver": "AccountOptionDataTypeVA",
+      "setup_type": "IBY_PARAMETER_TYPES",
+      "resolution_mode": "fsm_import_validated",
+      "resolver_source_kind": "lookup_type",
+      "value_population": "seeded",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Receiving EO list validator during governed import; optional read-only UI/public preflight in the selected target",
+      "public_preflight_policy": "optional_when_fsm_import_confirmed",
+      "applicable_attributes": [
+        "ORA_IBY_PAYMENT_SYSTEM_ACC_NAME.AccountOptionDatatype"
+      ],
+      "input_keys": [
+        "LookupCode"
+      ],
+      "method": "EO ListValidationBean against ViewAccessor",
+      "exact_path": "/ade/lmallick_fphdev/fusionapps/fin/components/payables/iby/sharedSetup/paymentSystems/publicModel/src/oracle/apps/financials/payments/sharedSetup/paymentSystems/publicModel/entity/PaymentSystemAccountNameEO.xml#AccountOptionDataTypeVA",
+      "query_keys": [
+        "LookupCode"
+      ],
+      "response_fields": [
+        "LookupCode"
+      ],
+      "match_rule": "Provided exact code must be accepted by the named list validator; this validates membership and does not translate a display name.",
+      "value_mapping": "Already canonical input code retained in package; no code lookup result synthesized.",
+      "zero_match_behavior": "FND:::FND_CMN_INVALID_ATTRB_API_SERV",
+      "multiple_match_behavior": "Membership validation, not a name-to-single-ID resolution; no arbitrary first-result selection specified here.",
+      "failure_behavior": "Receiving EO rejects nonmember value with FND:::FND_CMN_INVALID_ATTRB_API_SERV; import diagnostics must be checked.",
+      "read_only": true,
+      "evidence_source_ids": [
+        "SRC-MPS-META-006"
+      ],
+      "status": "Confirmed",
+      "limitations": "Source proves declaration of import-time list validation, not target rows, access rights or successful end-to-end execution.",
+      "next_action": "Qualify positive and invalid-code cases in the separately approved nonproduction campaign."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-VALIDATOR-004",
+      "resolver": "YesNoPVA",
+      "setup_type": "YES_NO",
+      "resolution_mode": "fsm_import_validated",
+      "resolver_source_kind": "lookup_type",
+      "value_population": "seeded",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Receiving EO list validator during governed import; optional read-only UI/public preflight in the selected target",
+      "public_preflight_policy": "optional_when_fsm_import_confirmed",
+      "applicable_attributes": [
+        "ORA_IBY_PAYMENT_SYSTEM_ACC_NAME.SecuredFlag"
+      ],
+      "input_keys": [
+        "LookupCode"
+      ],
+      "method": "EO ListValidationBean against ViewAccessor",
+      "exact_path": "/ade/lmallick_fphdev/fusionapps/fin/components/payables/iby/sharedSetup/paymentSystems/publicModel/src/oracle/apps/financials/payments/sharedSetup/paymentSystems/publicModel/entity/PaymentSystemAccountNameEO.xml#YesNoPVA",
+      "query_keys": [
+        "LookupCode"
+      ],
+      "response_fields": [
+        "LookupCode"
+      ],
+      "match_rule": "Provided exact code must be accepted by the named list validator; this validates membership and does not translate a display name.",
+      "value_mapping": "Already canonical input code retained in package; no code lookup result synthesized.",
+      "zero_match_behavior": "FND:::FND_CMN_INVALID_ATTRB_API_SERV",
+      "multiple_match_behavior": "Membership validation, not a name-to-single-ID resolution; no arbitrary first-result selection specified here.",
+      "failure_behavior": "Receiving EO rejects nonmember value with FND:::FND_CMN_INVALID_ATTRB_API_SERV; import diagnostics must be checked.",
+      "read_only": true,
+      "evidence_source_ids": [
+        "SRC-MPS-META-006"
+      ],
+      "status": "Confirmed",
+      "limitations": "Source proves declaration of import-time list validation, not target rows, access rights or successful end-to-end execution.",
+      "next_action": "Qualify positive and invalid-code cases in the separately approved nonproduction campaign."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-VALIDATOR-005",
+      "resolver": "YesNoPVA",
+      "setup_type": "YES_NO",
+      "resolution_mode": "fsm_import_validated",
+      "resolver_source_kind": "lookup_type",
+      "value_population": "seeded",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Receiving EO list validator during governed import; optional read-only UI/public preflight in the selected target",
+      "public_preflight_policy": "optional_when_fsm_import_confirmed",
+      "applicable_attributes": [
+        "ORA_IBY_PAYMENT_SYSTEM_ACC_NAME.TokenProfileFlag"
+      ],
+      "input_keys": [
+        "LookupCode"
+      ],
+      "method": "EO ListValidationBean against ViewAccessor",
+      "exact_path": "/ade/lmallick_fphdev/fusionapps/fin/components/payables/iby/sharedSetup/paymentSystems/publicModel/src/oracle/apps/financials/payments/sharedSetup/paymentSystems/publicModel/entity/PaymentSystemAccountNameEO.xml#YesNoPVA",
+      "query_keys": [
+        "LookupCode"
+      ],
+      "response_fields": [
+        "LookupCode"
+      ],
+      "match_rule": "Provided exact code must be accepted by the named list validator; this validates membership and does not translate a display name.",
+      "value_mapping": "Already canonical input code retained in package; no code lookup result synthesized.",
+      "zero_match_behavior": "FND:::FND_CMN_INVALID_ATTRB_API_SERV",
+      "multiple_match_behavior": "Membership validation, not a name-to-single-ID resolution; no arbitrary first-result selection specified here.",
+      "failure_behavior": "Receiving EO rejects nonmember value with FND:::FND_CMN_INVALID_ATTRB_API_SERV; import diagnostics must be checked.",
+      "read_only": true,
+      "evidence_source_ids": [
+        "SRC-MPS-META-006"
+      ],
+      "status": "Confirmed",
+      "limitations": "Source proves declaration of import-time list validation, not target rows, access rights or successful end-to-end execution.",
+      "next_action": "Qualify positive and invalid-code cases in the separately approved nonproduction campaign."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-VALIDATOR-006",
+      "resolver": "FormatPVA",
+      "setup_type": "Format code",
+      "resolution_mode": "fsm_import_validated",
+      "resolver_source_kind": "table_or_view",
+      "value_population": "mixed",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Receiving EO list validator during governed import; optional read-only UI/public preflight in the selected target",
+      "public_preflight_policy": "optional_when_fsm_import_confirmed",
+      "applicable_attributes": [
+        "ORA_IBY_PAYMENT_SYSTEM_FORMAT.PaymentFormatCode"
+      ],
+      "input_keys": [
+        "FormatCode"
+      ],
+      "method": "EO ListValidationBean against ViewAccessor",
+      "exact_path": "/ade/lmallick_fphdev/fusionapps/fin/components/payables/iby/sharedSetup/paymentSystems/publicModel/src/oracle/apps/financials/payments/sharedSetup/paymentSystems/publicModel/entity/PaymentSystemFormatEO.xml#FormatPVA",
+      "query_keys": [
+        "FormatCode"
+      ],
+      "response_fields": [
+        "FormatCode"
+      ],
+      "match_rule": "Provided exact code must be accepted by the named list validator; this validates membership and does not translate a display name.",
+      "value_mapping": "Already canonical input code retained in package; no code lookup result synthesized.",
+      "zero_match_behavior": "FND:::FND_CMN_INVALID_ATTRB_API_SERV",
+      "multiple_match_behavior": "Membership validation, not a name-to-single-ID resolution; no arbitrary first-result selection specified here.",
+      "failure_behavior": "Receiving EO rejects nonmember value with FND:::FND_CMN_INVALID_ATTRB_API_SERV; import diagnostics must be checked.",
+      "read_only": true,
+      "evidence_source_ids": [
+        "SRC-MPS-META-009"
+      ],
+      "status": "Confirmed",
+      "limitations": "Source proves declaration of import-time list validation, not target rows, access rights or successful end-to-end execution.",
+      "next_action": "Qualify positive and invalid-code cases in the separately approved nonproduction campaign."
+    },
+    {
+      "requirement_id": "RESOLVER-MPS-VALIDATOR-007",
+      "resolver": "TransmissionProtocolVA",
+      "setup_type": "Transmission protocol",
+      "resolution_mode": "fsm_import_validated",
+      "resolver_source_kind": "table_or_view",
+      "value_population": "mixed",
+      "environment_verification_required": true,
+      "runtime_verification_method": "Receiving EO list validator during governed import; optional read-only UI/public preflight in the selected target",
+      "public_preflight_policy": "optional_when_fsm_import_confirmed",
+      "applicable_attributes": [
+        "ORA_IBY_PAYMENT_SYSTEM_TRAN.TransmitProtocolCode"
+      ],
+      "input_keys": [
+        "TransmitProtocolCode"
+      ],
+      "method": "EO ListValidationBean against ViewAccessor",
+      "exact_path": "/ade/lmallick_fphdev/fusionapps/fin/components/payables/iby/sharedSetup/paymentSystems/publicModel/src/oracle/apps/financials/payments/sharedSetup/paymentSystems/publicModel/entity/PaymentSystemTransmissionEO.xml#TransmissionProtocolVA",
+      "query_keys": [
+        "TransmitProtocolCode"
+      ],
+      "response_fields": [
+        "TransmitProtocolCode"
+      ],
+      "match_rule": "Provided exact code must be accepted by the named list validator; this validates membership and does not translate a display name.",
+      "value_mapping": "Already canonical input code retained in package; no code lookup result synthesized.",
+      "zero_match_behavior": "FND:::FND_CMN_INVALID_ATTRB_API_SERV",
+      "multiple_match_behavior": "Membership validation, not a name-to-single-ID resolution; no arbitrary first-result selection specified here.",
+      "failure_behavior": "Receiving EO rejects nonmember value with FND:::FND_CMN_INVALID_ATTRB_API_SERV; import diagnostics must be checked.",
+      "read_only": true,
+      "evidence_source_ids": [
+        "SRC-MPS-META-018"
+      ],
+      "status": "Confirmed",
+      "limitations": "Source proves declaration of import-time list validation, not target rows, access rights or successful end-to-end execution.",
+      "next_action": "Qualify positive and invalid-code cases in the separately approved nonproduction campaign."
+    }
+  ]
+}

@@ -1,6 +1,5 @@
 # Customer ownership evidence
 
-Classification: Oracle Highly Restricted
 
 `scripts/customer_ownership_review.py` checks supplied evidence for the seven entities resolved by the identity helper. Matching a source reference alone does not establish that its target belongs to the intended customer hierarchy. This check compares the account's party, the party site's party/location, the account site's account/party site, the account-site use's account site/set/purpose, and the party-site use's party site/purpose.
 

@@ -1,6 +1,5 @@
 # Customers Dependency Readiness
 
-Classification: Oracle Highly Restricted
 
 Before any runtime read or central handoff, apply
 [governed read routes](../references/governed-read-routes.md). The task-only

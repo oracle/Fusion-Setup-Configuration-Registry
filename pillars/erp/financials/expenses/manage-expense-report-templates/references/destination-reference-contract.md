@@ -56,7 +56,7 @@ LOV. Project mappings, tax, cards and policies retain their current scope gates.
 - Import mapping: the sibling `expenseTemplateService/view/ExpenseTypeVO.xml`,
   Segment1 at 221–225; `applicationModule/ExpenseTemplateServiceAMImpl.java`,
   LedgerName/BindByLedgerName at 396–415 and 656–675, assigning ChartOfAccountsId.
-- CodeSearch series: FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64. Development-source
+- CodeSearch series: maintainer-reviewed source snapshot Development-source
   evidence must be qualified with the selected destination release; it is not
   by itself a claim of successful 26.10 import.
 - [Lookup codes, Oracle 26D](https://docs.oracle.com/en/cloud/saas/applications-common/26d/farca/op-http-servername-fscmrestapi-resources-11.13.18.05-standardlookups-lookuptype-child-lookupcodes-get.html).

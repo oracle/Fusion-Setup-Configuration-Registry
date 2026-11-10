@@ -1,6 +1,5 @@
 # Customers Input Validation
 
-Classification: Oracle Highly Restricted
 
 Source basis: target-delivered template and source register in ../references/source-contract.md.
 

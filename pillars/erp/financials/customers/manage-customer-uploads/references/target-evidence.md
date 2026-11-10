@@ -1,6 +1,5 @@
 # Before-state target intent
 
-Classification: Oracle Highly Restricted
 
 For the supported existing-target API route, use the raw collection/replay and
 `customer_api_target_review` contract in [assisted evidence](assisted-evidence.md).

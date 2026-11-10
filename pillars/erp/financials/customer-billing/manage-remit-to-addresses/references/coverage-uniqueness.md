@@ -24,7 +24,7 @@ partial ZIP until the conflict is resolved and the revised design is confirmed.
 ## Source evidence
 
 SRC-REMIT-CRITERIA-U1: CodeSearch MCP reviewed 2026-09-21, FPHDEV
-[ra_remit_tos_all.table](https://codesearch.oraclecorp.com/source/xref/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64/fusionapps/fin/components/receivables/ar/transactionSetup/remitTo/dbSchema/database/fusionDB/FUSION/ra_remit_tos_all.table#1066).
+ra_remit_tos_all.table.
 The unique marker is at line 1066, RA_REMIT_TOS_U1 at 1068, STATE at 1076,
 COUNTRY at 1079, POSTAL_CODE_LOW at 1082, POSTAL_CODE_HIGH at 1085 and SET_ID
 at 1088. ADDRESS_SEQ_ID belongs to the separate index at 1139, not U1.

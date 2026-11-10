@@ -1,7 +1,5 @@
 {
-  "classification": "Oracle Highly Restricted",
   "status": "INTERFACE_MAPPING_REVIEW_ONLY",
-  "source_url": "https://codesearch.oraclecorp.com/source/xref/FUSIONAPPS_11.13.26.10.0_LINUX.X64/fusionapps/fin/ar/db/plsql/ar_customer_interface_pkg.pkb",
   "captured_source_sha256": "401a440df99fff2e8e2556cac9204a62fa7b3c61c1020f8dbf551ebf163b538f",
   "control_source_sha256": "c85f853f709c7adaec364476049c74f21f00ac5fc5bfdf97b6e2a96c89a548e4",
   "field_count": 87,

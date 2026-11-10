@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root><records>
+  <record><col1>HEADER</col1><col2>VC</col2><col3>TESTPAY0001SUA0001</col3><col4>Success</col4><col5>PROVIDER-TRXN-0001</col5><col6/><col7/></record>
+  <record><col1>HEADER</col1><col2>VC</col2><col3>TESTPAY0002SUA0002</col3><col4>Failure</col4><col5/><col6>TEST-REJECT</col6><col7>Synthetic rejection</col7></record>
+</records></root>

@@ -1,6 +1,5 @@
 {
   "schema_version": "ar-customer-registration-contract-v1",
-  "classification": "Oracle Highly Restricted",
   "release": "26D (11.13.26.10.0)",
   "registration_fields": {
     "BUS_OBJ_FILE_DISCRIMINATOR": "customers",

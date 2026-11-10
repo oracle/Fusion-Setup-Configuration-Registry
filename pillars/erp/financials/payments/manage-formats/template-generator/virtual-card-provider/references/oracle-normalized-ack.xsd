@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="AckResponse">
+    <xs:complexType><xs:sequence>
+      <xs:element name="PmtHeader"><xs:complexType><xs:sequence>
+        <xs:element name="MsgId" type="xs:string"/>
+        <xs:element name="MsgSts" type="xs:string" minOccurs="0"/>
+        <xs:element name="MsgStsCd" type="xs:string"/>
+        <xs:element name="MsgErrCd" type="xs:string" minOccurs="0"/>
+        <xs:element name="MsgErrDet" type="xs:string" minOccurs="0"/>
+      </xs:sequence></xs:complexType></xs:element>
+      <xs:element name="PmtDetls" minOccurs="0" maxOccurs="unbounded"><xs:complexType><xs:sequence>
+        <xs:element name="PmtRef" type="xs:string"/>
+        <xs:element name="PmtSts" type="xs:string" minOccurs="0"/>
+        <xs:element name="PmtStsCd" type="xs:string"/>
+        <xs:element name="PmtMsgErrCd" type="xs:string" minOccurs="0"/>
+        <xs:element name="PmtMsgErrDet" type="xs:string" minOccurs="0"/>
+        <xs:element name="PmtClearingNum" type="xs:string" minOccurs="0"/>
+        <xs:element name="InvHoldCd" type="xs:string" minOccurs="0"/>
+      </xs:sequence></xs:complexType></xs:element>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+</xs:schema>

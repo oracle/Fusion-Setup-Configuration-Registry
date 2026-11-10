@@ -1,6 +1,5 @@
 # Before/after scoped effect observations
 
-Classification: Oracle Highly Restricted
 
 This is the detailed supplied-evidence comparator contract. Its exhaustive
 column shape remains unchanged for developer or otherwise complete evidence.

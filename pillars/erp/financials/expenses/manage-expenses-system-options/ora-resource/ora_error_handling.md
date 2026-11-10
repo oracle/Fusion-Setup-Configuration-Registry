@@ -9,6 +9,7 @@
 | An option CSV has no exact row, duplicate rows, a mismatched header, or paired option files differ on a requested row | Classify as catalog mismatch; do not choose a row or repair the export |
 | The package changes after it is built | Classify as artifact persistence; restart Data Loader preflight, Task Hook validation, and approval with the changed package |
 | Data Loader preflight, Task Hook validation, approval, submission, monitoring, or ProcessLog verification fails | Preserve the returned safe diagnostic, stop before retry, and follow core.data-loader's declared recovery path |
+| Selected-row nonproduction qualification is locally valid but has no import/read-back evidence | Retain a warning in Task Hook and exact-artifact preview; conformance permits only the declared test, never ordinary customer promotion. Failed unrelated-row or audit preservation remains a failed live test |
 
 ## Task Nodes
 

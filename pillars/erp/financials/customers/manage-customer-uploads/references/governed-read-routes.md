@@ -1,6 +1,5 @@
 # Governed customer reads and current availability
 
-Classification: Oracle Highly Restricted
 
 This is the runtime route contract for the task-only cleanup. The inspected
 framework baseline is `erp-pillar-integration` commit

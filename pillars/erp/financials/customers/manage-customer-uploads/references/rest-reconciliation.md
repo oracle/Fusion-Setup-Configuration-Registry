@@ -1,6 +1,5 @@
 # Partial REST reconciliation contract
 
-Classification: Oracle Highly Restricted
 
 ## Current route and historical evidence boundary
 
@@ -281,8 +280,8 @@ permission to create. Party-number and party-site-number checks remain separate.
 
 ## Deployed account DFF mapping
 
-The internal [Flexfields Runtime Metadata Description Service](https://confluence.oraclecorp.com/confluence/pages/viewpage.action?pageId=2685835569)
-(Oracle Internal) documents a read-only deployed-metadata describe route. The
+The Flexfields Runtime Metadata Description Service provides a read-only
+deployed-metadata describe route. The
 account service's imported DFF XSD identifies the base locator used here:
 `http://xmlns.oracle.com/apps/cdm/foundation/parties/flex/custAccount/CustAcctInformation`.
 The collector delegates GET to core at

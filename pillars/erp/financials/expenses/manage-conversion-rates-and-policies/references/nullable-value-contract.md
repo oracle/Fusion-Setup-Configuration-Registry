@@ -24,7 +24,7 @@ Task Hook and exact-artifact approval before import.
 
 ## Source evidence
 
-CodeSearch MCP, FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64, reviewed 2026-10-21:
+CodeSearch MCP, maintainer-reviewed source snapshot, reviewed 2026-10-21:
 
 - `fusionapps/fin/components/payables/exm/policy/exchangeRate/ui/public_html/oracle/apps/financials/expenses/policy/exchangeRate/ui/page/ManageExchangeRate.jsff`:
   parent percentage required attributes inherit hints at 286/313, child at

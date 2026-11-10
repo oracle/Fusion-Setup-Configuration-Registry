@@ -1,6 +1,5 @@
 # Selected persisted-value evidence
 
-Classification: Oracle Highly Restricted
 
 `scripts/customer_value_review.py:analyze` is an offline comparison function.
 Pass the candidate ZIP bytes, declared create/update/mixed intent, environment,

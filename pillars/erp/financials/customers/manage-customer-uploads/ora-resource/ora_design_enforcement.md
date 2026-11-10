@@ -1,6 +1,5 @@
 # Customers Design Enforcement
 
-Classification: Oracle Highly Restricted
 
 ## Enforcement Order
 

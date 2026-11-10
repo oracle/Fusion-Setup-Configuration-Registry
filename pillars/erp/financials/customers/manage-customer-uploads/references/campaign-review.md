@@ -1,6 +1,5 @@
 # FBDI campaign evidence review
 
-Classification: Oracle Highly Restricted
 
 `scripts/customer_campaign_review.py` joins the existing evidence reviewers for
 one exact candidate. It is the offline reconciliation stage of the campaign

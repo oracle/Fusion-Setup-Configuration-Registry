@@ -67,8 +67,9 @@ combinations as accepted live outcomes or promise guaranteed success.
 
 ## Current target and baseline
 
-The historical observation target is retained in accepted-meals-profile.json
-as historical evidence, not a release allowlist. Runtime may use any explicitly
+The historical observation release and result hashes are retained in
+accepted-meals-profile.json; its private target identity is omitted. No target
+receives historical qualification from that redacted identity. Runtime may use any explicitly
 selected environment/release with a fresh approved baseline, exact task schema,
 matching target and release provenance, and operation-bound currency evidence.
 A different environment or release is
@@ -161,6 +162,14 @@ include only the two disclosed hidden blank-to-N values and generated audits;
 report these raw differences rather than claiming exact submitted-cell equality.
 UPDATE preserves all other cells/creation audits; report actual update audit
 effects. Sequence-only metadata drift remains a strict finding, not equivalence.
+Two consecutive controlled exports reproduced changes in four Mileage
+NodeSequence values without an intervening setup import; all 19 CSV row
+multisets, including audit cells, were identical. This supports a bounded
+export-variance disposition for that observation, not a policy-update effect
+or universal sequence equivalence. Retain the original strict comparison and
+its evidence. Build every later candidate from its own fresh descriptor and
+require byte-identical submission metadata; structural metadata drift still
+stops execution. Do not rewrite sequence values or reuse an older descriptor.
 Failure/partial/mismatch stops without replay/repair; obtain a human completion
 or retry decision. No outcome promises guaranteed cleanup or success for every
 value or circumstance.

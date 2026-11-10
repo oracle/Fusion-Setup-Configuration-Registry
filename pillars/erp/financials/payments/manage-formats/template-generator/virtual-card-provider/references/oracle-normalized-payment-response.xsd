@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="records"><xs:complexType><xs:sequence>
+    <xs:element name="record" minOccurs="0" maxOccurs="unbounded"><xs:complexType><xs:sequence>
+      <xs:element name="paymentRefNum" type="xs:string"/>
+      <xs:element name="bepStatus" type="xs:string"/>
+      <xs:element name="bepTrxnResponseId" type="xs:string" minOccurs="0"/>
+      <xs:element name="bepErrorCode" type="xs:string" minOccurs="0"/>
+      <xs:element name="bepErrorMessage" type="xs:string" minOccurs="0"/>
+      <xs:element name="invHoldCode" type="xs:string" minOccurs="0"/>
+    </xs:sequence></xs:complexType></xs:element>
+  </xs:sequence></xs:complexType></xs:element>
+</xs:schema>

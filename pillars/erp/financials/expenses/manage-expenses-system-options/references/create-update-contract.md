@@ -51,9 +51,32 @@ Build review-only packages, obtain core Data Loader/Task Hook validation and
 exact-candidate approval, then submit once. Fresh-export reconciliation must
 verify new overrides, values, and preservation separately from job acceptance.
 
+## Selected-row submission and audit preservation
+
+Both builder commands retain all four members, the exact fresh descriptor and
+ordered headers. They submit only complete selected rows by BuName/code; CSVs
+with no requested keys are header-only. Existing selected rows keep all non-input
+cells. New rows follow the sparse-create contract. Both option aliases remain
+identical; unrelated baseline rows are never replayed. The manifest records
+selected/omitted counts and the candidate digest.
+
+The prior full-baseline create/update regression retained business values but
+changed last-update audits on an unrelated DFLT_CC_EXP_TEMPLATE_ID row. Those
+strict failures remain historical evidence. The selected-row repair passed
+48/48 create and 57/57 update checks, including every unrelated full row and
+audit cell. See [bounded preservation evidence](selected-row-preservation.md).
+
+`build-import` is the ordinary confirmed-mapping route using this profile.
+`build-qualification` is the explicit nonproduction maintainer route and labels
+its result qualification-only. Neither local result is a live success claim:
+Task Hook, immutable approval and fresh-export reconciliation remain required.
+The controlled evidence does not certify every field combination or global
+setting. Do not remove aliases, manufacture metadata, clear unrelated audits,
+bypass Task Hook or silently downgrade a preservation failure.
+
 ## Source evidence
 
-CodeSearch series FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64, reviewed 2026-10-21:
+CodeSearch series maintainer-reviewed source snapshot, reviewed 2026-10-21:
 
 - `fusionapps/fin/components/payables/exm/setup/shared/model/src/oracle/apps/financials/expenses/setup/shared/expenseSetupOptionService/applicationModule/ExpenseSetupOptionServiceAMImpl.java`:
   BuName-to-BusinessUnitPVO mapping at 143–153, global OtherOrgId sentinel

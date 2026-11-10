@@ -50,16 +50,6 @@ MigratorHelper readXML, updatePrimaryKeysInXML and findByAltKey are no longer mi
 
 ## Evidence
 
-| Source ID | Source | Location | Revision boundary | Status |
-|---|---|---|---|---|
-| SRC-HELP-26D | Set up Expense Assistant | https://docs.oracle.com/en/cloud/saas/financials/26d/faiex/set-up-expense-assistant.html | 26D | Confirmed |
-| SRC-BO-SEEDS-COMPLETE | SetupBusinessObjectSD.xml | https://codesearch.oraclecorp.com/source/xref/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64/fusionapps/fin/fun/db/data/FinFunShared/SetupBusinessObjectSD.xml | FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64; index 2026-10-09 | Confirmed |
-| SRC-ORG-AMIMPL | ExpenseOrgSettingServiceAMImpl.java | https://codesearch.oraclecorp.com/source/xref/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64/fusionapps/fin/components/payables/exm/setup/shared/model/src/oracle/apps/financials/expenses/setup/shared/expenseOrgSettingService/applicationModule/ExpenseOrgSettingServiceAMImpl.java | FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64; source snapshot hash in evidence/classic/manifest.json; reviewed 2026-10-09 | Confirmed |
-| SRC-OPTION-AMIMPL | ExpenseSetupOptionServiceAMImpl.java | https://codesearch.oraclecorp.com/source/xref/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64/fusionapps/fin/components/payables/exm/setup/shared/model/src/oracle/apps/financials/expenses/setup/shared/expenseSetupOptionService/applicationModule/ExpenseSetupOptionServiceAMImpl.java | FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64; source snapshot hash in evidence/classic/manifest.json; reviewed 2026-10-09 | Confirmed |
-| SRC-BU-PEO | BusinessUnitPEO.xml | https://codesearch.oraclecorp.com/source/xref/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64/fusionapps/hcm/components/hcmCoreSetup/organizations/fun/businessUnits/publicEntity/src/oracle/apps/financials/commonModules/businessUnits/publicEntity/BusinessUnitPEO.xml | FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64; index 2026-10-09 20:00:03 UTC | Confirmed |
+Maintainer provenance IDs: `SRC-HELP-26D`, `SRC-BO-SEEDS-COMPLETE`, `SRC-ORG-AMIMPL`, `SRC-OPTION-AMIMPL`, `SRC-BU-PEO`.
 
-Source-domain gaps closed on 2026-10-12: enable Y/N, seven weekday codes and three direction codes from complete System seed parents. The time-zone owning VO is identified; the source-backed fixed UTC−08:00 code is Etc/GMT+8, while target membership is still unresolved. See ora_reference_lookups.md for source URLs and boundaries.
-
-Customers provide environment and business input only. The workflow obtains its
-own template and baseline. The maintained transport profile, not a prior
-customer import ZIP, supplies reusable serialization guidance.
+The reusable contract is the task-local field, scope and package rules. Maintainer source locations are excluded from distribution and are not runtime inputs. Historical review does not qualify a new target or authorize an import. Retain every current-target and approval check.

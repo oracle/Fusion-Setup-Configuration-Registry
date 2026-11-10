@@ -1,7 +1,5 @@
 # Meals dependency readiness
 
-Classification: Oracle Highly Restricted.
-
 Use [ordinary Meals execution](../references/ordinary-meals-execution.md) for
 the supported workbook and governed workflow.
 

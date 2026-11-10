@@ -1,0 +1,942 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "ORA_FUN_MANAGE_DATA_ACCESS_FOR_USERS",
+      "task_name": "Manage Data Access for Users",
+      "start_node": "MDA.CLASSIFY_REQUEST",
+      "nodes": [
+        {
+          "id": "MDA.CLASSIFY_REQUEST",
+          "node_type": "decision",
+          "sequence": 1,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "assignment": "MDA.SELECT_METHOD",
+            "loader_status": "MDA.LOADER_STATUS_INPUT",
+            "invalid": "RETURN_ISSUES"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Classify supplied assignment versus submitted-loader follow-up intent locally before lookups",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 332
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.LOADER_STATUS_INPUT",
+          "node_type": "step",
+          "sequence": 2,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "MDA.LOADER_STATUS_READY",
+            "invalid": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MDA.CLASSIFY_REQUEST"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Validate locally supplied or retained loader reference and environment; no mutation prerequisites",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 333
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.LOADER_STATUS_READY",
+          "node_type": "terminal",
+          "sequence": 3,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "MDA.LOADER_STATUS_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return readiness to SKILL.md later Data Loader status and verification handoff",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 292
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.SELECT_METHOD",
+          "node_type": "decision",
+          "sequence": 5,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "fsm": "MDA.VALIDATE_INPUT",
+            "rest": "MDA.VALIDATE_INPUT",
+            "invalid": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MDA.CLASSIFY_REQUEST"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Apply Method Selection Policy in this file before method-specific input checks; preserve the selected method for the same request during handoff or resume",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 334
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.VALIDATE_INPUT",
+          "node_type": "step",
+          "sequence": 10,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "MDA.APPLY_COMMON_DEFAULTS",
+            "invalid": "RETURN_ISSUES",
+            "failed": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MDA.SELECT_METHOD"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Classify intent; for mutations resolve the explicit context label before any missing-context decision; check selected-operation inputs without external calls",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 335
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.APPLY_COMMON_DEFAULTS",
+          "node_type": "step",
+          "sequence": 15,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "applied": "MDA.SELECT_OPERATION",
+            "not_applicable": "MDA.SELECT_OPERATION"
+          },
+          "prerequisites": [
+            "MDA.VALIDATE_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Derive mutation desired state only; method was selected before validation",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 95
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.SELECT_OPERATION",
+          "node_type": "decision",
+          "sequence": 20,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "mutation": "MDA.RESOLVE_USER",
+            "fsm_export": "MDA.FSM_EXPORT_CHECK",
+            "rest_list": "MDA.REST_LIST",
+            "rest_get": "MDA.REST_GET",
+            "rest_count": "MDA.REST_COUNT",
+            "invalid": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MDA.APPLY_COMMON_DEFAULTS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Branch on normalized operation and selected method; reads bypass mutation-only checks",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 336
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.RESOLVE_USER",
+          "node_type": "step",
+          "sequence": 30,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "MDA.RESOLVE_ROLE",
+            "not_found": "RETURN_ISSUES",
+            "ambiguous": "RETURN_ISSUES",
+            "failed": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MDA.SELECT_OPERATION"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Mutation user resolution",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 603
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.RESOLVE_ROLE",
+          "node_type": "step",
+          "sequence": 40,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "MDA.VERIFY_MEMBERSHIP",
+            "not_found": "RETURN_ISSUES",
+            "ambiguous": "RETURN_ISSUES",
+            "failed": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MDA.RESOLVE_USER"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Mutation role resolution",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 604
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.VERIFY_MEMBERSHIP",
+          "node_type": "step",
+          "sequence": 50,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "MDA.VALIDATE_CONTEXT_VALUES",
+            "missing": "RETURN_ISSUES",
+            "inconsistent": "RETURN_ISSUES",
+            "failed": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MDA.RESOLVE_ROLE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Exact selected mutation role membership",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 605
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.VALIDATE_CONTEXT_VALUES",
+          "node_type": "step",
+          "sequence": 60,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "MDA.SELECT_MUTATION_METHOD",
+            "invalid": "RETURN_ISSUES",
+            "failed": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MDA.VERIFY_MEMBERSHIP"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Require the unchanged resolved intake context and bind exact ordered values; no existence prevalidation",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 337
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.SELECT_MUTATION_METHOD",
+          "node_type": "decision",
+          "sequence": 70,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "fsm": "MDA.RESOLVE_ROLE_OBJECT_MAPPING",
+            "rest": "MDA.REST_RECONCILE",
+            "invalid": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MDA.VALIDATE_CONTEXT_VALUES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Dispatch the already selected mutation method after common checks; never reselect it",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 338
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.RESOLVE_ROLE_OBJECT_MAPPING",
+          "node_type": "decision",
+          "sequence": 80,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "known_mapping": "MDA.CHECK_DEPENDENCIES",
+            "catalog_miss_mapping_required": "MDA.CHECK_DEPENDENCIES",
+            "catalog_miss_no_mapping_for_revoke": "MDA.CHECK_DEPENDENCIES",
+            "invalid_catalog": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MDA.SELECT_MUTATION_METHOD"
+          ],
+          "on_failure": "stop",
+          "applies_when": "FSM-only local mapping decision",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 606
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.CHECK_DEPENDENCIES",
+          "node_type": "decision",
+          "sequence": 90,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "MDA.APPLY_DEFAULTS",
+            "needs_input": "RETURN_ISSUES",
+            "invalid": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MDA.RESOLVE_ROLE_OBJECT_MAPPING"
+          ],
+          "on_failure": "stop",
+          "applies_when": "FSM mutation dependencies including applicable original-date resolution",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 135
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.APPLY_DEFAULTS",
+          "node_type": "step",
+          "sequence": 100,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "applied": "MDA.ENFORCE_DESIGN",
+            "not_applicable": "MDA.ENFORCE_DESIGN"
+          },
+          "prerequisites": [
+            "MDA.CHECK_DEPENDENCIES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Apply FSM-only defaults after its dependencies",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 96
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.ENFORCE_DESIGN",
+          "node_type": "step",
+          "sequence": 110,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "enforced": "MDA.HANDOFF_GATE",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MDA.APPLY_DEFAULTS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Enforce FSM design and validated package boundaries",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 163
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.HANDOFF_GATE",
+          "node_type": "step",
+          "sequence": 120,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "MDA.HANDOFF_READY",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MDA.ENFORCE_DESIGN"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Check aggregate FSM package readiness; Data Loader owns approval",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 294
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.HANDOFF_READY",
+          "node_type": "terminal",
+          "sequence": 130,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "MDA.HANDOFF_GATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return FSM import readiness to the explicit SKILL.md Data Loader handoff",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 295
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.REST_RECONCILE",
+          "node_type": "step",
+          "sequence": 140,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "complete": "MDA.REST_CHECK_DEPENDENCIES",
+            "ambiguous": "RETURN_ISSUES",
+            "invalid": "RETURN_ISSUES",
+            "incomplete": "RETURN_ISSUES",
+            "failed": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MDA.SELECT_MUTATION_METHOD"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Complete REST reconciliation for all requested mutation rows",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 607
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.REST_CHECK_DEPENDENCIES",
+          "node_type": "decision",
+          "sequence": 150,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "MDA.REST_ENFORCE_DESIGN",
+            "needs_input": "RETURN_ISSUES",
+            "invalid": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MDA.REST_RECONCILE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "REST-only dependency and aggregate reconciliation checks",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 136
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.REST_ENFORCE_DESIGN",
+          "node_type": "step",
+          "sequence": 160,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "enforced": "MDA.REST_CLASSIFY_PLAN",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MDA.REST_CHECK_DEPENDENCIES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Enforce REST unscheduled-state and reconciliation policy before no-op classification; defer loader artifact checks to their reached stages",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 164
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.REST_CLASSIFY_PLAN",
+          "node_type": "decision",
+          "sequence": 170,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "all_noop": "MDA.REST_NOOP_DONE",
+            "writes_needed": "MDA.REST_LOADER_CONTRACT",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MDA.REST_ENFORCE_DESIGN"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Classify existing complete evidence using the sole lifecycle table; no repeated lookup",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 608
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.REST_LOADER_CONTRACT",
+          "node_type": "step",
+          "sequence": 175,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "MDA.REST_VALIDATE_ARTIFACT",
+            "unsupported": "RETURN_ISSUES",
+            "ambiguous": "RETURN_ISSUES",
+            "failed": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MDA.REST_CLASSIFY_PLAN"
+          ],
+          "on_failure": "stop",
+          "applies_when": "REST writes only: resolve the exact current registered schema and derive the selected minimal loader source",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 609
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.REST_VALIDATE_ARTIFACT",
+          "node_type": "decision",
+          "sequence": 180,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "needs_preparation": "MDA.REST_PREPARE_READY",
+            "validated": "MDA.REST_HANDOFF_GATE",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MDA.REST_LOADER_CONTRACT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "REST writes only: match final DAT records and archive digest to fresh reconciliation, current schema, and request; never rebuild or submit",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 339
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.REST_PREPARE_READY",
+          "node_type": "terminal",
+          "sequence": 185,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "MDA.REST_VALIDATE_ARTIFACT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return planning readiness to SKILL.md registered REST loader preparation; not approval or execution",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 293
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.REST_HANDOFF_GATE",
+          "node_type": "step",
+          "sequence": 190,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "MDA.REST_READY",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MDA.REST_VALIDATE_ARTIFACT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Check validated immutable REST loader artifact and retained method/context; core owns approval and submission",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 296
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.REST_READY",
+          "node_type": "terminal",
+          "sequence": 200,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "MDA.REST_HANDOFF_GATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return final-artifact validation to the calling Data Loader Task Hook; no recursive handoff or submission",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 297
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.REST_NOOP_DONE",
+          "node_type": "terminal",
+          "sequence": 205,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "MDA.REST_CLASSIFY_PLAN"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return completed no-op outcomes from complete reconciliation; no mutation approval",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 298
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.FSM_EXPORT_CHECK",
+          "node_type": "decision",
+          "sequence": 210,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "MDA.FSM_EXPORT_READY",
+            "needs_input": "RETURN_ISSUES",
+            "invalid": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MDA.SELECT_OPERATION"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Check selected shared-exporter scope and prerequisites only",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 137
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.FSM_EXPORT_READY",
+          "node_type": "terminal",
+          "sequence": 220,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "MDA.FSM_EXPORT_CHECK"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return readiness to SKILL.md explicit shared-exporter handoff; export not yet executed",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 299
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.REST_LIST",
+          "node_type": "step",
+          "sequence": 230,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "complete": "MDA.REST_LIST_DONE",
+            "window_complete": "MDA.REST_LIST_DONE",
+            "invalid_scope": "RETURN_ISSUES",
+            "incomplete": "RETURN_ISSUES",
+            "failed": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MDA.SELECT_OPERATION"
+          ],
+          "on_failure": "stop",
+          "applies_when": "REST List/search or requested window with valid scope/options; no mutation prerequisites",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 610
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.REST_LIST_DONE",
+          "node_type": "terminal",
+          "sequence": 240,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "MDA.REST_LIST"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return completed List or window with separate requested-scope and collection completion evidence",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 300
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.REST_GET",
+          "node_type": "step",
+          "sequence": 250,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "found": "MDA.REST_GET_DONE",
+            "not_found": "MDA.REST_GET_DONE",
+            "invalid_scope": "RETURN_ISSUES",
+            "failed": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MDA.SELECT_OPERATION"
+          ],
+          "on_failure": "stop",
+          "applies_when": "REST item retrieval for one assignment ID without additional predicates; no mutation prerequisites",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 611
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.REST_GET_DONE",
+          "node_type": "terminal",
+          "sequence": 260,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "MDA.REST_GET"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return definitive found/not-found item read; no mutation",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 301
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.REST_COUNT",
+          "node_type": "step",
+          "sequence": 270,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "complete": "MDA.REST_COUNT_DONE",
+            "invalid_scope": "RETURN_ISSUES",
+            "incomplete": "RETURN_ISSUES",
+            "failed": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MDA.SELECT_OPERATION"
+          ],
+          "on_failure": "stop",
+          "applies_when": "REST exact or estimated assignment count with valid scope/options; no mutation prerequisites",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 612
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MDA.REST_COUNT_DONE",
+          "node_type": "terminal",
+          "sequence": 280,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "MDA.REST_COUNT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return completed assignment count labeled exact or estimated; no mutation",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 302
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RETURN_ISSUES",
+          "node_type": "terminal",
+          "sequence": 990,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Return selected-branch blockers without handoff or mutation",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 303
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

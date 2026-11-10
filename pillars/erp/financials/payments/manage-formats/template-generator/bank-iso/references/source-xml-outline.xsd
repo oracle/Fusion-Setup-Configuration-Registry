@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified">
+  <xs:annotation>
+    <xs:documentation>
+      Permissive source XML data definition for Oracle Payments OutboundPaymentInstruction.
+      Derived from Oracle Financials 26B IBY_XML_FD_INS_1_0_V public query and
+      IBY_FD_EXTRACT_GEN_PVT helper fragments. Nested generated views are represented
+      by reusable open complex types because the top-level public view delegates them.
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:element name="OutboundPaymentInstruction" type="OutboundPaymentInstructionType"/>
+
+  <xs:complexType name="OutboundPaymentInstructionType">
+    <xs:sequence>
+      <xs:element name="RecordHistory" type="RecordHistoryType" minOccurs="0"/>
+      <xs:element name="LedgerCurrency" type="OpenElementType" minOccurs="0"/>
+      <xs:element name="PaymentInstructionInfo" type="PaymentInstructionInfoType" minOccurs="0"/>
+      <xs:element name="PaymentProcessProfile" type="PaymentProcessProfileType" minOccurs="0"/>
+      <xs:element name="PaymentFormat" type="PaymentFormatType" minOccurs="0"/>
+      <xs:element name="CheckFormatInfo" type="OpenElementType" minOccurs="0"/>
+      <xs:element name="InstructionTotals" type="InstructionTotalsType" minOccurs="0"/>
+      <xs:element name="InstructionGrouping" type="InstructionGroupingType" minOccurs="0"/>
+      <xs:element name="AcknowledgementDetails" type="OpenElementType" minOccurs="0"/>
+      <xs:element name="FederalPFExtend" type="OpenElementType" minOccurs="0"/>
+      <xs:element name="OutboundPayment" type="OutboundPaymentType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="Extend" type="OpenElementType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="RecordHistoryType">
+    <xs:sequence>
+      <xs:element name="CreatedBy" type="xs:string" minOccurs="0"/>
+      <xs:element name="CreationDate" type="xs:string" minOccurs="0"/>
+      <xs:element name="LastUpdateDate" type="xs:string" minOccurs="0"/>
+      <xs:element name="LastUpdateLogin" type="xs:string" minOccurs="0"/>
+      <xs:element name="LastUpdatedBy" type="xs:string" minOccurs="0"/>
+      <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PaymentInstructionInfoType">
+    <xs:sequence>
+      <xs:element name="InstructionReferenceNumber" type="xs:string" minOccurs="0"/>
+      <xs:element name="FormatProgramRequestID" type="xs:string" minOccurs="0"/>
+      <xs:element name="InstructionCreationDate" type="xs:string" minOccurs="0"/>
+      <xs:element name="MultiOrgAccessControl" type="OpenElementType" minOccurs="0"/>
+      <xs:element name="InstructionStatus" type="CodeMeaningType" minOccurs="0"/>
+      <xs:element name="ProcessingType" type="CodeMeaningType" minOccurs="0"/>
+      <xs:element name="ProcessType" type="xs:string" minOccurs="0"/>
+      <xs:element name="UserAssignedRefCode" type="xs:string" minOccurs="0"/>
+      <xs:element name="PaymentMode" type="xs:string" minOccurs="0"/>
+      <xs:element name="BankAssignedRefCode" type="xs:string" minOccurs="0"/>
+      <xs:element name="PaymentSequence" type="OpenElementType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="BankInstruction" type="OpenElementType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="BankInstructionDetails" type="xs:string" minOccurs="0"/>
+      <xs:element name="PaymentTextMessage" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="RegulatoryReportingOption" type="xs:string" minOccurs="0"/>
+      <xs:element name="CCRemittanceFileSequenceNumber" type="xs:string" minOccurs="0"/>
+      <xs:element name="CCRemittanceFileVersionNumber" type="xs:string" minOccurs="0"/>
+      <xs:element name="PaymentSystemAccount" type="PaymentSystemAccountType" minOccurs="0"/>
+      <xs:element name="Notes" type="xs:string" minOccurs="0"/>
+      <xs:element name="DescriptiveFlexField" type="OpenElementType" minOccurs="0"/>
+      <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PaymentSystemAccountType">
+    <xs:sequence>
+      <xs:element name="AccountName" type="xs:string" minOccurs="0"/>
+      <xs:element name="AccountSettings" type="NameValueType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="DescriptiveFlexField" type="OpenElementType" minOccurs="0"/>
+      <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PaymentProcessProfileType">
+    <xs:sequence>
+      <xs:element name="PaymentProcessProfileInternalID" type="xs:string" minOccurs="0"/>
+      <xs:element name="PaymentProcessProfileName" type="xs:string" minOccurs="0"/>
+      <xs:element name="BatchBookingFlag" type="xs:string" minOccurs="0"/>
+      <xs:element name="LogicalGrouping" type="OpenElementType" minOccurs="0"/>
+      <xs:element name="DescriptiveFlexField" type="OpenElementType" minOccurs="0"/>
+      <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PaymentFormatType">
+    <xs:sequence>
+      <xs:element name="PaymentFormatInternalID" type="xs:string" minOccurs="0"/>
+      <xs:element name="PaymentFormatName" type="xs:string" minOccurs="0"/>
+      <xs:element name="DescriptiveFlexField" type="OpenElementType" minOccurs="0"/>
+      <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="InstructionTotalsType">
+    <xs:sequence>
+      <xs:element name="PaymentCount" type="xs:string" minOccurs="0"/>
+      <xs:element name="TotalPaymentAmount" type="AmountType" minOccurs="0"/>
+      <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="InstructionGroupingType">
+    <xs:sequence>
+      <xs:element name="PaymentDate" type="xs:string" minOccurs="0"/>
+      <xs:element name="PaymentCurrency" type="CurrencyType" minOccurs="0"/>
+      <xs:element name="PaymentServiceRequestID" type="xs:string" minOccurs="0"/>
+      <xs:element name="Payer" type="PartyType" minOccurs="0"/>
+      <xs:element name="PayerOrganization" type="OpenElementType" minOccurs="0"/>
+      <xs:element name="BankAccount" type="BankAccountType" minOccurs="0"/>
+      <xs:element name="PaymentReason" type="CodeMeaningFormatType" minOccurs="0"/>
+      <xs:element name="PaymentReasonComments" type="xs:string" minOccurs="0"/>
+      <xs:element name="FunctionalCategory" type="CodeMeaningType" minOccurs="0"/>
+      <xs:element name="FederalRFCIdentifier" type="xs:string" minOccurs="0"/>
+      <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="OutboundPaymentType">
+    <xs:sequence>
+      <xs:element name="LogicalGrouping" type="OpenElementType" minOccurs="0"/>
+      <xs:element name="PaymentMethod" type="OpenElementType" minOccurs="0"/>
+      <xs:element name="PaymentDate" type="xs:string" minOccurs="0"/>
+      <xs:element name="SettlementPriority" type="CodeMeaningFormatType" minOccurs="0"/>
+      <xs:element name="ServiceLevel" type="CodeMeaningFormatType" minOccurs="0"/>
+      <xs:element name="DeliveryChannel" type="CodeMeaningFormatType" minOccurs="0"/>
+      <xs:element name="BankCharges" type="OpenElementType" minOccurs="0"/>
+      <xs:element name="PaymentReason" type="CodeMeaningFormatType" minOccurs="0"/>
+      <xs:element name="PaymentSourceInfo" type="OpenElementType" minOccurs="0"/>
+      <xs:element name="PaymentNumber" type="OpenElementType" minOccurs="0"/>
+      <xs:element name="PaymentAmount" type="AmountType" minOccurs="0"/>
+      <xs:element name="Payer" type="PartyType" minOccurs="0"/>
+      <xs:element name="BankAccount" type="BankAccountType" minOccurs="0"/>
+      <xs:element name="InvoicingLegalEntity" type="PartyType" minOccurs="0"/>
+      <xs:element name="PayeeBankAccount" type="BankAccountType" minOccurs="0"/>
+      <xs:element name="SupplierorParty" type="PartyType" minOccurs="0"/>
+      <xs:element name="Payee" type="PartyType" minOccurs="0"/>
+      <xs:element name="DocumentPayable" type="DocumentPayableType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="DocumentPayableType">
+    <xs:sequence>
+      <xs:element name="DocumentNumber" type="OpenElementType" minOccurs="0"/>
+      <xs:element name="DocumentDate" type="xs:string" minOccurs="0"/>
+      <xs:element name="DocumentDescription" type="xs:string" minOccurs="0"/>
+      <xs:element name="DocumentType" type="CodeMeaningType" minOccurs="0"/>
+      <xs:element name="TotalDocumentAmount" type="AmountType" minOccurs="0"/>
+      <xs:element name="DiscountTaken" type="OpenElementType" minOccurs="0"/>
+      <xs:element name="TotalDocumentTaxAmount" type="AmountType" minOccurs="0"/>
+      <xs:element name="AmountWithheld" type="AmountType" minOccurs="0"/>
+      <xs:element name="PaymentAmount" type="AmountType" minOccurs="0"/>
+      <xs:element name="DeliveryChannel" type="CodeMeaningFormatType" minOccurs="0"/>
+      <xs:element name="RemittanceMessage" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="PONumber" type="xs:string" minOccurs="0"/>
+      <xs:element name="Extend" type="OpenElementType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="DocumentPayableLine" type="OpenElementType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PartyType">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string" minOccurs="0"/>
+      <xs:element name="LegalEntityInternalID" type="xs:string" minOccurs="0"/>
+      <xs:element name="LegalEntityName" type="xs:string" minOccurs="0"/>
+      <xs:element name="LegalEntityRegistrationNumber" type="xs:string" minOccurs="0"/>
+      <xs:element name="TaxRegistrationNumber" type="xs:string" minOccurs="0"/>
+      <xs:element name="SupplierNumber" type="xs:string" minOccurs="0"/>
+      <xs:element name="PartyNumber" type="xs:string" minOccurs="0"/>
+      <xs:element name="FirstPartyReference" type="xs:string" minOccurs="0"/>
+      <xs:element name="PartyInternalID" type="xs:string" minOccurs="0"/>
+      <xs:element name="TaxOrganizationType" type="CodeMeaningType" minOccurs="0"/>
+      <xs:element name="Address" type="AddressType" minOccurs="0"/>
+      <xs:element name="ContactInfo" type="OpenElementType" minOccurs="0"/>
+      <xs:element name="PersonInfo" type="OpenElementType" minOccurs="0"/>
+      <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="BankAccountType">
+    <xs:sequence>
+      <xs:element name="BankAccountNumber" type="xs:string" minOccurs="0"/>
+      <xs:element name="IBANNumber" type="xs:string" minOccurs="0"/>
+      <xs:element name="BankAccountName" type="xs:string" minOccurs="0"/>
+      <xs:element name="BankAccountType" type="CodeMeaningType" minOccurs="0"/>
+      <xs:element name="BankAccountCurrency" type="CurrencyType" minOccurs="0"/>
+      <xs:element name="EFTUserNumber" type="OpenElementType" minOccurs="0"/>
+      <xs:element name="SwiftCode" type="xs:string" minOccurs="0"/>
+      <xs:element name="BranchNumber" type="xs:string" minOccurs="0"/>
+      <xs:element name="BankName" type="xs:string" minOccurs="0"/>
+      <xs:element name="BankAddress" type="AddressType" minOccurs="0"/>
+      <xs:element name="IntermediaryBankAccount" type="OpenElementType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="AddressType">
+    <xs:sequence>
+      <xs:element name="AddressLine1" type="xs:string" minOccurs="0"/>
+      <xs:element name="AddressLine2" type="xs:string" minOccurs="0"/>
+      <xs:element name="AddressLine3" type="xs:string" minOccurs="0"/>
+      <xs:element name="City" type="xs:string" minOccurs="0"/>
+      <xs:element name="County" type="xs:string" minOccurs="0"/>
+      <xs:element name="State" type="xs:string" minOccurs="0"/>
+      <xs:element name="Province" type="xs:string" minOccurs="0"/>
+      <xs:element name="Country" type="xs:string" minOccurs="0"/>
+      <xs:element name="PostalCode" type="xs:string" minOccurs="0"/>
+      <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="AmountType">
+    <xs:sequence>
+      <xs:element name="Value" type="xs:string" minOccurs="0"/>
+      <xs:element name="Currency" type="CurrencyType" minOccurs="0"/>
+      <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CurrencyType">
+    <xs:sequence>
+      <xs:element name="Code" type="xs:string" minOccurs="0"/>
+      <xs:element name="Name" type="xs:string" minOccurs="0"/>
+      <xs:element name="NumericCode" type="xs:string" minOccurs="0"/>
+      <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CodeMeaningType">
+    <xs:sequence>
+      <xs:element name="Code" type="xs:string" minOccurs="0"/>
+      <xs:element name="Meaning" type="xs:string" minOccurs="0"/>
+      <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CodeMeaningFormatType">
+    <xs:sequence>
+      <xs:element name="Code" type="xs:string" minOccurs="0"/>
+      <xs:element name="Meaning" type="xs:string" minOccurs="0"/>
+      <xs:element name="FormatValue" type="xs:string" minOccurs="0"/>
+      <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="NameValueType">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string" minOccurs="0"/>
+      <xs:element name="Value" type="xs:string" minOccurs="0"/>
+      <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="OpenElementType" mixed="true">
+    <xs:sequence>
+      <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+    </xs:sequence>
+    <xs:anyAttribute processContents="skip"/>
+  </xs:complexType>
+</xs:schema>

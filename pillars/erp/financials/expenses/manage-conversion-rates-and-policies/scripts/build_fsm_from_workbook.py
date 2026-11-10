@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+from copy import copy
 import json
 import os
 from datetime import datetime, timezone
@@ -195,8 +196,8 @@ def build(workbook: Path, template: Path, current_export: Path, environment: str
     child_input = _rows(workbook, "Currency Tolerances", CHILD_HEAD)
     if not parent_input and not child_input:
         raise IntakeError("Workbook has no policy or currency-tolerance rows")
-    template_xml, template_tables = _package(template, environment, max_age_hours)
-    _, export_tables = _package(current_export, environment, max_age_hours)
+    _, template_tables = _package(template, environment, max_age_hours)
+    current_xml, export_tables = _package(current_export, environment, max_age_hours)
     if any(rows for _, rows in template_tables.values()):
         raise IntakeError("Template CSV members must contain headers only")
     if any(template_tables[name][0] != export_tables[name][0] for name in (PARENT, CHILD)):
@@ -293,15 +294,21 @@ def build(workbook: Path, template: Path, current_export: Path, environment: str
     if dry_run:
         return result
     memory = _memory_archive if _memory_archive is not None else BytesIO()
-    with ZipFile(memory, "w", compression=ZIP_DEFLATED) as archive:
-        for name, planned in ((PARENT, planned_parents.values()), (CHILD, planned_children.values())):
-            head = template_tables[name][0]
-            content = StringIO(newline="")
-            writer = csv.writer(content, lineterminator="\r\n")
-            writer.writerow(head)
-            writer.writerows([row.get(field, "") for field in head] for row in planned)
-            archive.writestr(name, content.getvalue().encode("utf-8"))
-        archive.writestr(METADATA, template_xml)
+    payloads = {METADATA: current_xml}
+    for name, planned in ((PARENT, planned_parents.values()), (CHILD, planned_children.values())):
+        head = template_tables[name][0]
+        content = StringIO(newline="")
+        writer = csv.writer(content, lineterminator="\r\n")
+        writer.writerow(head)
+        writer.writerows([row.get(field, "") for field in head] for row in planned)
+        payloads[name] = content.getvalue().encode("utf-8")
+    # The blank template establishes schema/header compatibility. Actual import
+    # provenance and ZIP member attributes come from the fresh current export.
+    # Reusing its ZipInfo avoids wall-clock timestamps changing identical builds.
+    with ZipFile(current_export) as source, ZipFile(memory, "w", compression=ZIP_DEFLATED) as archive:
+        archive.comment = source.comment
+        for info in source.infolist():
+            archive.writestr(copy(info), payloads[info.filename])
     if _memory_archive is None:
         output.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
         # This candidate may later be bound to core approval. Create exclusively

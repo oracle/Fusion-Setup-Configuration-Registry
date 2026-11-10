@@ -4,39 +4,33 @@
   "status": "ready_for_single_currency_meals_with_expanded_input_validation",
   "sources": {
     "EO-MealsPolicy": {
-      "path": "fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/MealsPolicyEO.xml",
+      "path": "maintainer-source-record",
       "sha256": "73189dcd4ba42b57d61e237e644e253f93cc058d5f78eb35a06661dff6a5d38f",
-      "series": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64",
-      "label": "261013.0000.S",
       "claim_scope": "Declared keys and validators only; not target import qualification"
     },
     "EO-MealsPolLine": {
-      "path": "fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/MealsPolLineEO.xml",
+      "path": "maintainer-source-record",
       "sha256": "2a263951051c6d0b43a2f80aaf3e1c86bd2f8e6400100d32b1e59e3c85cdf598",
-      "series": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64",
-      "label": "261013.0000.S",
       "claim_scope": "Declared keys and validators only; not target import qualification"
     },
     "SEED-EXM-YES-NO": {
-      "path": "fusionapps/fin/exm/noship/cdrautoapply/db/data/StandardLookupTypeSD.xml",
+      "path": "maintainer-source-record",
       "sha256": "d24881704d048a4e6f3a67d7115abe6c7cbbe3c5fabe3a69bae543b18340f162",
-      "label": "261013.0000.S",
       "claim_scope": "Pinned seed code/meaning mapping only; not current target lookup or CSV operation acceptance"
     },
     "UI-MealsPolicy-Boolean": {
-      "path": "fusionapps/fin/components/payables/exm/policy/meals/model/src/oracle/apps/financials/expenses/policy/meals/uiModel/view/MealsPolicyVO.xml",
+      "path": "maintainer-source-record",
       "sha256": "47615c42cfe287fafad6aa6980b5feb2ec497b72d8357b5d30f3ff40d1cdc6bf",
-      "label": "261013.0000.S",
       "claim_scope": "Explicit field to EXM_YES_NO binding only; no target-release or operation promotion"
     },
     "LIVE-SELECTED-RATE-STARTDATE-ENCODING": {
       "path": "references/date-encoding-evidence.json",
-      "sha256": "bdc84bad0c60c648648b13803f5fb6b6a5da237a13f4759a95d93f570feaa784",
+      "sha256": "8c1f3c5c384aaac5ab188d7d1859b575527ac33294ec9a7a3b4168dc78858adf",
       "claim_scope": "Exact observed selected-rate StartDate serialization only; no general operation promotion"
     },
     "LIVE-ACCEPTED-MEALS-PROFILE": {
       "path": "references/accepted-meals-profile.json",
-      "sha256": "bfe14692614fa6ca4cc407250d955f8d66521e226d7867bf29bd3426881a96ef",
+      "sha256": "707106ec0e02ee1f896219352d1eccd2515ffe36ec29af1823239586a7f5d130",
       "evidence": {
         "create_observation": "OBS-MS01 accepted-as-written",
         "create_candidate_sha256": "95f21b894b89b339cc30d43fd5ccaf91ea47c75997b537bb826a1a959f57806f",
@@ -60,7 +54,7 @@
     },
     "MEALS-EXPANDED-INPUTS": {
       "path": "references/accepted-meals-profile.json",
-      "sha256": "bfe14692614fa6ca4cc407250d955f8d66521e226d7867bf29bd3426881a96ef",
+      "sha256": "707106ec0e02ee1f896219352d1eccd2515ffe36ec29af1823239586a7f5d130",
       "source_ids": [
         "EO-MealsPolicy",
         "EO-MealsPolLine",

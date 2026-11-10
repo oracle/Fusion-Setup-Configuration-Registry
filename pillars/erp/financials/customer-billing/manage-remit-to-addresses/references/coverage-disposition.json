@@ -1,6 +1,5 @@
 {
   "schemaVersion": "remit-to-coverage-disposition-v1",
-  "classification": "Oracle Internal",
   "asOf": "2026-09-21",
   "taskCode": "AR_MANAGE_REMIT_TO_ADDRESSES",
   "reviewedSourceCommit": "123da9a7ee8d9aebac4e6cd8b6352d68cdf5efc1",
@@ -38,7 +37,6 @@
       "reviewDate": "2026-09-21",
       "release": "11.13.26.10.0",
       "country": "US",
-      "pageUrl": "https://confluence.oraclecorp.com/confluence/pages/viewpage.action?pageId=21942576693",
       "pageVersion": 5,
       "evidenceAttachment": "manage-remit-to-addresses-evidence-20260921.zip",
       "sha256": "d7dcad9aad0d97f6a09fc3c3e3952bb3592678b1b49f1d04eb9903facc08a966",
@@ -62,7 +60,6 @@
       "release": "11.13.26.10.0",
       "country": "US",
       "scope": "Single nonproduction environment and selected reference set; no all-country/release claim.",
-      "pageUrl": "https://confluence.oraclecorp.com/confluence/pages/viewpage.action?pageId=21942576693",
       "pageVersion": 4,
       "evidenceAttachment": "manage-remit-to-addresses-evidence-20260917.zip",
       "sha256": "52a6677351f579b964d99833acd3473ddc2c400b2d3304a5ed3d6223f1739e37",

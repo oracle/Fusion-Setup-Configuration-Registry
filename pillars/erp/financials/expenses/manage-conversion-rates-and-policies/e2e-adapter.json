@@ -76,7 +76,6 @@
       ]
     }
   },
-  "classification": "Oracle Highly Restricted",
   "cleanupPolicy": {
     "requiredForLiveMutation": true,
     "supportedStrategies": [

@@ -19,7 +19,7 @@ source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 type: "planning"
 execution_mode: "assisted"
 owner_team: "ERP financials pillar team"
-version: "0.6.0"
+version: "0.7.0"
 inputs:
   - "implementation_objective"
   - "project_context"
@@ -279,8 +279,10 @@ observed `-999` placeholder, to the unchanged exporter ZIP. It verifies
 the validated workbook digest and every baseline CSV digest, preserves all
 four exported members, and changes the uniquely matched or newly inserted
 `(BuName, OptionCode)` rows in both `EXM_SETUP_OPTION.csv` and its paired
-`EXM_CASH_ADV_SETUP_AND_POLICY.csv`. It retains every unrelated row
-and existing non-value columns. For a missing option in both paired files,
+`EXM_CASH_ADV_SETUP_AND_POLICY.csv`. It submits only the complete selected rows,
+retaining their existing non-value columns; unrelated rows are omitted from the
+submission and must remain unchanged in Fusion. Other members remain header-only.
+For a missing option in both paired files,
 it appends a sparse row with BuName, OptionCode and ValueCode; global rows use
 blank BuName and OtherOrgId=-1. It never copies global IDs or audits into a BU.
 Confirmed scalar settings use BuName, SettingCode and SettingValue in
@@ -290,6 +292,28 @@ any unsupported field. The generated ZIP is a candidate artifact only: pass it
 unchanged to `core.data-loader`, which performs its own preflight, Task Hook
 validation, immutable approval, submission, monitoring, and ProcessLog
 verification. Never submit the package directly.
+
+### Selected-row submission and preservation evidence
+
+`build-import` now uses the selected-row contract above. A prior full-baseline
+regression changed last-update audits on an unrelated DFLT_CC_EXP_TEMPLATE_ID
+row, despite identical submitted cells. That historical failure is retained;
+full-baseline replay is no longer an ordinary builder behavior.
+
+A controlled nonproduction create and update verified the selected-row profile:
+48/48 create checks and 57/57 update checks passed, including preservation of
+all 978 unrelated transport rows and their audit cells. See the bounded
+[preservation evidence](references/selected-row-preservation.md). These cases
+cover a BU-specific confirmed option and scalar setting, not every input,
+global setting, target or release. Each run still needs fresh references,
+native preflight/Task Hook approval and full post-import reconciliation.
+
+For explicit developer qualification of a changed contract or scope, use the
+[maintainer workflow](references/selected-row-qualification.md). Its separate
+`build-qualification` command keeps the qualification-only warning and does not
+grant ordinary promotion. Never remove an alias, rewrite metadata, replay an
+uncertain import or repair audit fields to conceal a mismatch. No automatic
+restoration, deletion or cleanup is implied.
 
 ## Export Evidence and Mapping Limits
 

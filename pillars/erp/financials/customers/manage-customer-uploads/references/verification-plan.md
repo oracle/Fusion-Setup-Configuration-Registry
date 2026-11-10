@@ -1,6 +1,5 @@
 # Customers import verification plan
 
-Classification: Oracle Highly Restricted
 
 Generate the exact candidate's plan with `customer_campaign_review.py plan`.
 The plan binds the archive, environment and operation and partitions every row's

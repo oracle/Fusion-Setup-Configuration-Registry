@@ -1,8 +1,8 @@
 {
   "profile_id": "meals-single-currency-v2",
   "observation_target": {
-    "environment": "cptcwxaqy",
-    "origin": "https://cptcwxaqy.fusionapps.ocs.oc-test.com",
+    "environment": null,
+    "origin": null,
     "release": "11.13.27.01.0"
   },
   "parent_settings": {

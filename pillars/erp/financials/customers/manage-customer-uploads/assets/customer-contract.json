@@ -1,6 +1,5 @@
 {
   "schema_version": "ar-customers-contract-v1",
-  "classification": "Oracle Highly Restricted",
   "task_code": "ORA_AR_MANAGE_CUSTOMER_UPLOADS",
   "business_object": "customers",
   "member": "ArUpdCustomers.csv",

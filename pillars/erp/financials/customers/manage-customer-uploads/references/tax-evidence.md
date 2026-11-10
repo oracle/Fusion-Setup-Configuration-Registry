@@ -1,6 +1,5 @@
 # Taxpayer-registration evidence
 
-Classification: Oracle Highly Restricted
 
 The Customers input `TAXPAYER_REGISTRATION_NUM` maps to
 `HZ_IMP_PARTIES_T.TAX_REFERENCE`. In the reviewed 26D source,
@@ -23,11 +22,11 @@ import when this asynchronous result is missing or delayed.
 
 Sources, all under the indexed `FUSIONAPPS_11.13.26.10.0_LINUX.X64` series:
 
-- [Tax callback](https://codesearch.oraclecorp.com/source/xref/FUSIONAPPS_11.13.26.10.0_LINUX.X64/fusionapps/fin/zx/db/plsql/zx_new_services_pkg.pkb#3185)
-- [Service wrapper](https://codesearch.oraclecorp.com/source/xref/FUSIONAPPS_11.13.26.10.0_LINUX.X64/fusionapps/fin/components/financialCommon/zx/configuration/party/partyService/src/oracle/apps/financials/tax/configuration/party/partyService/applicationModule/PartyImportForTCALocServiceAMImpl.java#30)
-- [Event subscription](https://codesearch.oraclecorp.com/source/xref/FUSIONAPPS_11.13.26.10.0_LINUX.X64/fusionapps/fin/components/financialCommonSoa/zx/configuration/party/importComposite/composite.xml#35)
-- [Mediator](https://codesearch.oraclecorp.com/source/xref/FUSIONAPPS_11.13.26.10.0_LINUX.X64/fusionapps/fin/components/financialCommonSoa/zx/configuration/party/importComposite/PartyImportForTcaLocation.mplan)
-- [Batch mapping](https://codesearch.oraclecorp.com/source/xref/FUSIONAPPS_11.13.26.10.0_LINUX.X64/fusionapps/fin/components/financialCommonSoa/zx/configuration/party/importComposite/xsl/ImportPartyData_To_processPTPForTCAImportAsync.xsl#21)
+- Tax callback
+- Service wrapper
+- Event subscription
+- Mediator
+- Batch mapping
 
 `scripts/customer_tax_review.py:analyze` consumes candidate-bound after-state
 identity and ownership evidence plus `ar-customer-tax-evidence-v1`. The envelope

@@ -1,6 +1,5 @@
 {
   "status": "source_encoding_reviewed_operation_pending",
-  "label": "261013.0000.S",
   "fields": {
     "ORA_EXM_MEALS_POLICY": {
       "RateIncludeMealsFlag": {
@@ -133,15 +132,13 @@
   },
   "source_claims": {
     "SEED-EXM-YES-NO": {
-      "path": "fusionapps/fin/exm/noship/cdrautoapply/db/data/StandardLookupTypeSD.xml",
+      "path": "maintainer-source-record",
       "sha256": "d24881704d048a4e6f3a67d7115abe6c7cbbe3c5fabe3a69bae543b18340f162",
-      "label": "261013.0000.S",
       "claim_scope": "Pinned seed code/meaning mapping only; not current target lookup or CSV operation acceptance"
     },
     "UI-MealsPolicy-Boolean": {
-      "path": "fusionapps/fin/components/payables/exm/policy/meals/model/src/oracle/apps/financials/expenses/policy/meals/uiModel/view/MealsPolicyVO.xml",
+      "path": "maintainer-source-record",
       "sha256": "47615c42cfe287fafad6aa6980b5feb2ec497b72d8357b5d30f3ff40d1cdc6bf",
-      "label": "261013.0000.S",
       "claim_scope": "Explicit field to EXM_YES_NO binding only; no target-release or operation promotion"
     }
   }

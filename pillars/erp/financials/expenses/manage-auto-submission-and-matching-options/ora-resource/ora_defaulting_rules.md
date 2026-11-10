@@ -28,12 +28,9 @@ These rules are reusable across target environments. Planner readiness means the
 
 ## Evidence
 
-| Source ID | Source | Location | Revision boundary | Status |
-|---|---|---|---|---|
-| SRC-ORG-AMIMPL | ExpenseOrgSettingServiceAMImpl.java | https://codesearch.oraclecorp.com/source/xref/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64/fusionapps/fin/components/payables/exm/setup/shared/model/src/oracle/apps/financials/expenses/setup/shared/expenseOrgSettingService/applicationModule/ExpenseOrgSettingServiceAMImpl.java | FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64; source snapshot hash in evidence/classic/manifest.json; reviewed 2026-10-09 | Confirmed |
-| SRC-OPTION-AMIMPL | ExpenseSetupOptionServiceAMImpl.java | https://codesearch.oraclecorp.com/source/xref/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64/fusionapps/fin/components/payables/exm/setup/shared/model/src/oracle/apps/financials/expenses/setup/shared/expenseSetupOptionService/applicationModule/ExpenseSetupOptionServiceAMImpl.java | FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64; source snapshot hash in evidence/classic/manifest.json; reviewed 2026-10-09 | Confirmed |
-| SRC-UI-OPTIONS-AMIMPL | FinExmSetupOptionsAMImpl.java | https://codesearch.oraclecorp.com/source/xref/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64/fusionapps/fin/components/payables/exm/setup/options/model/src/oracle/apps/financials/expenses/setup/options/uiModel/applicationModule/FinExmSetupOptionsAMImpl.java | FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64; index 2026-10-09 08:42 GMT | Confirmed |
-| SRC-ALM-REPORT-FETCH | ExpenseReportDataFetcher.java | https://alm.oraclecorp.com/fusionapps/#projects/erpm/scm/erp_core_expenses_integration.git/blob/src/main/java/oracle/apps/micro/fin/erpexpenses/app/expensereport/submit/util/ExpenseReportDataFetcher.java?revision=main | main; last-file-commit 88b0daec39c74c5656bffd225943f5565a4a8167 | Confirmed |
+Maintainer provenance IDs: `SRC-ORG-AMIMPL`, `SRC-OPTION-AMIMPL`, `SRC-UI-OPTIONS-AMIMPL`, `SRC-ALM-REPORT-FETCH`.
+
+The reusable contract is the task-local field, scope and package rules. Maintainer source locations are excluded from distribution and are not runtime inputs. Historical review does not qualify a new target or authorize an import. Retain every current-target and approval check.
 
 ## Organization-setting profile
 

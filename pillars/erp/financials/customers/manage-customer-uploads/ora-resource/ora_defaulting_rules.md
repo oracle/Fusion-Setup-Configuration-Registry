@@ -1,6 +1,5 @@
 # Customers Defaulting
 
-Classification: Oracle Highly Restricted
 
 ## Default Rules
 

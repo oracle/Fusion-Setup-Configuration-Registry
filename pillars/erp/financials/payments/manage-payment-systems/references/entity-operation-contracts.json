@@ -1,0 +1,303 @@
+{
+  "schemaVersion": "mps-entity-operation-contracts-v1",
+  "contracts": [
+    {
+      "entity": "IBY_PAYMENT_SYSTEM",
+      "operation": "create",
+      "implementorTarget": true,
+      "roles": [
+        "implementor-target",
+        "reconciliation-target"
+      ],
+      "sourceIds": [
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-ADE-003",
+        "SRC-MPS-ADE-004",
+        "SRC-MPS-EDM-IBY-BEPINFO",
+        "SRC-MPS-FW-CSV",
+        "SRC-MPS-FW-HELPER",
+        "SRC-MPS-META-004",
+        "SRC-MPS-POLICY"
+      ],
+      "boundary": "Source-reviewed service/VO entity with explicitly exposed business fields in this task. Operate only within the field contract and owning system/account relationship. Translation edits require installed language. Child operations retain unchanged dependency identities; sensitive and unknown value rows remain manual. No physical delete."
+    },
+    {
+      "entity": "IBY_PAYMENT_SYSTEM",
+      "operation": "update",
+      "implementorTarget": true,
+      "roles": [
+        "implementor-target",
+        "reconciliation-target"
+      ],
+      "sourceIds": [
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-ADE-003",
+        "SRC-MPS-ADE-004",
+        "SRC-MPS-EDM-IBY-BEPINFO",
+        "SRC-MPS-FW-CSV",
+        "SRC-MPS-FW-HELPER",
+        "SRC-MPS-META-004",
+        "SRC-MPS-POLICY"
+      ],
+      "boundary": "Source-reviewed service/VO entity with explicitly exposed business fields in this task. Operate only within the field contract and owning system/account relationship. Translation edits require installed language. Child operations retain unchanged dependency identities; sensitive and unknown value rows remain manual. No physical delete."
+    },
+    {
+      "entity": "ORA_IBY_PAYMENT_SYSTEM_SCHEME",
+      "operation": "create",
+      "implementorTarget": true,
+      "roles": [
+        "implementor-target",
+        "reconciliation-target"
+      ],
+      "sourceIds": [
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-FW-HELPER",
+        "SRC-MPS-META-014",
+        "SRC-MPS-META-015",
+        "SRC-MPS-POLICY"
+      ],
+      "boundary": "Source-reviewed service/VO entity with explicitly exposed business fields in this task. Operate only within the field contract and owning system/account relationship. Translation edits require installed language. Child operations retain unchanged dependency identities; sensitive and unknown value rows remain manual. No physical delete."
+    },
+    {
+      "entity": "ORA_IBY_PAYMENT_SYSTEM_SCHEME",
+      "operation": "update",
+      "implementorTarget": true,
+      "roles": [
+        "implementor-target",
+        "reconciliation-target"
+      ],
+      "sourceIds": [
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-FW-HELPER",
+        "SRC-MPS-META-014",
+        "SRC-MPS-META-015",
+        "SRC-MPS-POLICY"
+      ],
+      "boundary": "Source-reviewed service/VO entity with explicitly exposed business fields in this task. Operate only within the field contract and owning system/account relationship. Translation edits require installed language. Child operations retain unchanged dependency identities; sensitive and unknown value rows remain manual. No physical delete."
+    },
+    {
+      "entity": "ORA_IBY_PAYMENT_SYSTEM_TRAN",
+      "operation": "create",
+      "implementorTarget": true,
+      "roles": [
+        "implementor-target",
+        "reconciliation-target"
+      ],
+      "sourceIds": [
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-FW-HELPER",
+        "SRC-MPS-META-017",
+        "SRC-MPS-META-018",
+        "SRC-MPS-POLICY"
+      ],
+      "boundary": "Source-reviewed service/VO entity with explicitly exposed business fields in this task. Operate only within the field contract and owning system/account relationship. Translation edits require installed language. Child operations retain unchanged dependency identities; sensitive and unknown value rows remain manual. No physical delete."
+    },
+    {
+      "entity": "ORA_IBY_PAYMENT_SYSTEM_TRAN",
+      "operation": "update",
+      "implementorTarget": true,
+      "roles": [
+        "implementor-target",
+        "reconciliation-target"
+      ],
+      "sourceIds": [
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-FW-HELPER",
+        "SRC-MPS-META-017",
+        "SRC-MPS-META-018",
+        "SRC-MPS-POLICY"
+      ],
+      "boundary": "Source-reviewed service/VO entity with explicitly exposed business fields in this task. Operate only within the field contract and owning system/account relationship. Translation edits require installed language. Child operations retain unchanged dependency identities; sensitive and unknown value rows remain manual. No physical delete."
+    },
+    {
+      "entity": "ORA_IBY_PAYMENT_SYSTEM_ACC_VAL",
+      "operation": "create",
+      "implementorTarget": true,
+      "roles": [
+        "implementor-target",
+        "reconciliation-target"
+      ],
+      "sourceIds": [
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-ADE-007",
+        "SRC-MPS-ADE-008",
+        "SRC-MPS-FW-HELPER",
+        "SRC-MPS-META-020",
+        "SRC-MPS-META-021",
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-OPTION-003",
+        "SRC-MPS-OPTION-004",
+        "SRC-MPS-OPTION-005",
+        "SRC-MPS-OPTION-006",
+        "SRC-MPS-OPTION-007",
+        "SRC-MPS-POLICY"
+      ],
+      "boundary": "Source-reviewed service/VO entity with explicitly exposed business fields in this task. Operate only within the field contract and owning system/account relationship. Translation edits require installed language. Child operations retain unchanged dependency identities; sensitive and unknown value rows remain manual. No physical delete."
+    },
+    {
+      "entity": "ORA_IBY_PAYMENT_SYSTEM_ACC_VAL",
+      "operation": "update",
+      "implementorTarget": true,
+      "roles": [
+        "implementor-target",
+        "reconciliation-target"
+      ],
+      "sourceIds": [
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-ADE-007",
+        "SRC-MPS-ADE-008",
+        "SRC-MPS-FW-HELPER",
+        "SRC-MPS-META-020",
+        "SRC-MPS-META-021",
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-OPTION-003",
+        "SRC-MPS-OPTION-004",
+        "SRC-MPS-OPTION-005",
+        "SRC-MPS-OPTION-006",
+        "SRC-MPS-OPTION-007",
+        "SRC-MPS-POLICY"
+      ],
+      "boundary": "Source-reviewed service/VO entity with explicitly exposed business fields in this task. Operate only within the field contract and owning system/account relationship. Translation edits require installed language. Child operations retain unchanged dependency identities; sensitive and unknown value rows remain manual. No physical delete."
+    },
+    {
+      "entity": "ORA_IBY_PAYMENT_SYSTEM_FORMAT",
+      "operation": "create",
+      "implementorTarget": true,
+      "roles": [
+        "implementor-target",
+        "reconciliation-target"
+      ],
+      "sourceIds": [
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-FW-CSV",
+        "SRC-MPS-FW-HELPER",
+        "SRC-MPS-META-008",
+        "SRC-MPS-META-009",
+        "SRC-MPS-POLICY"
+      ],
+      "boundary": "Source-reviewed service/VO entity with explicitly exposed business fields in this task. Operate only within the field contract and owning system/account relationship. Translation edits require installed language. Child operations retain unchanged dependency identities; sensitive and unknown value rows remain manual. No physical delete."
+    },
+    {
+      "entity": "ORA_IBY_PAYMENT_SYSTEM_FORMAT",
+      "operation": "update",
+      "implementorTarget": true,
+      "roles": [
+        "implementor-target",
+        "reconciliation-target"
+      ],
+      "sourceIds": [
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-FW-CSV",
+        "SRC-MPS-FW-HELPER",
+        "SRC-MPS-META-008",
+        "SRC-MPS-META-009",
+        "SRC-MPS-POLICY"
+      ],
+      "boundary": "Source-reviewed service/VO entity with explicitly exposed business fields in this task. Operate only within the field contract and owning system/account relationship. Translation edits require installed language. Child operations retain unchanged dependency identities; sensitive and unknown value rows remain manual. No physical delete."
+    },
+    {
+      "entity": "ORA_IBY_PAYMENT_SYSTEM_KEY",
+      "operation": "create",
+      "implementorTarget": true,
+      "roles": [
+        "implementor-target",
+        "reconciliation-target"
+      ],
+      "sourceIds": [
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-FW-HELPER",
+        "SRC-MPS-META-011",
+        "SRC-MPS-META-012",
+        "SRC-MPS-POLICY"
+      ],
+      "boundary": "Source-reviewed service/VO entity with explicitly exposed business fields in this task. Operate only within the field contract and owning system/account relationship. Translation edits require installed language. Child operations retain unchanged dependency identities; sensitive and unknown value rows remain manual. No physical delete."
+    },
+    {
+      "entity": "ORA_IBY_PAYMENT_SYSTEM_KEY",
+      "operation": "update",
+      "implementorTarget": true,
+      "roles": [
+        "implementor-target",
+        "reconciliation-target"
+      ],
+      "sourceIds": [
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-FW-HELPER",
+        "SRC-MPS-META-011",
+        "SRC-MPS-META-012",
+        "SRC-MPS-POLICY"
+      ],
+      "boundary": "Source-reviewed service/VO entity with explicitly exposed business fields in this task. Operate only within the field contract and owning system/account relationship. Translation edits require installed language. Child operations retain unchanged dependency identities; sensitive and unknown value rows remain manual. No physical delete."
+    },
+    {
+      "entity": "ORA_IBY_PAYMENT_SYSTEM_ACC_NAME",
+      "operation": "create",
+      "implementorTarget": true,
+      "roles": [
+        "implementor-target",
+        "reconciliation-target"
+      ],
+      "sourceIds": [
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-FW-HELPER",
+        "SRC-MPS-META-005",
+        "SRC-MPS-META-006",
+        "SRC-MPS-POLICY"
+      ],
+      "boundary": "Source-reviewed service/VO entity with explicitly exposed business fields in this task. Operate only within the field contract and owning system/account relationship. Translation edits require installed language. Child operations retain unchanged dependency identities; sensitive and unknown value rows remain manual. No physical delete."
+    },
+    {
+      "entity": "ORA_IBY_PAYMENT_SYSTEM_ACC_NAME",
+      "operation": "update",
+      "implementorTarget": true,
+      "roles": [
+        "implementor-target",
+        "reconciliation-target"
+      ],
+      "sourceIds": [
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-FW-HELPER",
+        "SRC-MPS-META-005",
+        "SRC-MPS-META-006",
+        "SRC-MPS-POLICY"
+      ],
+      "boundary": "Source-reviewed service/VO entity with explicitly exposed business fields in this task. Operate only within the field contract and owning system/account relationship. Translation edits require installed language. Child operations retain unchanged dependency identities; sensitive and unknown value rows remain manual. No physical delete."
+    },
+    {
+      "entity": "ORA_IBY_PAYMENT_SYSTEM_ACC_NAME_TRANSLATION",
+      "operation": "create",
+      "implementorTarget": true,
+      "roles": [
+        "implementor-target",
+        "reconciliation-target"
+      ],
+      "sourceIds": [
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-FW-HELPER",
+        "SRC-MPS-META-023",
+        "SRC-MPS-META-024",
+        "SRC-MPS-POLICY"
+      ],
+      "boundary": "Source-reviewed service/VO entity with explicitly exposed business fields in this task. Operate only within the field contract and owning system/account relationship. Translation edits require installed language. Child operations retain unchanged dependency identities; sensitive and unknown value rows remain manual. No physical delete."
+    },
+    {
+      "entity": "ORA_IBY_PAYMENT_SYSTEM_ACC_NAME_TRANSLATION",
+      "operation": "update",
+      "implementorTarget": true,
+      "roles": [
+        "implementor-target",
+        "reconciliation-target"
+      ],
+      "sourceIds": [
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-FW-HELPER",
+        "SRC-MPS-META-023",
+        "SRC-MPS-META-024",
+        "SRC-MPS-POLICY"
+      ],
+      "boundary": "Source-reviewed service/VO entity with explicitly exposed business fields in this task. Operate only within the field contract and owning system/account relationship. Translation edits require installed language. Child operations retain unchanged dependency identities; sensitive and unknown value rows remain manual. No physical delete."
+    }
+  ]
+}

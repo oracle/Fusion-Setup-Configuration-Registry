@@ -1,6 +1,5 @@
 # Manage Transaction Sources Dependency Readiness
 
-Classification: Oracle Highly Restricted
 
 ## Required Dependency Order
 

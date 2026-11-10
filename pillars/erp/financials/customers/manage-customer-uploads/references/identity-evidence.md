@@ -1,6 +1,5 @@
 # Source-key evidence review
 
-Classification: Oracle Highly Restricted
 
 The task's `scripts/customer_identity_review.py` reviews supplied read-only evidence offline. It is not a live resolver, an authentication mechanism or full persisted reconciliation. It always reports live execution blocked. Use only evidence exported through a reviewed, declared route; record exact candidate hash, environment, operation, capture timestamp and query date. Completeness declarations are assertions to verify, not proof of authority or freshness.
 

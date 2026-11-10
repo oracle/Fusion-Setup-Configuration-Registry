@@ -1,6 +1,5 @@
 # Manage Transaction Sources Input Validation
 
-Classification: Oracle Highly Restricted
 
 <!-- fscr-supported-operations: create, update -->
 <!-- fscr-create-fields: ORA_AR_TXN_BATCH_SOURCE::AutoTrxNumberingFlag, ORA_AR_TXN_BATCH_SOURCE::BatchSourceType, ORA_AR_TXN_BATCH_SOURCE::Description, ORA_AR_TXN_BATCH_SOURCE::InvalidLinesRule, ORA_AR_TXN_BATCH_SOURCE::LastBatchNum, ORA_AR_TXN_BATCH_SOURCE::Name, ORA_AR_TXN_BATCH_SOURCE::SetCode, ORA_AR_TXN_BATCH_SOURCE::StartDate, ORA_AR_TXN_BATCH_SOURCE::Status -->
@@ -59,4 +58,4 @@ This contract validates portable create and update input for `AR_MANAGE_TRANSACT
 | SRC-UI-MTS; SRC-CS-CREATE-VO; SRC-DOC-COMPLETION-26C | Create requiredness, labels, defaults, and conditional UI behavior |
 | SRC-DOC-BO-26C; SRC-FSM-CURRENT | Published enumerations and exact observed package codes |
 | SRC-CS-CREATE-VO; SRC-CS-EDIT-VO; SRC-CS-VO; SRC-CS-CMVO; SRC-CS-AMIMPL; SRC-E2E-MTS-CREATE-20260906; SRC-E2E-MTS-UPDATE-20260905; SRC-E2E-MTS-AR-UPDATE-ROUTING-20260910 | Relationship-partition ownership, supported-field boundary, export-owned update routing, and reconciliation targets |
-| SRC-CS-EO-NUMBERING-2610 | [TransactionBatchSourceEOImpl.validateEntity](https://codesearch.oraclecorp.com/source/xref/FUSIONAPPS_11.13.26.10.0_LINUX.X64/fusionapps/fin/components/receivables/ar/transactionSetup/batchSources/model/src/oracle/apps/financials/receivables/transactionSetup/batchSources/model/entity/TransactionBatchSourceEOImpl.java#40), lines 40–64: when numbering is Y and the sequence does not yet exist, MINVALUE is 1 and START WITH uses LastBatchNum directly. This establishes the create lower bound; it does not establish an update-field range or a business default. |
+| SRC-CS-EO-NUMBERING-2610 | TransactionBatchSourceEOImpl.validateEntity, lines 40–64: when numbering is Y and the sequence does not yet exist, MINVALUE is 1 and START WITH uses LastBatchNum directly. This establishes the create lower bound; it does not establish an update-field range or a business default. |

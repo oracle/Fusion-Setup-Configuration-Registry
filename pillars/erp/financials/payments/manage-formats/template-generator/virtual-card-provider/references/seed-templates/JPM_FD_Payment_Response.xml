@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:template match="/">
+ <records>
+   <xsl:for-each select="/root/records/record">
+     <record>
+       <paymentRefNum>
+         <xsl:value-of select="substring-before(col3, 'SUA')"/>
+       </paymentRefNum>
+       <bepStatus>
+         <xsl:value-of select="col4"/>
+       </bepStatus>
+       <bepTrxnResponseId>
+         <xsl:value-of select="col5"/>
+       </bepTrxnResponseId>
+       <bepErrorCode>
+         <xsl:value-of select="col6"/>
+       </bepErrorCode>
+       <bepErrorMessage>
+         <xsl:value-of select="col7"/>
+       </bepErrorMessage>
+       <invHoldCode>
+         <xsl:choose>
+           <xsl:when test="col4 = 'Failure'">ORA_AP_BANK_ACK_RJCT</xsl:when>
+           <xsl:otherwise></xsl:otherwise> <!-- Intentionally left blank -->
+           </xsl:choose>
+       </invHoldCode>
+     </record>
+   </xsl:for-each>
+ </records>
+ </xsl:template>
+</xsl:stylesheet>

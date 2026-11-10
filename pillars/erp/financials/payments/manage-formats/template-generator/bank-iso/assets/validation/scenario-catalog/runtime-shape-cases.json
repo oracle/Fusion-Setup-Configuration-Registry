@@ -1,0 +1,43 @@
+{
+  "version": "1.0",
+  "purpose": "Synthetic source-shape mutations for offline validation; no bank-specific output rules.",
+  "baseline": "A reviewed bank-specific single-payment project variant of a shipping source fixture; do not mutate the packaged fixture.",
+  "source_values": "Entirely synthetic. Preserve these test characteristics through transformation; inspect output separately.",
+  "cases": [
+    {
+      "id": "long_logical_group",
+      "applicability": "Template consumes LogicalGroupReference for grouping or bank identifiers.",
+      "set": {"OutboundPayment/LogicalGrouping/LogicalGroupReference": "900001_90001"},
+      "check": "Full source group remains intact; bank ID satisfies the reviewed limit and uniqueness rule."
+    },
+    {
+      "id": "dotted_utc_offset",
+      "applicability": "Template maps InstructionCreationDate to an ISO timestamp.",
+      "set": {"PaymentInstructionInfo/InstructionCreationDate": "2026-01-15T12:34:56+00.00"},
+      "check": "Schema-valid timestamp preserves date, time and offset."
+    },
+    {
+      "id": "dotted_negative_fractional_offset",
+      "applicability": "Template maps InstructionCreationDate to an ISO timestamp.",
+      "set": {"PaymentInstructionInfo/InstructionCreationDate": "2026-01-15T12:34:56.123456-07.30"},
+      "check": "Schema-valid timestamp preserves fractional precision and negative half-hour offset."
+    },
+    {
+      "id": "source_urgp_ccd",
+      "applicability": "URGP/CCD source combination is evidenced and its bank-specific handling has been reviewed; otherwise record exclusion or unresolved mapping.",
+      "set": {"OutboundPayment/ServiceLevel/FormatValue": "URGP", "OutboundPayment/DeliveryChannel/FormatValue": "CCD"},
+      "check": "Output follows the reviewed bank/rail mapping, or documented unsupported input is rejected. No universal output code is specified."
+    },
+    {
+      "id": "combined_runtime_shape",
+      "applicability": "All long-group, timestamp and URGP/CCD applicability conditions above hold.",
+      "set": {
+        "OutboundPayment/LogicalGrouping/LogicalGroupReference": "900001_90001",
+        "PaymentInstructionInfo/InstructionCreationDate": "2026-01-15T12:34:56.123456-07.30",
+        "OutboundPayment/ServiceLevel/FormatValue": "URGP",
+        "OutboundPayment/DeliveryChannel/FormatValue": "CCD"
+      },
+      "check": "All individual expected output checks hold together; source input is not pre-normalized."
+    }
+  ]
+}

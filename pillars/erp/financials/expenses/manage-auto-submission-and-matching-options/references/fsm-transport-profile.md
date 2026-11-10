@@ -36,34 +36,7 @@ All five audit fields are populated in every supplied row. Therefore the ZIP
 is evidence for the user-attested global representation, not a live test of
 empty audit fields, new target rows or a minimal delta. Keep these distinctions.
 
-The blank audit and insert contracts come from the owning sources:
-
-- [FSM owner FAQ, version 37](https://confluence.oraclecorp.com/confluence/pages/viewpage.action?pageId=1681235222),
-  section “Behavior of Updateable property during readXML()”, lines 323–347:
-  non-updateable attributes are ignored by readXML.
-- OrgSettingVO marks CreationDate, CreatedBy, LastUpdateDate, LastUpdatedBy and
-  LastUpdateLogin non-updateable. OrgSettingEO declares history columns for
-  them; audit values belong to the server. Source links are SRC-ORG-VO/EO in
-  `../ora-resource/ora_input_validation.md`.
-- CSVXmlTransform.populateXmlRequest, lines 779–809, parses date text only when
-  nonempty. Empty audit cells can pass conversion without fabricated dates.
-  `markVOsToUseXMLExplicitNull`, lines 611–623, enables explicit null output.
-  Source: SRC-FSM-CSV-TRANSFORM in `../ora-resource/ora_error_handling.md`.
-- ExpenseOrgSettingServiceAMImpl.importData resolves BuName to target OrgId,
-  uses -1 for global scope, and invokes updatePrimaryKeysInXML followed by
-  readXML. OrgSettingEO primary and alternate keys are OrgId + SettingCode.
-  An absent expense-setting row is an insert into that verified scope, not a
-  business-unit creation. [Oracle's ADF readXML documentation](https://docs.oracle.com/en/middleware/developer-tools/adf/12.2.1.4/develop/working-programmatically-view-objects.html)
-  describes updating matching keys and inserting absent rows.
-
-The initial qualification combined these owning contracts with the
-user-attested successful blank-global representation; the subsequent live
-organization-setting import below provides additional execution evidence. It does not require a
-separate empirical example of every empty non-updateable audit column. It also
-does not erase the source/deployed-version boundary: execute through the normal
-preview and loader, report actual failures, and verify results through the
-declared status/reconciliation workflow. Never report source reasoning or unit
-tests as a successful Fusion import.
+The portable serialization contract retains all audit headers, emits empty audit cells, uses a verified canonical BuName or explicit global scope, and delegates row identity and audit generation to Fusion. This is the bounded organization-only profile, not a callable private API. The verified import below establishes the historically tested case; it does not certify another target, populated aliases or omitted columns. Preview, exact-artifact approval, terminal-status handling and reconciliation remain mandatory.
 
 ## Verified organization-setting import
 

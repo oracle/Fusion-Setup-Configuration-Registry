@@ -1,7 +1,7 @@
 {
   "claim": "The selected Meals rate create submitted date-only YYYY/MM/DD StartDate and persisted that calendar date.",
   "boundary": "Encoding evidence only, not combined-create support, general field acceptance, date overlap/identity semantics or EndDate behavior.",
-  "source_label": "cptcwxaqy export release11.13.27.01.0",
+  "source_label": "historical export release11.13.27.01.0",
   "csv_date_format": "%Y/%m/%d",
   "entities": [
     "ORA_EXM_MEALS_POLICY_LINE"

@@ -1,6 +1,5 @@
 # Customers source contract and readiness
 
-Classification: Oracle Highly Restricted
 
 The initial task covers all 87 input columns of the **Customers worksheet** in the simplified Upload Customers template. Contacts, Reference Accounts and Customer Bank Accounts are deferred. A worksheet boundary is not a creation-only rule. Do not substitute the larger CustomerImportTemplate flow.
 
@@ -12,8 +11,8 @@ The initial task covers all 87 input columns of the **Customers worksheet** in t
 | [Oracle Upload Customers](https://docs.oracle.com/en/cloud/saas/financials/26b/oefbf/uploadcustomers-3123.html) | Simplified flow identity, published template/control reference, staging tables and UCM account | Published 26B control file does not prove deployed 26D behavior |
 | Developer-supplied ADE ArUpdCustomers.ctl; SHA-256 c85f853f709c7adaec364476049c74f21f00ac5fc5bfdf97b6e2a96c89a548e4 | All 87 ordered inputs; source-reference fallbacks, generated party-site reference and date expressions | Supplied in response to the 26D source request; exact ADE label not supplied. Identical to the public control comparison copy. No live loader execution established |
 | [Oracle upload guidelines](https://docs.oracle.com/en/cloud/saas/financials/26c/facsf/guidelines-for-uploading-customer-data-using-a-simplified.html) | Related setup, original column order and template input conventions | A documented profile update convention is not blanket field mutability |
-| [26D AR customer interface source](https://codesearch.oraclecorp.com/source/xref/FUSIONAPPS_11.13.26.10.0_LINUX.X64/fusionapps/fin/ar/db/plsql/ar_customer_interface_pkg.pkb) | Entity mappings at 13297–13714, account DFFs, profile default at 14571–14604, existing-profile I-to-U switch at 14615–14629, receipt-method default at 14646–14684 | Indexed source does not establish exact tenant patch or an authorized lookup endpoint |
-| [26D CustomerUpload source](https://codesearch.oraclecorp.com/source/xref/FUSIONAPPS_11.13.26.10.0_LINUX.X64/fusionapps/fin/components/financialsEss/ar/customerSetup/customerProfileClasses/ess/src/oracle/apps/financials/receivables/customerSetup/customerProfileClasses/ess/program/CustomerUpload.java) | Five-argument ESSCREATE contract and request correlation | ESSCREATE is a batch/job mode, not a guarantee that existing business records remain unchanged |
+| 26D AR customer interface source | Entity mappings at 13297–13714, account DFFs, profile default at 14571–14604, existing-profile I-to-U switch at 14615–14629, receipt-method default at 14646–14684 | Indexed source does not establish exact tenant patch or an authorized lookup endpoint |
+| 26D CustomerUpload source | Five-argument ESSCREATE contract and request correlation | ESSCREATE is a batch/job mode, not a guarantee that existing business records remain unchanged |
 | Developer deployment readback | Published customers registration and full adapter configuration were compared successfully in the selected test environment | Environment receipt remains outside this portable skill; each live run must re-resolve its actual registration and privileges |
 
 ## Operation and reconciliation ownership

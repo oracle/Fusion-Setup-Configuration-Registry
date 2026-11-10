@@ -1,6 +1,5 @@
 # Central FBDI handoff evaluation
 
-Classification: Oracle Highly Restricted
 
 This is an assisted evaluation contract for ARCU.EXECUTION_GATE. A complete
 compiled registry means the instructions can be planned. Each candidate still

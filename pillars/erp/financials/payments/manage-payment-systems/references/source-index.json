@@ -1,0 +1,585 @@
+{
+  "sources": [
+    {
+      "sourceId": "SRC-CATALOG-HIERARCHY",
+      "title": "Effective hierarchy catalog",
+      "status": "Confirmed",
+      "release": "fe6580c50f7c598eeb905092e50d17473d37964d",
+      "reference": "Effective hierarchy catalog"
+    },
+    {
+      "sourceId": "SRC-CATALOG-TASKS",
+      "title": "Effective task master",
+      "status": "Confirmed",
+      "release": "fe6580c50f7c598eeb905092e50d17473d37964d",
+      "reference": "Effective task master"
+    },
+    {
+      "sourceId": "SRC-FSM-PACKAGE",
+      "title": "Same-task export/template/metadata/results",
+      "status": "Confirmed",
+      "release": "11.13.26.10.0",
+      "reference": "Same-task export/template/metadata/results"
+    },
+    {
+      "sourceId": "SRC-HELP",
+      "title": "Official Oracle Help",
+      "status": "To collect",
+      "release": "Matching release/revision required",
+      "reference": "Official Oracle Help"
+    },
+    {
+      "sourceId": "SRC-EDM",
+      "title": "Oracle Enterprise Data Model",
+      "status": "To collect",
+      "release": "Matching release/revision required",
+      "reference": "Oracle Enterprise Data Model"
+    },
+    {
+      "sourceId": "SRC-REST",
+      "title": "Official REST/service/LOV metadata",
+      "status": "To collect",
+      "release": "Matching release/revision required",
+      "reference": "Official REST/service/LOV metadata"
+    },
+    {
+      "sourceId": "SRC-CODE",
+      "title": "CodeSearch / implementation evidence",
+      "status": "To collect",
+      "release": "Matching release/revision required",
+      "reference": "CodeSearch / implementation evidence"
+    },
+    {
+      "sourceId": "SRC-INTERNAL",
+      "title": "Approved internal design/support",
+      "status": "To collect",
+      "release": "Matching release/revision required",
+      "reference": "Approved internal design/support"
+    },
+    {
+      "sourceId": "SRC-TEST",
+      "title": "Controlled non-production evidence",
+      "status": "To collect",
+      "release": "Matching release/revision required",
+      "reference": "Controlled non-production evidence"
+    },
+    {
+      "sourceId": "SRC-HELP-IBY-PAYMENTS-IMPLEMENT",
+      "title": "How You Implement Payables and Payments",
+      "status": "Rejected",
+      "release": "25C seed; prefer the selected matching release when available",
+      "reference": "https://docs.oracle.com/en/cloud/saas/financials/25c/facsf/how-you-implement-payables-and-payments.html"
+    },
+    {
+      "sourceId": "SRC-HELP-IBY-PAYMENT-SYSTEM",
+      "title": "How You Set Up a Payment System",
+      "status": "Rejected",
+      "release": "26B",
+      "reference": "https://docs.oracle.com/en/cloud/saas/financials/26b/faipp/how-you-set-up-a-payment-system.html"
+    },
+    {
+      "sourceId": "SRC-MPS-ADE-001",
+      "title": "PaymentSystemServiceAMImpl.java",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSystemServiceAMImpl.java"
+    },
+    {
+      "sourceId": "SRC-MPS-ADE-002",
+      "title": "PaymentSystemServiceAM.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSystemServiceAM.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-ADE-003",
+      "title": "PaymentSystemInfoVO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSystemInfoVO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-ADE-004",
+      "title": "PaymentSystemInfoEO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSystemInfoEO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-ADE-005",
+      "title": "PaymentSystemInfoEOImpl.java",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSystemInfoEOImpl.java"
+    },
+    {
+      "sourceId": "SRC-MPS-ADE-006",
+      "title": "PaymentSystemInfoVORowImpl.java",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSystemInfoVORowImpl.java"
+    },
+    {
+      "sourceId": "SRC-MPS-ADE-007",
+      "title": "PaymentSystemAccountValueEOImpl.java",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSystemAccountValueEOImpl.java"
+    },
+    {
+      "sourceId": "SRC-MPS-ADE-008",
+      "title": "SystemSecurityOptionsEOImpl.java",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "SystemSecurityOptionsEOImpl.java"
+    },
+    {
+      "sourceId": "SRC-MPS-ADE-009",
+      "title": "SegmentUtil.java",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "SegmentUtil.java"
+    },
+    {
+      "sourceId": "SRC-MPS-ADE-010",
+      "title": "iby_security_pkg.pkb",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "iby_security_pkg.pkb"
+    },
+    {
+      "sourceId": "SRC-MPS-ADE-011",
+      "title": "ConfigUtil.java",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "ConfigUtil.java"
+    },
+    {
+      "sourceId": "SRC-MPS-ADE-012",
+      "title": "DataUtil.java",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "DataUtil.java"
+    },
+    {
+      "sourceId": "SRC-MPS-ADE-013",
+      "title": "TokenProviderUtil.java",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "TokenProviderUtil.java"
+    },
+    {
+      "sourceId": "SRC-MPS-ADE-014",
+      "title": "PaymentSystemAccountNameEOImpl.java",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSystemAccountNameEOImpl.java"
+    },
+    {
+      "sourceId": "SRC-MPS-ADE-015",
+      "title": "PaymentSystemAccountTokenNameValueVORowImpl.java",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSystemAccountTokenNameValueVORowImpl.java"
+    },
+    {
+      "sourceId": "SRC-MPS-ADE-016",
+      "title": "BankPVO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "BankPVO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-ADE-017",
+      "title": "BusinessUnitPVO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "BusinessUnitPVO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-ADE-018",
+      "title": "SetupBusinessObjectSD.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "SetupBusinessObjectSD.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-ADE-019",
+      "title": "SetupBOReferenceAttributeSD.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "SetupBOReferenceAttributeSD.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-ADE-020",
+      "title": "SetupTaskBusinessObjectSD.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "SetupTaskBusinessObjectSD.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-ADE-021",
+      "title": "StandardLookupTypeSD.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "StandardLookupTypeSD.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-META-003",
+      "title": "PaymentSystemInfoVO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSystemInfoVO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-META-004",
+      "title": "BankPEO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "BankPEO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-META-005",
+      "title": "PaymentSystemAccountNameVO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSystemAccountNameVO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-META-006",
+      "title": "PaymentSystemAccountNameEO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSystemAccountNameEO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-META-007",
+      "title": "PaymentSystemAccountNameVO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSystemAccountNameVO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-META-008",
+      "title": "PaymentSystemFormatVO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSystemFormatVO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-META-009",
+      "title": "PaymentSystemFormatEO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSystemFormatEO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-META-010",
+      "title": "PaymentSystemFormatVO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSystemFormatVO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-META-011",
+      "title": "PaymentSystemKeysVO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSystemKeysVO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-META-012",
+      "title": "PaymentSystemKeysEO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSystemKeysEO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-META-013",
+      "title": "PaymentSystemKeysVO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSystemKeysVO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-META-014",
+      "title": "PaymentSchemeVO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSchemeVO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-META-015",
+      "title": "PaymentSchemeEO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSchemeEO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-META-016",
+      "title": "PaymentSchemeVO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSchemeVO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-META-017",
+      "title": "PaymentSystemTransmissionVO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSystemTransmissionVO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-META-018",
+      "title": "PaymentSystemTransmissionEO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSystemTransmissionEO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-META-019",
+      "title": "PaymentSystemTransmissionVO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSystemTransmissionVO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-META-020",
+      "title": "PaymentSystemAccountValueVO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSystemAccountValueVO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-META-021",
+      "title": "PaymentSystemAccountValueEO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSystemAccountValueEO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-META-022",
+      "title": "PaymentSystemAccountValueVO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSystemAccountValueVO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-META-023",
+      "title": "PaymentSystemAccountNameTranslationVO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSystemAccountNameTranslationVO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-META-024",
+      "title": "PaymentSystemAccountNameTranslationEO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSystemAccountNameTranslationEO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-FW-HELPER",
+      "title": "MigratorHelper-javap.txt",
+      "status": "Confirmed",
+      "release": "JAR SHA256 05dd79fe2c7b6fdb3ae0f518d15e57adb85261069870743d36fd474b0feeded6",
+      "reference": "MigratorHelper-javap.txt"
+    },
+    {
+      "sourceId": "SRC-MPS-FW-CSV",
+      "title": "XMLCSVHandler-javap.txt",
+      "status": "Confirmed",
+      "release": "JAR SHA256 e23a87f99c0b4660d9392272b0c3b71978ad60bffbd4583b3dc683f8ce537e5d",
+      "reference": "XMLCSVHandler-javap.txt"
+    },
+    {
+      "sourceId": "SRC-MPS-FW-READER",
+      "title": "CSVReader-javap.txt",
+      "status": "Confirmed",
+      "release": "JAR SHA256 e23a87f99c0b4660d9392272b0c3b71978ad60bffbd4583b3dc683f8ce537e5d",
+      "reference": "CSVReader-javap.txt"
+    },
+    {
+      "sourceId": "SRC-MPS-POLICY",
+      "title": "MPS sensitive-field policy aligned with MTC",
+      "status": "Confirmed",
+      "release": "2026-10-20",
+      "reference": "MPS sensitive-field policy aligned with MTC"
+    },
+    {
+      "sourceId": "SRC-MPS-OPTION-002",
+      "title": "EditPaymentSystemAccount.jsff",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "EditPaymentSystemAccount.jsff"
+    },
+    {
+      "sourceId": "SRC-MPS-OPTION-003",
+      "title": "FDAckTransmitConfigVVO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "FDAckTransmitConfigVVO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-OPTION-004",
+      "title": "LBTransmissionFormatVVO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "LBTransmissionFormatVVO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-OPTION-005",
+      "title": "InvActionLookupVO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "InvActionLookupVO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-OPTION-006",
+      "title": "PaymentSystemAccountNameEOToPaymentSystemAccountValueEO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSystemAccountNameEOToPaymentSystemAccountValueEO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-OPTION-007",
+      "title": "PaymentSystemAccountValueVOImpl.java",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "PaymentSystemAccountValueVOImpl.java"
+    },
+    {
+      "sourceId": "SRC-MPS-DOC-INDEX",
+      "title": "Financials current release index",
+      "status": "Confirmed",
+      "release": "26D",
+      "reference": "https://docs.oracle.com/en/cloud/saas/financials/26d/index.html"
+    },
+    {
+      "sourceId": "SRC-MPS-EDM-IBY-BEP-ACCT-OPT-NAME-B",
+      "title": "IBY_BEP_ACCT_OPT_NAME_B table metadata",
+      "status": "Confirmed",
+      "release": "26D",
+      "reference": "https://docs.oracle.com/en/cloud/saas/financials/26d/oedmf/ibybepacctoptnameb-12125.html#ibybepacctoptnameb-12125"
+    },
+    {
+      "sourceId": "SRC-MPS-EDM-IBY-BEP-ACCT-OPT-NAME-TL",
+      "title": "IBY_BEP_ACCT_OPT_NAME_TL table metadata",
+      "status": "Confirmed",
+      "release": "26D",
+      "reference": "https://docs.oracle.com/en/cloud/saas/financials/26d/oedmf/ibybepacctoptnametl-12128.html#ibybepacctoptnametl-12128"
+    },
+    {
+      "sourceId": "SRC-MPS-EDM-IBY-BEP-ACCT-OPT-VALS",
+      "title": "IBY_BEP_ACCT_OPT_VALS table metadata",
+      "status": "Confirmed",
+      "release": "26D",
+      "reference": "https://docs.oracle.com/en/cloud/saas/financials/26d/oedmf/ibybepacctoptvals-12131.html#ibybepacctoptvals-12131"
+    },
+    {
+      "sourceId": "SRC-MPS-EDM-IBY-BEPINFO",
+      "title": "IBY_BEPINFO table metadata",
+      "status": "Confirmed",
+      "release": "26D",
+      "reference": "https://docs.oracle.com/en/cloud/saas/financials/26d/oedmf/ibybepinfo-11969.html#ibybepinfo-11969"
+    },
+    {
+      "sourceId": "SRC-MPS-EDM-IBY-BEPKEYS",
+      "title": "IBY_BEPKEYS table metadata",
+      "status": "Confirmed",
+      "release": "26D",
+      "reference": "https://docs.oracle.com/en/cloud/saas/financials/26d/oedmf/ibybepkeys-11970.html#ibybepkeys-11970"
+    },
+    {
+      "sourceId": "SRC-MPS-EDM-IBY-PMT-SYS-FORMATS",
+      "title": "IBY_PMT_SYS_FORMATS table metadata",
+      "status": "Confirmed",
+      "release": "26D",
+      "reference": "https://docs.oracle.com/en/cloud/saas/financials/26d/oedmf/ibypmtsysformats-12160.html#ibypmtsysformats-12160"
+    },
+    {
+      "sourceId": "SRC-MPS-EDM-IBY-PMT-SYS-TRANSMISSIONS",
+      "title": "IBY_PMT_SYS_TRANSMISSIONS table metadata",
+      "status": "Confirmed",
+      "release": "26D",
+      "reference": "https://docs.oracle.com/en/cloud/saas/financials/26d/oedmf/ibypmtsystransmissions-12162.html#ibypmtsystransmissions-12162"
+    },
+    {
+      "sourceId": "SRC-MPS-EDM-IBY-PMTSCHEMES",
+      "title": "IBY_PMTSCHEMES table metadata",
+      "status": "Confirmed",
+      "release": "26D",
+      "reference": "https://docs.oracle.com/en/cloud/saas/financials/26d/oedmf/ibypmtschemes-12164.html#ibypmtschemes-12164"
+    },
+    {
+      "sourceId": "SRC-MPS-DOC-LOOKUPS",
+      "title": "Standard lookup codes GET",
+      "status": "Confirmed",
+      "release": "26D",
+      "reference": "https://docs.oracle.com/en/cloud/saas/applications-common/26d/farca/op-http-servername-fscmrestapi-resources-11.13.18.05-standardlookups-lookuptype-child-lookupcodes-get.html"
+    },
+    {
+      "sourceId": "SRC-MPS-DOC-CASHBANKS",
+      "title": "Cash management banks LOV",
+      "status": "Confirmed",
+      "release": "26D",
+      "reference": "https://docs.oracle.com/en/cloud/saas/financials/26d/farfa/op-cashbankslov-get.html"
+    },
+    {
+      "sourceId": "SRC-MPS-RESOLVER-001",
+      "title": "CurrencyPVO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "CurrencyPVO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-RESOLVER-002",
+      "title": "TransmissionConfigurationVO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "TransmissionConfigurationVO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-RESOLVER-003",
+      "title": "FormatPVO.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "FormatPVO.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-RESOLVER-004",
+      "title": "StandardLookupTypeSD.xml.mps-scoped.xml",
+      "status": "Confirmed",
+      "release": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306",
+      "reference": "StandardLookupTypeSD.xml.mps-scoped.xml"
+    },
+    {
+      "sourceId": "SRC-MPS-DOC-PAYMENT-SYSTEM-26D",
+      "title": "How You Set Up a Payment System",
+      "status": "Confirmed",
+      "release": "26D",
+      "reference": "https://docs.oracle.com/en/cloud/saas/financials/26d/faipp/how-you-set-up-a-payment-system.html"
+    },
+    {
+      "sourceId": "SRC-FSM-NODE-SEQ-PRODUCER",
+      "title": "FSM request-scoped NodeSequence producer",
+      "status": "Confirmed",
+      "release": "Read-only fphdev framework/seed capture 21 October 2026; cptcpuwqy 11.13.26.10.0 export corroboration",
+      "reference": "references/fsm-node-sequence-evidence.md#producer"
+    },
+    {
+      "sourceId": "SRC-FSM-NODE-SEQ-CONSUMER",
+      "title": "FSM XML file/level sequence consumer",
+      "status": "Confirmed",
+      "release": "Read-only fphdev framework/seed capture 21 October 2026; cptcpuwqy 11.13.26.10.0 export corroboration",
+      "reference": "references/fsm-node-sequence-evidence.md#consumer"
+    },
+    {
+      "sourceId": "SRC-MPS-XML-FILE-MAPPING",
+      "title": "MPS authoritative service XML-file mapping",
+      "status": "Confirmed",
+      "release": "Read-only fphdev framework/seed capture 21 October 2026; cptcpuwqy 11.13.26.10.0 export corroboration",
+      "reference": "references/fsm-node-sequence-evidence.md#mps-file-mapping"
+    }
+  ]
+}

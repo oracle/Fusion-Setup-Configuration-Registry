@@ -1,0 +1,1030 @@
+<?xml version="1.0" encoding="utf-8"?>
+<OutboundPaymentInstruction>
+	<RecordHistory>
+		<CreatedBy>TESTID000001</CreatedBy>
+		<CreationDate>2026-01-15T12:00:00</CreationDate>
+		<LastUpdateDate>2026-01-15T12:00:00</LastUpdateDate>
+		<LastUpdateLogin>MASKED_SECRET_0001</LastUpdateLogin>
+		<LastUpdatedBy>TESTID000001</LastUpdatedBy>
+	</RecordHistory>
+	<PaymentInstructionInfo>
+		<InstructionReferenceNumber>TESTID000002</InstructionReferenceNumber>
+		<FormatProgramRequestID>TESTID000003</FormatProgramRequestID>
+		<InstructionCreationDate>2026-01-15T12:00:00</InstructionCreationDate>
+		<MultiOrgAccessControl>
+			<HasBlockedData>N</HasBlockedData>
+		</MultiOrgAccessControl>
+		<InstructionStatus>
+			<Code>CREATED</Code>
+			<Meaning>Created</Meaning>
+		</InstructionStatus>
+		<ProcessingType>
+			<Code>ELECTRONIC</Code>
+			<Meaning>Electronic</Meaning>
+		</ProcessingType>
+		<ProcessType>STANDARD</ProcessType>
+		<UserAssignedRefCode>TESTROUTE0001</UserAssignedRefCode>
+		<PaymentMode />
+		<BankAssignedRefCode />
+		<PaymentSequence>
+			<SequenceName />
+			<LastValue />
+		</PaymentSequence>
+		<PaymentSequence>
+			<SequenceName />
+			<LastValue />
+		</PaymentSequence>
+		<PaymentSequence>
+			<SequenceName />
+			<LastValue />
+		</PaymentSequence>
+		<BankInstruction>
+			<BankInstructionCode />
+			<Meaning />
+			<FormatValue />
+		</BankInstruction>
+		<BankInstruction>
+			<BankInstructionCode />
+			<Meaning />
+			<FormatValue />
+		</BankInstruction>
+		<BankInstructionDetails />
+		<PaymentTextMessage />
+		<PaymentTextMessage />
+		<RegulatoryReportingOption>NO_DECLARATIONS</RegulatoryReportingOption>
+		<PaymentSystemAccount>
+			<AccountName>Test Name 001</AccountName>
+			<AccountSettings>
+				<Name>BANK_IDENTIFIER</Name>
+				<Value />
+			</AccountSettings>
+			<AccountSettings>
+				<Name>CGI_INITIATING_PARTY_NAME</Name>
+				<Value />
+			</AccountSettings>
+			<AccountSettings>
+				<Name>CGI_INITIATING_PARTY_OTHRID</Name>
+				<Value />
+			</AccountSettings>
+			<AccountSettings>
+				<Name>DEBTOR_NAME</Name>
+				<Value />
+			</AccountSettings>
+			<AccountSettings>
+				<Name>EMAIL_DISB_ACK_DETAILS</Name>
+				<Value>TEST_SETTING_0001</Value>
+			</AccountSettings>
+			<AccountSettings>
+				<Name>FD_ACK_AUTO_VOID_OPTION</Name>
+				<Value>TEST_SETTING_0002</Value>
+			</AccountSettings>
+			<AccountSettings>
+				<Name>FD_ACK_TIME_GAP</Name>
+				<Value>TEST_SETTING_0003</Value>
+			</AccountSettings>
+			<AccountSettings>
+				<Name>FD_ACK_TRANS_CONFIG</Name>
+				<Value>TEST_SETTING_0004</Value>
+			</AccountSettings>
+			<AccountSettings>
+				<Name>FD_ACK_VOID_INVOICE_ACTION</Name>
+				<Value>TEST_SETTING_0005</Value>
+			</AccountSettings>
+			<AccountSettings>
+				<Name>FD_PAY_FILE_REG_FORMAT</Name>
+				<Value>TEST_SETTING_0006</Value>
+			</AccountSettings>
+			<AccountSettings>
+				<Name>ISO20022_DR_BICORBEI</Name>
+				<Value />
+			</AccountSettings>
+			<AccountSettings>
+				<Name>ISO20022_IP_NAME</Name>
+				<Value />
+			</AccountSettings>
+			<AccountSettings>
+				<Name>ISO20022_IP_OTHERID</Name>
+				<Value />
+			</AccountSettings>
+			<AccountSettings>
+				<Name>FD_ACK_PCI_TRANS_CONFIG</Name>
+				<Value>TEST_SETTING_0007</Value>
+			</AccountSettings>
+			<AccountSettings>
+				<Name>FD_ACK_FORMAT</Name>
+				<Value>TEST_SETTING_0008</Value>
+			</AccountSettings>
+			<DescriptiveFlexField />
+		</PaymentSystemAccount>
+		<Notes />
+	</PaymentInstructionInfo>
+	<PaymentProcessProfile>
+		<PaymentProcessProfileInternalID>TESTID000004</PaymentProcessProfileInternalID>
+		<PaymentProcessProfileName>Synthetic ISO CGI Wire PSA</PaymentProcessProfileName>
+		<BatchBookingFlag />
+		<LogicalGrouping>
+			<GroupByPaymentDateLogical>Y</GroupByPaymentDateLogical>
+			<GroupByBankAccountLogical>Y</GroupByBankAccountLogical>
+			<GroupBySettlementPriority>N</GroupBySettlementPriority>
+			<GroupByServiceLevel>Y</GroupByServiceLevel>
+			<GroupByBankChargeBearer>100.00</GroupByBankChargeBearer>
+			<GroupByUltimateDebtor>N</GroupByUltimateDebtor>
+			<GroupByCategoryPurpose>N</GroupByCategoryPurpose>
+			<GroupByPaymentMethod>N</GroupByPaymentMethod>
+		</LogicalGrouping>
+		<DescriptiveFlexField />
+	</PaymentProcessProfile>
+	<PaymentFormat>
+		<PaymentFormatInternalID>TESTID000005</PaymentFormatInternalID>
+		<PaymentFormatName>Synthetic ISO20022 CGI Format</PaymentFormatName>
+		<DescriptiveFlexField />
+	</PaymentFormat>
+	<InstructionTotals>
+		<PaymentCount>1</PaymentCount>
+		<TotalPaymentAmount>
+			<Value>102.00</Value>
+			<Currency>
+				<Code>EUR</Code>
+			</Currency>
+		</TotalPaymentAmount>
+	</InstructionTotals>
+	<InstructionGrouping>
+		<PaymentDate>2026-01-15T12:00:00</PaymentDate>
+		<PaymentCurrency>
+			<Code>EUR</Code>
+			<Name>Euro</Name>
+		</PaymentCurrency>
+		<PaymentServiceRequestID>TESTID000006</PaymentServiceRequestID>
+		<Payer>
+			<PartyInternalID>TESTID000007</PartyInternalID>
+			<PartyNumber>TESTID000008</PartyNumber>
+			<Name>Test Name 002</Name>
+			<PartyType>
+				<Code />
+				<Meaning />
+			</PartyType>
+			<TaxRegistrationNumber />
+			<LegalEntityRegistrationNumber>TESTID000009</LegalEntityRegistrationNumber>
+			<LegalEntityInternalID>TESTID000010</LegalEntityInternalID>
+			<LegalEntityName>Test Name 002</LegalEntityName>
+			<Address>
+				<AddressInternalID>TESTID000011</AddressInternalID>
+				<AddressLine1>100 Test Street</AddressLine1>
+				<AddressLine2>Suite 100</AddressLine2>
+				<AddressLine3 />
+				<City>Test City</City>
+				<County>Test County</County>
+				<State>TS</State>
+				<Province />
+				<Country>US</Country>
+				<ISO3DigitCountry>USA</ISO3DigitCountry>
+				<CountryName>United States</CountryName>
+				<PostalCode>00000</PostalCode>
+				<PreFormattedConcatenatedAddress>100 Test Street, Test City TS 00000</PreFormattedConcatenatedAddress>
+				<PreFormattedMailingAddress>100 Test Street, Test City TS 00000</PreFormattedMailingAddress>
+				<AddressName />
+			</Address>
+			<ContactInfo>
+				<ContactLocators>
+					<PhoneNumber />
+					<FaxNumber />
+					<EmailAddress />
+					<Website />
+				</ContactLocators>
+			</ContactInfo>
+			<LEDescriptiveFlexField>
+				<AttributeCategory>MASKED_ATTR_0001</AttributeCategory>
+			</LEDescriptiveFlexField>
+		</Payer>
+		<PayerOrganization>
+			<OrganizationInternalID>TESTID000012</OrganizationInternalID>
+			<OrganizationType>
+				<Code>OPERATING_UNIT</Code>
+				<Meaning>Business unit</Meaning>
+			</OrganizationType>
+			<OrganizationName>Test Organization 003</OrganizationName>
+		</PayerOrganization>
+		<BankAccount>
+			<BankAccountInternalID>TESTID000013</BankAccountInternalID>
+			<BankName>Test Bank 004</BankName>
+			<AlternateBankName>Test Bank 004</AlternateBankName>
+			<BankNumber />
+			<BranchInternalID>TESTID000014</BranchInternalID>
+			<BranchName>Test Branch 005</BranchName>
+			<AlternateBranchName>Test Branch 006</AlternateBranchName>
+			<BranchNumber>TESTROUTE0002</BranchNumber>
+			<BankAccountName>Test Bank Account 007</BankAccountName>
+			<AlternateBankAccountName />
+			<BankAccountNumber>TESTACCT0001</BankAccountNumber>
+			<MaskedBankAccountNumber>********0002</MaskedBankAccountNumber>
+			<UserEnteredBankAccountNumber>TESTACCT0001</UserEnteredBankAccountNumber>
+			<BankAccountSuffix />
+			<SwiftCode>TESTUS33XXX</SwiftCode>
+			<IBANNumber />
+			<CheckDigits />
+			<SecondaryBankAccountReference />
+			<BankAccountType>
+				<Code />
+				<Meaning />
+			</BankAccountType>
+			<BankAccountCurrency>
+				<Code>USD</Code>
+			</BankAccountCurrency>
+			<BankAddress>
+				<AddressInternalID />
+				<AddressLine1 />
+				<AddressLine2 />
+				<AddressLine3 />
+				<AddressLine4 />
+				<City />
+				<County />
+				<State />
+				<Province />
+				<Country>US</Country>
+				<ISO3DigitCountry>USA</ISO3DigitCountry>
+				<CountryName>United States</CountryName>
+				<PostalCode />
+				<PreFormattedConcatenatedAddress />
+				<PreFormattedMailingAddress />
+			</BankAddress>
+			<DescriptiveFlexField>
+				<Attribute1>MASKED_ATTR_0002</Attribute1>
+				<Attribute2>MASKED_ATTR_0003</Attribute2>
+				<Attribute3>MASKED_ATTR_0004</Attribute3>
+				<Attribute4>MASKED_ATTR_0005</Attribute4>
+				<Attribute5>MASKED_ATTR_0006</Attribute5>
+			</DescriptiveFlexField>
+			<BranchDescriptiveFlexField />
+			<FederalBankAccountInfo>
+				<FederalRFCIdentifier />
+				<FederalAgencyLocationCode />
+				<FederalAbbreviatedAgencyCode />
+				<FederalEmployerIdentificationNumber />
+			</FederalBankAccountInfo>
+			<EFTUserNumber>
+				<AccountLevelEFTNumber />
+				<BranchLevelEFTNumber />
+				<EFTRequesterId>TESTROUTE0003</EFTRequesterId>
+			</EFTUserNumber>
+		</BankAccount>
+	</InstructionGrouping>
+	<FederalPFExtend />
+	<OutboundPayment>
+		<RecordHistory>
+			<CreatedBy>TESTID000001</CreatedBy>
+			<CreationDate>2026-01-15T12:00:00</CreationDate>
+			<LastUpdateDate>2026-01-15T12:00:00</LastUpdateDate>
+			<LastUpdateLogin>MASKED_SECRET_0002</LastUpdateLogin>
+			<LastUpdatedBy>TESTID000001</LastUpdatedBy>
+		</RecordHistory>
+		<PaymentSourceInfo>
+			<ApplicationInternalID>TESTID000015</ApplicationInternalID>
+			<ApplicationName>AP</ApplicationName>
+			<PaymentServiceRequestID>TESTID000006</PaymentServiceRequestID>
+			<FunctionalCategory>
+				<Code>PAYABLES_DISB</Code>
+				<Meaning>Payables disbursements</Meaning>
+			</FunctionalCategory>
+			<PayerOrganization>
+				<OrganizationInternalID>TESTID000012</OrganizationInternalID>
+				<OrganizationType>
+					<Code>OPERATING_UNIT</Code>
+					<Meaning>Business unit</Meaning>
+				</OrganizationType>
+				<OrganizationName>Test Organization 003</OrganizationName>
+			</PayerOrganization>
+			<EmployeePaymentFlag>N</EmployeePaymentFlag>
+		</PaymentSourceInfo>
+		<PaymentNumber>
+			<DocCategory />
+			<SequenceName />
+			<SequenceValue />
+			<PaymentReferenceNumber>TESTID000016</PaymentReferenceNumber>
+			<CheckNumber />
+		</PaymentNumber>
+		<PaymentDate>2026-01-15</PaymentDate>
+		<PaymentDueDate>2026-01-15</PaymentDueDate>
+		<MaturityDate />
+		<AnticipatedValueDate />
+		<PaymentDescription />
+		<PaymentStatus>
+			<Code>INSTRUCTION_CREATED</Code>
+			<Meaning>Payment file created</Meaning>
+		</PaymentStatus>
+		<Payee>
+			<PartyInternalID>TESTID000017</PartyInternalID>
+			<PartyNumber>TESTID000018</PartyNumber>
+			<Name>Test Name 008</Name>
+			<TaxRegistrationType />
+			<TaxRegistrationNumber>TESTID000019</TaxRegistrationNumber>
+			<LegalEntityRegistrationNumber />
+			<LegalEntityRegistrationType />
+			<AlternateName />
+			<TaxOrganizationType>
+				<Code>CORPORATION</Code>
+				<Meaning>Corporation</Meaning>
+			</TaxOrganizationType>
+			<PersonInfo>
+				<TownOfBirth />
+				<BirthDate />
+				<CountryOfBirth />
+			</PersonInfo>
+			<SupplierNumber>TESTID000020</SupplierNumber>
+			<SupplierDescriptiveFlexField>
+				<Attribute1>MASKED_ATTR_0007</Attribute1>
+				<Attribute3>MASKED_ATTR_0008</Attribute3>
+			</SupplierDescriptiveFlexField>
+			<SupplierSiteDescriptiveFlexField>
+				<Attribute1>MASKED_ATTR_0009</Attribute1>
+				<Attribute6>MASKED_ATTR_0010</Attribute6>
+				<Attribute15>MASKED_ATTR_0011</Attribute15>
+			</SupplierSiteDescriptiveFlexField>
+			<Address>
+				<AddressInternalID>TESTID000021</AddressInternalID>
+				<AddressLine1>100 Test Street</AddressLine1>
+				<AddressLine4>100 Test Street</AddressLine4>
+				<City>Test City</City>
+				<County />
+				<State />
+				<Country>FI</Country>
+				<ISO3DigitCountry>FIN</ISO3DigitCountry>
+				<CountryName>Finland</CountryName>
+				<PostalCode>00000</PostalCode>
+				<AddressName>Test City</AddressName>
+				<AlternateAddressName />
+				<PreFormattedConcatenatedAddress>100 Test Street, Test City TS 00000</PreFormattedConcatenatedAddress>
+				<PreFormattedMailingAddress>100 Test Street, Test City TS 00000</PreFormattedMailingAddress>
+			</Address>
+			<ContactInfo>
+				<ContactLocators>
+					<PhoneNumber>+1555010001</PhoneNumber>
+					<FaxNumber />
+					<EmailAddress>test001@example.invalid</EmailAddress>
+					<Website />
+				</ContactLocators>
+			</ContactInfo>
+			<RemitAdviceDeliveryMethod>EMAIL</RemitAdviceDeliveryMethod>
+			<RemitAdviceEmail>test-contact-001@oracle.com</RemitAdviceEmail>
+		</Payee>
+		<SupplierorParty>
+			<PartyInternalID>TESTID000017</PartyInternalID>
+			<PartyNumber>TESTID000018</PartyNumber>
+			<Name>Test Supplier 006</Name>
+			<TaxRegistrationType />
+			<TaxRegistrationNumber>TESTID000019</TaxRegistrationNumber>
+			<LegalEntityRegistrationNumber />
+			<AlternateName />
+			<TaxOrganizationType>
+				<Code>CORPORATION</Code>
+				<Meaning>Corporation</Meaning>
+			</TaxOrganizationType>
+			<PersonInfo>
+				<TownOfBirth />
+				<BirthDate />
+				<CountryOfBirth />
+			</PersonInfo>
+			<SupplierNumber>TESTID000020</SupplierNumber>
+			<SupplierDescriptiveFlexField>
+				<Attribute1>MASKED_ATTR_0007</Attribute1>
+				<Attribute3>MASKED_ATTR_0008</Attribute3>
+			</SupplierDescriptiveFlexField>
+			<SupplierSiteDescriptiveFlexField>
+				<Attribute1>MASKED_ATTR_0009</Attribute1>
+				<Attribute6>MASKED_ATTR_0010</Attribute6>
+				<Attribute15>MASKED_ATTR_0011</Attribute15>
+			</SupplierSiteDescriptiveFlexField>
+			<Address>
+				<AddressInternalID>TESTID000021</AddressInternalID>
+				<AddressLine1>100 Test Street</AddressLine1>
+				<AddressLine2 />
+				<AddressLine3 />
+				<AddressLine4 />
+				<City>Test City</City>
+				<County />
+				<State />
+				<Country>FI</Country>
+				<ISO3DigitCountry>FIN</ISO3DigitCountry>
+				<CountryName>Finland</CountryName>
+				<PostalCode>00000</PostalCode>
+				<AddressName>Test City</AddressName>
+				<AlternateAddressName />
+				<PreFormattedConcatenatedAddress>100 Test Street, Test City TS 00000</PreFormattedConcatenatedAddress>
+				<PreFormattedMailingAddress>100 Test Street, Test City TS 00000</PreFormattedMailingAddress>
+			</Address>
+			<ContactInfo>
+				<ContactLocators>
+					<PhoneNumber>+1555010001</PhoneNumber>
+					<FaxNumber />
+					<EmailAddress>test001@example.invalid</EmailAddress>
+					<Website />
+				</ContactLocators>
+			</ContactInfo>
+			<RemitAdviceDeliveryMethod>EMAIL</RemitAdviceDeliveryMethod>
+			<RemitAdviceEmail>test-contact-001@oracle.com</RemitAdviceEmail>
+		</SupplierorParty>
+		<PayeeBankAccount>
+			<BankAccountInternalID>TESTID000022</BankAccountInternalID>
+			<BankName>Test Bank 009</BankName>
+			<AlternateBankName>Test Bank 009</AlternateBankName>
+			<BankNumber>TESTROUTE0004</BankNumber>
+			<BranchInternalID>TESTID000023</BranchInternalID>
+			<BranchName>Test Branch 010</BranchName>
+			<AlternateBranchName>Test Bank 009</AlternateBranchName>
+			<BranchNumber>TESTROUTE0004</BranchNumber>
+			<BankCode />
+			<BankAccountName>Test Name 008</BankAccountName>
+			<AlternateBankAccountName />
+			<BankAccountNumber>TESTACCT0003</BankAccountNumber>
+			<MaskedBankAccountNumber>********0004</MaskedBankAccountNumber>
+			<UserEnteredBankAccountNumber>TESTACCT0003</UserEnteredBankAccountNumber>
+			<BankAccountSuffix />
+			<SwiftCode>TESTUS33XXX</SwiftCode>
+			<IBANNumber>GB00TESTIBAN0001</IBANNumber>
+			<MaskedIBANNumber>GB00TESTIBAN0002</MaskedIBANNumber>
+			<CheckDigits />
+			<SecondaryBankAccountReference />
+			<BankAccountType>
+				<Code />
+				<Meaning />
+			</BankAccountType>
+			<BankAccountCurrency>
+				<Code>EUR</Code>
+			</BankAccountCurrency>
+			<BankAddress>
+				<AddressInternalID />
+				<AddressLine1 />
+				<AddressLine2 />
+				<AddressLine3 />
+				<AddressLine4 />
+				<City />
+				<County />
+				<State />
+				<Province />
+				<Country>FI</Country>
+				<ISO3DigitCountry>FIN</ISO3DigitCountry>
+				<CountryName>Finland</CountryName>
+				<PostalCode />
+				<PreFormattedConcatenatedAddress />
+				<PreFormattedMailingAddress />
+			</BankAddress>
+			<PrimaryOwner>
+				<Name>Test Name 008</Name>
+			</PrimaryOwner>
+			<FactorAccount>
+				<Code>N</Code>
+				<Meaning>No</Meaning>
+			</FactorAccount>
+			<DescriptiveFlexField />
+			<BranchDescriptiveFlexField />
+		</PayeeBankAccount>
+		<Payer>
+			<PartyInternalID>TESTID000007</PartyInternalID>
+			<PartyNumber>TESTID000008</PartyNumber>
+			<Name>Test Name 002</Name>
+			<PartyType>
+				<Code />
+				<Meaning />
+			</PartyType>
+			<TaxRegistrationNumber />
+			<LegalEntityRegistrationNumber>TESTID000009</LegalEntityRegistrationNumber>
+			<LegalEntityInternalID>TESTID000010</LegalEntityInternalID>
+			<LegalEntityName>Test Name 002</LegalEntityName>
+			<Address>
+				<AddressInternalID>TESTID000011</AddressInternalID>
+				<AddressLine1>100 Test Street</AddressLine1>
+				<AddressLine2>Suite 100</AddressLine2>
+				<AddressLine3 />
+				<City>Test City</City>
+				<County>Test County</County>
+				<State>TS</State>
+				<Province />
+				<Country>US</Country>
+				<ISO3DigitCountry>USA</ISO3DigitCountry>
+				<CountryName>United States</CountryName>
+				<PostalCode>00000</PostalCode>
+				<PreFormattedConcatenatedAddress>100 Test Street, Test City TS 00000</PreFormattedConcatenatedAddress>
+				<PreFormattedMailingAddress>100 Test Street, Test City TS 00000</PreFormattedMailingAddress>
+				<AddressName />
+			</Address>
+			<ContactInfo>
+				<ContactLocators>
+					<PhoneNumber />
+					<FaxNumber />
+					<EmailAddress />
+					<Website />
+				</ContactLocators>
+			</ContactInfo>
+			<LEDescriptiveFlexField>
+				<AttributeCategory>MASKED_ATTR_0001</AttributeCategory>
+			</LEDescriptiveFlexField>
+		</Payer>
+		<BankAccount>
+			<BankAccountInternalID>TESTID000013</BankAccountInternalID>
+			<BankName>Test Bank 004</BankName>
+			<AlternateBankName>Test Bank 004</AlternateBankName>
+			<BankNumber />
+			<BranchInternalID>TESTID000014</BranchInternalID>
+			<BranchName>Test Branch 005</BranchName>
+			<AlternateBranchName>Test Branch 006</AlternateBranchName>
+			<BranchNumber>TESTROUTE0002</BranchNumber>
+			<BankAccountName>Test Bank Account 007</BankAccountName>
+			<AlternateBankAccountName />
+			<BankAccountNumber>TESTACCT0001</BankAccountNumber>
+			<MaskedBankAccountNumber>********0002</MaskedBankAccountNumber>
+			<UserEnteredBankAccountNumber>TESTACCT0001</UserEnteredBankAccountNumber>
+			<BankAccountSuffix />
+			<SwiftCode>TESTUS33XXX</SwiftCode>
+			<IBANNumber />
+			<CheckDigits />
+			<SecondaryBankAccountReference />
+			<BankAccountType>
+				<Code />
+				<Meaning />
+			</BankAccountType>
+			<BankAccountCurrency>
+				<Code>USD</Code>
+			</BankAccountCurrency>
+			<BankAddress>
+				<AddressInternalID />
+				<AddressLine1 />
+				<AddressLine2 />
+				<AddressLine3 />
+				<AddressLine4 />
+				<City />
+				<County />
+				<State />
+				<Province />
+				<Country>US</Country>
+				<ISO3DigitCountry>USA</ISO3DigitCountry>
+				<CountryName>United States</CountryName>
+				<PostalCode />
+				<PreFormattedConcatenatedAddress />
+				<PreFormattedMailingAddress />
+			</BankAddress>
+			<DescriptiveFlexField>
+				<Attribute1>MASKED_ATTR_0002</Attribute1>
+				<Attribute2>MASKED_ATTR_0003</Attribute2>
+				<Attribute3>MASKED_ATTR_0004</Attribute3>
+				<Attribute4>MASKED_ATTR_0005</Attribute4>
+				<Attribute5>MASKED_ATTR_0006</Attribute5>
+			</DescriptiveFlexField>
+			<BranchDescriptiveFlexField />
+			<FederalBankAccountInfo>
+				<FederalRFCIdentifier />
+				<FederalAgencyLocationCode />
+				<FederalAbbreviatedAgencyCode />
+				<FederalEmployerIdentificationNumber />
+			</FederalBankAccountInfo>
+			<EFTUserNumber>
+				<AccountLevelEFTNumber />
+				<BranchLevelEFTNumber />
+				<EFTRequesterId>TESTROUTE0003</EFTRequesterId>
+			</EFTUserNumber>
+		</BankAccount>
+		<Beneficiary>
+			<Name>Test Name 008</Name>
+		</Beneficiary>
+		<PaymentAmount>
+			<Value>102.00</Value>
+			<Currency>
+				<Code>EUR</Code>
+				<Name>Euro</Name>
+			</Currency>
+		</PaymentAmount>
+		<PaymentAmountText>100.00</PaymentAmountText>
+		<PaymentAmountInLedgerCurrency>
+			<LedgerCurrency>
+				<Code>USD</Code>
+				<Name>US Dollar</Name>
+			</LedgerCurrency>
+			<ExchangeRate>
+				<RateType>104.00</RateType>
+				<Rate>105.0000</Rate>
+			</ExchangeRate>
+			<Value>106.00</Value>
+			<PaymentAmountTextInLedgerCurrency>100.00</PaymentAmountTextInLedgerCurrency>
+		</PaymentAmountInLedgerCurrency>
+		<PaymentMethod>
+			<PaymentMethodInternalID>TESTID000024</PaymentMethodInternalID>
+			<PaymentMethodName>Electronic</PaymentMethodName>
+			<PaymentMethodFormatValue>TRF</PaymentMethodFormatValue>
+			<PaymentMode />
+			<DescriptiveFlexField />
+		</PaymentMethod>
+		<PayAlongFlag>N</PayAlongFlag>
+		<SettlementPriority>
+			<Code />
+			<Meaning />
+		</SettlementPriority>
+		<AmountWithheld>
+			<Value>0.00</Value>
+			<Currency>
+				<Code>EUR</Code>
+			</Currency>
+		</AmountWithheld>
+		<DiscountTaken>
+			<Amount>
+				<Value>0.00</Value>
+				<Currency>
+					<Code>EUR</Code>
+				</Currency>
+			</Amount>
+		</DiscountTaken>
+		<BankCharges>
+			<BankChargeBearer>
+				<Code />
+				<Meaning />
+			</BankChargeBearer>
+			<Amount>
+				<Value>0.00</Value>
+				<Currency>
+					<Code>EUR</Code>
+				</Currency>
+			</Amount>
+		</BankCharges>
+		<DeliveryChannel>
+			<Code>FWT</Code>
+			<Meaning>Non Repetitive Wire</Meaning>
+			<FormatValue>FWT</FormatValue>
+		</DeliveryChannel>
+		<ServiceLevel>
+			<Code>URGP</Code>
+			<Meaning>Urgent payment</Meaning>
+			<FormatValue>URGP</FormatValue>
+		</ServiceLevel>
+		<PaymentReason>
+			<Code />
+			<Meaning />
+			<FormatValue />
+		</PaymentReason>
+		<PaymentReasonComments />
+		<RemittanceMessage />
+		<RemittanceMessage />
+		<RemittanceMessage />
+		<BankInstruction>
+			<BankInstructionCode />
+			<Meaning />
+			<FormatValue />
+		</BankInstruction>
+		<BankInstruction>
+			<BankInstructionCode />
+			<Meaning />
+			<FormatValue />
+		</BankInstruction>
+		<BankInstructionDetails />
+		<PaymentTextMessage />
+		<PaymentTextMessage />
+		<PaymentTextMessage />
+		<PaymentDetails />
+		<RegulatoryReporting>
+			<DeclarationFlag>N</DeclarationFlag>
+			<Amount>
+				<Value>0.00</Value>
+				<Currency>
+					<Code />
+				</Currency>
+			</Amount>
+		</RegulatoryReporting>
+		<FederalPaymentInfo>
+			<FederalAllotmentCode />
+			<FederalOffsetEligibilityFlag />
+			<FederalAccountingSymbol />
+		</FederalPaymentInfo>
+		<LogicalGrouping>
+			<PaymentInformationAmountTotal>102.00</PaymentInformationAmountTotal>
+			<PaymentInformationTotal>1</PaymentInformationTotal>
+			<LogicalGroupReference>44470320_48173279</LogicalGroupReference>
+		</LogicalGrouping>
+		<DocumentPayableCount>1</DocumentPayableCount>
+		<DescriptiveFlexField />
+		<DocumentPayable>
+			<RecordHistory>
+				<CreatedBy>TESTID000001</CreatedBy>
+				<CreationDate>2026-01-15T12:00:00</CreationDate>
+				<LastUpdateDate>2026-01-15T12:00:00</LastUpdateDate>
+				<LastUpdateLogin>MASKED_SECRET_0003</LastUpdateLogin>
+				<LastUpdatedBy>TESTID000001</LastUpdatedBy>
+			</RecordHistory>
+			<InvoiceBusinessUnit>
+				<InvoiceBusinessUnitId>TESTID000012</InvoiceBusinessUnitId>
+				<InvoiceBusinessUnitType>
+					<Code>OPERATING_UNIT</Code>
+					<Meaning>Business unit</Meaning>
+				</InvoiceBusinessUnitType>
+				<InvoiceBusinessUnitName>Test Business Unit</InvoiceBusinessUnitName>
+			</InvoiceBusinessUnit>
+			<DocumentNumber>
+				<DocumentInternalIDSegment1>TESTID000025</DocumentInternalIDSegment1>
+				<DocumentInternalIDSegment2>TESTID000026</DocumentInternalIDSegment2>
+				<DocumentInternalIDSegment3>TESTID000027</DocumentInternalIDSegment3>
+				<DocumentInternalIDSegment4 />
+				<DocumentInternalIDSegment5 />
+				<ApplicationInternalID>TESTID000015</ApplicationInternalID>
+				<ApplicationDocumentSubType>PAYABLES_DOC</ApplicationDocumentSubType>
+				<ApplicationUniqueInternalID>TESTID000025</ApplicationUniqueInternalID>
+				<ReferenceNumber>TESTID000028</ReferenceNumber>
+				<UniqueRemittanceIdentifier>
+					<Number />
+					<CheckDigit />
+				</UniqueRemittanceIdentifier>
+				<DocCategory />
+				<SequenceName />
+				<SequenceValue />
+			</DocumentNumber>
+			<PONumber />
+			<DocumentStatus>
+				<Code>PAYMENT_CREATED</Code>
+				<Meaning>Payment created</Meaning>
+			</DocumentStatus>
+			<DocumentDate>2026-01-15</DocumentDate>
+			<DocumentCreationDate>2026-01-15T12:00:00</DocumentCreationDate>
+			<RoutingAttributes>
+				<RoutingAttribute1 />
+				<RoutingAttribute2 />
+				<RoutingAttribute3 />
+				<RoutingAttribute4 />
+				<RoutingAttribute5 />
+			</RoutingAttributes>
+			<PaymentDueDate>2026-01-15</PaymentDueDate>
+			<DocumentType>
+				<Code>STANDARD</Code>
+				<Meaning>Standard</Meaning>
+			</DocumentType>
+			<DocumentDescription />
+			<ExpenseReportCreditCardNumber />
+			<EmployeePaymentFlag>N</EmployeePaymentFlag>
+			<TotalDocumentAmount>
+				<Value>102.00</Value>
+				<Currency>
+					<Code>EUR</Code>
+				</Currency>
+			</TotalDocumentAmount>
+			<PaymentAmount>
+				<Value>102.00</Value>
+				<Currency>
+					<Code>EUR</Code>
+				</Currency>
+			</PaymentAmount>
+			<PaymentAmountinDocumentCurrency>
+				<Value>102.00</Value>
+				<Currency>
+					<Code>EUR</Code>
+				</Currency>
+			</PaymentAmountinDocumentCurrency>
+			<PayAloneFlag>N</PayAloneFlag>
+			<SettlementPriority>
+				<Code />
+				<Meaning />
+			</SettlementPriority>
+			<AmountWithheld>
+				<Value>0.00</Value>
+				<Currency>
+					<Code>EUR</Code>
+				</Currency>
+			</AmountWithheld>
+			<AmoutWithheldinDocumentCurrency>
+				<Value>0</Value>
+				<Currency>
+					<Code>EUR</Code>
+				</Currency>
+			</AmoutWithheldinDocumentCurrency>
+			<DiscountTaken>
+				<Amount>
+					<Value>0.00</Value>
+					<Currency>
+						<Code>EUR</Code>
+					</Currency>
+				</Amount>
+				<DiscountDate />
+			</DiscountTaken>
+			<DiscountTakeninDocumentCurrency>
+				<Amount>
+					<Value>0.00</Value>
+					<Currency>
+						<Code>EUR</Code>
+					</Currency>
+				</Amount>
+			</DiscountTakeninDocumentCurrency>
+			<BankCharges>
+				<BankChargeBearer>
+					<Code />
+					<Meaning />
+				</BankChargeBearer>
+			</BankCharges>
+			<DeliveryChannel>
+				<Code />
+				<Meaning />
+				<FormatValue />
+			</DeliveryChannel>
+			<PaymentReason>
+				<Code />
+				<Meaning />
+				<FormatValue />
+			</PaymentReason>
+			<PaymentReasonComments />
+			<RemittanceMessage />
+			<RemittanceMessage />
+			<RemittanceMessage />
+			<Charge>
+				<TotalDocumentChargeAmount>
+					<Value>0.00</Value>
+					<Currency>
+						<Code>EUR</Code>
+					</Currency>
+				</TotalDocumentChargeAmount>
+			</Charge>
+			<TotalDocumentTaxAmount>
+				<Value>0.00</Value>
+				<Currency>
+					<Code>EUR</Code>
+				</Currency>
+			</TotalDocumentTaxAmount>
+			<CreditAmountApplied>
+				<Value>0.00</Value>
+				<Currency>
+					<Code>EUR</Code>
+				</Currency>
+			</CreditAmountApplied>
+			<InterestAmountApplied>
+				<Value>0.00</Value>
+				<Currency>
+					<Code>EUR</Code>
+				</Currency>
+			</InterestAmountApplied>
+			<InterestRate>0.00</InterestRate>
+			<DocumentPayableLine>
+				<LineNumber>2</LineNumber>
+				<PONumber />
+				<ConsumptionAdviceNumber />
+				<LineType>
+					<Code>TAX</Code>
+					<Meaning />
+				</LineType>
+				<LineDescription>Masked text 001</LineDescription>
+				<LineGrossAmount>
+					<Value>109.00</Value>
+					<Currency>
+						<Code>EUR</Code>
+						<NumericCode>978</NumericCode>
+					</Currency>
+				</LineGrossAmount>
+				<UnitPrice>0.00</UnitPrice>
+				<Quantity />
+				<UnitOfMeasure>
+					<Code />
+					<Meaning />
+				</UnitOfMeasure>
+				<Tax>
+					<TaxCode>US-TAX-AP</TaxCode>
+					<TaxRate>110.00</TaxRate>
+					<TaxRateCode>100.00</TaxRateCode>
+				</Tax>
+			</DocumentPayableLine>
+			<DocumentPayableLine>
+				<LineNumber>3</LineNumber>
+				<PONumber />
+				<ConsumptionAdviceNumber />
+				<LineType>
+					<Code>AWT</Code>
+					<Meaning />
+				</LineType>
+				<LineDescription />
+				<LineGrossAmount>
+					<Value>0.00</Value>
+					<Currency>
+						<Code>EUR</Code>
+						<NumericCode>978</NumericCode>
+					</Currency>
+				</LineGrossAmount>
+				<UnitPrice>0.00</UnitPrice>
+				<Quantity />
+				<UnitOfMeasure>
+					<Code />
+					<Meaning />
+				</UnitOfMeasure>
+				<Tax>
+					<TaxCode>US-WHT-AP</TaxCode>
+					<TaxRate>0.00</TaxRate>
+					<TaxRateCode>100.00</TaxRateCode>
+				</Tax>
+			</DocumentPayableLine>
+			<DocumentPayableLine>
+				<LineNumber>1</LineNumber>
+				<PONumber />
+				<ConsumptionAdviceNumber />
+				<LineType>
+					<Code>ITEM</Code>
+					<Meaning />
+				</LineType>
+				<LineDescription />
+				<LineGrossAmount>
+					<Value>113.00</Value>
+					<Currency>
+						<Code>EUR</Code>
+						<NumericCode>978</NumericCode>
+					</Currency>
+				</LineGrossAmount>
+				<UnitPrice>0.00</UnitPrice>
+				<Quantity />
+				<UnitOfMeasure>
+					<Code />
+					<Meaning />
+				</UnitOfMeasure>
+				<Tax>
+					<TaxCode />
+					<TaxRate>0.00</TaxRate>
+					<TaxRateCode />
+				</Tax>
+			</DocumentPayableLine>
+			<DescriptiveFlexField />
+			<GlobalDescriptiveFlexField>
+				<GlobalAttributeCategory />
+				<GlobalAttribute1 />
+				<GlobalAttribute2 />
+				<GlobalAttribute3 />
+				<GlobalAttribute4 />
+				<GlobalAttribute5 />
+				<GlobalAttribute6 />
+				<GlobalAttribute7 />
+				<GlobalAttribute8 />
+				<GlobalAttribute9 />
+				<GlobalAttribute10 />
+				<GlobalAttribute11 />
+				<GlobalAttribute12 />
+				<GlobalAttribute13 />
+				<GlobalAttribute14 />
+				<GlobalAttribute15 />
+			</GlobalDescriptiveFlexField>
+			<SrcDocDescriptiveFlexField>
+				<AttributeCategory />
+				<Attribute1 />
+				<Attribute2 />
+				<Attribute3 />
+				<Attribute4 />
+				<Attribute5 />
+				<Attribute6 />
+				<Attribute7 />
+				<Attribute8 />
+				<Attribute9 />
+				<Attribute10 />
+				<Attribute11 />
+				<Attribute12 />
+				<Attribute13 />
+				<Attribute14 />
+				<Attribute15 />
+			</SrcDocDescriptiveFlexField>
+			<SrcDocGlobalDescriptiveFlexField>
+				<GlobalAttributeCategory />
+				<GlobalAttribute1 />
+				<GlobalAttribute2 />
+				<GlobalAttribute3 />
+				<GlobalAttribute4 />
+				<GlobalAttribute5 />
+				<GlobalAttribute6 />
+				<GlobalAttribute7 />
+				<GlobalAttribute8 />
+				<GlobalAttribute9 />
+				<GlobalAttribute10 />
+				<GlobalAttribute11 />
+				<GlobalAttribute12 />
+				<GlobalAttribute13 />
+				<GlobalAttribute14 />
+				<GlobalAttribute15 />
+				<GlobalAttribute16 />
+				<GlobalAttribute17 />
+				<GlobalAttribute18 />
+				<GlobalAttribute19 />
+				<GlobalAttribute20 />
+				<GlobalAttributeNumber1 />
+				<GlobalAttributeNumber2 />
+				<GlobalAttributeNumber3 />
+				<GlobalAttributeNumber4 />
+				<GlobalAttributeNumber5 />
+				<GlobalAttributeDate1 />
+				<GlobalAttributeDate2 />
+				<GlobalAttributeDate3 />
+				<GlobalAttributeDate4 />
+				<GlobalAttributeDate5 />
+			</SrcDocGlobalDescriptiveFlexField>
+		</DocumentPayable>
+		<InvoicingLegalEntity>
+			<LegalEntityId>TESTID000010</LegalEntityId>
+			<Name>Test Name 002</Name>
+			<LegalEntityRegistrationNumber>TESTID000009</LegalEntityRegistrationNumber>
+			<Address>
+				<Country>US</Country>
+				<PostalCode>00000</PostalCode>
+				<City>Test City</City>
+				<County>Test County</County>
+				<State>TS</State>
+				<Province />
+				<AddressLine1>100 Test Street</AddressLine1>
+				<AddressLine2>Suite 100</AddressLine2>
+				<AddressLine3 />
+			</Address>
+		</InvoicingLegalEntity>
+		<SrcDescriptiveFlexField />
+		<SrcGlobalDescriptiveFlexField />
+		<FederalPMTExtend />
+	</OutboundPayment>
+</OutboundPaymentInstruction>

@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='utf-8'?>
+<BankAccountVerificationRequest>
+  <RequestId>REQ-FAILURE-2001-US-0001</RequestId>
+  <PaymentSystemAccount>
+    <AccountName>Synthetic AVS Account US</AccountName>
+    <AccountOption>
+      <Name>APPLICABLE_COUNTRIES</Name>
+      <Value>US</Value>
+    </AccountOption>
+    <AccountOption>
+      <Name>BA_VAL_CLIENT_ID</Name>
+      <Value>SYNTHETIC_CLIENT_ID</Value>
+    </AccountOption>
+    <AccountOption>
+      <Name>BA_VAL_PROFILE_NAME</Name>
+      <Value>SYNTHETIC_AVS_PROFILE_US</Value>
+    </AccountOption>
+    <AccountOption>
+      <Name>BA_VAL_PROGRAM_ID</Name>
+      <Value>SYNTHETIC_PROGRAM_ID</Value>
+    </AccountOption>
+    <AccountOption>
+      <Name>BA_VAL_PROGRAM_TYPE</Name>
+      <Value>SYNTHETIC_PROGRAM_TYPE</Value>
+    </AccountOption>
+    <AccountOption>
+      <Name>BA_VAL_REQ_FORMAT</Name>
+      <Value>JSON</Value>
+    </AccountOption>
+    <AccountOption>
+      <Name>BA_VAL_RESP_FORMAT</Name>
+      <Value>JSON</Value>
+    </AccountOption>
+    <AccountOption>
+      <Name>BA_VAL_TRANS_CONFIG</Name>
+      <Value>SYNTHETIC_TRANS_CONFIG</Value>
+    </AccountOption>
+    <AccountOption>
+      <Name>BA_VAL_USAGE_RULE</Name>
+      <Value>SYNTHETIC_USAGE_RULE</Value>
+    </AccountOption>
+  </PaymentSystemAccount>
+  <BankAccount>
+    <BankAccountNumber>000123456789</BankAccountNumber>
+    <IBAN/>
+    <BankAccountNumberElectronic>000123456789</BankAccountNumberElectronic>
+    <CountryCode>US</CountryCode><BankName>Synthetic Bank US</BankName>
+    <BankNumber/>
+    <BranchName>Synthetic US Branch</BranchName>
+    <BranchNumber>0001</BranchNumber>
+    <EftSwiftCode/>
+    <BranchType>ABA</BranchType>
+  </BankAccount>
+  <BankAccountOwner>
+    <AccountOwnerName>Synthetic Owner US 2001</AccountOwnerName>
+    <OwnerFirstName/>
+    <OwnerLastName/>
+    <OwnerPartyType>ORGANIZATION</OwnerPartyType>
+    <OwnerTaxId/><PrimaryFlag>Y</PrimaryFlag>
+  </BankAccountOwner>
+</BankAccountVerificationRequest>
