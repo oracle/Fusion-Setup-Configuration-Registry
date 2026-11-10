@@ -20,7 +20,7 @@ existing unresolved mapping is not promoted to a fixed code by this table.
 
 ## Source evidence
 
-CodeSearch MCP, FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64, reviewed 2026-10-21:
+CodeSearch MCP, maintainer-reviewed source snapshot, reviewed 2026-10-21:
 
 - `fusionapps/fin/components/payables/exm/setup/options/model/src/oracle/apps/financials/expenses/setup/options/uiModel/view/SetupOptionMinus1VO.xml`:
   option-to-LOV selection at 48 and 853; lookup types at 269 (payment), 318

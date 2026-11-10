@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:z="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03" version="1.0">
+  <xsl:output method="xml" />
+  <xsl:template match="/">
+     <xsl:variable name="hdrMsgId">
+        <xsl:value-of select="/z:Document/z:CstmrPmtStsRpt/z:OrgnlGrpInfAndSts/z:OrgnlMsgId" />
+     </xsl:variable>
+     <AckResponse>
+        <PmtHeader>
+           <MsgId>
+              <xsl:value-of select="/z:Document/z:CstmrPmtStsRpt/z:OrgnlGrpInfAndSts/z:OrgnlMsgId" />
+           </MsgId>
+           <xsl:variable name="MsgStsCode">
+              <xsl:value-of select="/z:Document/z:CstmrPmtStsRpt/z:OrgnlGrpInfAndSts/z:GrpSts" />
+           </xsl:variable>
+           <MsgSts>
+              <xsl:value-of select="/z:Document/z:CstmrPmtStsRpt/z:OrgnlGrpInfAndSts/z:GrpSts" />
+           </MsgSts>
+           <MsgStsCd>
+              <xsl:choose>
+                 <xsl:when test=" $MsgStsCode='ACSP' or
+			                   $MsgStsCode='ACSC' or
+							   $MsgStsCode='ACCP' or
+							   $MsgStsCode='ACTC' or
+							   $MsgStsCode='ACWC' or
+							   $MsgStsCode='RCVD' or
+							   $MsgStsCode='PDNG' or
+							   $MsgStsCode='PART'
+							   ">ACKNOWLEDGED</xsl:when>
+                 <xsl:when test="$MsgStsCode='RJCT'">REJECTED</xsl:when>
+                 <xsl:otherwise>ACKNOWLEDGED</xsl:otherwise>
+              </xsl:choose>
+           </MsgStsCd>
+           <MsgErrCd>
+              <xsl:value-of select="/z:Document/z:CstmrPmtStsRpt/z:OrgnlGrpInfAndSts/z:StsRsnInf/z:Rsn/z:Cd" />
+           </MsgErrCd>
+           <MsgErrDet>
+              <xsl:value-of select="/z:Document/z:CstmrPmtStsRpt/z:OrgnlGrpInfAndSts/z:StsRsnInf/z:AddtlInf" />
+           </MsgErrDet>
+        </PmtHeader>
+        <xsl:for-each select="/z:Document/z:CstmrPmtStsRpt/z:OrgnlPmtInfAndSts/z:TxInfAndSts">
+           <PmtDetls>
+              <PmtRef>
+                 <xsl:value-of select="z:OrgnlEndToEndId" />
+              </PmtRef>
+              <xsl:variable name="dtlsPmtSts">
+                 <xsl:value-of select="z:TxSts" />
+              </xsl:variable>
+              <xsl:variable name="PmtStsCode">
+                 <xsl:choose>
+                    <xsl:when test="$hdrMsgId='UNAVAILABLE' and $dtlsPmtSts=''">
+                       <xsl:value-of select="../z:NbOfTxsPerSts/z:DtldSts" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                       <xsl:value-of select="z:TxSts" />
+                    </xsl:otherwise>
+                 </xsl:choose>
+              </xsl:variable>
+              <PmtSts>
+                 <xsl:value-of select="$PmtStsCode" />
+              </PmtSts>
+              <PmtStsCd>
+                 <xsl:choose>
+                    <xsl:when test=" $PmtStsCode='ACSP' or
+				                  $PmtStsCode='ACSC' or
+								  $PmtStsCode='ACCP' or
+								  $PmtStsCode='ACTC' or
+								  $PmtStsCode='ACWC' or
+								  $PmtStsCode='RCVD' or
+								  $PmtStsCode='PDNG'">ACKNOWLEDGED</xsl:when>
+                    <xsl:when test="$PmtStsCode='RJCT'">REJECTED</xsl:when>
+                    <xsl:otherwise>ACKNOWLEDGED</xsl:otherwise>
+                 </xsl:choose>
+              </PmtStsCd>
+              <PmtMsgErrCd>
+                 <xsl:value-of select="z:StsRsnInf/z:Rsn/z:Cd" />
+              </PmtMsgErrCd>
+              <PmtMsgErrDet>
+                 <xsl:value-of select="z:StsRsnInf/z:AddtlInf" />
+              </PmtMsgErrDet>
+		   <xsl:variable name="PmtRjctRsnCd">
+				<xsl:value-of select="z:StsRsnInf/z:Rsn/z:Cd" />
+              </xsl:variable>
+		   <InvHoldCd>
+		         <xsl:choose>
+                    <xsl:when test=" $PmtRjctRsnCd='AC01' or
+				                  $PmtRjctRsnCd='AC04' or
+								  $PmtRjctRsnCd='AC06' or
+								  $PmtRjctRsnCd='AG01' or
+								  $PmtRjctRsnCd='AG02' or
+								  $PmtRjctRsnCd='AG03' or
+								  $PmtRjctRsnCd='AG07' or
+								  $PmtRjctRsnCd='AM04' or
+				                  $PmtRjctRsnCd='AM05' or
+								  $PmtRjctRsnCd='AM07' or
+								  $PmtRjctRsnCd='AM12' or
+								  $PmtRjctRsnCd='BE01' or
+								  $PmtRjctRsnCd='BE06' or
+								  $PmtRjctRsnCd='BE15' or
+								  $PmtRjctRsnCd='BE21' or
+								  $PmtRjctRsnCd='DS02' or
+								  $PmtRjctRsnCd='DT01' or
+								  $PmtRjctRsnCd='ED05' or
+								  $PmtRjctRsnCd='FF02' or
+								  $PmtRjctRsnCd='FF09' or
+								  $PmtRjctRsnCd='MD05' or
+								  $PmtRjctRsnCd='MD07' or
+								  $PmtRjctRsnCd='NARR' or
+								  $PmtRjctRsnCd='RC01' or
+								  $PmtRjctRsnCd='RC02' or
+								  $PmtRjctRsnCd='RC04' or
+								  $PmtRjctRsnCd='RC08' or
+								  $PmtRjctRsnCd='RR01' or
+								  $PmtRjctRsnCd='RR04' or
+								  $PmtRjctRsnCd='RR07'">ORA_AP_BANK_ACK_RJCT</xsl:when>
+                    <xsl:otherwise>ORA_AP_BANK_ACK_RJCT</xsl:otherwise>
+                 </xsl:choose>
+		   </InvHoldCd>
+           </PmtDetls>
+        </xsl:for-each>
+     </AckResponse>
+  </xsl:template>
+</xsl:stylesheet>

@@ -1,6 +1,5 @@
 # Manage Transaction Sources Reference Lookups
 
-Classification: Oracle Highly Restricted
 
 Public lookups are optional read-only preflight. The exact-task FSM import resolver remains authoritative for application. Transport or authorization unavailability does not convert a valid import resolver into an unsupported path; zero or multiple business matches remain blocking data outcomes.
 

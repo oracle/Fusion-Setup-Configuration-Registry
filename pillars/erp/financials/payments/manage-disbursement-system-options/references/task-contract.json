@@ -1,0 +1,1622 @@
+{
+  "schemaVersion": "disbursement-options-task-contract-v1",
+  "taskCode": "IBY_MANAGE_DISBURSEMENT_SYSTEM_OPTIONS",
+  "taskName": "Manage Disbursement System Options",
+  "importMode": "FSM",
+  "csvMember": "IBY_INTERNAL_PAYER.csv",
+  "metadataMember": "ASM_SETUP_CSV_METADATA.xml",
+  "nodePath": "/InternalPayerVO/InternalPayerVORow",
+  "nodeSequence": "1",
+  "orderedHeaders": [
+    "BuName",
+    "PaymentMethodAtPayeeFlag",
+    "DocumentRejectionLevelCode",
+    "PaymentRejectionLevelCode",
+    "RequirePropPmtsReviewFlag",
+    "AllowExtAcctOverrideFlag",
+    "ExclusivePaymentFlag",
+    "SavePaymentFileInDb",
+    "CreatedBy",
+    "CreationDate",
+    "LastUpdatedBy",
+    "LastUpdateDate",
+    "LastUpdateLogin",
+    "OrgType",
+    "BankChargeBearer",
+    "PprReportFormat",
+    "AutomaticPprReportSubmit",
+    "BusinessUnitId1",
+    "ModuleId",
+    "ModuleKey",
+    "PaymentsApprovalFlag",
+    "SraEmailSubject",
+    "SraSendFrom"
+  ],
+  "identity": {
+    "enterprise": {
+      "explicitScope": "enterprise",
+      "csvBuName": "",
+      "baselineCardinality": 1
+    },
+    "businessUnit": {
+      "explicitScope": "business_unit",
+      "portableKey": "BuName",
+      "comparison": "exact",
+      "baselineUpdateCardinality": 1
+    },
+    "missingScope": "clarification",
+    "databaseKey": "service-owned IntPayerId; import AltOrgKey is OrgId",
+    "rename": "not supported by the CSV identity field"
+  },
+  "operations": {
+    "create": {
+      "status": "observed_retained_contexts_qualified_other_contexts_pending",
+      "boundary": "Only the two recorded retained explicit-N creates are observed: terminal request164877 succeeded, while its original fresh-export comparison failed for hidden expected identities. Later export300104797771464 after separate user-completed prerequisite setup matched both creates and all1219cells of the previous53rows without reimport. c01 blank PaymentsApprovalFlag -> N remains an original FAIL with accepted retention, not a blank-create PASS or universal default. Explicit complete create preparation/current eligibility checks remain. No implicit upsert, reuse of historical approval or cleanup-to-absence."
+    },
+    "update": {
+      "status": "observed_contexts_qualified_other_contexts_pending",
+      "boundary": "Only the two field-specific observedContexts have terminal and fresh-export update/restoration evidence; all unobserved contexts remain unresolved. Preserve existing runtime exact-field decisions, current evidence, identity/protected checks and ordinary design/Core approval."
+    },
+    "delete": {
+      "status": "evidence_unresolved",
+      "boundary": "Generic service CanDelete does not establish a task CSV deletion mechanism. Omission never means delete."
+    },
+    "endDate": {
+      "status": "evidence_unresolved",
+      "boundary": "No end-date column is exported; no lifecycle mapping invented."
+    }
+  },
+  "businessFields": [
+    {
+      "name": "PaymentMethodAtPayeeFlag",
+      "csvPosition": 2,
+      "metadataPosition": 1,
+      "type": "string",
+      "role": "Business implementor for explicit requested changes",
+      "requiredness": "Non-null in root VO and EO; for create supply explicitly unless a separately proven default exists. Updates preserve baseline; no guessed value.",
+      "default": "No scalar default established. Preserve unrequested baseline values on update; obtain explicit create values where required.",
+      "length": {
+        "maxLength": 1,
+        "sourceIds": [
+          "SRC-GOLD-EO-SNIPPETS"
+        ],
+        "boundary": "Entity precision1; no default implied.",
+        "lengthUnit": "characters"
+      },
+      "create": {
+        "disposition": "supported",
+        "appliesTo": [
+          "create"
+        ],
+        "sourceIds": [
+          "SRC-E2E-RETAINED-CREATE-55ROW-164877"
+        ],
+        "boundary": "Only the two exact retained explicit-N create contexts referenced below have controlled terminal and later supported export evidence for this field. Original m01/c01 failures remain unchanged; unobserved create inputs/contexts remain unresolved. No default or cleanup-to-absence mechanism is established.",
+        "observedContextsRef": "createPreparation.observedRetainedCreates",
+        "observedFieldValues": [
+          {
+            "buName": "Vision ANZ BU",
+            "value": "N"
+          },
+          {
+            "buName": "Vision APAC BU",
+            "value": "N"
+          }
+        ],
+        "unobservedContexts": "unresolved",
+        "reusableMutationAuthority": false
+      },
+      "update": {
+        "disposition": "unresolved",
+        "appliesTo": [
+          "update"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-AM-SNIPPETS",
+          "SRC-GOLD-VO-SNIPPETS",
+          "SRC-GOLD-EO-SNIPPETS",
+          "SRC-GOLD-UI-FULL"
+        ],
+        "boundary": "Analyze as a business update field. Preserve all unrequested fields. No live update result exists yet."
+      },
+      "reference": "IBY_PSO_DEF_PAY_METHOD; EO LookupPVO accessor; current environment codes must be verified",
+      "sourceIds": [
+        "SRC-GOLD-VO-SNIPPETS",
+        "SRC-GOLD-EO-SNIPPETS",
+        "SRC-GOLD-AM-SNIPPETS"
+      ],
+      "sourceValueEvidence": {
+        "constraintKind": "lookup",
+        "sourceKind": "lookup_type",
+        "lookupType": "IBY_PSO_DEF_PAY_METHOD",
+        "allowedValues": [
+          {
+            "code": "N",
+            "label": "Based only on payment method defaulting rules setup"
+          },
+          {
+            "code": "Y",
+            "label": "Override defaulting rules when payee default method set"
+          }
+        ],
+        "normalization": "Source code/label pairs only. Ask the implementor to confirm the canonical package code for a label; no automatic runtime normalization is implemented.",
+        "valuePopulation": "seeded",
+        "extensible": false,
+        "environmentVerificationRequired": true,
+        "publicPreflightPolicy": "No new endpoint is established; retain applicable target evidence or an eligible exact-field application-validation decision.",
+        "authoritativeFallback": {
+          "resolutionMode": "fsm_import_validated",
+          "status": "Partial",
+          "mechanism": "ByLookupType; field validates LookupCode",
+          "limitation": "EO list validation is source-backed; exact deployed contents/revision and helper zero/multiple-match internals remain unverified."
+        },
+        "sourceIds": [
+          "SRC-DEV-LOOKUP-SEEDS-20260924",
+          "SRC-DEV-INTERNAL-PAYER-EO-LOOKUPS"
+        ],
+        "sourceRevision": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64 / st_fusionapps_pt-v2mibfphdev/63, 2026/09/24 14:07:52",
+        "sourceLines": [
+          30126,
+          30166
+        ],
+        "customizationLevel": "S",
+        "sourceSeedEnabled": "Y",
+        "sourceSeedStartDate": "2005-06-02",
+        "sourceSeedEndDate": null,
+        "deployedTargetVerified": false,
+        "exhaustiveDeployedDomain": false,
+        "runtimeEnforcesSourceEnumeration": false,
+        "sourceFilter": "ByLookupType; field validates LookupCode"
+      }
+    },
+    {
+      "name": "DocumentRejectionLevelCode",
+      "csvPosition": 3,
+      "metadataPosition": 2,
+      "type": "string",
+      "role": "Business implementor for explicit requested changes",
+      "requiredness": "Non-null in root VO and EO; for create supply explicitly unless a separately proven default exists. Updates preserve baseline; no guessed value.",
+      "default": "No scalar default established. Preserve unrequested baseline values on update; obtain explicit create values where required.",
+      "length": {
+        "maxLength": 30,
+        "sourceIds": [
+          "SRC-GOLD-EO-SNIPPETS"
+        ],
+        "boundary": "Entity precision30.",
+        "lengthUnit": "characters"
+      },
+      "create": {
+        "disposition": "supported",
+        "appliesTo": [
+          "create"
+        ],
+        "sourceIds": [
+          "SRC-E2E-RETAINED-CREATE-55ROW-164877"
+        ],
+        "boundary": "Only the two exact retained explicit-N create contexts referenced below have controlled terminal and later supported export evidence for this field. Original m01/c01 failures remain unchanged; unobserved create inputs/contexts remain unresolved. No default or cleanup-to-absence mechanism is established.",
+        "observedContextsRef": "createPreparation.observedRetainedCreates",
+        "observedFieldValues": [
+          {
+            "buName": "Vision ANZ BU",
+            "value": "PAYEE"
+          },
+          {
+            "buName": "Vision APAC BU",
+            "value": "PAYEE"
+          }
+        ],
+        "unobservedContexts": "unresolved",
+        "reusableMutationAuthority": false
+      },
+      "update": {
+        "disposition": "unresolved",
+        "appliesTo": [
+          "update"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-AM-SNIPPETS",
+          "SRC-GOLD-VO-SNIPPETS",
+          "SRC-GOLD-EO-SNIPPETS",
+          "SRC-GOLD-UI-FULL"
+        ],
+        "boundary": "Analyze as a business update field. Preserve all unrequested fields. No live update result exists yet."
+      },
+      "reference": "IBY_DOCUMENT_REJECTION_LEVELS; active and enabled LookupPVO list validation",
+      "sourceIds": [
+        "SRC-GOLD-VO-SNIPPETS",
+        "SRC-GOLD-EO-SNIPPETS",
+        "SRC-GOLD-AM-SNIPPETS"
+      ],
+      "sourceValueEvidence": {
+        "constraintKind": "lookup",
+        "sourceKind": "lookup_type",
+        "lookupType": "IBY_DOCUMENT_REJECTION_LEVELS",
+        "allowedValues": [
+          {
+            "code": "DOCUMENT",
+            "label": "Reject only documents with errors"
+          },
+          {
+            "code": "NONE",
+            "label": "Stop process for review"
+          },
+          {
+            "code": "PAYEE",
+            "label": "Reject all documents for payee"
+          },
+          {
+            "code": "REQUEST",
+            "label": "Reject all documents in request"
+          }
+        ],
+        "normalization": "Source code/label pairs only. Ask the implementor to confirm the canonical package code for a label; no automatic runtime normalization is implemented.",
+        "valuePopulation": "seeded",
+        "extensible": false,
+        "environmentVerificationRequired": true,
+        "publicPreflightPolicy": "No new endpoint is established; retain applicable target evidence or an eligible exact-field application-validation decision.",
+        "authoritativeFallback": {
+          "resolutionMode": "fsm_import_validated",
+          "status": "Partial",
+          "mechanism": "ByLookupType + IsActive + IsEnabled; field validates LookupCode",
+          "limitation": "EO list validation is source-backed; exact deployed contents/revision and helper zero/multiple-match internals remain unverified."
+        },
+        "sourceIds": [
+          "SRC-DEV-LOOKUP-SEEDS-20260924",
+          "SRC-DEV-INTERNAL-PAYER-EO-LOOKUPS"
+        ],
+        "sourceRevision": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64 / st_fusionapps_pt-v2mibfphdev/63, 2026/09/24 14:07:52",
+        "sourceLines": [
+          3518,
+          3599
+        ],
+        "customizationLevel": "S",
+        "sourceSeedEnabled": "Y",
+        "sourceSeedStartDate": "2005-06-02",
+        "sourceSeedEndDate": null,
+        "deployedTargetVerified": false,
+        "exhaustiveDeployedDomain": false,
+        "runtimeEnforcesSourceEnumeration": false,
+        "sourceFilter": "ByLookupType + IsActive + IsEnabled; field validates LookupCode"
+      }
+    },
+    {
+      "name": "PaymentRejectionLevelCode",
+      "csvPosition": 4,
+      "metadataPosition": 3,
+      "type": "string",
+      "role": "Business implementor for explicit requested changes",
+      "requiredness": "Non-null in root VO and EO; for create supply explicitly unless a separately proven default exists. Updates preserve baseline; no guessed value.",
+      "default": "No scalar default established. Preserve unrequested baseline values on update; obtain explicit create values where required.",
+      "length": {
+        "maxLength": 30,
+        "sourceIds": [
+          "SRC-GOLD-EO-SNIPPETS"
+        ],
+        "boundary": "Entity precision30.",
+        "lengthUnit": "characters"
+      },
+      "create": {
+        "disposition": "supported",
+        "appliesTo": [
+          "create"
+        ],
+        "sourceIds": [
+          "SRC-E2E-RETAINED-CREATE-55ROW-164877"
+        ],
+        "boundary": "Only the two exact retained explicit-N create contexts referenced below have controlled terminal and later supported export evidence for this field. Original m01/c01 failures remain unchanged; unobserved create inputs/contexts remain unresolved. No default or cleanup-to-absence mechanism is established.",
+        "observedContextsRef": "createPreparation.observedRetainedCreates",
+        "observedFieldValues": [
+          {
+            "buName": "Vision ANZ BU",
+            "value": "PAYMENT"
+          },
+          {
+            "buName": "Vision APAC BU",
+            "value": "PAYMENT"
+          }
+        ],
+        "unobservedContexts": "unresolved",
+        "reusableMutationAuthority": false
+      },
+      "update": {
+        "disposition": "unresolved",
+        "appliesTo": [
+          "update"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-AM-SNIPPETS",
+          "SRC-GOLD-VO-SNIPPETS",
+          "SRC-GOLD-EO-SNIPPETS",
+          "SRC-GOLD-UI-FULL"
+        ],
+        "boundary": "Analyze as a business update field. Preserve all unrequested fields. No live update result exists yet."
+      },
+      "reference": "IBY_PAYMENT_REJECTION_LEVELS; active and enabled LookupPVO list validation",
+      "sourceIds": [
+        "SRC-GOLD-VO-SNIPPETS",
+        "SRC-GOLD-EO-SNIPPETS",
+        "SRC-GOLD-AM-SNIPPETS"
+      ],
+      "sourceValueEvidence": {
+        "constraintKind": "lookup",
+        "sourceKind": "lookup_type",
+        "lookupType": "IBY_PAYMENT_REJECTION_LEVELS",
+        "allowedValues": [
+          {
+            "code": "NONE",
+            "label": "Stop process for review"
+          },
+          {
+            "code": "PAYMENT",
+            "label": "Reject only payments with errors"
+          },
+          {
+            "code": "REQUEST",
+            "label": "Reject all payments in request"
+          }
+        ],
+        "normalization": "Source code/label pairs only. Ask the implementor to confirm the canonical package code for a label; no automatic runtime normalization is implemented.",
+        "valuePopulation": "seeded",
+        "extensible": false,
+        "environmentVerificationRequired": true,
+        "publicPreflightPolicy": "No new endpoint is established; retain applicable target evidence or an eligible exact-field application-validation decision.",
+        "authoritativeFallback": {
+          "resolutionMode": "fsm_import_validated",
+          "status": "Partial",
+          "mechanism": "ByLookupType + IsActive + IsEnabled; field validates LookupCode",
+          "limitation": "EO list validation is source-backed; exact deployed contents/revision and helper zero/multiple-match internals remain unverified."
+        },
+        "sourceIds": [
+          "SRC-DEV-LOOKUP-SEEDS-20260924",
+          "SRC-DEV-INTERNAL-PAYER-EO-LOOKUPS"
+        ],
+        "sourceRevision": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64 / st_fusionapps_pt-v2mibfphdev/63, 2026/09/24 14:07:52",
+        "sourceLines": [
+          26692,
+          26748
+        ],
+        "customizationLevel": "S",
+        "sourceSeedEnabled": "Y",
+        "sourceSeedStartDate": "2005-06-02",
+        "sourceSeedEndDate": null,
+        "deployedTargetVerified": false,
+        "exhaustiveDeployedDomain": false,
+        "runtimeEnforcesSourceEnumeration": false,
+        "sourceFilter": "ByLookupType + IsActive + IsEnabled; field validates LookupCode"
+      }
+    },
+    {
+      "name": "RequirePropPmtsReviewFlag",
+      "csvPosition": 5,
+      "metadataPosition": 4,
+      "type": "string",
+      "role": "Business implementor for explicit requested changes",
+      "requiredness": "Non-null in root VO and EO; for create supply explicitly unless a separately proven default exists. Updates preserve baseline; no guessed value.",
+      "default": "No scalar default established. Preserve unrequested baseline values on update; obtain explicit create values where required.",
+      "length": {
+        "maxLength": 1,
+        "sourceIds": [
+          "SRC-GOLD-EO-SNIPPETS"
+        ],
+        "boundary": "Entity precision1; no default implied.",
+        "lengthUnit": "characters"
+      },
+      "create": {
+        "disposition": "supported",
+        "appliesTo": [
+          "create"
+        ],
+        "sourceIds": [
+          "SRC-E2E-RETAINED-CREATE-55ROW-164877"
+        ],
+        "boundary": "Only the two exact retained explicit-N create contexts referenced below have controlled terminal and later supported export evidence for this field. Original m01/c01 failures remain unchanged; unobserved create inputs/contexts remain unresolved. No default or cleanup-to-absence mechanism is established.",
+        "observedContextsRef": "createPreparation.observedRetainedCreates",
+        "observedFieldValues": [
+          {
+            "buName": "Vision ANZ BU",
+            "value": "N"
+          },
+          {
+            "buName": "Vision APAC BU",
+            "value": "N"
+          }
+        ],
+        "unobservedContexts": "unresolved",
+        "reusableMutationAuthority": false
+      },
+      "update": {
+        "disposition": "unresolved",
+        "appliesTo": [
+          "update"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-AM-SNIPPETS",
+          "SRC-GOLD-VO-SNIPPETS",
+          "SRC-GOLD-EO-SNIPPETS",
+          "SRC-GOLD-UI-FULL"
+        ],
+        "boundary": "Analyze as a business update field. Preserve all unrequested fields. No live update result exists yet."
+      },
+      "reference": "",
+      "sourceIds": [
+        "SRC-GOLD-VO-SNIPPETS",
+        "SRC-GOLD-EO-SNIPPETS",
+        "SRC-GOLD-AM-SNIPPETS"
+      ]
+    },
+    {
+      "name": "AllowExtAcctOverrideFlag",
+      "csvPosition": 6,
+      "metadataPosition": 5,
+      "type": "string",
+      "role": "Business implementor for explicit requested changes",
+      "requiredness": "Non-null in root VO and EO; for create supply explicitly unless a separately proven default exists. Updates preserve baseline; no guessed value.",
+      "default": "No scalar default established. Preserve unrequested baseline values on update; obtain explicit create values where required.",
+      "length": {
+        "maxLength": 1,
+        "sourceIds": [
+          "SRC-GOLD-EO-SNIPPETS"
+        ],
+        "boundary": "Entity precision1; no default implied.",
+        "lengthUnit": "characters"
+      },
+      "create": {
+        "disposition": "supported",
+        "appliesTo": [
+          "create"
+        ],
+        "sourceIds": [
+          "SRC-E2E-RETAINED-CREATE-55ROW-164877"
+        ],
+        "boundary": "Only the two exact retained explicit-N create contexts referenced below have controlled terminal and later supported export evidence for this field. Original m01/c01 failures remain unchanged; unobserved create inputs/contexts remain unresolved. No default or cleanup-to-absence mechanism is established.",
+        "observedContextsRef": "createPreparation.observedRetainedCreates",
+        "observedFieldValues": [
+          {
+            "buName": "Vision ANZ BU",
+            "value": "Y"
+          },
+          {
+            "buName": "Vision APAC BU",
+            "value": "Y"
+          }
+        ],
+        "unobservedContexts": "unresolved",
+        "reusableMutationAuthority": false
+      },
+      "update": {
+        "disposition": "unresolved",
+        "appliesTo": [
+          "update"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-AM-SNIPPETS",
+          "SRC-GOLD-VO-SNIPPETS",
+          "SRC-GOLD-EO-SNIPPETS",
+          "SRC-GOLD-UI-FULL"
+        ],
+        "boundary": "Analyze as a business update field. Preserve all unrequested fields. No live update result exists yet."
+      },
+      "reference": "",
+      "sourceIds": [
+        "SRC-GOLD-VO-SNIPPETS",
+        "SRC-GOLD-EO-SNIPPETS",
+        "SRC-GOLD-AM-SNIPPETS"
+      ]
+    },
+    {
+      "name": "ExclusivePaymentFlag",
+      "csvPosition": 7,
+      "metadataPosition": 6,
+      "type": "string",
+      "role": "Business implementor for explicit requested changes",
+      "requiredness": "Non-null in root VO and EO; for create supply explicitly unless a separately proven default exists. Updates preserve baseline; no guessed value.",
+      "default": "No scalar default established. Preserve unrequested baseline values on update; obtain explicit create values where required.",
+      "length": {
+        "maxLength": 1,
+        "sourceIds": [
+          "SRC-GOLD-EO-SNIPPETS"
+        ],
+        "boundary": "Entity precision1; no default implied.",
+        "lengthUnit": "characters"
+      },
+      "create": {
+        "disposition": "supported",
+        "appliesTo": [
+          "create"
+        ],
+        "sourceIds": [
+          "SRC-E2E-RETAINED-CREATE-55ROW-164877"
+        ],
+        "boundary": "Only the two exact retained explicit-N create contexts referenced below have controlled terminal and later supported export evidence for this field. Original m01/c01 failures remain unchanged; unobserved create inputs/contexts remain unresolved. No default or cleanup-to-absence mechanism is established.",
+        "observedContextsRef": "createPreparation.observedRetainedCreates",
+        "observedFieldValues": [
+          {
+            "buName": "Vision ANZ BU",
+            "value": "N"
+          },
+          {
+            "buName": "Vision APAC BU",
+            "value": "N"
+          }
+        ],
+        "unobservedContexts": "unresolved",
+        "reusableMutationAuthority": false
+      },
+      "update": {
+        "disposition": "unresolved",
+        "appliesTo": [
+          "update"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-AM-SNIPPETS",
+          "SRC-GOLD-VO-SNIPPETS",
+          "SRC-GOLD-EO-SNIPPETS",
+          "SRC-GOLD-UI-FULL"
+        ],
+        "boundary": "Analyze as a business update field. Preserve all unrequested fields. No live update result exists yet."
+      },
+      "reference": "",
+      "sourceIds": [
+        "SRC-GOLD-VO-SNIPPETS",
+        "SRC-GOLD-EO-SNIPPETS",
+        "SRC-GOLD-AM-SNIPPETS"
+      ]
+    },
+    {
+      "name": "SavePaymentFileInDb",
+      "csvPosition": 8,
+      "metadataPosition": 7,
+      "type": "string",
+      "role": "Business implementor for explicit requested changes",
+      "requiredness": "Non-null in root VO and EO; for create supply explicitly unless a separately proven default exists. Updates preserve baseline; no guessed value.",
+      "default": "No scalar default established. Preserve unrequested baseline values on update; obtain explicit create values where required.",
+      "length": {
+        "maxLength": 1,
+        "sourceIds": [
+          "SRC-GOLD-EO-SNIPPETS"
+        ],
+        "boundary": "Entity precision1; no default implied.",
+        "lengthUnit": "characters"
+      },
+      "create": {
+        "disposition": "supported",
+        "appliesTo": [
+          "create"
+        ],
+        "sourceIds": [
+          "SRC-E2E-RETAINED-CREATE-55ROW-164877"
+        ],
+        "boundary": "Only the two exact retained explicit-N create contexts referenced below have controlled terminal and later supported export evidence for this field. Original m01/c01 failures remain unchanged; unobserved create inputs/contexts remain unresolved. No default or cleanup-to-absence mechanism is established.",
+        "observedContextsRef": "createPreparation.observedRetainedCreates",
+        "observedFieldValues": [
+          {
+            "buName": "Vision ANZ BU",
+            "value": "N"
+          },
+          {
+            "buName": "Vision APAC BU",
+            "value": "N"
+          }
+        ],
+        "unobservedContexts": "unresolved",
+        "reusableMutationAuthority": false
+      },
+      "update": {
+        "disposition": "unresolved",
+        "appliesTo": [
+          "update"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-AM-SNIPPETS",
+          "SRC-GOLD-VO-SNIPPETS",
+          "SRC-GOLD-EO-SNIPPETS",
+          "SRC-GOLD-UI-FULL"
+        ],
+        "boundary": "Analyze as a business update field. Preserve all unrequested fields. No live update result exists yet."
+      },
+      "reference": "",
+      "sourceIds": [
+        "SRC-GOLD-VO-SNIPPETS",
+        "SRC-GOLD-EO-SNIPPETS",
+        "SRC-GOLD-AM-SNIPPETS"
+      ]
+    },
+    {
+      "name": "CreatedBy",
+      "csvPosition": 9,
+      "metadataPosition": 8,
+      "type": "string",
+      "role": "System-managed audit / who column; never a business input",
+      "requiredness": "Service owns audit population; database non-null constraints do not make this a mandatory user input.",
+      "default": "Service history mechanism; preserve baseline packaging only under runtime contract; never accept user overrides.",
+      "length": null,
+      "create": {
+        "disposition": "unsupported",
+        "appliesTo": [
+          "create"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-VO-SNIPPETS",
+          "SRC-GOLD-EO-SNIPPETS"
+        ],
+        "boundary": "Unsupported as a business-owned input; VO marks audit attributes nonupdateable and EO assigns HistoryColumn semantics."
+      },
+      "update": {
+        "disposition": "unsupported",
+        "appliesTo": [
+          "update"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-VO-SNIPPETS",
+          "SRC-GOLD-EO-SNIPPETS"
+        ],
+        "boundary": "Unsupported as a business-owned input; VO marks audit attributes nonupdateable and EO assigns HistoryColumn semantics."
+      },
+      "reference": "",
+      "sourceIds": [
+        "SRC-GOLD-VO-SNIPPETS",
+        "SRC-GOLD-EO-SNIPPETS",
+        "SRC-GOLD-AM-SNIPPETS"
+      ]
+    },
+    {
+      "name": "CreationDate",
+      "csvPosition": 10,
+      "metadataPosition": 9,
+      "type": "dateTime",
+      "role": "System-managed audit / who column; never a business input",
+      "requiredness": "Service owns audit population; database non-null constraints do not make this a mandatory user input.",
+      "default": "Service history mechanism; preserve baseline packaging only under runtime contract; never accept user overrides.",
+      "length": null,
+      "create": {
+        "disposition": "unsupported",
+        "appliesTo": [
+          "create"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-VO-SNIPPETS",
+          "SRC-GOLD-EO-SNIPPETS"
+        ],
+        "boundary": "Unsupported as a business-owned input; VO marks audit attributes nonupdateable and EO assigns HistoryColumn semantics."
+      },
+      "update": {
+        "disposition": "unsupported",
+        "appliesTo": [
+          "update"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-VO-SNIPPETS",
+          "SRC-GOLD-EO-SNIPPETS"
+        ],
+        "boundary": "Unsupported as a business-owned input; VO marks audit attributes nonupdateable and EO assigns HistoryColumn semantics."
+      },
+      "reference": "",
+      "sourceIds": [
+        "SRC-GOLD-VO-SNIPPETS",
+        "SRC-GOLD-EO-SNIPPETS",
+        "SRC-GOLD-AM-SNIPPETS"
+      ]
+    },
+    {
+      "name": "LastUpdatedBy",
+      "csvPosition": 11,
+      "metadataPosition": 10,
+      "type": "string",
+      "role": "System-managed audit / who column; never a business input",
+      "requiredness": "Service owns audit population; database non-null constraints do not make this a mandatory user input.",
+      "default": "Service history mechanism; preserve baseline packaging only under runtime contract; never accept user overrides.",
+      "length": null,
+      "create": {
+        "disposition": "unsupported",
+        "appliesTo": [
+          "create"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-VO-SNIPPETS",
+          "SRC-GOLD-EO-SNIPPETS"
+        ],
+        "boundary": "Unsupported as a business-owned input; VO marks audit attributes nonupdateable and EO assigns HistoryColumn semantics."
+      },
+      "update": {
+        "disposition": "unsupported",
+        "appliesTo": [
+          "update"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-VO-SNIPPETS",
+          "SRC-GOLD-EO-SNIPPETS"
+        ],
+        "boundary": "Unsupported as a business-owned input; VO marks audit attributes nonupdateable and EO assigns HistoryColumn semantics."
+      },
+      "reference": "",
+      "sourceIds": [
+        "SRC-GOLD-VO-SNIPPETS",
+        "SRC-GOLD-EO-SNIPPETS",
+        "SRC-GOLD-AM-SNIPPETS"
+      ]
+    },
+    {
+      "name": "LastUpdateDate",
+      "csvPosition": 12,
+      "metadataPosition": 11,
+      "type": "dateTime",
+      "role": "System-managed audit / who column; never a business input",
+      "requiredness": "Service owns audit population; database non-null constraints do not make this a mandatory user input.",
+      "default": "Service history mechanism; preserve baseline packaging only under runtime contract; never accept user overrides.",
+      "length": null,
+      "create": {
+        "disposition": "unsupported",
+        "appliesTo": [
+          "create"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-VO-SNIPPETS",
+          "SRC-GOLD-EO-SNIPPETS"
+        ],
+        "boundary": "Unsupported as a business-owned input; VO marks audit attributes nonupdateable and EO assigns HistoryColumn semantics."
+      },
+      "update": {
+        "disposition": "unsupported",
+        "appliesTo": [
+          "update"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-VO-SNIPPETS",
+          "SRC-GOLD-EO-SNIPPETS"
+        ],
+        "boundary": "Unsupported as a business-owned input; VO marks audit attributes nonupdateable and EO assigns HistoryColumn semantics."
+      },
+      "reference": "",
+      "sourceIds": [
+        "SRC-GOLD-VO-SNIPPETS",
+        "SRC-GOLD-EO-SNIPPETS",
+        "SRC-GOLD-AM-SNIPPETS"
+      ]
+    },
+    {
+      "name": "LastUpdateLogin",
+      "csvPosition": 13,
+      "metadataPosition": 12,
+      "type": "string",
+      "role": "System-managed audit / who column; never a business input",
+      "requiredness": "Service owns audit population; database non-null constraints do not make this a mandatory user input.",
+      "default": "Service history mechanism; preserve baseline packaging only under runtime contract; never accept user overrides.",
+      "length": null,
+      "create": {
+        "disposition": "unsupported",
+        "appliesTo": [
+          "create"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-VO-SNIPPETS",
+          "SRC-GOLD-EO-SNIPPETS"
+        ],
+        "boundary": "Unsupported as a business-owned input; VO marks audit attributes nonupdateable and EO assigns HistoryColumn semantics."
+      },
+      "update": {
+        "disposition": "unsupported",
+        "appliesTo": [
+          "update"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-VO-SNIPPETS",
+          "SRC-GOLD-EO-SNIPPETS"
+        ],
+        "boundary": "Unsupported as a business-owned input; VO marks audit attributes nonupdateable and EO assigns HistoryColumn semantics."
+      },
+      "reference": "",
+      "sourceIds": [
+        "SRC-GOLD-VO-SNIPPETS",
+        "SRC-GOLD-EO-SNIPPETS",
+        "SRC-GOLD-AM-SNIPPETS"
+      ]
+    },
+    {
+      "name": "OrgType",
+      "csvPosition": 14,
+      "metadataPosition": 13,
+      "type": "string",
+      "role": "Scope-related package context; business edit contract unresolved",
+      "requiredness": "Do not infer default OPERATING_UNIT from existing rows. Enterprise baseline is blank;52 BU rows contain OPERATING_UNIT.",
+      "default": "Preserve baseline; no invented create default.",
+      "length": {
+        "maxLength": 30,
+        "sourceIds": [
+          "SRC-GOLD-EO-SNIPPETS"
+        ],
+        "boundary": "Entity precision30.",
+        "lengthUnit": "characters"
+      },
+      "create": {
+        "disposition": "unresolved",
+        "appliesTo": [
+          "create"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-AM-SNIPPETS",
+          "SRC-GOLD-VO-SNIPPETS",
+          "SRC-GOLD-EO-SNIPPETS",
+          "SRC-GOLD-UI-FULL"
+        ],
+        "boundary": "UI/export/import entity corroborate this business field; operation/persistence remains subject to E2E qualification."
+      },
+      "update": {
+        "disposition": "unresolved",
+        "appliesTo": [
+          "update"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-AM-SNIPPETS",
+          "SRC-GOLD-VO-SNIPPETS",
+          "SRC-GOLD-EO-SNIPPETS",
+          "SRC-GOLD-UI-FULL"
+        ],
+        "boundary": "Analyze as a business update field. Preserve all unrequested fields. No live update result exists yet."
+      },
+      "reference": "EDM names IBY_ORGANIZATION_TYPES; task EO reviewed has no list validator for OrgType.",
+      "sourceIds": [
+        "SRC-GOLD-VO-SNIPPETS",
+        "SRC-GOLD-EO-SNIPPETS",
+        "SRC-GOLD-AM-SNIPPETS"
+      ]
+    },
+    {
+      "name": "BankChargeBearer",
+      "csvPosition": 15,
+      "metadataPosition": 14,
+      "type": "string",
+      "role": "Business implementor for explicit requested changes",
+      "requiredness": "Optional unless a source-backed conditional rule applies; update only when requested.",
+      "default": "No scalar default established. Preserve unrequested baseline values on update; obtain explicit create values where required.",
+      "length": {
+        "maxLength": 30,
+        "sourceIds": [
+          "SRC-GOLD-EO-SNIPPETS"
+        ],
+        "boundary": "Entity precision30.",
+        "lengthUnit": "characters"
+      },
+      "create": {
+        "disposition": "supported",
+        "appliesTo": [
+          "create"
+        ],
+        "sourceIds": [
+          "SRC-E2E-RETAINED-CREATE-55ROW-164877"
+        ],
+        "boundary": "Only the two exact retained explicit-N create contexts referenced below have controlled terminal and later supported export evidence for this field. Original m01/c01 failures remain unchanged; unobserved create inputs/contexts remain unresolved. No default or cleanup-to-absence mechanism is established.",
+        "observedContextsRef": "createPreparation.observedRetainedCreates",
+        "observedFieldValues": [
+          {
+            "buName": "Vision ANZ BU",
+            "value": ""
+          },
+          {
+            "buName": "Vision APAC BU",
+            "value": ""
+          }
+        ],
+        "unobservedContexts": "unresolved",
+        "reusableMutationAuthority": false
+      },
+      "update": {
+        "disposition": "unresolved",
+        "appliesTo": [
+          "update"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-AM-SNIPPETS",
+          "SRC-GOLD-VO-SNIPPETS",
+          "SRC-GOLD-EO-SNIPPETS",
+          "SRC-GOLD-UI-FULL"
+        ],
+        "boundary": "Analyze as a business update field. Preserve all unrequested fields. No live update result exists yet."
+      },
+      "reference": "IBY_BANK_CHARGE_BEARER; enabled LookupPVO list validation; active filter commented in EO",
+      "sourceIds": [
+        "SRC-GOLD-VO-SNIPPETS",
+        "SRC-GOLD-EO-SNIPPETS",
+        "SRC-GOLD-AM-SNIPPETS"
+      ],
+      "sourceValueEvidence": {
+        "constraintKind": "lookup",
+        "sourceKind": "lookup_type",
+        "lookupType": "IBY_BANK_CHARGE_BEARER",
+        "allowedValues": [
+          {
+            "code": "BEN",
+            "label": "Payee"
+          },
+          {
+            "code": "OUR",
+            "label": "Payer"
+          },
+          {
+            "code": "PAYEE_PAYS_EXPRESS",
+            "label": "Payee pays express charges"
+          },
+          {
+            "code": "SHA",
+            "label": "Shared"
+          },
+          {
+            "code": "SLEV",
+            "label": "Following Service Level"
+          }
+        ],
+        "normalization": "Source code/label pairs only. Ask the implementor to confirm the canonical package code for a label; no automatic runtime normalization is implemented.",
+        "valuePopulation": "mixed",
+        "extensible": true,
+        "environmentVerificationRequired": true,
+        "publicPreflightPolicy": "No new endpoint is established; retain applicable target evidence or an eligible exact-field application-validation decision.",
+        "authoritativeFallback": {
+          "resolutionMode": "fsm_import_validated",
+          "status": "Partial",
+          "mechanism": "ByLookupType + IsEnabled; IsActive commented out; no invented active-date filter",
+          "limitation": "EO list validation is source-backed; exact deployed contents/revision and helper zero/multiple-match internals remain unverified."
+        },
+        "sourceIds": [
+          "SRC-DEV-LOOKUP-SEEDS-20260924",
+          "SRC-DEV-INTERNAL-PAYER-EO-LOOKUPS"
+        ],
+        "sourceRevision": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64 / st_fusionapps_pt-v2mibfphdev/63, 2026/09/24 14:07:52",
+        "sourceLines": [
+          1227,
+          1315
+        ],
+        "customizationLevel": "E",
+        "sourceSeedEnabled": "Y",
+        "sourceSeedStartDate": "2005-06-02",
+        "sourceSeedEndDate": null,
+        "deployedTargetVerified": false,
+        "exhaustiveDeployedDomain": false,
+        "runtimeEnforcesSourceEnumeration": false,
+        "sourceFilter": "ByLookupType + IsEnabled; IsActive commented out; no invented active-date filter"
+      }
+    },
+    {
+      "name": "PprReportFormat",
+      "csvPosition": 16,
+      "metadataPosition": 15,
+      "type": "string",
+      "role": "Business implementor for explicit requested changes",
+      "requiredness": "Conditionally required when AutomaticPprReportSubmit=Y.",
+      "default": "No scalar default established. Preserve unrequested baseline values on update; obtain explicit create values where required.",
+      "length": {
+        "maxLength": 30,
+        "sourceIds": [
+          "SRC-GOLD-EO-SNIPPETS"
+        ],
+        "boundary": "Entity precision30.",
+        "lengthUnit": "characters"
+      },
+      "create": {
+        "disposition": "supported",
+        "appliesTo": [
+          "create"
+        ],
+        "sourceIds": [
+          "SRC-E2E-RETAINED-CREATE-55ROW-164877"
+        ],
+        "boundary": "Only the two exact retained explicit-N create contexts referenced below have controlled terminal and later supported export evidence for this field. Original m01/c01 failures remain unchanged; unobserved create inputs/contexts remain unresolved. No default or cleanup-to-absence mechanism is established.",
+        "observedContextsRef": "createPreparation.observedRetainedCreates",
+        "observedFieldValues": [
+          {
+            "buName": "Vision ANZ BU",
+            "value": ""
+          },
+          {
+            "buName": "Vision APAC BU",
+            "value": ""
+          }
+        ],
+        "unobservedContexts": "unresolved",
+        "reusableMutationAuthority": false
+      },
+      "update": {
+        "disposition": "unresolved",
+        "appliesTo": [
+          "update"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-AM-SNIPPETS",
+          "SRC-GOLD-VO-SNIPPETS",
+          "SRC-GOLD-EO-SNIPPETS",
+          "SRC-GOLD-UI-FULL"
+        ],
+        "boundary": "Analyze as a business update field. Preserve all unrequested fields. No live update result exists yet."
+      },
+      "reference": "FormatVO FormatCode with FormatTypeCode=IBY_FD_PPR_STATUS; value existence remains environment-specific",
+      "sourceIds": [
+        "SRC-GOLD-VO-SNIPPETS",
+        "SRC-GOLD-EO-SNIPPETS",
+        "SRC-GOLD-AM-SNIPPETS"
+      ]
+    },
+    {
+      "name": "AutomaticPprReportSubmit",
+      "csvPosition": 17,
+      "metadataPosition": 16,
+      "type": "string",
+      "role": "Business implementor for explicit requested changes",
+      "requiredness": "Optional unless a source-backed conditional rule applies; update only when requested.",
+      "default": "No scalar default established. Preserve unrequested baseline values on update; obtain explicit create values where required.",
+      "length": {
+        "maxLength": 1,
+        "sourceIds": [
+          "SRC-GOLD-EO-SNIPPETS"
+        ],
+        "boundary": "Entity precision1; no default implied.",
+        "lengthUnit": "characters"
+      },
+      "create": {
+        "disposition": "supported",
+        "appliesTo": [
+          "create"
+        ],
+        "sourceIds": [
+          "SRC-E2E-RETAINED-CREATE-55ROW-164877"
+        ],
+        "boundary": "Only the two exact retained explicit-N create contexts referenced below have controlled terminal and later supported export evidence for this field. Original m01/c01 failures remain unchanged; unobserved create inputs/contexts remain unresolved. No default or cleanup-to-absence mechanism is established.",
+        "observedContextsRef": "createPreparation.observedRetainedCreates",
+        "observedFieldValues": [
+          {
+            "buName": "Vision ANZ BU",
+            "value": ""
+          },
+          {
+            "buName": "Vision APAC BU",
+            "value": ""
+          }
+        ],
+        "unobservedContexts": "unresolved",
+        "reusableMutationAuthority": false
+      },
+      "update": {
+        "disposition": "supported",
+        "appliesTo": [
+          "update"
+        ],
+        "sourceIds": [
+          "SRC-E2E-OBSERVED-AUTOPPR-164493-164510"
+        ],
+        "boundary": "Observed only: enterprise AutomaticPprReportSubmit Y -> N -> Y with PprReportFormat=PPR_STATUS_REPORT preserved, terminal success and fresh all-cell reconciliation (164493/164510; corroborated 164559/164580), release11.13.27.01.0. Other scopes, values and report formats remain unresolved. No create default, lookup-domain or new mutation authority follows.",
+        "observedContexts": [
+          {
+            "scope": "enterprise",
+            "buName": "",
+            "before": "Y",
+            "after": "N",
+            "restored": "Y",
+            "preservedPprReportFormat": "PPR_STATUS_REPORT",
+            "forwardRequestIds": [
+              "164493",
+              "164559"
+            ],
+            "restorationRequestIds": [
+              "164510",
+              "164580"
+            ],
+            "release": "11.13.27.01.0"
+          }
+        ],
+        "unobservedContexts": "unresolved",
+        "reusableMutationAuthority": false
+      },
+      "reference": "",
+      "sourceIds": [
+        "SRC-GOLD-VO-SNIPPETS",
+        "SRC-GOLD-EO-SNIPPETS",
+        "SRC-GOLD-AM-SNIPPETS"
+      ]
+    },
+    {
+      "name": "BuName",
+      "csvPosition": 1,
+      "metadataPosition": 17,
+      "type": "string",
+      "role": "Business-owned portable record key for BU scope; blank for explicit enterprise scope",
+      "requiredness": "BU operation requires exact existing BU name and current enterprise context. Enterprise update requires explicit enterprise scope and exactly one blank-name baseline row.",
+      "default": "No default or sentinel. Preserve blank BuName on enterprise CSV row.",
+      "length": null,
+      "create": {
+        "disposition": "unresolved",
+        "appliesTo": [
+          "create"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-AM-SNIPPETS",
+          "SRC-GOLD-VO-SNIPPETS",
+          "SRC-GOLD-EO-SNIPPETS",
+          "SRC-GOLD-UI-FULL"
+        ],
+        "boundary": "UI/export/import entity corroborate this business field; operation/persistence remains subject to E2E qualification."
+      },
+      "update": {
+        "disposition": "unsupported",
+        "appliesTo": [
+          "update"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-SETUP-SEED"
+        ],
+        "boundary": "Key identifies an update target; renaming/reassigning its BU is not an exposed update. Seed UpdateEnabledFlag=N."
+      },
+      "reference": "BuAltKeyByName -> BusinessUnitPEO.Name + EnterpriseId; helper returns BusinessUnitId used as OrgId.",
+      "sourceIds": [
+        "SRC-GOLD-VO-SNIPPETS",
+        "SRC-GOLD-EO-SNIPPETS",
+        "SRC-GOLD-AM-SNIPPETS"
+      ]
+    },
+    {
+      "name": "BusinessUnitId1",
+      "csvPosition": 18,
+      "metadataPosition": 18,
+      "type": "long",
+      "role": "Derived, read-only BU usage metadata; never a business override",
+      "requiredness": "Read-only BusinessUnitUsagePEO join metadata; non-null hint is not a user input requirement.",
+      "default": "No invented IDs or module values. Preserve exact exported metadata for existing rows; create serialization awaits qualification.",
+      "length": null,
+      "create": {
+        "disposition": "unresolved",
+        "appliesTo": [
+          "create"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-VO-SNIPPETS"
+        ],
+        "boundary": "Read-only/SDOHidden metadata appears in exact CSV; determine required create serialization through qualified framework/testing."
+      },
+      "update": {
+        "disposition": "unsupported",
+        "appliesTo": [
+          "update"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-VO-SNIPPETS"
+        ],
+        "boundary": "Nonupdateable, SDOHidden reference metadata; prohibit business overrides."
+      },
+      "reference": "",
+      "sourceIds": [
+        "SRC-GOLD-VO-SNIPPETS",
+        "SRC-GOLD-EO-SNIPPETS",
+        "SRC-GOLD-AM-SNIPPETS"
+      ]
+    },
+    {
+      "name": "ModuleId",
+      "csvPosition": 19,
+      "metadataPosition": 19,
+      "type": "long",
+      "role": "Derived, read-only BU usage metadata; never a business override",
+      "requiredness": "Read-only BusinessUnitUsagePEO join metadata; non-null hint is not a user input requirement.",
+      "default": "No invented IDs or module values. Preserve exact exported metadata for existing rows; create serialization awaits qualification.",
+      "length": null,
+      "create": {
+        "disposition": "unresolved",
+        "appliesTo": [
+          "create"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-VO-SNIPPETS"
+        ],
+        "boundary": "Read-only/SDOHidden metadata appears in exact CSV; determine required create serialization through qualified framework/testing."
+      },
+      "update": {
+        "disposition": "unsupported",
+        "appliesTo": [
+          "update"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-VO-SNIPPETS"
+        ],
+        "boundary": "Nonupdateable, SDOHidden reference metadata; prohibit business overrides."
+      },
+      "reference": "",
+      "sourceIds": [
+        "SRC-GOLD-VO-SNIPPETS",
+        "SRC-GOLD-EO-SNIPPETS",
+        "SRC-GOLD-AM-SNIPPETS"
+      ]
+    },
+    {
+      "name": "ModuleKey",
+      "csvPosition": 20,
+      "metadataPosition": 20,
+      "type": "string",
+      "role": "Derived, read-only BU usage metadata; never a business override",
+      "requiredness": "Read-only BusinessUnitUsagePEO join metadata; non-null hint is not a user input requirement.",
+      "default": "No invented IDs or module values. Preserve exact exported metadata for existing rows; create serialization awaits qualification.",
+      "length": null,
+      "create": {
+        "disposition": "unresolved",
+        "appliesTo": [
+          "create"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-VO-SNIPPETS"
+        ],
+        "boundary": "Read-only/SDOHidden metadata appears in exact CSV; determine required create serialization through qualified framework/testing."
+      },
+      "update": {
+        "disposition": "unsupported",
+        "appliesTo": [
+          "update"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-VO-SNIPPETS"
+        ],
+        "boundary": "Nonupdateable, SDOHidden reference metadata; prohibit business overrides."
+      },
+      "reference": "",
+      "sourceIds": [
+        "SRC-GOLD-VO-SNIPPETS",
+        "SRC-GOLD-EO-SNIPPETS",
+        "SRC-GOLD-AM-SNIPPETS"
+      ]
+    },
+    {
+      "name": "PaymentsApprovalFlag",
+      "csvPosition": 21,
+      "metadataPosition": 21,
+      "type": "string",
+      "role": "Business implementor for explicit requested changes",
+      "requiredness": "Unresolved requiredness discrepancy: root VO IsNotNull=true; EO lacks IsNotNull;31 current exported rows are blank. Preserve baseline on unrelated updates; do not silently default.",
+      "default": "No scalar default established. Preserve unrequested baseline values on update; obtain explicit create values where required.",
+      "length": {
+        "maxLength": 1,
+        "sourceIds": [
+          "SRC-GOLD-EO-SNIPPETS"
+        ],
+        "boundary": "Entity precision1; no default implied.",
+        "lengthUnit": "characters"
+      },
+      "create": {
+        "disposition": "supported",
+        "appliesTo": [
+          "create"
+        ],
+        "sourceIds": [
+          "SRC-E2E-RETAINED-CREATE-55ROW-164877"
+        ],
+        "boundary": "Only the two exact retained explicit-N create contexts referenced below have controlled terminal and later supported export evidence for this field. Original m01/c01 failures remain unchanged; unobserved create inputs/contexts remain unresolved. No default or cleanup-to-absence mechanism is established.",
+        "observedContextsRef": "createPreparation.observedRetainedCreates",
+        "observedFieldValues": [
+          {
+            "buName": "Vision ANZ BU",
+            "value": "N"
+          },
+          {
+            "buName": "Vision APAC BU",
+            "value": "N"
+          }
+        ],
+        "unobservedContexts": "unresolved",
+        "reusableMutationAuthority": false
+      },
+      "update": {
+        "disposition": "unresolved",
+        "appliesTo": [
+          "update"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-AM-SNIPPETS",
+          "SRC-GOLD-VO-SNIPPETS",
+          "SRC-GOLD-EO-SNIPPETS",
+          "SRC-GOLD-UI-FULL"
+        ],
+        "boundary": "Analyze as a business update field. Preserve all unrequested fields. No live update result exists yet."
+      },
+      "reference": "",
+      "sourceIds": [
+        "SRC-GOLD-VO-SNIPPETS",
+        "SRC-GOLD-EO-SNIPPETS",
+        "SRC-GOLD-AM-SNIPPETS"
+      ]
+    },
+    {
+      "name": "SraEmailSubject",
+      "csvPosition": 22,
+      "metadataPosition": 22,
+      "type": "string",
+      "role": "Business implementor for explicit requested changes",
+      "requiredness": "Optional unless a source-backed conditional rule applies; update only when requested.",
+      "default": "No scalar default established. Preserve unrequested baseline values on update; obtain explicit create values where required.",
+      "length": {
+        "maxLength": 1024,
+        "sourceIds": [
+          "SRC-GOLD-EO-SNIPPETS"
+        ],
+        "boundary": "EO string precision1024; do not invent email-format restrictions.",
+        "lengthUnit": "characters"
+      },
+      "create": {
+        "disposition": "supported",
+        "appliesTo": [
+          "create"
+        ],
+        "sourceIds": [
+          "SRC-E2E-RETAINED-CREATE-55ROW-164877"
+        ],
+        "boundary": "Only the two exact retained explicit-N create contexts referenced below have controlled terminal and later supported export evidence for this field. Original m01/c01 failures remain unchanged; unobserved create inputs/contexts remain unresolved. No default or cleanup-to-absence mechanism is established.",
+        "observedContextsRef": "createPreparation.observedRetainedCreates",
+        "observedFieldValues": [
+          {
+            "buName": "Vision ANZ BU",
+            "value": "Automatic Separate Remittance Advice"
+          },
+          {
+            "buName": "Vision APAC BU",
+            "value": "Automatic Separate Remittance Advice"
+          }
+        ],
+        "unobservedContexts": "unresolved",
+        "reusableMutationAuthority": false
+      },
+      "update": {
+        "disposition": "supported",
+        "appliesTo": [
+          "update"
+        ],
+        "sourceIds": [
+          "SRC-E2E-OBSERVED-SUBJECT-164559-164580"
+        ],
+        "boundary": "Observed only: SraEmailSubject enterprise Automatic Separate Remittance Advice -> FSCR FINIBY-1910 validation -> original, and FGST-Auto Ltd / FGST-Service Ltd blank -> same requested subject -> blank, terminal success and fresh all-cell reconciliation (164559/164580), release11.13.27.01.0. Other subjects/scopes remain unresolved. Blank restoration is not a create default.",
+        "observedContexts": [
+          {
+            "scope": "enterprise",
+            "buName": "",
+            "before": "Automatic Separate Remittance Advice",
+            "after": "FSCR FINIBY-1910 validation",
+            "restored": "Automatic Separate Remittance Advice",
+            "forwardRequestId": "164559",
+            "restorationRequestId": "164580",
+            "release": "11.13.27.01.0"
+          },
+          {
+            "scope": "business_unit",
+            "buName": "FGST-Auto Ltd",
+            "before": "",
+            "after": "FSCR FINIBY-1910 validation",
+            "restored": "",
+            "forwardRequestId": "164559",
+            "restorationRequestId": "164580",
+            "release": "11.13.27.01.0"
+          },
+          {
+            "scope": "business_unit",
+            "buName": "FGST-Service Ltd",
+            "before": "",
+            "after": "FSCR FINIBY-1910 validation",
+            "restored": "",
+            "forwardRequestId": "164559",
+            "restorationRequestId": "164580",
+            "release": "11.13.27.01.0"
+          }
+        ],
+        "unobservedContexts": "unresolved",
+        "reusableMutationAuthority": false
+      },
+      "reference": "",
+      "sourceIds": [
+        "SRC-GOLD-VO-SNIPPETS",
+        "SRC-GOLD-EO-SNIPPETS",
+        "SRC-GOLD-AM-SNIPPETS"
+      ]
+    },
+    {
+      "name": "SraSendFrom",
+      "csvPosition": 23,
+      "metadataPosition": 23,
+      "type": "string",
+      "role": "Business implementor for explicit requested changes",
+      "requiredness": "Optional unless a source-backed conditional rule applies; update only when requested.",
+      "default": "No scalar default established. Preserve unrequested baseline values on update; obtain explicit create values where required.",
+      "length": {
+        "maxLength": 1024,
+        "sourceIds": [
+          "SRC-GOLD-EO-SNIPPETS"
+        ],
+        "boundary": "EO string precision1024; do not invent email-format restrictions.",
+        "lengthUnit": "characters"
+      },
+      "create": {
+        "disposition": "supported",
+        "appliesTo": [
+          "create"
+        ],
+        "sourceIds": [
+          "SRC-E2E-RETAINED-CREATE-55ROW-164877"
+        ],
+        "boundary": "Only the two exact retained explicit-N create contexts referenced below have controlled terminal and later supported export evidence for this field. Original m01/c01 failures remain unchanged; unobserved create inputs/contexts remain unresolved. No default or cleanup-to-absence mechanism is established.",
+        "observedContextsRef": "createPreparation.observedRetainedCreates",
+        "observedFieldValues": [
+          {
+            "buName": "Vision ANZ BU",
+            "value": "SRAtest@oracle.com"
+          },
+          {
+            "buName": "Vision APAC BU",
+            "value": "SRAtest@oracle.com"
+          }
+        ],
+        "unobservedContexts": "unresolved",
+        "reusableMutationAuthority": false
+      },
+      "update": {
+        "disposition": "unresolved",
+        "appliesTo": [
+          "update"
+        ],
+        "sourceIds": [
+          "SRC-GOLD-AM-SNIPPETS",
+          "SRC-GOLD-VO-SNIPPETS",
+          "SRC-GOLD-EO-SNIPPETS",
+          "SRC-GOLD-UI-FULL"
+        ],
+        "boundary": "Analyze as a business update field. Preserve all unrequested fields. No live update result exists yet."
+      },
+      "reference": "",
+      "sourceIds": [
+        "SRC-GOLD-VO-SNIPPETS",
+        "SRC-GOLD-EO-SNIPPETS",
+        "SRC-GOLD-AM-SNIPPETS"
+      ]
+    }
+  ],
+  "liveHandoff": {
+    "owner": "core.data-loader through current Run Book",
+    "taskHelperMaySubmit": false,
+    "sessionRetention": "active core governs; no task-owned approval envelopes or recovery files",
+    "comparisonDoesNotDetermineImportOutcome": true
+  },
+  "provenProductEvidence": {
+    "kind": "user-executed unchanged round-trip plus agent read-only fresh export",
+    "rows": 53,
+    "columns": 23,
+    "blankEnterpriseRows": 1,
+    "failedRows": 0,
+    "warningRows": 0,
+    "csvSHA256BeforeAndAfter": "b15fa5aa1f211c8756af0bda7defb8a0714ad221f147d23f877624f423efdeba",
+    "boundary": "This unchanged round-trip alone establishes no changed-value, create or delete qualification. Later field-specific observed update/restoration contracts are recorded separately."
+  },
+  "runtime": {
+    "file": "scripts/disbursement_options.py",
+    "sha256": "3c72cda3ad0ba05cdde8e075c4bc45bac780b6905dfe3ea3097ad3a3bc3ea7e5",
+    "purpose": "Offline deterministic explicit existing-row update and absent-BU create/mixed packages; atomic preflight, preservation, update reversal and fresh-export reconciliation; no authentication or import",
+    "interfaces": {
+      "read_export": "exact ZIP bytes, environment, release -> strict baseline",
+      "review_updates": "baseline, explicit requests, exact bounded field decisions -> atomic design",
+      "review_operations": "baseline, explicit create/update requests, exact field decisions and current eligible BU reference IDs -> atomic design; no default or implicit upsert",
+      "build_candidate": "exact baseline ZIP bytes, separately confirmed design -> native FSM ZIP bytes; no approval granted",
+      "validate_candidate": "candidate bytes, baseline bytes, design -> independent exact values and preservation check",
+      "determinism": "baseline bytes, design -> repeated byte comparison",
+      "reverse_review": "existing-row-only forward design and fresh evidence -> new reverse design; rejects created rows with no before-values",
+      "reconcile": "design, fresh export snapshot -> all-cell comparison; not terminal import outcome"
+    }
+  },
+  "createPreparation": {
+    "status": "observed_explicit_N_retained_contexts_qualified_others_pending",
+    "scope": "explicit business_unit with an exact absent identity",
+    "requiredBusinessFields": [
+      "PaymentMethodAtPayeeFlag",
+      "DocumentRejectionLevelCode",
+      "PaymentRejectionLevelCode",
+      "RequirePropPmtsReviewFlag",
+      "AllowExtAcctOverrideFlag",
+      "ExclusivePaymentFlag",
+      "SavePaymentFileInDb"
+    ],
+    "explicitInputs": "All 13 business fields, including intentional optional blanks; no task-owned scalar default",
+    "context": "Explicit OrgType=OPERATING_UNIT for this source-backed BU create path; existing-row OrgType remains preserved",
+    "automaticReportFlag": "Neither full GOLD EO nor import VO declares IsNotNull; blank is not rejected as mandatory. Y still requires a valid nonblank PprReportFormat.",
+    "paymentsApprovalFlag": "c01 blank input persisted as N: original exact comparison FAIL and later accepted retention, never a universal default or blank-create PASS. Explicit N was supplied and later verified for the two recorded retained creates. Preserve unrequested existing-row blanks; other contexts remain unresolved.",
+    "controlledObservation": {
+      "sourceId": "SRC-E2E-CREATE-C01-164773",
+      "release": "11.13.27.01.0",
+      "blankApprovalInputObservedAs": "N",
+      "otherRequestedBusinessValuesMatched": true,
+      "allPreExistingCellsMatched": true,
+      "originalExactReconciliation": "FAIL",
+      "universalDefaultEstablished": false,
+      "explicitNCreateQualified": false
+    },
+    "serviceOwnedColumns": "Audit and derived usage values are not business overrides. Blank serialization was observed in the exact retained contexts; other create contexts remain unresolved. Current design and independent validation still apply.",
+    "reconciliation": "Compare requested business/context values and all pre-existing cells. List new service assignments separately; BU ID matches the exact reference, module key the source export join, module ID a positive numeric value. No module ID mapping is invented.",
+    "cleanup": "No qualified CSV deletion/restoration-to-absence contract. Retention requires confirmed create intent; reverse_review rejects create/mixed designs.",
+    "observedRetainedCreates": [
+      {
+        "scope": "business_unit",
+        "buName": "Vision ANZ BU",
+        "orgType": "OPERATING_UNIT",
+        "values": {
+          "PaymentMethodAtPayeeFlag": "N",
+          "DocumentRejectionLevelCode": "PAYEE",
+          "PaymentRejectionLevelCode": "PAYMENT",
+          "RequirePropPmtsReviewFlag": "N",
+          "AllowExtAcctOverrideFlag": "Y",
+          "ExclusivePaymentFlag": "N",
+          "SavePaymentFileInDb": "N",
+          "BankChargeBearer": "",
+          "PprReportFormat": "",
+          "AutomaticPprReportSubmit": "",
+          "PaymentsApprovalFlag": "N",
+          "SraEmailSubject": "Automatic Separate Remittance Advice",
+          "SraSendFrom": "SRAtest@oracle.com"
+        },
+        "requestId": "164877",
+        "terminal": "SUCCESS",
+        "laterSupportedExportProcessId": "300104797771464",
+        "release": "11.13.27.01.0",
+        "retained": true,
+        "originalExactReconciliation": "FAIL_missing_expected_identities",
+        "laterSupportedValueComparison": "PASS_after_separately_user_completed_prerequisite",
+        "newImportForLaterVerification": false
+      },
+      {
+        "scope": "business_unit",
+        "buName": "Vision APAC BU",
+        "orgType": "OPERATING_UNIT",
+        "values": {
+          "PaymentMethodAtPayeeFlag": "N",
+          "DocumentRejectionLevelCode": "PAYEE",
+          "PaymentRejectionLevelCode": "PAYMENT",
+          "RequirePropPmtsReviewFlag": "N",
+          "AllowExtAcctOverrideFlag": "Y",
+          "ExclusivePaymentFlag": "N",
+          "SavePaymentFileInDb": "N",
+          "BankChargeBearer": "",
+          "PprReportFormat": "",
+          "AutomaticPprReportSubmit": "",
+          "PaymentsApprovalFlag": "N",
+          "SraEmailSubject": "Automatic Separate Remittance Advice",
+          "SraSendFrom": "SRAtest@oracle.com"
+        },
+        "requestId": "164877",
+        "terminal": "SUCCESS",
+        "laterSupportedExportProcessId": "300104797771464",
+        "release": "11.13.27.01.0",
+        "retained": true,
+        "originalExactReconciliation": "FAIL_missing_expected_identities",
+        "laterSupportedValueComparison": "PASS_after_separately_user_completed_prerequisite",
+        "newImportForLaterVerification": false
+      }
+    ],
+    "sourceIds": [
+      "SRC-E2E-RETAINED-CREATE-55ROW-164877"
+    ],
+    "unobservedContexts": "unresolved",
+    "originalFailuresPreserved": true,
+    "universalDefaultEstablished": false
+  },
+  "exportVisibility": {
+    "sourceIds": [
+      "SRC-GOLD-VO-SNIPPETS",
+      "SRC-E2E-M01-EXPORT-VISIBILITY-164877"
+    ],
+    "namedRowFilter": "Named internal payers must join the BU and PAYABLES_PAYMENT_BF usage to appear in the task export.",
+    "physicalCreateRequiresUsage": "not_established; controlled rows were inserted without that usage",
+    "exportAbsenceProvesPhysicalAbsence": false,
+    "taskSelectionAndVisibilityDistinct": true,
+    "onMissingExpectedIdentity": "Preserve exact comparison failure; check supported existence/visibility evidence and clarify before any create proposal or retry.",
+    "prerequisiteRepair": "Only if intended, route Assign Business Unit Business Function separately with explicit business values; then fresh export/reconcile without resubmitting known existing rows.",
+    "protectedUsageFields": "BusinessUnitId1/ModuleId/ModuleKey are not business overrides or a substitute for business-function assignment.",
+    "developerSqlBoundary": "Diagnostic evidence only; not an implementor prerequisite, supported runtime reconciler or retrospective PASS waiver."
+  },
+  "lookupSourceBoundary": {
+    "sourceIds": [
+      "SRC-DEV-LOOKUP-SEEDS-20260924",
+      "SRC-DEV-INTERNAL-PAYER-EO-LOOKUPS",
+      "SRC-DEV-INTERNAL-PAYER-EOIMPL-PPR"
+    ],
+    "deployedRevisionEquivalent": false,
+    "currentTargetDomainVerified": false,
+    "automaticRuntimeNormalizationImplemented": false,
+    "runtimeClosedDomainValidationAdded": false,
+    "formatCodeDomain": "unresolved; EO filters IBY_FD_PPR_STATUS",
+    "orgTypeMutability": "unresolved",
+    "addedDevOnlyAttributes": false
+  }
+}

@@ -4,17 +4,13 @@
   "status": "partial_source_review",
   "sources": {
     "EO-MealsPolicy": {
-      "path": "fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/MealsPolicyEO.xml",
+      "path": "maintainer-source-record",
       "sha256": "73189dcd4ba42b57d61e237e644e253f93cc058d5f78eb35a06661dff6a5d38f",
-      "series": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64",
-      "label": "261013.0000.S",
       "claim_scope": "Declared keys and validators only; not target import qualification"
     },
     "EO-MealsPolLine": {
-      "path": "fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/MealsPolLineEO.xml",
+      "path": "maintainer-source-record",
       "sha256": "2a263951051c6d0b43a2f80aaf3e1c86bd2f8e6400100d32b1e59e3c85cdf598",
-      "series": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64",
-      "label": "261013.0000.S",
       "claim_scope": "Declared keys and validators only; not target import qualification"
     }
   },
@@ -225,7 +221,7 @@
     }
   },
   "global_limits": [
-    "FPH pinned source is not proof of cptcwxaqy release equivalence",
+    "FPH pinned source is not proof of historical-test-target release equivalence",
     "XML import entrypoint is not the CSV converter",
     "EO nullability/default assignments are not an operation-specific CSV omission contract"
   ]

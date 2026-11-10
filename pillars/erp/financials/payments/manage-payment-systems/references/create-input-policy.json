@@ -1,0 +1,289 @@
+{
+  "schemaVersion": "mps-create-input-policy-v1",
+  "entities": {
+    "IBY_PAYMENT_SYSTEM": {
+      "fields": {
+        "Name": {
+          "requiredOnCreate": true,
+          "nonblankOnWrite": true,
+          "sourceIds": [
+            "SRC-MPS-ADE-003",
+            "SRC-MPS-ADE-004",
+            "SRC-MPS-FW-CSV"
+          ],
+          "reason": "Mandatory system label, independently unique; identity remains Suffix."
+        },
+        "StartDate": {
+          "requiredOnCreate": true,
+          "nonblankOnWrite": true,
+          "sourceIds": [
+            "SRC-MPS-ADE-003",
+            "SRC-MPS-ADE-004",
+            "SRC-MPS-FW-CSV"
+          ],
+          "reason": "Mandatory root date; supply an explicit date. Do not infer execution date or rely on blank CSV preserving a constructor expression."
+        },
+        "EndDate": {
+          "requiredOnCreate": true,
+          "nonblankOnWrite": true,
+          "sourceIds": [
+            "SRC-MPS-ADE-003",
+            "SRC-MPS-ADE-004",
+            "SRC-MPS-FW-CSV"
+          ],
+          "reason": "Mandatory root date; explicit 4712-12-31 represents no end. EO constructor default exists but is not permission to serialize an explicit null."
+        }
+      }
+    },
+    "ORA_IBY_PAYMENT_SYSTEM_ACC_NAME": {
+      "fields": {
+        "AccountOptionDatatype": {
+          "requiredOnCreate": true,
+          "nonblankOnWrite": true,
+          "sourceIds": [
+            "SRC-MPS-META-005",
+            "SRC-MPS-META-006",
+            "SRC-MPS-FW-CSV"
+          ],
+          "reason": "Mandatory insert-only datatype; EO default VARCHAR2 is not silently selected or serialized as blank by this task."
+        },
+        "DisplayOrder": {
+          "requiredOnCreate": true,
+          "nonblankOnWrite": true,
+          "sourceIds": [
+            "SRC-MPS-META-005",
+            "SRC-MPS-META-006",
+            "SRC-MPS-FW-CSV"
+          ],
+          "reason": "Mandatory numeric display order; supply explicitly. UI 1 is not an import default."
+        },
+        "AccountOptionName": {
+          "requiredOnCreate": true,
+          "nonblankOnWrite": true,
+          "sourceIds": [
+            "SRC-MPS-META-005",
+            "SRC-MPS-META-006",
+            "SRC-MPS-FW-CSV"
+          ],
+          "reason": "Mandatory definition label."
+        },
+        "SecuredFlag": {
+          "requiredOnCreate": true,
+          "nonblankOnWrite": false,
+          "sourceIds": [
+            "SRC-MPS-META-005",
+            "SRC-MPS-META-006",
+            "SRC-MPS-FW-CSV"
+          ],
+          "reason": "Materialize the previously approved N default for a new definition only; explicit input is never overridden. This is metadata, not credential handling.",
+          "default": {
+            "value": "N",
+            "sourceIds": [
+              "SRC-MPS-META-006"
+            ]
+          }
+        }
+      }
+    },
+    "ORA_IBY_PAYMENT_SYSTEM_FORMAT": {
+      "fields": {
+        "StartDate": {
+          "requiredOnCreate": true,
+          "nonblankOnWrite": true,
+          "sourceIds": [
+            "SRC-MPS-META-008",
+            "SRC-MPS-META-009",
+            "SRC-MPS-FW-CSV"
+          ],
+          "reason": "Mandatory format date; explicitly supplied, with StartDate < EndDate."
+        },
+        "EndDate": {
+          "requiredOnCreate": true,
+          "nonblankOnWrite": true,
+          "sourceIds": [
+            "SRC-MPS-META-008",
+            "SRC-MPS-META-009",
+            "SRC-MPS-FW-CSV"
+          ],
+          "reason": "Mandatory format date; constructor default is not an implicit FSCR blank value."
+        }
+      }
+    },
+    "ORA_IBY_PAYMENT_SYSTEM_KEY": {
+      "fields": {
+        "Ownertype": {
+          "requiredOnCreate": true,
+          "nonblankOnWrite": false,
+          "sourceIds": [
+            "SRC-MPS-META-011",
+            "SRC-MPS-META-012",
+            "SRC-MPS-META-013"
+          ],
+          "reason": "Explicit account-creation input under the approved defaulting guidance; not a claim that the database column is NOT NULL. UI PAYEE default is not an import default."
+        }
+      }
+    },
+    "ORA_IBY_PAYMENT_SYSTEM_SCHEME": {
+      "fields": {}
+    },
+    "ORA_IBY_PAYMENT_SYSTEM_TRAN": {
+      "fields": {}
+    },
+    "ORA_IBY_PAYMENT_SYSTEM_ACC_VAL": {
+      "fields": {
+        "AccountOptionValue": {
+          "requiredOnCreate": false,
+          "nonblankOnWrite": true,
+          "sourceIds": [
+            "SRC-MPS-META-020",
+            "SRC-MPS-META-021",
+            "SRC-MPS-ADE-001"
+          ],
+          "reason": "Nonblank service value when explicitly written. Sensitive/unknown rows are removed before this policy."
+        },
+        "BuName": {
+          "requiredOnCreate": false,
+          "nonblankOnWrite": true,
+          "sourceIds": [
+            "SRC-MPS-META-020",
+            "SRC-MPS-META-021",
+            "SRC-MPS-ADE-001"
+          ],
+          "reason": "Nonblank when explicitly authored; BU_NAME import maps this name to the stored value."
+        }
+      },
+      "byOptionCode": {
+        "BU_NAME": {
+          "required": [
+            "BuName"
+          ],
+          "sourceIds": [
+            "SRC-MPS-META-020",
+            "SRC-MPS-META-021",
+            "SRC-MPS-ADE-001"
+          ],
+          "reason": "Import hook resolves BuName to AccountOptionValue; do not request or invent the numeric ID."
+        },
+        "*": {
+          "required": [
+            "AccountOptionValue"
+          ],
+          "sourceIds": [
+            "SRC-MPS-META-020",
+            "SRC-MPS-META-021",
+            "SRC-MPS-ADE-001"
+          ],
+          "reason": "Other reviewed ordinary option codes require an explicit canonical value and their existing bound resolution evidence."
+        }
+      }
+    },
+    "ORA_IBY_PAYMENT_SYSTEM_ACC_NAME_TRANSLATION": {
+      "fields": {
+        "SourceLang": {
+          "requiredOnCreate": true,
+          "nonblankOnWrite": true,
+          "sourceIds": [
+            "SRC-MPS-META-023",
+            "SRC-MPS-META-024"
+          ],
+          "reason": "Mandatory translation source language; require explicit verified language, never infer a locale."
+        },
+        "AccountOptionName": {
+          "requiredOnCreate": true,
+          "nonblankOnWrite": true,
+          "sourceIds": [
+            "SRC-MPS-META-023",
+            "SRC-MPS-META-024"
+          ],
+          "reason": "Mandatory translation label; Language remains an immutable key."
+        },
+        "ORA_IBY_PAYMENT_SYSTEM_ACC_NAME.AccountOptionCode": {
+          "requiredOnCreate": true,
+          "nonblankOnWrite": true,
+          "sourceIds": [
+            "SRC-FSM-PACKAGE",
+            "SRC-MPS-ADE-001",
+            "SRC-MPS-META-023"
+          ],
+          "reason": "Portable owning-definition context column must be explicitly supplied and equal AccountOptionCode; it is not a database ID."
+        }
+      }
+    }
+  },
+  "keyFields": "Required by the existing portable business-key contract.",
+  "systemManagedExclusions": "Audit columns, physical IDs and ObjectVersionNumber are not business inputs. Joined bank mandatory attributes do not establish unconditional root requiredness.",
+  "defaultsBoundary": "Only the previously approved SecuredFlag=N default is materialized. No date, owner, display-order, language, lookup or credential value is invented.",
+  "sensitiveBoundary": "Existing sensitive/unknown value omission and root credential guards remain authoritative.",
+  "sourceFiles": [
+    {
+      "sourceId": "SRC-MPS-ADE-001",
+      "sourcePath": "fusionapps/fin/components/payables/iby/sharedSetup/paymentSystems/publicModel/src/oracle/apps/financials/payments/sharedSetup/paymentSystems/paymentSystemService/applicationModule/PaymentSystemServiceAMImpl.java",
+      "sha256": "a64577d0dcaff1a0d1b3b7eaf403d5a41560e81193477219e3876b79e98e0508"
+    },
+    {
+      "sourceId": "SRC-MPS-ADE-003",
+      "sourcePath": "fusionapps/fin/components/payables/iby/sharedSetup/paymentSystems/publicModel/src/oracle/apps/financials/payments/sharedSetup/paymentSystems/paymentSystemService/view/PaymentSystemInfoVO.xml",
+      "sha256": "819273bb55a5432aec1a26f3c324feeaa552e1e5bde10ab192505cf54d3dce55"
+    },
+    {
+      "sourceId": "SRC-MPS-ADE-004",
+      "sourcePath": "fusionapps/fin/components/payables/iby/sharedSetup/paymentSystems/publicModel/src/oracle/apps/financials/payments/sharedSetup/paymentSystems/publicModel/entity/PaymentSystemInfoEO.xml",
+      "sha256": "4b0b135c80ae8b1e33781a07a3c5e9a09369645348322f5a87f333d4c7e5e6e2"
+    },
+    {
+      "sourceId": "SRC-MPS-META-005",
+      "sourcePath": "fusionapps/fin/components/payables/iby/sharedSetup/paymentSystems/publicModel/src/oracle/apps/financials/payments/sharedSetup/paymentSystems/paymentSystemService/view/PaymentSystemAccountNameVO.xml",
+      "sha256": "5028c877d5d2742e64e6e9df0c9bc47a45274c02840eec045238c54892ef7aa1"
+    },
+    {
+      "sourceId": "SRC-MPS-META-006",
+      "sourcePath": "fusionapps/fin/components/payables/iby/sharedSetup/paymentSystems/publicModel/src/oracle/apps/financials/payments/sharedSetup/paymentSystems/publicModel/entity/PaymentSystemAccountNameEO.xml",
+      "sha256": "a37f966de8a65040e8a7a0fd74f113a227e6a0f1abb890c61329212bdc914f78"
+    },
+    {
+      "sourceId": "SRC-MPS-META-008",
+      "sourcePath": "fusionapps/fin/components/payables/iby/sharedSetup/paymentSystems/publicModel/src/oracle/apps/financials/payments/sharedSetup/paymentSystems/paymentSystemService/view/PaymentSystemFormatVO.xml",
+      "sha256": "9340e0d01f89b2718e6aee98255100b719dee627671b6acff9a3ea931e104777"
+    },
+    {
+      "sourceId": "SRC-MPS-META-009",
+      "sourcePath": "fusionapps/fin/components/payables/iby/sharedSetup/paymentSystems/publicModel/src/oracle/apps/financials/payments/sharedSetup/paymentSystems/publicModel/entity/PaymentSystemFormatEO.xml",
+      "sha256": "f8f3901d65e14267108741c001a6279abaed915da57280adf62ef26ba0625697"
+    },
+    {
+      "sourceId": "SRC-MPS-META-011",
+      "sourcePath": "fusionapps/fin/components/payables/iby/sharedSetup/paymentSystems/publicModel/src/oracle/apps/financials/payments/sharedSetup/paymentSystems/paymentSystemService/view/PaymentSystemKeysVO.xml",
+      "sha256": "9d433334c845cdda77db4f1df3a9de81c3e63bb35da3ab5f39d8fa0529a80594"
+    },
+    {
+      "sourceId": "SRC-MPS-META-012",
+      "sourcePath": "fusionapps/fin/components/payables/iby/sharedSetup/paymentSystems/publicModel/src/oracle/apps/financials/payments/sharedSetup/paymentSystems/publicModel/entity/PaymentSystemKeysEO.xml",
+      "sha256": "84669dc53f3092121cf874afa0335bfc85703e8dd013df2ae317dc9e689fb72d"
+    },
+    {
+      "sourceId": "SRC-MPS-META-013",
+      "sourcePath": "fusionapps/fin/components/payables/iby/sharedSetup/paymentSystems/publicModel/src/oracle/apps/financials/payments/sharedSetup/paymentSystems/publicModel/view/PaymentSystemKeysVO.xml",
+      "sha256": "30686651930552dc86e5d9d0de0749f2d63224ed318af116a4610f9f1e93f5e1"
+    },
+    {
+      "sourceId": "SRC-MPS-META-020",
+      "sourcePath": "fusionapps/fin/components/payables/iby/sharedSetup/paymentSystems/publicModel/src/oracle/apps/financials/payments/sharedSetup/paymentSystems/paymentSystemService/view/PaymentSystemAccountValueVO.xml",
+      "sha256": "197884208ac66f954bee454c4c463d35f03fe7ef527e00db9bc684b50d2c06fc"
+    },
+    {
+      "sourceId": "SRC-MPS-META-021",
+      "sourcePath": "fusionapps/fin/components/payables/iby/sharedSetup/paymentSystems/publicModel/src/oracle/apps/financials/payments/sharedSetup/paymentSystems/publicModel/entity/PaymentSystemAccountValueEO.xml",
+      "sha256": "00db5b74d5640618c60aea0c65067415f950bf9e0b20c4e66b207654676fede6"
+    },
+    {
+      "sourceId": "SRC-MPS-META-023",
+      "sourcePath": "fusionapps/fin/components/payables/iby/sharedSetup/paymentSystems/publicModel/src/oracle/apps/financials/payments/sharedSetup/paymentSystems/paymentSystemService/view/PaymentSystemAccountNameTranslationVO.xml",
+      "sha256": "050a51addd1b8e5da6e2f51c39e14abbba98e4ddd1d5a475fd44c8659b8ddcd0"
+    },
+    {
+      "sourceId": "SRC-MPS-META-024",
+      "sourcePath": "fusionapps/fin/components/payables/iby/sharedSetup/paymentSystems/publicModel/src/oracle/apps/financials/payments/sharedSetup/paymentSystems/publicModel/entity/PaymentSystemAccountNameTranslationEO.xml",
+      "sha256": "59c27c1af7e801e5cbf0de23525a629fe549831b50fb360c4f311ccc57375289"
+    }
+  ]
+}

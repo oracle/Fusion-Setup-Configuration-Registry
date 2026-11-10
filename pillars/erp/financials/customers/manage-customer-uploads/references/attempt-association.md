@@ -1,6 +1,5 @@
 # Associate a Customers attempt with core status evidence
 
-Classification: Oracle Highly Restricted
 
 ## Selected task-owned REST collection
 

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0"   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:template match="/">
+<reconRcrd>
+
+<xsl:for-each select="/root/records/record">
+<reconDetls>
+<authCode>
+   <xsl:value-of   select="col3"/>
+</authCode>
+<paymentRef>
+   <xsl:value-of   select="col13"/>
+</paymentRef>
+<settlmntDate>
+   <xsl:value-of   select="col16"/>
+</settlmntDate>
+<acquirerRef>
+   <xsl:value-of   select="col17"/>
+</acquirerRef>
+<settlmntCurr>
+   <xsl:value-of   select="col18"/>
+</settlmntCurr>
+<transactionAmt>
+   <xsl:value-of   select="col19"/>
+</transactionAmt>
+<transactionDate>
+   <xsl:value-of   select="col20"/>
+</transactionDate>
+<transactionId>
+   <xsl:value-of   select="col21"/>
+</transactionId>
+</reconDetls>
+</xsl:for-each>
+
+</reconRcrd>
+</xsl:template>
+</xsl:stylesheet>

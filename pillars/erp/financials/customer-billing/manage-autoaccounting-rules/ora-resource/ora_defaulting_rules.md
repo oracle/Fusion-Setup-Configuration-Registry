@@ -1,6 +1,5 @@
 # Manage AutoAccounting Rules Defaulting Rules
 
-Classification: Oracle Highly Restricted
 
 ## Defaults
 

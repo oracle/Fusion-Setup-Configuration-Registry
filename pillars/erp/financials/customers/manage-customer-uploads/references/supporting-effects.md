@@ -1,6 +1,5 @@
 # Supporting profile and sibling-site effects
 
-Classification: Oracle Highly Restricted
 
 `scripts/customer_supporting_effect_review.py:analyze` compares complete,
 supplied before/after inventories for every party in the bound ownership

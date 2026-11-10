@@ -1,6 +1,5 @@
 # Manage Transaction Types Defaulting Rules
 
-Classification: Oracle Highly Restricted
 
 ## Task-Owned Defaults
 

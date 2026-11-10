@@ -1,6 +1,5 @@
 # Bill-to link evidence
 
-Classification: Oracle Highly Restricted
 
 `scripts/customer_bill_to_review.py:analyze` compares the supplied after-state
 link for nonblank BILL_TO_CUST_SITE_REF on SHIP_TO rows. It revalidates the

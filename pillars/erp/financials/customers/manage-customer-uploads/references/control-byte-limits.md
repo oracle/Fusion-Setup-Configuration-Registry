@@ -1,6 +1,5 @@
 # Customers input byte limits
 
-Classification: Oracle Highly Restricted.
 
 The reviewed 26D `ArUpdCustomers.ctl` uses delimited character fields with no
 character-length override. For this task's UTF-8 file route, validate decoded

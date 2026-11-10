@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "mps-lifecycle-policy-v1",
+  "sourceIds": ["SRC-MPS-ADE-005"],
+  "flagSchemes": {
+    "CreditCardFlag": "SSL",
+    "DebitCardFlag": "PINLESSDEBITCARD",
+    "FCBankTransferFlag": "BANKACCOUNT",
+    "FDBankTransferFlag": "BANKPAYMENT",
+    "TokenizeFlag": "TOKENIZATION",
+    "CardPlatformFlag": "VIRTUAL_CARD"
+  },
+  "automaticSchemeRemoval": false,
+  "citiCharacterRule": {"requiredContext": "Citi-Payables", "sourceIds": ["SRC-MPS-EDM-IBY-BEPINFO"]}
+}

@@ -1,7 +1,5 @@
 # Meals encoding, identity and evidence boundaries
 
-Classification: Oracle Highly Restricted.
-
 The executable scope and user fields are defined in
 [ordinary execution](ordinary-meals-execution.md),
 [the fixed intake schema](intake-fields.json) and
@@ -14,11 +12,7 @@ qualification campaigns remain in Git/project history, outside the runtime packa
 
 [Boolean evidence](boolean-encoding-evidence.json) retains the nine Meals
 field-specific mappings, including five user inputs and four hidden/managed
-flags. The pinned UI VO binds these fields to EXM_YES_NO; the seed maps
-Yes to Y and No to N. EO/FSM attributes and reviewed String accessors preserve
-the codes. Do not infer a mapping for another field from a Flag suffix.
-The MealsPolicyEOImpl.java source hash is
-6f7bcc8a3dfede8366a7340080b1163eb7d88dc4eea2e6631302b87afdd0c165.
+flags. Use the explicit Yes-to-Y and No-to-N mapping for each listed field. Do not infer a mapping for another field from a Flag suffix.
 
 The intake contract maps the two enforcement labels to UPPER and VIOLATION.
 [Date evidence](date-encoding-evidence.json) binds the observed Meals StartDate
@@ -50,21 +44,14 @@ remain empty under the supported profile. Removing their
 workbook inputs does not remove them from the FSM key. Reject ambiguous and
 case-only matches. Keys, date, currency, status and determinants are immutable.
 
-The reviewed Meals rate source derives MigrationFlag from a Service-root
-application module other than ExpenseMobileServiceAM. MigrationFlagType starts
-with that flag; its CATCH_ALL branch does not reset other cases. XML declares
-AltKey and AltKey_NoStart uniqueness validators. Batch admission preserves both
-keys and conservatively requires nonoverlapping inclusive effective periods,
-including retained rates. No existing rate is automatically closed or deleted.
-Multi-rate and EndDate generation remain pending live qualification. MigratorHelper and
-CSV-converter internals remain unproved; source facts are not target acceptance.
+Batch admission preserves the full rate key and the alternate key excluding Start Date, and conservatively requires nonoverlapping inclusive effective periods, including retained rates. No existing rate is automatically closed or deleted. Multi-rate and EndDate generation remain pending live qualification. Local validation is not target acceptance.
 
 ## Qualification boundaries
 
-Pinned source is FPH label 261013.0000.S; exact paths/hashes remain in the JSON
-source registers. Do not infer target-release equivalence from it. The shipped
+Historical review does not establish target-release equivalence. The shipped
 [profile evidence](accepted-meals-profile.json) preserves accepted basic
-CREATE/UPDATE hashes and historical observation target/release. Runtime has no
+CREATE/UPDATE hashes and historical observation release. Private target identity
+is omitted; every selected target retains the live-reconciliation warning. Runtime has no
 release allowlist; admission requires the exact task schema and release provenance.
 Other environments or releases need
 fresh bound evidence and live reconciliation, not edits to the historical target.

@@ -77,7 +77,6 @@
       "status": "ready"
     }
   },
-  "classification": "Oracle Highly Restricted",
   "entrypoints": {
     "commands": {
       "build": "build",

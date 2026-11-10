@@ -1,6 +1,5 @@
 # Customers Reference Lookups
 
-Classification: Oracle Highly Restricted
 
 ## Local Lookups
 

@@ -7,7 +7,7 @@ or inheritance. Creates and missing overrides use sparse rows with exact destina
 
 ## Sources
 
-- [Oracle Fusion Cloud Applications: Using Functional Setup Manager](https://docs.oracle.com/en/cloud/saas/applications-common/26b/oafsm/using-functional-setup-manager.pdf)
+- [Oracle Fusion Cloud Applications: Using Functional Setup Manager, 26D](https://docs.oracle.com/en/cloud/saas/applications-common/26d/oafsm/using-functional-setup-manager.pdf)
 - [Oracle 26D: Compare Task Setup Data](https://docs.oracle.com/en/cloud/saas/applications-common/26d/oafsm/compare-task-setup-data.html) (CSV import does not delete existing target records)
 - Task-local `scripts/expense_system_options_intake.mjs` validation and package builder
 
@@ -31,7 +31,8 @@ complete code mappings. Dynamic report-template references remain separate.
 | Task and environment binding | Require the validation task code, metadata ObjectShortName, ProcessType, ProcessStatus, ProcessEnv, and CSV digests to agree with the supplied baseline. Match the metadata ProcessId to the export job ID, or accept the observed `-999` placeholder only when the unchanged exporter ZIP has the expected environment/task/job filename and all four members match the extracted files byte for byte | Every confirmed FSM option create/update package | |
 | Workbook immutability | Require the workbook's current SHA-256 to equal the digest in intake-validation.json | Every confirmed FSM option create/update package | |
 | Exact option identity | Require at most one row per BuName/OptionCode in each paired file; both absent permits sparse insertion, both present permits a ValueCode update, and divergent presence or values blocks. New global rows use OtherOrgId=-1. Scalar settings upsert by BuName/SettingCode | Every confirmed FSM option create/update package | |
-| Package member preservation | Retain the four exported member names and preserve every unrelated row and non-value column | Every confirmed FSM option create/update package | |
+| Package member preservation | Retain four members, exact fresh descriptor bytes and ordered headers. Emit only complete selected rows, preserve their non-input cells and both aliases, and leave unselected entities header-only. Omit unrelated baseline rows; verify their full persisted values and audits after import. Candidate conformance is not live success | Every confirmed FSM option create/update package, ordinary or explicit nonproduction qualification | |
+| Qualification boundary | Require the user-selected nonproduction environment, qualification-only manifest, exact selected-key intent, submitted/omitted row counts and pending-preservation warning. No ordinary customer promotion, alias removal, metadata rewriting or silent rule override | A build-qualification candidate is requested | |
 
 ## Task Nodes
 

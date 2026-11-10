@@ -1,6 +1,5 @@
 # Customers FBDI phase contract
 
-Classification: Oracle Highly Restricted
 
 The central Task Hook plans non-write, nonterminal registry nodes before the
 candidate preview. It does not schedule a task-owned post-import phase. Keep

@@ -1,6 +1,5 @@
 # Request-scope evidence
 
-Classification: Oracle Highly Restricted
 
 `scripts/customer_request_review.py:analyze` compares candidate ZIP bytes,
 operation, environment, a supplied attempt record and staging evidence offline.

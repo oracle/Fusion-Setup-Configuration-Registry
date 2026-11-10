@@ -1,0 +1,110 @@
+{
+  "schemaVersion": "mps-sensitive-policy-v1",
+  "version": "1.0.0",
+  "owner": "Payments task maintainers",
+  "manualUntilSupportedSecureFramework": true,
+  "rootEntity": "IBY_PAYMENT_SYSTEM",
+  "rootCredentialFields": [
+    "Bepusername",
+    "Beppassword",
+    "Psusername",
+    "Pspassword"
+  ],
+  "rootNonemptyOrUncertainAction": "block_serialized_subtree",
+  "valueEntity": "ORA_IBY_PAYMENT_SYSTEM_ACC_VAL",
+  "valueField": "AccountOptionValue",
+  "definitionEntity": "ORA_IBY_PAYMENT_SYSTEM_ACC_NAME",
+  "classificationKey": [
+    "owningPaymentSystem",
+    "AccountOptionCode"
+  ],
+  "sensitivityEvidence": [
+    "SecuredFlag",
+    "reviewedOptionSemantics",
+    "TopologyMgrCode",
+    "priorSensitivity"
+  ],
+  "sensitiveOrUnknownAction": "omit_entire_value_row_and_record_manual_step",
+  "placeholderAllowlist": [],
+  "segmentEvidence": "Positive VAL_SEC_SEGMENT_ID means segment-backed value; null may mean plaintext. Not an implementor input.",
+  "reclassificationMayDowngradeSensitivity": false,
+  "maskReplayAllowed": false,
+  "credentialReplayAllowed": false,
+  "policyChangeInvalidatesCandidate": true,
+  "sourceIds": [
+    "SRC-MPS-POLICY",
+    "SRC-MPS-ADE-007",
+    "SRC-MPS-ADE-008",
+    "SRC-MPS-FW-CSV",
+    "SRC-MPS-OPTION-006"
+  ],
+  "reviewedOrdinaryOptionCodes": {
+    "BU_NAME": {
+      "sourceIds": [
+        "SRC-MPS-ADE-001"
+      ],
+      "meaning": "Business unit name resolved by the import service",
+      "resolverRequirement": "RESOLVER-MPS-BU"
+    },
+    "ACCT_TOKEN_2FA": {
+      "sourceIds": [
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-OPTION-007",
+        "SRC-MPS-DOC-LOOKUPS",
+        "SRC-MPS-RESOLVER-004"
+      ],
+      "meaning": "Payment system account option ACCT_TOKEN_2FA",
+      "resolverRequirement": "RESOLVER-MPS-OPTION-011"
+    },
+    "ACCT_SINGLE_USE_TOKEN": {
+      "sourceIds": [
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-OPTION-007",
+        "SRC-MPS-DOC-LOOKUPS",
+        "SRC-MPS-RESOLVER-004"
+      ],
+      "meaning": "Payment system account option ACCT_SINGLE_USE_TOKEN",
+      "resolverRequirement": "RESOLVER-MPS-OPTION-012"
+    },
+    "VCP_UI_GENERIC_SUPPLIER_MOD": {
+      "sourceIds": [
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-OPTION-007",
+        "SRC-MPS-DOC-LOOKUPS",
+        "SRC-MPS-RESOLVER-004"
+      ],
+      "meaning": "Payment system account option VCP_UI_GENERIC_SUPPLIER_MOD",
+      "resolverRequirement": "RESOLVER-MPS-OPTION-019"
+    },
+    "VCP_UI_COMPANY_MOD": {
+      "sourceIds": [
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-OPTION-007",
+        "SRC-MPS-DOC-LOOKUPS",
+        "SRC-MPS-RESOLVER-004"
+      ],
+      "meaning": "Payment system account option VCP_UI_COMPANY_MOD",
+      "resolverRequirement": "RESOLVER-MPS-OPTION-020"
+    },
+    "BA_VAL_USAGE_RULE": {
+      "sourceIds": [
+        "SRC-MPS-META-022",
+        "SRC-MPS-OPTION-002",
+        "SRC-MPS-ADE-001",
+        "SRC-MPS-OPTION-007",
+        "SRC-MPS-DOC-LOOKUPS",
+        "SRC-MPS-RESOLVER-004"
+      ],
+      "meaning": "Payment system account option BA_VAL_USAGE_RULE",
+      "resolverRequirement": "RESOLVER-MPS-OPTION-023"
+    }
+  }
+}

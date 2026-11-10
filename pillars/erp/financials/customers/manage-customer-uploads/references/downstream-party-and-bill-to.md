@@ -1,6 +1,5 @@
 # Downstream party and bill-to source findings
 
-Classification: Oracle Highly Restricted
 
 Reviewed source series: FUSIONAPPS_11.13.26.10.0_LINUX.X64. This is authoring
 evidence, not an observed successful import or a complete business-validation

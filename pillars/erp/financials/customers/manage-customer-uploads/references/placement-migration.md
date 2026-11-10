@@ -1,6 +1,5 @@
 # Financials / Customers placement
 
-Classification: Oracle Highly Restricted
 
 This revision moves the previous Receivables-owned task and its owned noship
 bundle into the existing catalog-backed Financials / Customers functional area.

@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='utf-8'?>
+<BankAccountVerificationRequest>
+  <RequestId>REQ-SUCCESS-1011-IT-0001</RequestId>
+  <PaymentSystemAccount>
+    <AccountName>Synthetic AVS Account IT</AccountName>
+    <AccountOption>
+      <Name>APPLICABLE_COUNTRIES</Name>
+      <Value>IT</Value>
+    </AccountOption>
+    <AccountOption>
+      <Name>BA_VAL_CLIENT_ID</Name>
+      <Value>SYNTHETIC_CLIENT_ID</Value>
+    </AccountOption>
+    <AccountOption>
+      <Name>BA_VAL_PROFILE_NAME</Name>
+      <Value>SYNTHETIC_AVS_PROFILE_IT</Value>
+    </AccountOption>
+    <AccountOption>
+      <Name>BA_VAL_PROGRAM_ID</Name>
+      <Value>SYNTHETIC_PROGRAM_ID</Value>
+    </AccountOption>
+    <AccountOption>
+      <Name>BA_VAL_PROGRAM_TYPE</Name>
+      <Value>SYNTHETIC_PROGRAM_TYPE</Value>
+    </AccountOption>
+    <AccountOption>
+      <Name>BA_VAL_REQ_FORMAT</Name>
+      <Value>JSON</Value>
+    </AccountOption>
+    <AccountOption>
+      <Name>BA_VAL_RESP_FORMAT</Name>
+      <Value>JSON</Value>
+    </AccountOption>
+    <AccountOption>
+      <Name>BA_VAL_TRANS_CONFIG</Name>
+      <Value>SYNTHETIC_TRANS_CONFIG</Value>
+    </AccountOption>
+    <AccountOption>
+      <Name>BA_VAL_USAGE_RULE</Name>
+      <Value>SYNTHETIC_USAGE_RULE</Value>
+    </AccountOption>
+  </PaymentSystemAccount>
+  <BankAccount>
+    <BankAccountNumber>00000123456</BankAccountNumber>
+    <IBAN>IT60X0542811101000000123456</IBAN>
+    <BankAccountNumberElectronic>00000123456</BankAccountNumberElectronic>
+    <CountryCode>IT</CountryCode><BankName>Synthetic Bank IT</BankName>
+    <BankNumber>05428</BankNumber>
+    <BranchName>Synthetic IT Branch</BranchName>
+    <BranchNumber>11101</BranchNumber>
+    <EftSwiftCode>SYNBITM1XXX</EftSwiftCode>
+    <BranchType/>
+  </BankAccount>
+  <BankAccountOwner>
+    <AccountOwnerName>Synthetic Owner IT 1011</AccountOwnerName>
+    <OwnerFirstName/>
+    <OwnerLastName/>
+    <OwnerPartyType>ORGANIZATION</OwnerPartyType>
+    <OwnerTaxId/><PrimaryFlag>Y</PrimaryFlag>
+  </BankAccountOwner>
+</BankAccountVerificationRequest>

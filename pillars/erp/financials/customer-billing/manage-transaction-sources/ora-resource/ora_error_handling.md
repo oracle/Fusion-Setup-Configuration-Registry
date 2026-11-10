@@ -1,6 +1,5 @@
 # Manage Transaction Sources Error Handling and Handoff Gates
 
-Classification: Oracle Highly Restricted
 
 ## Error Situations
 

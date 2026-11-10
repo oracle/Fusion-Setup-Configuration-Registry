@@ -1,6 +1,5 @@
 # Read existing interface ESS diagnostics
 
-Classification: Oracle Highly Restricted
 
 Current runtime availability is governed by [governed read routes](governed-read-routes.md).
 Exact Customer Upload attempt evidence can be collected through

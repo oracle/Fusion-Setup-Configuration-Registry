@@ -1,6 +1,5 @@
 # Manage Transaction Sources Defaulting Rules
 
-Classification: Oracle Highly Restricted
 
 ## Standard Defaults
 

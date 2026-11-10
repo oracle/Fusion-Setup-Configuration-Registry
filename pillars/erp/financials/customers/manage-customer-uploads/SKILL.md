@@ -177,7 +177,6 @@ Use the parent functional-area skill `erp.financials.customers` for functional-a
 
 ## Customers FBDI Authoring Status
 
-Classification: Oracle Highly Restricted.
 
 SQL, JDBC, SQL Developer and Publisher are developer-test validation tools only.
 Do not ask implementors for database access or query execution as part of this

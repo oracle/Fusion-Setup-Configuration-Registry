@@ -1,6 +1,5 @@
 # Manage Transaction Types Reference Lookups
 
-Classification: Oracle Highly Restricted
 
 Only fixed local domains and source-proven FSM import resolvers are recorded. The 26B `transactionTypesLOV` GET is discovery evidence but does not prove a deterministic Name-plus-SetCode preflight, so no executable REST lookup node is generated.
 

@@ -1,6 +1,5 @@
 # Manage Transaction Sources Design Enforcement
 
-Classification: Oracle Highly Restricted
 
 <!-- fscr-supported-operations: create, update -->
 <!-- fscr-create-fields: ORA_AR_TXN_BATCH_SOURCE::AutoTrxNumberingFlag, ORA_AR_TXN_BATCH_SOURCE::BatchSourceType, ORA_AR_TXN_BATCH_SOURCE::Description, ORA_AR_TXN_BATCH_SOURCE::InvalidLinesRule, ORA_AR_TXN_BATCH_SOURCE::LastBatchNum, ORA_AR_TXN_BATCH_SOURCE::Name, ORA_AR_TXN_BATCH_SOURCE::SetCode, ORA_AR_TXN_BATCH_SOURCE::StartDate, ORA_AR_TXN_BATCH_SOURCE::Status -->

@@ -73,7 +73,7 @@ Apply the documented conversion-specific defaults after validating the current t
 | Remaining CSV members | Preserve dependency closure, row order, headers, aliases, header-only state, and unrelated rows unchanged. |
 | ASM_SETUP_CSV_METADATA.xml | Preserve the export-generated manifest; do not populate service process or audit fields. |
 
-Evidence: 11.13.27.04.0 SECONDARY/SUBLEDGER exports and reviewed 26.10 source for [secondary relationship defaults](https://codesearch.oraclecorp.com/source/xref/FUSIONAPPS_11.13.26.10.0_LINUX.X64/fusionapps/fin/components/ledger/gl/ledgers/ledgerDefinitions/model/src/oracle/apps/financials/generalLedger/ledgers/ledgerDefinitions/model/entity/LedgerEOImpl.java#4351), [Other/Other Y/Y](https://codesearch.oraclecorp.com/source/xref/FUSIONAPPS_11.13.26.10.0_LINUX.X64/fusionapps/fin/components/ledger/gl/ledgers/ledgerDefinitions/model/src/oracle/apps/financials/generalLedger/ledgers/ledgerDefinitions/model/entity/LedgerRelationshipEOImpl.java#3006), and [service-generated import rules](https://codesearch.oraclecorp.com/source/xref/FUSIONAPPS_11.13.26.10.0_LINUX.X64/fusionapps/fin/components/ledger/gl/ledgers/ledgerDefinitions/model/src/oracle/apps/financials/generalLedger/ledgers/ledgerDefinitions/model/entity/LedgerRelationshipEOImpl.java#3259).
+Evidence: 11.13.27.04.0 SECONDARY/SUBLEDGER exports and reviewed 26.10 source for secondary relationship defaults, Other/Other Y/Y, and service-generated import rules.
 
 ## Task Nodes
 

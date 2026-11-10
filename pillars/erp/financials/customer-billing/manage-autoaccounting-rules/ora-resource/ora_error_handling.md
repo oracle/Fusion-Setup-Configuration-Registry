@@ -1,6 +1,5 @@
 # Manage AutoAccounting Rules Error Handling
 
-Classification: Oracle Highly Restricted
 
 ## Failure Classification
 

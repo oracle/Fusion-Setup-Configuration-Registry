@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root><records>
+  <record><col3>AUTH0001</col3><col13>TESTPAY0001</col13><col16>2026-08-01</col16><col17>ACQ0001</col17><col18>USD</col18><col19>125.50</col19><col20>2026-07-31</col20><col21>TRXN0001</col21></record>
+  <record><col3>AUTH0002</col3><col13>TESTPAY0001</col13><col16>2026-08-02</col16><col17>ACQ0002</col17><col18>USD</col18><col19>25.00</col19><col20>2026-08-01</col20><col21>TRXN0002</col21></record>
+</records></root>

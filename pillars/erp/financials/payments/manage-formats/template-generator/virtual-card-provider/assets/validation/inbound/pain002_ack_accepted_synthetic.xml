@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03">
+ <CstmrPmtStsRpt>
+   <GrpHdr>
+     <MsgId>TEST-ACK-0001</MsgId>
+     <CreDtTm>2026-08-01T12:00:00Z</CreDtTm>
+     <InitgPty>
+       <Id>
+         <OrgId>
+           <Othr>
+             <Id>TEST PROVIDER</Id>
+             <SchmeNm>
+               <Cd>BANK</Cd>
+             </SchmeNm>
+           </Othr>
+         </OrgId>
+       </Id>
+     </InitgPty>
+   </GrpHdr>
+   <OrgnlGrpInfAndSts>
+     <OrgnlMsgId>TEST-PAYMENT-FILE-0001</OrgnlMsgId>
+     <OrgnlMsgNmId>pain.001.001.03</OrgnlMsgNmId>
+     <OrgnlNbOfTxs>2</OrgnlNbOfTxs>
+     <OrgnlCtrlSum>300.00</OrgnlCtrlSum>
+     <GrpSts>ACSP</GrpSts>
+     <NbOfTxsPerSts>
+       <DtldNbOfTxs>2</DtldNbOfTxs>
+       <DtldSts>ACSP</DtldSts>
+       <DtldCtrlSum>300.00</DtldCtrlSum>
+     </NbOfTxsPerSts>
+     <NbOfTxsPerSts>
+       <DtldNbOfTxs>0</DtldNbOfTxs>
+       <DtldSts>RJCT</DtldSts>
+       <DtldCtrlSum>0.000</DtldCtrlSum>
+     </NbOfTxsPerSts>
+   </OrgnlGrpInfAndSts>
+   <OrgnlPmtInfAndSts>
+     <OrgnlPmtInfId>TEST-PAYMENT-FILE-0001</OrgnlPmtInfId>
+     <TxInfAndSts>
+       <OrgnlInstrId>TEST-INSTR-0001</OrgnlInstrId>
+       <OrgnlEndToEndId>TESTPAY0001</OrgnlEndToEndId>
+       <TxSts>ACSP</TxSts>
+       <OrgnlTxRef>
+         <Amt>
+           <InstdAmt Ccy="USD">125.00</InstdAmt>
+         </Amt>
+         <ReqdExctnDt>2026-08-01</ReqdExctnDt>
+       </OrgnlTxRef>
+     </TxInfAndSts>
+     <TxInfAndSts>
+       <OrgnlInstrId>TEST-INSTR-0002</OrgnlInstrId>
+       <OrgnlEndToEndId>TESTPAY0002</OrgnlEndToEndId>
+       <TxSts>ACSP</TxSts>
+       <OrgnlTxRef>
+         <Amt>
+           <InstdAmt Ccy="USD">175.00</InstdAmt>
+         </Amt>
+         <ReqdExctnDt>2026-08-01</ReqdExctnDt>
+       </OrgnlTxRef>
+     </TxInfAndSts>
+   </OrgnlPmtInfAndSts>
+ </CstmrPmtStsRpt>
+</Document>

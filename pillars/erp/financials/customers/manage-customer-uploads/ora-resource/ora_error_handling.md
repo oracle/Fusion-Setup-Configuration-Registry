@@ -1,6 +1,5 @@
 # Customers Errors and Execution Gate
 
-Classification: Oracle Highly Restricted
 
 ## Error Situations
 

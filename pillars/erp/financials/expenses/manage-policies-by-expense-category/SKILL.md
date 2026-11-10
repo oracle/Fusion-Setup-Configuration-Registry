@@ -150,7 +150,8 @@ case aliases, automatic closing/deleting rates or automatic batch splitting.
 
 The [profile definition](references/accepted-meals-profile.json) preserves the
 accepted basic CREATE/UPDATE observations separately from the user-authorized
-expansion. Historical observations are from the profile's observation_target;
+expansion. Historical observations retain their release and result hashes;
+private observation-target identity is omitted and cannot establish qualification;
 they do not restrict runtime to that pod or release. Runtime has no release
 allowlist; it requires the exact task schema and verified selected-target
 baseline/reference evidence, including baseline release provenance. Schema drift

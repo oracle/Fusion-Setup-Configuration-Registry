@@ -79,15 +79,9 @@ Evidence: SRC-ORG-AMIMPL (importData), SRC-OPTION-AMIMPL (importData), SRC-FSM-M
 
 ## Evidence
 
-| Source ID | Source | Location | Revision boundary | Status |
-|---|---|---|---|---|
-| SRC-FSM-TEMPLATE | Same-task template export | Same-task ASM_SETUP_CSV_METADATA.xml and exact template headers; source artifacts retained in the project workspace | 11.13.27.01.0 | Confirmed |
-| SRC-ORG-VO | OrgSettingVO.xml | https://codesearch.oraclecorp.com/source/xref/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64/fusionapps/fin/components/payables/exm/setup/shared/model/src/oracle/apps/financials/expenses/setup/shared/expenseOrgSettingService/view/OrgSettingVO.xml | FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64; source snapshot hash in evidence/classic/manifest.json; reviewed 2026-10-09 | Confirmed |
-| SRC-OPTION-VO | SetupOptionVO.xml | https://codesearch.oraclecorp.com/source/xref/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64/fusionapps/fin/components/payables/exm/setup/shared/model/src/oracle/apps/financials/expenses/setup/shared/expenseSetupOptionService/view/SetupOptionVO.xml | FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64; source snapshot hash in evidence/classic/manifest.json; reviewed 2026-10-09 | Confirmed |
-| SRC-ORG-EO | OrgSettingEO.xml | https://codesearch.oraclecorp.com/source/xref/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64/fusionapps/fin/components/payables/exm/setup/shared/model/src/oracle/apps/financials/expenses/setup/shared/model/entity/OrgSettingEO.xml | FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64; source snapshot hash in evidence/classic/manifest.json; reviewed 2026-10-09 | Confirmed |
-| SRC-OPTION-EO | SetupOptionEO.xml | https://codesearch.oraclecorp.com/source/xref/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64/fusionapps/fin/components/payables/exm/setup/shared/model/src/oracle/apps/financials/expenses/setup/shared/model/entity/SetupOptionEO.xml | FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64; source snapshot hash in evidence/classic/manifest.json; reviewed 2026-10-09 | Confirmed |
-| SRC-UI-DA-PAGE | FinExmSetupOptionsDigitalAssistant.jsff | https://codesearch.oraclecorp.com/source/xref/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64/fusionapps/fin/components/payables/exm/setup/options/ui/public_html/oracle/apps/financials/expenses/setup/options/ui/page/FinExmSetupOptionsDigitalAssistant.jsff | FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64; indexed 2026-10-09; deployed parity unverified | Confirmed |
-| SRC-UI-DA-BEAN | FinExmSetupDigitalAssistantBean.java | https://codesearch.oraclecorp.com/source/xref/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64/fusionapps/fin/components/payables/exm/setup/options/ui/src/oracle/apps/financials/expenses/setup/options/ui/bean/FinExmSetupDigitalAssistantBean.java | FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64; indexed 2026-10-09; deployed parity unverified | Confirmed |
+Maintainer provenance IDs: `SRC-FSM-TEMPLATE`, `SRC-ORG-VO`, `SRC-OPTION-VO`, `SRC-ORG-EO`, `SRC-OPTION-EO`, `SRC-UI-DA-PAGE`, `SRC-UI-DA-BEAN`.
+
+The reusable contract is the task-local field, scope and package rules. Maintainer source locations are excluded from distribution and are not runtime inputs. Historical review does not qualify a new target or authorize an import. Retain every current-target and approval check.
 
 ## Organization-setting profile
 

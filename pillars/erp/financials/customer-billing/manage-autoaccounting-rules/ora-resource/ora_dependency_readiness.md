@@ -1,6 +1,5 @@
 # Manage AutoAccounting Rules Dependency Readiness
 
-Classification: Oracle Highly Restricted
 
 ## Dependency Rules
 

@@ -1,6 +1,5 @@
 # Receipt-assignment evidence
 
-Classification: Oracle Highly Restricted
 
 `scripts/customer_receipt_review.py:analyze` compares supplied after-state receipt
 values for a candidate bound to identity/ownership evidence. It does not submit

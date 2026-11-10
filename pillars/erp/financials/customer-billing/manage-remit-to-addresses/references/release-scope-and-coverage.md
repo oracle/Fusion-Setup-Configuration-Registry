@@ -1,6 +1,6 @@
 # Release scope and catalog coverage dispositions
 
-Oracle Internal. Evidence review: 2026-09-21.
+Evidence review: 2026-09-21.
 
 ## Release claim
 
@@ -19,7 +19,7 @@ Runtime code remains environment-independent. The historical live evidence quali
 | Continuation live campaign, page version 5 | Nine verified phases, 264 passing requirements, zero final mismatches; exact and bulk A/I updates/restoration, creates, parent/child create, 97-parent bulk create, mixed create/update and cleanup | All 236 catalog variants, a single 100-row live import, physical deletion, or complete UI inspection of every row |
 | Current catalog disposition | Every one of 236 variant IDs is accounted for | Disposition completeness is not execution completeness or merge approval |
 
-The historical evidence is on the [testing page](https://confluence.oraclecorp.com/confluence/pages/viewpage.action?pageId=21942576693). Attachment: `manage-remit-to-addresses-evidence-20260917.zip`; SHA-256 `52a6677351f579b964d99833acd3473ddc2c400b2d3304a5ed3d6223f1739e37`. It contains 118 members. Only the dated evidence scope is carried forward; no customer records, credentials or machine-specific paths are copied into this skill.
+The historical evidence is on the testing page. Attachment: `manage-remit-to-addresses-evidence-20260917.zip`; SHA-256 `52a6677351f579b964d99833acd3473ddc2c400b2d3304a5ed3d6223f1739e37`. It contains 118 members. Only the dated evidence scope is carried forward; no customer records, credentials or machine-specific paths are copied into this skill.
 
 Five generic tests were skipped because the adapter declares no transient create fields, no override-eligible unresolved update fields, no generic choice contracts, no generic string-length constraints, and no unresolved identity keys. A/I rules have separate task tests. Local maximum-length coverage is not established by those skips.
 

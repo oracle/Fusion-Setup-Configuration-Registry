@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="reconRcrd"><xs:complexType><xs:sequence>
+    <xs:element name="reconDetls" minOccurs="0" maxOccurs="unbounded"><xs:complexType><xs:sequence>
+      <xs:element name="authCode" type="xs:string" minOccurs="0"/>
+      <xs:element name="paymentRef" type="xs:string"/>
+      <xs:element name="settlmntDate" type="xs:string" minOccurs="0"/>
+      <xs:element name="acquirerRef" type="xs:string" minOccurs="0"/>
+      <xs:element name="settlmntCurr" type="xs:string" minOccurs="0"/>
+      <xs:element name="transactionAmt" type="xs:string" minOccurs="0"/>
+      <xs:element name="transactionDate" type="xs:string" minOccurs="0"/>
+      <xs:element name="transactionId" type="xs:string" minOccurs="0"/>
+    </xs:sequence></xs:complexType></xs:element>
+  </xs:sequence></xs:complexType></xs:element>
+</xs:schema>

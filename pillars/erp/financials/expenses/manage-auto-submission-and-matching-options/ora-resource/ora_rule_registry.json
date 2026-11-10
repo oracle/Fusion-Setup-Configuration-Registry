@@ -70,7 +70,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 94
+            "line": 88
           },
           "readiness": {
             "status": "ready",
@@ -118,7 +118,7 @@
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 76
+            "line": 66
           },
           "readiness": {
             "status": "ready",

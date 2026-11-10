@@ -1,0 +1,784 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FSCR Payments template handoff",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "projectId",
+    "assistanceMode",
+    "recordOwner",
+    "formatCode",
+    "formatTypeCode",
+    "usageType",
+    "engineSkillId",
+    "attachmentMechanism",
+    "generationStatus",
+    "attachmentStatus",
+    "runtimeVerificationStatus",
+    "artifacts",
+    "gaps",
+    "nextAction",
+    "projectRecords"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "enum": [
+        "fscr-payments-template-handoff-v2",
+        "fscr-payments-template-handoff-v3"
+      ]
+    },
+    "projectId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "assistanceMode": {
+      "enum": [
+        "generated",
+        "guided-manual",
+        "disabled"
+      ]
+    },
+    "recordOwner": {
+      "enum": [
+        "generator",
+        "manage_formats"
+      ]
+    },
+    "formatCode": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1,
+      "maxLength": 30
+    },
+    "formatTypeCode": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1,
+      "maxLength": 30
+    },
+    "usageType": {
+      "type": "string",
+      "minLength": 1
+    },
+    "engineSkillId": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "direction": {
+      "enum": [
+        "inbound",
+        "outbound",
+        "not_applicable"
+      ]
+    },
+    "payloadTypeCode": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "attachmentMechanism": {
+      "enum": [
+        "direct_xml_upload",
+        "bi_publisher_selection",
+        "unknown"
+      ]
+    },
+    "generationStatus": {
+      "enum": [
+        "discovery",
+        "draft",
+        "validated",
+        "failed",
+        "disabled"
+      ]
+    },
+    "attachmentStatus": {
+      "enum": [
+        "pending_manual_upload",
+        "pending_bi_selection",
+        "attached_confirmed",
+        "not_applicable",
+        "pending_route_confirmation"
+      ]
+    },
+    "runtimeVerificationStatus": {
+      "enum": [
+        "pending",
+        "passed",
+        "failed"
+      ]
+    },
+    "templateIdentity": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "templateSha256": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "failureClass": {
+      "enum": [
+        "input_validation",
+        "catalog_or_metadata_mismatch",
+        "artifact_persistence",
+        "process_failed",
+        "none"
+      ]
+    },
+    "diagnostic": {
+      "type": "string"
+    },
+    "projectRecords": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifactIndexPath",
+        "skillRunPath",
+        "tokenUsagePath"
+      ],
+      "properties": {
+        "artifactIndexPath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "skillRunPath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tokenUsagePath": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "path",
+          "sha256"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "template",
+              "mapping_matrix",
+              "source_gaps",
+              "offline_validation",
+              "discovery_pack"
+            ]
+          },
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "nextAction": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidenceReferences": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "generationObjective": {
+      "enum": [
+        "implementation_candidate",
+        "strict_conformance"
+      ]
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "decision",
+          "basis",
+          "verification",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "decision": {
+            "type": "string",
+            "minLength": 1
+          },
+          "basis": {
+            "type": "string",
+            "minLength": 1
+          },
+          "verification": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "enum": [
+              "unconfirmed",
+              "confirmed"
+            ]
+          }
+        }
+      }
+    },
+    "validationChecks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "compile",
+        "transform",
+        "schema",
+        "businessRules"
+      ],
+      "properties": {
+        "compile": {
+          "enum": [
+            "passed",
+            "failed",
+            "not_run",
+            "not_applicable"
+          ]
+        },
+        "transform": {
+          "enum": [
+            "passed",
+            "failed",
+            "not_run",
+            "not_applicable"
+          ]
+        },
+        "schema": {
+          "enum": [
+            "passed",
+            "failed",
+            "not_run",
+            "not_applicable"
+          ]
+        },
+        "businessRules": {
+          "enum": [
+            "passed",
+            "failed",
+            "not_run",
+            "not_applicable"
+          ]
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "generationStatus": {
+            "const": "validated"
+          }
+        },
+        "required": [
+          "generationStatus"
+        ]
+      },
+      "then": {
+        "required": [
+          "templateIdentity",
+          "templateSha256",
+          "projectRecords"
+        ],
+        "properties": {
+          "templateIdentity": {
+            "type": "string",
+            "minLength": 1
+          },
+          "templateSha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "artifacts": {
+            "allOf": [
+              {
+                "contains": {
+                  "properties": {
+                    "kind": {
+                      "const": "template"
+                    }
+                  },
+                  "required": [
+                    "kind"
+                  ]
+                }
+              },
+              {
+                "contains": {
+                  "properties": {
+                    "kind": {
+                      "const": "mapping_matrix"
+                    }
+                  },
+                  "required": [
+                    "kind"
+                  ]
+                }
+              },
+              {
+                "contains": {
+                  "properties": {
+                    "kind": {
+                      "const": "source_gaps"
+                    }
+                  },
+                  "required": [
+                    "kind"
+                  ]
+                }
+              },
+              {
+                "contains": {
+                  "properties": {
+                    "kind": {
+                      "const": "offline_validation"
+                    }
+                  },
+                  "required": [
+                    "kind"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "recordOwner": {
+            "const": "generator"
+          }
+        },
+        "required": [
+          "recordOwner"
+        ]
+      },
+      "then": {
+        "properties": {
+          "runtimeVerificationStatus": {
+            "const": "pending"
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "attachmentMechanism": {
+                  "const": "direct_xml_upload"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "attachmentStatus": {
+                  "const": "pending_manual_upload"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "attachmentMechanism": {
+                  "const": "bi_publisher_selection"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "attachmentStatus": {
+                  "const": "pending_bi_selection"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "attachmentStatus": {
+            "const": "attached_confirmed"
+          }
+        },
+        "required": [
+          "attachmentStatus"
+        ]
+      },
+      "then": {
+        "required": [
+          "evidenceReferences"
+        ],
+        "properties": {
+          "recordOwner": {
+            "const": "manage_formats"
+          },
+          "evidenceReferences": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "runtimeVerificationStatus": {
+            "const": "passed"
+          }
+        },
+        "required": [
+          "runtimeVerificationStatus"
+        ]
+      },
+      "then": {
+        "required": [
+          "evidenceReferences"
+        ],
+        "properties": {
+          "recordOwner": {
+            "const": "manage_formats"
+          },
+          "attachmentStatus": {
+            "const": "attached_confirmed"
+          },
+          "evidenceReferences": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "assistanceMode": {
+            "const": "disabled"
+          }
+        },
+        "required": [
+          "assistanceMode"
+        ]
+      },
+      "then": {
+        "properties": {
+          "generationStatus": {
+            "const": "disabled"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "assistanceMode": {
+            "const": "guided-manual"
+          }
+        },
+        "required": [
+          "assistanceMode"
+        ]
+      },
+      "then": {
+        "properties": {
+          "generationStatus": {
+            "enum": [
+              "discovery",
+              "draft",
+              "failed"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "generationStatus": {
+            "const": "failed"
+          }
+        },
+        "required": [
+          "generationStatus"
+        ]
+      },
+      "then": {
+        "required": [
+          "failureClass",
+          "diagnostic"
+        ],
+        "properties": {
+          "failureClass": {
+            "enum": [
+              "input_validation",
+              "catalog_or_metadata_mismatch",
+              "artifact_persistence",
+              "process_failed"
+            ]
+          },
+          "diagnostic": {
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "schemaVersion": {
+            "const": "fscr-payments-template-handoff-v2"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "formatCode": {
+            "type": "string"
+          },
+          "formatTypeCode": {
+            "type": "string"
+          },
+          "attachmentMechanism": {
+            "enum": [
+              "direct_xml_upload",
+              "bi_publisher_selection"
+            ]
+          },
+          "attachmentStatus": {
+            "enum": [
+              "pending_manual_upload",
+              "pending_bi_selection",
+              "attached_confirmed",
+              "not_applicable"
+            ]
+          }
+        },
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "generationObjective"
+              ]
+            },
+            {
+              "required": [
+                "assumptions"
+              ]
+            },
+            {
+              "required": [
+                "validationChecks"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "schemaVersion": {
+            "const": "fscr-payments-template-handoff-v3"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "generationObjective",
+          "assumptions",
+          "validationChecks"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "attachmentMechanism": {
+            "const": "unknown"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "generationStatus": {
+            "enum": [
+              "draft",
+              "discovery",
+              "failed",
+              "disabled"
+            ]
+          },
+          "attachmentStatus": {
+            "const": "pending_route_confirmation"
+          },
+          "runtimeVerificationStatus": {
+            "const": "pending"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "attachmentStatus": {
+            "const": "pending_route_confirmation"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "attachmentMechanism": {
+            "const": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "generationStatus": {
+            "const": "validated"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "formatCode": {
+            "type": "string"
+          },
+          "formatTypeCode": {
+            "type": "string"
+          },
+          "attachmentMechanism": {
+            "enum": [
+              "direct_xml_upload",
+              "bi_publisher_selection"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "anyOf": [
+          {
+            "properties": {
+              "attachmentStatus": {
+                "const": "attached_confirmed"
+              }
+            }
+          },
+          {
+            "properties": {
+              "runtimeVerificationStatus": {
+                "const": "passed"
+              }
+            }
+          }
+        ]
+      },
+      "then": {
+        "properties": {
+          "formatCode": {
+            "type": "string"
+          },
+          "formatTypeCode": {
+            "type": "string"
+          },
+          "attachmentMechanism": {
+            "enum": [
+              "direct_xml_upload",
+              "bi_publisher_selection"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "schemaVersion": {
+            "const": "fscr-payments-template-handoff-v3"
+          },
+          "generationStatus": {
+            "const": "validated"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "assumptions": {
+            "items": {
+              "properties": {
+                "status": {
+                  "const": "confirmed"
+                }
+              }
+            }
+          },
+          "validationChecks": {
+            "properties": {
+              "compile": {
+                "const": "passed"
+              },
+              "transform": {
+                "const": "passed"
+              },
+              "schema": {
+                "enum": [
+                  "passed",
+                  "not_applicable"
+                ]
+              },
+              "businessRules": {
+                "enum": [
+                  "passed",
+                  "not_applicable"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

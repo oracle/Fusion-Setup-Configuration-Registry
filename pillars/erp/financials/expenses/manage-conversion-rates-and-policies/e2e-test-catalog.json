@@ -5173,7 +5173,6 @@
     }
   ],
   "catalogId": "EXM_MANAGE_CONVERSION_RATES_AND_POLICIES-E2E-TEST-CATALOG-V1",
-  "classification": "Oracle Highly Restricted",
   "coverage": {
     "areas": {
       "Bulk & Isolation": 2,

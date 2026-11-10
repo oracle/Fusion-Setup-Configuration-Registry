@@ -1,6 +1,5 @@
 # Assisted customer evidence review
 
-Classification: Oracle Highly Restricted
 
 This route evaluates evidence already supplied in the task context. It does not
 run Publisher SQL from a task node or substitute a private Fusion client. The

@@ -48,7 +48,11 @@ def validate_context(contract, context, provenance, validation_date, receipt_pat
     if observed.tzinfo is None or observed.astimezone(timezone.utc).date() != today or observed > now:
         raise ValueError('Meals profile baseline observation is stale or in the future; refresh through the approved export route')
     observation = profile['observation_target']
-    observed_target = (context['ProcessEnv'] == observation['environment']
+    # Public evidence deliberately omits private historical target identity.
+    # Missing identity never grants historical/live qualification to any target.
+    observed_target = (bool(observation.get('environment'))
+        and bool(observation.get('origin'))
+        and context['ProcessEnv'] == observation['environment']
         and context['ProcessRelease'] == observation['release']
         and origin(provenance['origin']) == origin(observation['origin']))
     return {'historically_observed_target': observed_target,

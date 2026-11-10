@@ -1,6 +1,5 @@
 # Registration and argument binding
 
-Classification: Oracle Highly Restricted
 
 `scripts/customer_registration_review.py` compares supplied registration evidence
 with the reviewed [registration recipe](../assets/customer-registration-contract.json)

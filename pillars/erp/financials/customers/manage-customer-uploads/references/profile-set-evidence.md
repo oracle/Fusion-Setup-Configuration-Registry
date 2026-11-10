@@ -1,6 +1,5 @@
 # Account-profile class and requested reference-set evidence
 
-Classification: Oracle Highly Restricted
 
 Use `scripts/customer_profile_set_review.py:analyze` after the identity and
 ownership checks. Pass candidate ZIP bytes, declared operation, environment,

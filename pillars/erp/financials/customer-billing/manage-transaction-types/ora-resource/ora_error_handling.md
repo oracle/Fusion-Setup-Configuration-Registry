@@ -1,6 +1,5 @@
 # Manage Transaction Types Error Handling
 
-Classification: Oracle Highly Restricted
 
 ## Error Situations
 

@@ -95,7 +95,7 @@ Deduplicate exact repeated candidate records while retaining source provenance a
 
 For example, a returned project row with Meaning `Currency` and LookupCode `DOLLARS` supplies `RateUnit=DOLLARS`; Meaning `Hours` and LookupCode `HOURS` supplies `HOURS`. A returned inventory row with UOM `Each` and UOMCode `Ea` supplies `Ea`. These illustrate response mapping, not hardcoded fallback membership. The inventory Currency class's base unit `USD` does not identify the project meaning Currency; `unitOfMeasureClasses` is not a substitute for these two sources. Header `CurrencyCode` is a separate field.
 
-The combined domain's authoring sources are indexed under Source Evidence Index: the view unions inventory units with PJF_UNIT lookup codes/meanings, and the rate-line view derives RateUnit from the chosen UomCode. This establishes representation, not full API/UI eligibility parity. Retain enabled/date evidence, but do not add an enabled-only, current-date or rate-start filter without a separately evidenced task predicate; the view computes status and does not itself exclude those rows. Nonlabor still derives its UOM from the resolved expenditure type, and existing subtype defaults remain in ora_defaulting_rules.md. An explicit UOM conflicting with the Nonlabor-derived code is a validation issue; this resolver never changes the selected import route or approval gates.
+The combined UOM domain includes inventory units and project lookup codes/meanings, and RateUnit is derived from the chosen UomCode. This establishes representation, not full API/UI eligibility parity. Retain enabled/date evidence, but do not add an enabled-only, current-date or rate-start filter without a separately evidenced task predicate; status alone does not exclude those rows. Nonlabor still derives its UOM from the resolved expenditure type, and existing subtype defaults remain in ora_defaulting_rules.md. An explicit UOM conflicting with the Nonlabor-derived code is a validation issue; this resolver never changes the selected import route or approval gates.
 
 
 ## Contract Coverage
@@ -203,12 +203,3 @@ A target rejection of a field at the header path does not establish rejection at
 |---|---|---|---|---|---|---|---|
 | RATE.FIND_SCHEDULE | step | 3 | reference_lookup | resolved->RATE.RESOLVE_LINES;warning->RATE.RESOLVE_LINES;failure->RATE.RETURN_ISSUES | RATE.APPLY_DEFAULTS | stop | Resolve applicable contracts; complete all supported checks and retain warnings |
 | RATE.RESOLVE_LINES | step | 4 | reference_lookup | resolved->RATE.VALIDATE_LINES;warning->RATE.VALIDATE_LINES;failure->RATE.RETURN_ISSUES | RATE.FIND_SCHEDULE | stop | Resolve lines with separate membership, eligibility and representation results; defer input/policy judgments to their owners |
-
-## Source Evidence Index
-
-These are authoring provenance, not runtime acquisition dependencies. The selected core lookup contracts above remain the execution authority.
-
-| Source ID | Source | Rules Supported | Evidence Boundary |
-|---|---|---|---|
-| RATE-UOM-001 | [PJF_UNITS_OF_MEASURE_V](https://codesearch.oraclecorp.com/source/xref/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64/fusionapps/prj/components/projectsFinancials/foundation/setup/rates/dbSchema/database/fusionDB/FUSION/PJF_UNITS_OF_MEASURE_V.view#54) | Combined inventory UOM and project lookup representation | Authoring evidence only; does not establish full target eligibility |
-| RATE-UOM-002 | [ResourceClassRateVO](https://codesearch.oraclecorp.com/source/xref/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64/fusionapps/prj/components/projectsFinancials/foundation/setup/rates/protectedUiModel/src/oracle/apps/projects/foundation/setup/rates/protectedUiModel/view/ResourceClassRateVO.xml#78) | RateUnit from selected UomCode | Authoring evidence only; no change to runtime route or approval |

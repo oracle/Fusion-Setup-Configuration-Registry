@@ -1,6 +1,5 @@
 # Manage AutoAccounting Rules Reference Lookups
 
-Classification: Oracle Highly Restricted
 
 All resolvers are read-only or local normalization. The exact-task FSM resolver remains authoritative.
 

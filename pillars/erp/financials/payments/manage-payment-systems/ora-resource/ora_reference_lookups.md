@@ -1,0 +1,30 @@
+# MPS reference lookups
+
+
+
+## Live Lookups
+
+| Resolver | Runs When | Source Values | Request Path or URL | Requested Fields | Match Rule | Values to Fill | If No Match or Many Matches |
+|---|---|---|---|---|---|---|---|
+| resolve_acct_token_2fa | Only when this exact ordinary account option is requested and sensitivity checks passed | Lookup type ORA_IBY_TOKEN_OTP; Requested exact LookupCode or exact localized Meaning; Effective date and response language | /fscmRestApi/resources/11.13.18.05/standardLookups/ORA_IBY_TOKEN_OTP/child/lookupCodes | LookupCode; Meaning; EnabledFlag; StartDateActive; EndDateActive | Match exact requested code or exact localized meaning within the fixed lookup type. Require exactly one enabled, date-effective row; ambiguous display meanings fail closed. | Return LookupCode as AccountOptionValue for this exact account option only, after MPS sensitivity policy permits the row. No import-time name conversion assumed. | Block candidate setting; do not invent code or create a lookup. Block and require an unambiguous canonical code/context; never choose first. |
+| resolve_acct_single_use_token | Only when this exact ordinary account option is requested and sensitivity checks passed | Lookup type ORA_IBY_TOKEN_OTP; Requested exact LookupCode or exact localized Meaning; Effective date and response language | /fscmRestApi/resources/11.13.18.05/standardLookups/ORA_IBY_TOKEN_OTP/child/lookupCodes | LookupCode; Meaning; EnabledFlag; StartDateActive; EndDateActive | Match exact requested code or exact localized meaning within the fixed lookup type. Require exactly one enabled, date-effective row; ambiguous display meanings fail closed. | Return LookupCode as AccountOptionValue for this exact account option only, after MPS sensitivity policy permits the row. No import-time name conversion assumed. | Block candidate setting; do not invent code or create a lookup. Block and require an unambiguous canonical code/context; never choose first. |
+| resolve_vcp_ui_generic_supplier_mod | Only when this exact ordinary account option is requested and sensitivity checks passed | Lookup type ORA_IBY_VCP_UI_SUPPLIER_MOD; Requested exact LookupCode or exact localized Meaning; Effective date and response language | /fscmRestApi/resources/11.13.18.05/standardLookups/ORA_IBY_VCP_UI_SUPPLIER_MOD/child/lookupCodes | LookupCode; Meaning; EnabledFlag; StartDateActive; EndDateActive | Match exact requested code or exact localized meaning within the fixed lookup type. Require exactly one enabled, date-effective row; ambiguous display meanings fail closed. | Return LookupCode as AccountOptionValue for this exact account option only, after MPS sensitivity policy permits the row. No import-time name conversion assumed. | Block candidate setting; do not invent code or create a lookup. Block and require an unambiguous canonical code/context; never choose first. |
+| resolve_vcp_ui_company_mod | Only when this exact ordinary account option is requested and sensitivity checks passed | Lookup type ORA_IBY_VCP_UI_COMPANY_MOD; Requested exact LookupCode or exact localized Meaning; Effective date and response language | /fscmRestApi/resources/11.13.18.05/standardLookups/ORA_IBY_VCP_UI_COMPANY_MOD/child/lookupCodes | LookupCode; Meaning; EnabledFlag; StartDateActive; EndDateActive | Match exact requested code or exact localized meaning within the fixed lookup type. Require exactly one enabled, date-effective row; ambiguous display meanings fail closed. | Return LookupCode as AccountOptionValue for this exact account option only, after MPS sensitivity policy permits the row. No import-time name conversion assumed. | Block candidate setting; do not invent code or create a lookup. Block and require an unambiguous canonical code/context; never choose first. |
+| resolve_ba_val_usage_rule | Only when this exact ordinary account option is requested and sensitivity checks passed | Lookup type ORA_IBY_BA_VAL_USAGE_RULE; Requested exact LookupCode or exact localized Meaning; Effective date and response language | /fscmRestApi/resources/11.13.18.05/standardLookups/ORA_IBY_BA_VAL_USAGE_RULE/child/lookupCodes | LookupCode; Meaning; EnabledFlag; StartDateActive; EndDateActive | Match exact requested code or exact localized meaning within the fixed lookup type. Require exactly one enabled, date-effective row; ambiguous display meanings fail closed. | Return LookupCode as AccountOptionValue for this exact account option only, after MPS sensitivity policy permits the row. No import-time name conversion assumed. | Block candidate setting; do not invent code or create a lookup. Block and require an unambiguous canonical code/context; never choose first. |
+
+## Lookup Execution Rules
+
+| Situation | What Happens |
+|---|---|
+| Public lookup requested | Use GET only through the selected read-only workflow; follow all pages and retain exact type, effective date and response language. No lookup creation. Target availability and privileges must be verified. |
+| Import resolver | BankName plus HomeCountry is resolved by the MPS import hook, with zero/multiple rejected. BU_NAME uses BuName; the hook takes first match so establish unambiguous target identity before submission. No general option-name conversion. |
+| UI-only choice | Complete the affected option manually in UI; no guessed code or ID and no SQL runtime fallback. Consult reference-contracts.json for the exact option/filter. |
+| Import list validator | BepType, NlsLanguage, AccountOptionDatatype, SecuredFlag, TokenProfileFlag, PaymentFormatCode and TransmitProtocolCode accept canonical values validated by their reviewed import validators. This is membership validation, not display-name resolution. |
+| No applicable public lookup | Record not applicable and continue; do not contact Fusion unnecessarily. |
+
+
+## Task Nodes
+
+| Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
+|---|---|---|---|---|---|---|---|
+| MPS.LOOKUPS | step | 30 | reference_lookup | pass->MPS.DEPENDENCIES;fail->MPS.RETURN_ISSUES | MPS.INPUT | stop | always |

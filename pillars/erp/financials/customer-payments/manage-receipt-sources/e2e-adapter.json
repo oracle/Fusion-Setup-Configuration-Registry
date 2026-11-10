@@ -56,7 +56,6 @@
       "status": "ready"
     }
   },
-  "classification": "Oracle Highly Restricted",
   "deletionPolicy": {
     "boundary": "Do not infer physical delete from end dating or omission from a candidate package.",
     "childHandling": "No physical deletion or cascade behavior is generated.",
