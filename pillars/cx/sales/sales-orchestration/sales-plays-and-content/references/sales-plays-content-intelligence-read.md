@@ -13,13 +13,10 @@
 ## Source and Scope
 
 This contract contains the developer-provided Sales Play Content Intelligence
-request and the applicable Knowledge Management security policies. The source
-is retained for provenance only:
+request and the applicable Knowledge Management security policies.
 
-`https://confluence.oraclecorp.com/confluence/pages/viewpage.action?pageId=20005795272`
-
-Use this local contract without requiring Confluence access to test semantic
-content search for one exact Sales Play ID and one user question. The POST
+Use this local contract to test semantic content search for one exact Sales
+Play ID and one user question. The POST
 request has read semantics and does not create or modify Sales Play or
 Knowledge content.
 
@@ -31,9 +28,11 @@ Invoke the endpoint through the Knowledge Management OAuth client:
 
 Read `knowledge-management-rest-api.md` before execution. The task-local client
 uses the configured `restBaseUrl`, reads the regular `scope`, selects the single
-scope token containing `knowledge-management`, and uses its gitignored local
-`.fusionaim_km_token.json` cache. Treat a missing `scope` or missing
-`knowledge-management` token inside that property as an authentication
+scope token containing `knowledge-management`, and uses the shared managed
+external profile cache (`--token-cache auto`) under `~/.fusionaim/`. The cache
+is bound to the selected OAuth profile; never store tokens in the checkout or
+project workspace. Treat a missing `scope` or missing `knowledge-management`
+token inside that property as an authentication
 configuration blocker. Do not copy an Authorization header or a pasted bearer
 token into the command, skill, payload, log, or diagnostic.
 

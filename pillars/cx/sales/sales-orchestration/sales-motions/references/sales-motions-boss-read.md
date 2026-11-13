@@ -2,10 +2,8 @@
 
 ## Verified Source
 
-The endpoint summary below was verified against the Oracle-internal 26C BOSS
-OpenAPI page:
-
-`https://ohcrest.doceng-oci.oraclecorp.com/client/fusionapps/openapi-engagement/26c-c-internal-boss/html/api-sales-motions.html`
+The endpoint summary below reflects the 26C BOSS API contract used when this
+reference was authored.
 
 Reverify the target release before execution when it is later than 26C.
 
@@ -16,7 +14,10 @@ Run commands from the repository root through:
 `core/fusion-api/rest-api-client/scripts/boss-rest_client.py`
 
 The client obtains `boss_scope` from `core/auth/fusionEnv.properties` and uses
-the gitignored `.fusionaim_boss_token.json` cache. Never paste an Authorization
+`--token-cache auto`, the shared managed external profile cache at
+`~/.fusionaim/<profile-fingerprint>_token.json`. The profile binds the approved
+issuer/endpoints, client, target, and selected scope. Repository-local cache
+paths are rejected; never copy tokens into the checkout or project workspace. Never paste an Authorization
 header, password, bearer token, or token-cache content into a command.
 
 ## Supported Endpoints
@@ -38,8 +39,10 @@ python3 core/fusion-api/rest-api-client/scripts/boss-rest_client.py \
   --query '$limit=5'
 ```
 
-Use only documented query parameters. Keep previews bounded unless the user
-explicitly requests a larger result set.
+LIST accepts `$limit`, `$offset`, `$includeTotalItems`, `$filter`, `$sortBy`,
+`$fields`, and `$effectiveDate`. `$sortBy` is a comma-separated list of field
+names, each optionally followed by `:asc` or `:desc`; the default is ascending.
+Keep previews bounded unless the user explicitly requests a larger result set.
 
 Treat an empty `items` array with `hasMore: false` as a successful empty
 result, not an authorization failure.
@@ -52,7 +55,8 @@ python3 core/fusion-api/rest-api-client/scripts/boss-rest_client.py \
 ```
 
 Require the exact Sales Motion ID. Never resolve a record ID solely from a
-display name when multiple records could match.
+display name when multiple records could match. GET also accepts `$fields`
+and `$effectiveDate`.
 
 ## Advanced Query All
 
@@ -63,7 +67,7 @@ The documented request body supports:
 | Body field | Purpose |
 |---|---|
 | fields | Return only the named Sales Motion fields plus mandatory system fields. |
-| accessors | Select nested accessors such as salesMotionObjectives and salesMotionObjectiveHvas, each with its own query object. |
+| accessors | Select salesMotionObjectives or $translations at the root; nest salesMotionObjectiveHvas inside salesMotionObjectives.accessors. |
 | collection.filter | Filter the collection using searchable fields. |
 | collection.limit | Restrict the returned item count. |
 | collection.offset | Select the zero-based collection starting position. |
@@ -103,12 +107,94 @@ API. If any requested predicate, field, operator, accessor, or ordering cannot
 be represented by the documented contract, stop and explain the unsupported
 part rather than dropping or weakening it.
 
+## Local Read Metadata
+
+The field tables below preserve the 26C metadata for the supported reads.
+`No` means the source contract does not declare that capability; do not filter
+or sort by that field. Validate fields within their own object scope, rather
+than inheriting search or sort permissions from a parent object. Parent-reference
+fields are objects; do not invent nested reference fields or filter syntax.
+
+Use a separate query object for each accessor under `accessors`, with a bounded
+`collection.limit` for each requested child collection. `fields` is an array
+of field names; `collection.sortBy` is an array such as `["name"]` or
+`[{"name":"desc"}]`. Select only fields and accessors documented locally.
+Omit `collection.privilege`, `parameters`, or subtype-specific criteria unless
+an approved contract supplies their exact supported values.
+
+### Sales Motion root fields
+
+| Field(s) | Type | Searchable | Sortable |
+|---|---|---|---|
+| `id` | string (big-integer) | Yes | Yes |
+| `name`, `objectCode`, `statusCode`, `createdBy`, `updatedBy` | string | Yes | Yes |
+| `description` | string | Yes | No |
+| `deletedFlag` | boolean | Yes | Yes |
+| `timeCreated`, `timeUpdated` | string (date-time) | Yes | Yes |
+| `$sourceLang` | string | No | No |
+
+Root accessors are `salesMotionObjectives` and `$translations`.
+Objective accessors are `salesMotionObjectiveHvas` and `$translations`.
+The 26C HVA response defines no further child accessor; do not place the HVA
+accessor at the Sales Motion root.
+
+### Sales Motion translations
+
+| Field(s) | Type | Searchable | Sortable |
+|---|---|---|---|
+| `id` | string (big-integer) | Yes | Yes |
+| `$language`, `name` | string | Yes | Yes |
+| `description` | string | Yes | No |
+| `$sourceLang`, `createdBy`, `updatedBy` | string | No | No |
+| `timeCreated`, `timeUpdated` | string (date-time) | No | No |
+| `salesMotion` | object | Yes | No |
+
+### Objectives
+
+| Field(s) | Type | Searchable | Sortable |
+|---|---|---|---|
+| `id` | string (big-integer) | Yes | Yes |
+| `name` | string | Yes | Yes |
+| `description` | string | Yes | No |
+| `evaluationText`, `createdBy`, `updatedBy` | string | No | No |
+| `displaySequence` | string (big-decimal) | No | Yes |
+| `deletedFlag` | boolean | Yes | Yes |
+| `timeCreated`, `timeUpdated` | string (date-time) | Yes | Yes |
+| `salesMotion` | object | Yes | No |
+
+### Objective translations
+
+| Field(s) | Type | Searchable | Sortable |
+|---|---|---|---|
+| `id` | string (big-integer) | Yes | Yes |
+| `$language`, `name` | string | Yes | Yes |
+| `description` | string | Yes | No |
+| `evaluationText`, `$sourceLang`, `createdBy`, `updatedBy` | string | No | No |
+| `timeCreated`, `timeUpdated` | string (date-time) | No | No |
+
+### High-value activities
+
+| Field(s) | Type | Searchable | Sortable |
+|---|---|---|---|
+| `id` | string (big-integer) | Yes | Yes |
+| `name` | string | Yes | Yes |
+| `description`, `evaluationText` | string | Yes | No |
+| `displaySequence` | string (big-decimal) | No | Yes |
+| `timeCreated`, `timeUpdated` | string (date-time) | Yes | Yes |
+| `deletedFlag` | boolean | Yes | Yes |
+| `createdBy`, `updatedBy` | string | No | No |
+| `salesMotionObjective` | object | Yes | No |
+
 ## Effective Read Access
 
 - A successful LIST, GET, or QUERY proves effective read access for that call only.
 - HTTP 401 is an authentication result.
-- HTTP 403 after the shared client's one cache-managed refresh is an
-  authorization or privilege failure.
+- For LIST or GET, the shared client refreshes and retries once on a
+  cache-managed HTTP 401 or 403. A second 403 is an authorization or privilege
+  failure.
+- For QUERY, the shared client does not automatically refresh or retry the
+  POST after HTTP 401 or 403. Stop and report the sanitized authentication or
+  authorization failure; do not infer a missing role from that response alone.
 - HTTP 404 on an exact GET is a not-found result, not proof of missing read
   permission.
 - Do not infer role membership, permission-group membership, setup-screen

@@ -2,10 +2,8 @@
 
 ## Verified Source
 
-The endpoint summary below was verified against the Oracle-internal 26C BOSS
-OpenAPI page:
-
-`https://ohcrest.doceng-oci.oraclecorp.com/client/fusionapps/openapi-engagement/26c-c-internal-boss/html/api-data-capture-rules.html`
+The endpoint summary below reflects the 26C BOSS API contract used when this
+reference was authored.
 
 Reverify the target release before execution when it is later than 26C.
 
@@ -16,7 +14,10 @@ Run commands from the repository root through:
 `core/fusion-api/rest-api-client/scripts/boss-rest_client.py`
 
 The client obtains `boss_scope` from `core/auth/fusionEnv.properties` and uses
-the gitignored `.fusionaim_boss_token.json` cache. Never paste an Authorization
+`--token-cache auto`, the shared managed external profile cache at
+`~/.fusionaim/<profile-fingerprint>_token.json`. The profile binds the approved
+issuer/endpoints, client, target, and selected scope. Repository-local cache
+paths are rejected; never copy tokens into the checkout or project workspace. Never paste an Authorization
 header, password, bearer token, Basic credential, or token-cache content into a
 command. Do not execute a credential-bearing token relay command supplied in a
 request.
@@ -143,6 +144,56 @@ Validate all requested fields and accessors against the target-release
 contract. The root response documents `dataCaptureRuleAttributes` and
 `$translations` accessors.
 
+## Child Read Metadata
+
+The field tables below preserve the 26C metadata for the supported reads.
+`No` means the source contract does not declare that capability; do not filter
+or sort by that field. Validate fields within their own object scope, rather
+than inheriting search or sort permissions from a parent object. Parent-reference
+fields are objects; do not invent nested reference fields or filter syntax.
+
+Use a separate query object for each accessor under `accessors`, with a bounded
+`collection.limit` for each requested child collection. `fields` is an array
+of field names; `collection.sortBy` is an array such as `["name"]` or
+`[{"name":"desc"}]`. Select only fields and accessors documented locally.
+Omit `collection.privilege`, `parameters`, or subtype-specific criteria unless
+an approved contract supplies their exact supported values.
+
+Root accessors are `dataCaptureRuleAttributes` and `$translations`.
+Each rule attribute can also contain a `$translations` accessor.
+
+### Rule translations
+
+| Field(s) | Type | Searchable | Sortable |
+|---|---|---|---|
+| `id` | string (big-integer) | Yes | Yes |
+| `$language`, `name` | string | Yes | Yes |
+| `description` | string | Yes | No |
+| `$sourceLang`, `createdBy`, `updatedBy` | string | No | No |
+| `timeCreated`, `timeUpdated` | string (date-time) | No | No |
+| `dataCaptureRule` | object | Yes | No |
+
+### Rule attributes
+
+| Field(s) | Type | Searchable | Sortable |
+|---|---|---|---|
+| `id` | string (big-integer) | Yes | Yes |
+| `attributeName`, `relatedObjectCode`, `createdBy`, `updatedBy` | string | Yes | Yes |
+| `evaluationText` | string | Yes | No |
+| `timeCreated`, `timeUpdated` | string (date-time) | Yes | Yes |
+| `dataCaptureRule` | object | Yes | No |
+
+### Rule attribute translations
+
+| Field(s) | Type | Searchable | Sortable |
+|---|---|---|---|
+| `id` | string (big-integer) | Yes | Yes |
+| `evaluationText` | string | Yes | No |
+| `$language` | string | Yes | Yes |
+| `$sourceLang`, `createdBy`, `updatedBy` | string | No | No |
+| `timeCreated`, `timeUpdated` | string (date-time) | No | No |
+| `dataCaptureRuleAttribute` | object | Yes | No |
+
 ## Natural-Language Query Translation
 
 Derive a bounded query from the meaning of the complete request. Do not depend
@@ -176,8 +227,12 @@ unsupported part rather than dropping or weakening it.
 
 - A successful LIST, GET, or QUERY proves effective read access for that call only.
 - HTTP 401 is an authentication result.
-- HTTP 403 after the shared client's one cache-managed refresh is an
-  authorization or privilege failure.
+- For LIST or GET, the shared client refreshes and retries once on a
+  cache-managed HTTP 401 or 403. A second 403 is an authorization or privilege
+  failure.
+- For QUERY, the shared client does not automatically refresh or retry the
+  POST after HTTP 401 or 403. Stop and report the sanitized authentication or
+  authorization failure; do not infer a missing role from that response alone.
 - HTTP 404 on an exact GET is a not-found result, not proof of missing read
   permission.
 - Do not infer role membership, permission-group membership, setup-screen

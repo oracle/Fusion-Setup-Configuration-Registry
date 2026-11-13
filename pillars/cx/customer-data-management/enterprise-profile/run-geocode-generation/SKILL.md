@@ -408,8 +408,6 @@ private keys, or sensitive payloads.
   `https://docs.oracle.com/en/cloud/saas/applications-common/26b/facia/set-up-geocoding.html`
 - Scheduler REST contract:
   `https://docs.oracle.com/en/cloud/saas/applications-common/26c/farca/op-ess-rest-scheduler-v1-requests-post.html`
-- Internal job metadata:
-  `https://confluence.oraclecorp.com/confluence/pages/viewpage.action?pageId=7210249295`
 - Effective task catalog:
   `knowledge/setup-task-catalog/effective/setupTasksAll.json`
 

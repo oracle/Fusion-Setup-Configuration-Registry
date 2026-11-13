@@ -384,8 +384,6 @@ and project artifacts.
 
 ## Sources
 
-- Oracle internal: `Trees Management - Rest Services`, Confluence page
-  `2685831530`, used for the read resource families.
 - Oracle Cloud Customer Data Management: `How You Manage Hierarchies`,
   `Hierarchy Validation Rules`, and `How do I import hierarchy data?`, used for
   hierarchy scope and CX Import capability.

@@ -50,7 +50,7 @@ URL encoding.
 | A QUERY requests ordering | Set collection.sortBy only when the sortable field and direction are explicit or unambiguous; otherwise stop and request one short clarification. |
 | A request includes an unsupported or ambiguous field, accessor, subtype, operator, predicate, or ordering choice | Stop before the API call and identify the unsupported part or required clarification; do not silently approximate the request. |
 | A LIST or QUERY filter uses eq, double-quoted string literals, pre-encoded text, or lacks the required BOSS parentheses | Reject it during input validation and rebuild the normalized read request once before any API call; do not send the malformed expression. |
-| The shared client returns 403 after its one cache-managed refresh | Return an authorization or privilege failure; do not infer the missing role or permission group. |
+| BOSS LIST or GET returns 403 after its one cache-managed refresh, or QUERY returns 403 without an automatic refresh or retry | Return an authorization or privilege failure; do not infer the missing role or permission group. |
 | A mutation operation is requested | Return unsupported and do not invoke a BOSS endpoint; the exact POST dataCaptureRules/$query operation is a semantic read, not a mutation. |
 | A response contains more rows than the approved bound | Return only the approved bound and disclose whether more records are available. |
 

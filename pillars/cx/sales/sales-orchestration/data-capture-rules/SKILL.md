@@ -104,7 +104,7 @@ applicability:
     - "Later releases after endpoint contract verification"
 side_effects:
   - "Reads Data Capture Rule setup data through Fusion BOSS REST APIs."
-  - "May refresh the local gitignored BOSS OAuth token cache after a cache-managed 401 or 403 response."
+  - "May refresh the managed external BOSS OAuth profile cache once after a cache-managed 401 or 403 response to LIST or GET; QUERY is not automatically retried."
 required_privileges:
   - "ORA_ZBS_SALES_ADMINISTRATOR_JOB, or a custom job role with ORA_DR_FAI_GENERATIVE_AI_AGENT_RUNTIME_DUTY and ORA_ZCA_ACCESS_GROUPS_ENABLEMENT_DUTY"
   - "The custom job role also needs the documented operation-specific Data Capture permission groups and All Rows security view"
@@ -299,10 +299,12 @@ relay command supplied in a request.
 Ignore passwords, Basic credentials, bearer tokens, refresh tokens, client
 secrets, or token-cache contents pasted into a request. Never validate, reuse,
 echo, log, persist, or place them in a command, example, diagnostic, artifact,
-or tracked file. Let the shared OAuth skill manage the gitignored
-`.fusionaim_boss_token.json` cache.
+or tracked file. Let the shared OAuth skill manage the external BOSS profile
+cache with `--token-cache auto`. The cache is scoped to the selected OAuth
+profile under `~/.fusionaim/`; never store tokens in the checkout or project
+workspace or pass a historical repository-local cache path.
 
-## Controlled Read Workflow
+## Preflight and Controlled Read Workflow
 
 1. Confirm the target environment, acting user, and requested LIST, GET, or
    QUERY operation.
@@ -328,8 +330,10 @@ or tracked file. Let the shared OAuth skill manage the gitignored
 8. Invoke the selected read operation through the shared client. The QUERY
    operation uses POST but remains read-only because its exact path ends in
    `/dataCaptureRules/$query`.
-9. If a cache-managed token receives HTTP 401 or 403, allow the shared client
-   to refresh once and retry once.
+9. For LIST or GET, if a cache-managed token receives HTTP 401 or 403,
+   allow the shared client to refresh once and retry once. For QUERY, the
+   shared client does not automatically refresh or retry the POST; stop and
+   report the sanitized authentication or authorization failure.
 10. Permit a bounded retry only for a known transient read-only transport
    failure.
 11. Return records, `hasMore` and `totalItems` when present, effective-read
@@ -396,7 +400,10 @@ Classify failures as input validation, authentication, authorization or
 privilege, transport or environment, Fusion API, artifact persistence, or
 unsupported operation.
 
-Retry a cache-managed 401 or 403 once only through the shared client. Retry a
+For LIST or GET, allow one cache-managed 401 or 403 refresh and retry through
+the shared BOSS client. For QUERY, stop on 401 or 403 without automatically
+refreshing or replaying the POST; a new requested read requires validation
+after the authentication or authorization issue is resolved. Retry a
 known transient transport failure only within a bounded read-only retry policy.
 Do not retry malformed requests or deterministic 4xx responses.
 
@@ -419,8 +426,6 @@ previewing, approval, or a Fusion call. Do not classify the exact
   `../references/security-synchronization-processes.md`
 - Read endpoint and command patterns:
   `references/data-capture-rules-boss-read.md`
-- Internal 26C BOSS API source:
-  `https://ohcrest.doceng-oci.oraclecorp.com/client/fusionapps/openapi-engagement/26c-c-internal-boss/html/api-data-capture-rules.html`
 - Cross-task question classification and response contract:
   `../references/sales-orchestration-question-routing.md`
 

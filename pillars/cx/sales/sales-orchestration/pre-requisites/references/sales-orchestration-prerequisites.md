@@ -192,21 +192,16 @@ For a question spanning more than one task, route to
 - Source accessed: 2026-08-10.
 - The Oracle page is published under the `latest` documentation path. Recheck
   the page when answering release-sensitive questions.
-- Oracle Internal, *Sales Orchestration - Env setup & validation*:
-  https://confluence.oraclecorp.com/confluence/pages/viewpage.action?pageId=21570198176
-- Source accessed: 2026-08-25; page version 11 (last updated 2026-08-14).
-  This source defines the internal first-time signals, exact validation URL
-  templates, Outlook/email UI and service checks, and Dispatcher validation.
+- Environment setup and validation guidance supplied 2026-08-25 covers
+  first-time signals, validation URL templates, Outlook/email UI and service
+  checks, and Dispatcher validation.
 - Screenshot source supplied 2026-08-25: `PATCH` target-record shape for
   `/crmRestApi/resources/latest/signalDefinitions/{{SignalDefinitionId}}` and
   the `ActiveFlag` body field. The supplied `false` body is documented above as
   a deactivation example; the activation example uses `true`.
-- Oracle Internal, *Sales Orchestration - Enable Signal Definitions*:
-  https://confluence.oraclecorp.com/confluence/pages/viewpage.action?pageId=21171809096
-- Source accessed: 2026-08-25. Its signal-activation procedure is normalized
-  above as a manual, approval-gated remediation sequence.
+- Signal-activation guidance supplied 2026-08-25 is normalized above as a
+  manual, approval-gated remediation sequence.
 - This local reference is self-contained for the supported prerequisite
-  explanation, validation, and remediation guidance. The Confluence links are
-  provenance only; do not require Confluence access to answer a future request.
+  explanation, validation, and remediation guidance.
 - This reference summarizes readiness; it does not authorize browser changes,
   setup mutations, ESS jobs, or external API calls.

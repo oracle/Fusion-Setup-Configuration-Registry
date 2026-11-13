@@ -160,9 +160,7 @@ Allow only these exact existing DFF codes:
 | `FOS_TRADE_AGREEMENT_FTR` | Financial Orchestration Financial Route | `10115` |
 | `FOS_TRADE_AGREEMENT_PTR` | Financial Orchestration Primary Route | `10115` |
 
-Mapping source: Oracle Central Confluence,
-[Bug 39748346 deployAllFlex script optimization for provisioning template creation](https://confluence.oraclecorp.com/confluence/pages/viewpage.action?pageId=21197119830),
-page version 12, updated 2026-07-31; verified 2026-09-24 (Oracle Internal).
+Mapping evidence: verified FOS flexfield deployment metadata.
 Its deployment XML and `[flexfieldType, applicationId, flexfieldCode]`
 descriptor list independently identify each code with application ID `10115`.
 This is reusable product registration evidence, not evidence of deployment
@@ -280,8 +278,7 @@ registration or available columns.
 | `ATTRIBUTE_DATE1` through `ATTRIBUTE_DATE3` | `DATE` |
 | `ATTRIBUTE_TIMESTAMP1` through `ATTRIBUTE_TIMESTAMP3` | `TIMESTAMP` |
 
-[FOS DFF BOSS synchronization guidance](https://confluence.oraclecorp.com/confluence/pages/viewpage.action?pageId=21359453499)
-(version 1, updated 2026-07-28) explicitly distinguishes the PTR DFF code
+DFF synchronization guidance explicitly distinguishes the PTR DFF code
 `FOS_TRADE_AGREEMENT_PTR` from the physical table `FOS_AGREEMENT_PTR_F`.
 For any allocation, verify the selected code's current table usage and column
 availability through the routed evidence before applying these references;

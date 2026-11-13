@@ -9,7 +9,8 @@
 | A request asks to create, generate, draft, or sample a Data Capture Rule or local blueprint | Return UNSUPPORTED within this skill. Do not route to the parent skill, generate an artifact or payload, request approval, authenticate, or call Fusion. |
 | A LIST or QUERY equality filter uses OData eq, double-quoted literals, pre-encoded text, or lacks the BOSS double parentheses | Fail input validation before Fusion. Normalize to ((field = 'value')) only when the user's field, operator, and value are unambiguous. |
 | A QUERY body wraps the documented fields in query, payload, or data | Fail input validation before Fusion and require one top-level query object with collection.filter and collection.limit. |
-| Cache-managed OAuth receives 401 or 403 | Refresh once through the shared BOSS client and retry the read request once. |
+| LIST or GET receives a cache-managed 401 or 403 | Refresh once through the shared BOSS client and retry once. |
+| QUERY receives 401 or 403 | Stop and report the sanitized authentication or authorization failure. The shared BOSS client does not automatically refresh or retry POST; validate a new requested read after the issue is resolved. |
 | Explicitly supplied credential or token receives 401 or 403 | Do not validate, replace, or reuse it; stop and require the shared OAuth flow. |
 | A second 403 occurs after cache-managed refresh | Classify as authorization or privilege failure. |
 | GET by exact ID returns 404 | Return a not-found result for that ID without selecting another record. |
@@ -25,7 +26,8 @@
 | Unsupported operation | The request is create, update, delete, PATCH, PUT, bulk write, sample or blueprint generation, or POST to any endpoint other than the exact dataCaptureRules/$query read endpoint. | Return UNSUPPORTED within this skill without routing or artifact generation; use LIST, GET, or QUERY, or wait for a reviewed write-enabled skill revision. |
 | Input validation | Environment, operation, exact ID, or query value is missing or invalid. | Correct only the invalid read input and rerun preflight. |
 | Authentication | Shared OAuth configuration or token acquisition fails. | Correct the shared OAuth configuration and authenticate again. |
-| Authorization or privilege | The LIST, GET, or QUERY call returns a second 403 after cache-managed refresh. | Confirm the read role, four read permission groups, and All Rows security view. |
+| QUERY authentication or authorization | QUERY returns 401 or 403 without an automatic refresh or retry. | Report the status and sanitized evidence; verify OAuth configuration and effective read access before a new requested read. Do not infer the missing role or permission group. |
+| Authorization or privilege | LIST or GET returns a second 403 after cache-managed refresh. | Confirm the read role, four read permission groups, and All Rows security view. |
 | Not found | GET by exact ID returns 404. | Verify the supplied ID; do not infer or substitute another record. |
 | Transport or environment | VPN, DNS, timeout, or service connectivity fails. | Confirm the target environment before one bounded read-only retry. |
 | Fusion API | BOSS returns another non-authentication 4xx or 5xx. | Correct the request or environment issue using sanitized response evidence. |

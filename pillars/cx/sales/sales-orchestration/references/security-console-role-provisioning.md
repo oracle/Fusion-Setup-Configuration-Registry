@@ -100,8 +100,8 @@ For every required permission group:
 10. Select **Next** until **Summary**, and then select **Save and Close** after
     all required role changes are complete.
 
-Do not infer permission-group names. Use the task-specific matrix sourced from
-the approved internal security page. The task skills execute read operations
+Do not infer permission-group names. Use the task-specific security matrix
+retained in the local references. The task skills execute read operations
 only, but their security references intentionally include Create, Update, and
 Delete provisioning guidance.
 
@@ -189,13 +189,10 @@ the administrator or end-user role identified by the approved policy matrix.
 
 ## Sources
 
-- Oracle-internal Sales Orchestration security matrix:
-  `https://confluence.oraclecorp.com/confluence/pages/viewpage.action?pageId=20005795272`
+The security grants supplied when this reference was authored are reproduced
+here and in the task-specific security references. Verify them against the
+target release during a release-freshness review.
 
-The security grants from that page are reproduced in this local reference and
-the task-specific security references. Do not require Confluence access to
-answer or apply this skill's supported guidance; retain the link for
-provenance and release-freshness review only.
 - Oracle profile-option and permission-group enablement guidance:
   `https://docs.oracle.com/en/cloud/saas/sales/faekt/security-and-privileges-to-setup-and-extract-key-terms-from-contract-documents.html`
 - Oracle AI Agent Studio permission-group guidance:
