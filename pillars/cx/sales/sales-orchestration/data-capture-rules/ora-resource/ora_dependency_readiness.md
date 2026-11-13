@@ -12,7 +12,7 @@
 | Dependency ID | Dependency | Mandatory | Applies When | Status | Value Source | Resolver | Why | User Guidance | Values to Fill |
 |---|---|---|---|---|---|---|---|---|---|
 | DCR.DEP.ENVIRONMENT | Target Fusion environment | Yes | LIST, GET, or QUERY | Satisfied | fusion_environment_context and core/auth/fusionEnv.properties |  | Read results must come from the intended environment. | Confirm the environment before the read call. | Target environment identity |
-| DCR.DEP.BOSS_OAUTH | BOSS OAuth configuration | Yes | LIST, GET, or QUERY | Satisfied | core.auth.fusion-oauth-authentication and core.fusion-api.rest-api-client |  | BOSS reads require boss_scope and the separate gitignored token cache. | Use the shared OAuth flow; never paste, execute, or persist a credential-bearing token command. | Authenticated BOSS client readiness |
+| DCR.DEP.BOSS_OAUTH | BOSS OAuth configuration | Yes | LIST, GET, or QUERY | Satisfied | core.auth.fusion-oauth-authentication and core.fusion-api.rest-api-client |  | BOSS reads require boss_scope and the shared managed external profile cache (--token-cache auto), isolated by issuer/endpoints, client, target, and selected scope; no tokens belong in the checkout or project workspace. | Use the shared OAuth flow; never paste, execute, or persist a credential-bearing token command. | Authenticated BOSS client readiness |
 
 ## Dependency Classification
 

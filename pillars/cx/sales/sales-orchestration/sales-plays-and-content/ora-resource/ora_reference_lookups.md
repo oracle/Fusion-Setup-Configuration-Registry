@@ -36,7 +36,7 @@
 | A QUERY asks for the first or top N records without an order | Set collection.limit to the bounded positive N, preserve service order, and disclose that no explicit sort was applied. |
 | A QUERY requests ordering | Set collection.sortBy only when the sortable field and direction are explicit or unambiguous; otherwise stop and request one short clarification. |
 | A request includes an unsupported or ambiguous field, accessor, subtype, enum, operator, predicate, or ordering choice | Stop before the API call and identify the unsupported part or required clarification; do not silently approximate the request. |
-| The shared client returns 403 after its one cache-managed refresh | Return an authorization or privilege failure; do not infer the missing role, permission group, or data security policy. |
+| BOSS LIST or GET returns 403 after its one cache-managed refresh, or QUERY returns 403 without an automatic refresh or retry | Return an authorization or privilege failure; do not infer the missing role, permission group, or data security policy. |
 | A mutation operation is requested | Return unsupported and do not invoke a write endpoint; the exact POST salesPlays/$query and POST /api/knowledge-management/v2/contentIntelligence operations are semantic reads, not mutations. |
 | A response contains more rows than the approved bound | Return only the approved bound and disclose whether more records are available. |
 

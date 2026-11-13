@@ -7,7 +7,6 @@
 | Current Oracle behavior | https://docs.oracle.com/en/cloud/saas/sales/fauss/populate-location-latitude-and-longitude-information.html | Explain process purpose, prerequisites, parameters, compatibility, and result boundaries |
 | Current setup guidance | https://docs.oracle.com/en/cloud/saas/applications-common/26b/facia/set-up-geocoding.html | Explain how geocoding is enabled for a country |
 | Current country-code reference | https://docs.oracle.com/en/cloud/saas/customer-data-management/faicd/list-of-available-countries-with-loqate-geography-reference-data.html | Resolve documented country names and two-letter codes |
-| Internal job metadata | https://confluence.oraclecorp.com/confluence/pages/viewpage.action?pageId=7210249295 | Identify HZ-HZGEOCODER and its child-process model |
 | SME decisions | Slack group DM C0BMJ2SPTQE on 2026-08-03 | Apply optional-parameter behavior, Batch Size default 50, maximum 100, and Regenerate Geocode default N |
 | Core runtime contract | core.fusion-api.ess-job-submitter | Explain submission, requestId capture, polling, timeout, and resume behavior |
 

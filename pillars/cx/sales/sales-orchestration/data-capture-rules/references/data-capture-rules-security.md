@@ -14,14 +14,10 @@
 
 ## Source
 
-The Oracle-internal Confluence page `26.07: Security Changes to work with Sales
-Motion/Play/Data Capture Objects` defines the out-of-box grants:
-
-`https://confluence.oraclecorp.com/confluence/pages/viewpage.action?pageId=20005795272`
-
-The documented grants are reproduced in this local reference. Do not require
-Confluence access for a future skill run; use a newer approved source only for
-an explicit release-freshness review.
+The out-of-box grants below reflect the security requirements supplied when
+this reference was authored. Use this local reference for future skill runs;
+verify the grants against the target release during an explicit
+release-freshness review.
 
 The custom-role duties and security-synchronization instructions below are
 additional developer-provided requirements for this task skill.

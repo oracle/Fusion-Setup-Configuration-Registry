@@ -269,8 +269,7 @@ Common owns any additional identity required by the selected resource contract.
 
 ### Documented FOS lookup inventory
 
-Source: [FOS and EDR Lookups](https://confluence.oraclecorp.com/confluence/pages/viewpage.action?pageId=1082595636),
-Oracle Central Confluence, version 3, updated 2019-01-22; reviewed 2026-09-24.
+Historical FOS lookup seed-data reference.
 These 33 exact FOS-prefixed names are historical seed-data references, not a
 complete current inventory, an existence guarantee, or a restrictive allowlist.
 The approved prefix rule still accepts other `FOS_` / `fos_` names, including

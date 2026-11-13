@@ -8,7 +8,9 @@
 | An explicit salesPlayType is not SALES_PLAY or CONTENT_BUNDLE | Stop before a Fusion call, show the unsupported type, and list the two accepted canonical values. |
 | GET returns the exact requested ID with a salesPlayType different from the explicitly expected type | Return the record with a type-mismatch diagnostic; do not substitute another record or reinterpret its type. |
 | A mutation operation is requested | Return unsupported, state that the current skill revision is read-only, and stop without a preview; do not misclassify the exact salesPlays/$query or /api/knowledge-management/v2/contentIntelligence semantic-read POST. |
-| Cache-managed OAuth receives 401 or 403 | Refresh once through the applicable shared BOSS or Knowledge Management client and retry the read request once. |
+| LIST or GET receives a cache-managed 401 or 403 | Refresh once through the shared BOSS client and retry once. |
+| QUERY receives 401 or 403 | Stop and report the sanitized authentication or authorization failure. The shared BOSS client does not automatically refresh or retry POST; validate a new requested read after the issue is resolved. |
+| CONTENT_SEARCH receives a cache-managed 401 or 403 | Refresh once through the Knowledge Management wrapper and retry the semantic read once. |
 | Explicitly supplied credential or token receives 401 or 403 | Do not validate, replace, or reuse it; stop and require the shared OAuth flow. |
 | The OAuth callback returns unauthorized_client after the `knowledge-management` scope token is selected from regular `scope` | Stop without retrying; classify the configured OAuth client or selected scope token as not accepted for `/api/knowledge-management`, and record that no Content Intelligence request was sent. |
 | A second 403 occurs after cache-managed refresh | Classify as authorization or privilege failure. |
@@ -30,7 +32,8 @@
 | Catalog mismatch | Documented or generated LIST query grammar is rejected while a source-backed runtime form differs. | Stop without retry, preserve the sanitized failing expression and trace identifier, update the skill from authorized evidence, and start a new requested read only after validation. |
 | Authentication | Applicable shared BOSS or Knowledge Management OAuth configuration or token acquisition fails. | Correct the applicable OAuth configuration and authenticate again. |
 | OAuth client registration | The authorization callback returns unauthorized_client for the selected `knowledge-management` scope token before CONTENT_SEARCH is sent. | Have the identity administrator approve the OAuth client and regular `scope` property for the selected `knowledge-management` token, or provide the approved client configuration; do not substitute a separate Knowledge Management scope property or a pasted bearer token. |
-| Authorization or privilege | LIST, GET, or QUERY returns a second 403 after cache-managed refresh. | Confirm the read role, four read permission groups, and All Rows security view. |
+| QUERY authentication or authorization | QUERY returns 401 or 403 without an automatic refresh or retry. | Report the status and sanitized evidence; verify OAuth configuration and effective read access before a new requested read. Do not infer the missing role or permission group. |
+| Authorization or privilege | LIST or GET returns a second 403 after cache-managed refresh. | Confirm the read role, four read permission groups, and All Rows security view. |
 | Knowledge data security | CONTENT_SEARCH returns a second 403 after cache-managed refresh. | Confirm access to the Sales Play Consumer user group and Sales Force Automation department for the acting end-user role. |
 | Not found | GET by exact ID returns 404. | Verify the supplied ID; do not infer or substitute another record. |
 | Transport or environment | VPN, DNS, timeout, or service connectivity fails. | Confirm the target environment before one bounded read-only retry. |

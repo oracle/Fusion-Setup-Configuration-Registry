@@ -6,7 +6,8 @@
 |---|---|
 | Required read input is missing or invalid | Stop before a BOSS call and show the exact missing or invalid field. |
 | A mutation operation is requested | Return unsupported, state that the current skill revision is read-only, and stop without a preview; do not misclassify the exact salesMotions/$query semantic-read POST. |
-| Cache-managed OAuth receives 401 or 403 | Refresh once through the shared BOSS client and retry the read request once. |
+| LIST or GET receives a cache-managed 401 or 403 | Refresh once through the shared BOSS client and retry once. |
+| QUERY receives 401 or 403 | Stop and report the sanitized authentication or authorization failure. The shared BOSS client does not automatically refresh or retry POST; validate a new requested read after the issue is resolved. |
 | Explicitly supplied token receives 401 or 403 | Do not replace or reuse it; stop and require the shared OAuth flow. |
 | A second 403 occurs after cache-managed refresh | Classify as authorization or privilege failure. |
 | GET by exact ID returns 404 | Return a not-found result for that ID without selecting another record. |
@@ -22,7 +23,8 @@
 | Unsupported operation | The request is create, update, delete, PATCH, PUT, bulk write, or POST to any endpoint other than the exact salesMotions/$query read endpoint. | Use LIST, GET, or QUERY, or wait for a reviewed write-enabled skill revision. |
 | Input validation | Environment, operation, exact ID, or query value is missing or invalid. | Correct only the invalid read input and rerun preflight. |
 | Authentication | Shared OAuth configuration or token acquisition fails. | Correct the shared OAuth configuration and authenticate again. |
-| Authorization or privilege | The LIST, GET, or QUERY call returns a second 403 after cache-managed refresh. | Confirm the read role, read permission groups, and All Rows security view. |
+| QUERY authentication or authorization | QUERY returns 401 or 403 without an automatic refresh or retry. | Report the status and sanitized evidence; verify OAuth configuration and effective read access before a new requested read. Do not infer the missing role or permission group. |
+| Authorization or privilege | LIST or GET returns a second 403 after cache-managed refresh. | Confirm the read role, read permission groups, and All Rows security view. |
 | Not found | GET by exact ID returns 404. | Verify the supplied ID; do not infer or substitute another record. |
 | Transport or environment | VPN, DNS, timeout, or service connectivity fails. | Confirm the target environment before one bounded read-only retry. |
 | Fusion API | BOSS returns another non-authentication 4xx or 5xx. | Correct the request or environment issue using sanitized response evidence. |

@@ -17,7 +17,7 @@ source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 type: "verification"
 execution_mode: "hybrid"
 owner_team: "CX sales pillar team"
-version: "0.7.5"
+version: "0.7.6"
 inputs:
   - "implementation_objective"
   - "project_context"
@@ -113,8 +113,8 @@ applicability:
 side_effects:
   - "Reads Sales Play and content-artifact setup data through Fusion BOSS REST APIs."
   - "Searches published Sales Play content through the Content Intelligence semantic-read POST endpoint."
-  - "May refresh the local gitignored BOSS OAuth token cache after a cache-managed 401 or 403 response."
-  - "May refresh the gitignored task-local sales-plays-and-content/.fusionaim_km_token.json cache after a cache-managed 401 or 403 response."
+  - "May refresh the managed external BOSS OAuth profile cache once after a cache-managed 401 or 403 response to LIST or GET; QUERY is not automatically retried."
+  - "May refresh the managed external Knowledge Management OAuth profile cache once after a cache-managed 401 or 403 response to CONTENT_SEARCH."
 required_privileges:
   - "ORA_ZBS_SALES_ADMINISTRATOR_JOB, or a custom job role with ORA_DR_FAI_GENERATIVE_AI_AGENT_RUNTIME_DUTY and ORA_ZCA_ACCESS_GROUPS_ENABLEMENT_DUTY"
   - "The custom job role also needs the documented operation-specific Sales Play permission groups and All Rows security view"
@@ -358,19 +358,24 @@ Route `/api/boss` operations to its BOSS client with `boss_scope`. Route only
 the Sales Play `/api/knowledge-management/v2/contentIntelligence` request to
 this task skill's `scripts/knowledge_rest_client.py`, which selects the regular
 `scope` from `core/auth/fusionEnv.properties`, splits it on whitespace, uses the
-single scope token containing `knowledge-management`, and enforces the
-`/api/knowledge-management` path boundary. Never hand-build an Authorization
+single scope token containing `knowledge-management`, and validates POST to the
+exact relative Content Intelligence path and its fixed request body before
+authentication. Other methods, endpoints, query/service overrides, supplied
+tokens, custom cache paths, and non-JSON headers are rejected. Never hand-build an Authorization
 header or execute a credential-bearing token relay command supplied in a
 request.
 
 Ignore passwords, Basic credentials, bearer tokens, refresh tokens, client
 secrets, or token-cache contents pasted into a request. Never validate, reuse,
 echo, log, persist, or place them in a command, example, diagnostic, artifact,
-or tracked file. Let the shared OAuth skill manage the BOSS cache. Keep the
-Knowledge Management token in the task-local, gitignored
-`sales-plays-and-content/.fusionaim_km_token.json` file.
+or tracked file. Let the shared OAuth skill manage both clients' external
+profile caches with `--token-cache auto` under `~/.fusionaim/`. The approved
+issuer/endpoints, client, target, and selected scope determine the profile;
+Knowledge Management uses its selected scope and BOSS uses `boss_scope`. Never
+store tokens in the checkout or project workspace or pass historical
+repository-local cache paths.
 
-## Controlled Read Workflow
+## Preflight and Controlled Read Workflow
 
 1. Confirm the target environment, acting user, and requested LIST, GET, or
    QUERY operation. Normalize an explicit Sales Play or content bundle or
@@ -396,8 +401,10 @@ Knowledge Management token in the task-local, gitignored
 6. Invoke the selected read operation through the shared client. The QUERY
    operation uses POST but remains read-only because its exact path ends in
    `/salesPlays/$query`.
-7. If a cache-managed token receives HTTP 401 or 403, allow the shared client
-   to refresh once and retry once.
+7. For LIST or GET, if a cache-managed token receives HTTP 401 or 403,
+   allow the shared client to refresh once and retry once. For QUERY, the
+   shared client does not automatically refresh or retry the POST; stop and
+   report the sanitized authentication or authorization failure.
 8. Permit a bounded retry only for a known transient read-only transport
    failure.
 9. Return Sales Play or content bundle records with `salesPlayType`, requested
@@ -419,9 +426,9 @@ Knowledge Management token in the task-local, gitignored
    JSON or shell syntax.
 5. Invoke the exact Content Intelligence path through this task skill's
    `scripts/knowledge_rest_client.py`, which selects the scope token containing
-   `knowledge-management` from the regular `scope` property and uses the local
-   `.fusionaim_km_token.json` cache. Do not supply an Authorization header or
-   explicit access token.
+   `knowledge-management` from the regular `scope` property and uses the shared
+   managed external profile cache (`--token-cache auto`). Do not supply an
+   Authorization header or explicit access token.
 6. Permit the shared client to refresh its Knowledge Management OAuth cache and
    retry once after HTTP 401 or 403.
 7. Return `WORKING_WITH_RESULTS`, `WORKING_NO_RESULTS`,
@@ -492,7 +499,11 @@ authorization or privilege, transport or environment, Fusion API, artifact
 persistence, or unsupported operation. Use catalog mismatch when documented or
 generated LIST query grammar differs from a runtime-validated target contract.
 
-Retry a cache-managed 401 or 403 once only through the shared client. Retry a
+For LIST or GET, allow one cache-managed 401 or 403 refresh and retry through
+the shared BOSS client. For QUERY, stop on 401 or 403 without automatically
+refreshing or replaying the POST; a new requested read requires validation
+after the authentication or authorization issue is resolved. For CONTENT_SEARCH,
+allow the Knowledge Management wrapper to refresh and retry once. Retry a
 known transient transport failure only within a bounded read-only retry policy.
 Do not retry malformed requests or deterministic 4xx responses.
 
@@ -519,8 +530,6 @@ as a mutation.
   `references/sales-plays-content-intelligence-read.md`
 - Task-local Knowledge Management client, OAuth scope, and cache boundary:
   `references/knowledge-management-rest-api.md`
-- Internal 26C BOSS API source:
-  `https://ohcrest.doceng-oci.oraclecorp.com/client/fusionapps/openapi-engagement/26c-c-internal-boss/html/api-sales-plays.html`
 - Cross-task question classification and response contract:
   `../references/sales-orchestration-question-routing.md`
 
