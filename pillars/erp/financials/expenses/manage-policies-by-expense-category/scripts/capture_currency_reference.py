@@ -13,6 +13,8 @@ import sys
 from currency_receipt import ROUTE, binding, digest, origin
 from currency_reference import classify, request_plan
 from workbook_intake import ROOT, artifact_output, read_workbook
+from currency_core_transport import core_get
+from environment_identity import same_environment
 
 
 class CoreLookupFailed(ValueError):
@@ -29,6 +31,7 @@ class CoreLookupFailed(ValueError):
 
 
 def operation_inputs(workbook, operations, *, baseline=None, runtime_contract=None):
+    from category_scope import owning_policy
     model = read_workbook(workbook)
     if model['status'] != 'local_shape_valid':
         raise ValueError('Correct workbook input before currency preflight')
@@ -37,32 +40,62 @@ def operation_inputs(workbook, operations, *, baseline=None, runtime_contract=No
     supplied = set()
     for record in model['records']:
         values = record['values']
-        if 'CurrencyCode' in values:
-            policy = values.get('PolicyName', values.get(record['entity'].removesuffix('_LINE') + '.PolicyName'))
-            supplied.add((record['entity'], policy, values['CurrencyCode']))
+        for field in ('CurrencyCode','NumOfAttendeesCurrCode'):
+            if field in values:
+                policy = values.get('PolicyName', values.get(owning_policy(record['entity']) + '.PolicyName'))
+                supplied.add((record['entity'], policy, values[field]))
     retained=set()
     if baseline is not None and runtime_contract is not None:
         from workbook_intake import read_package,load_catalog
         contract=json.loads(Path(runtime_contract).read_text())
         _,grids=read_package(baseline,load_catalog())
-        entity='ORA_EXM_MEALS_POLICY'
-        entry=contract.get('entities',{}).get(entity,{})
-        if 'CurrencyCode' in entry.get('validate_retained_reference_fields',[]):
-            if entry.get('identity_fields')!=['PolicyName'] or entry.get('identity_match')!='exact':
-                raise ValueError('Retained currency capture requires exact parent identity')
-            supplied_parents={r['policy_name'] for r in model['records']
-                if r['entity']==entity and 'CurrencyCode' in r['values']}
-            retained_names={r['policy_name'] for r in model['records'] if r['policy_name'] not in supplied_parents
-                and (r['entity']==entity or contract.get('executable_profile')=='meals-single-currency-v2')}
-            for name in retained_names:
-                if not name:
-                    continue
-                rows=[dict(zip(grids[entity][0],row)) for row in grids[entity][1:]
-                      if row[grids[entity][0].index('PolicyName')].casefold()==str(name).casefold()]
-                if (len(rows)!=1 or rows[0]['PolicyName']!=name
-                    or rows[0]['CurrencyOptionCode']!='SINGLE' or not rows[0]['CurrencyCode']):
-                    raise ValueError('Retained currency requires one exact existing SINGLE parent')
-                retained.add((entity,name,rows[0]['CurrencyCode']))
+        from category_scope import PARENTS
+        selected_parents={owning_policy(r['entity']) for r in model['records']}
+        for entity in sorted(set(PARENTS)|selected_parents):
+            entry=contract.get('entities',{}).get(entity,{})
+            if entity == 'ORA_EXM_ENTERTAINMENT_POLICY':
+                names = {r['policy_name'] for r in model['records'] if owning_policy(r['entity'])==entity}
+                for name in names:
+                    selected = [r for r in model['records'] if r['entity']==entity and r['policy_name']==name]
+                    values = selected[0]['values'] if selected else {}
+                    matches = [dict(zip(grids[entity][0],row)) for row in grids[entity][1:]
+                               if row[grids[entity][0].index('PolicyName')].casefold()==name.casefold()]
+                    if len(matches)>1 or matches and matches[0]['PolicyName']!=name:
+                        raise ValueError('Retained Entertainment currency requires an exact parent')
+                    if matches:
+                        for field in ('CurrencyCode','NumOfAttendeesCurrCode'):
+                            if field not in values and matches[0].get(field):
+                                retained.add((entity,name,matches[0][field]))
+                continue
+            if ('CurrencyCode' in entry.get('validate_retained_reference_fields',[])
+                    or entity=='ORA_EXM_MISCELLANEOUS_POLICY'):
+                if entry.get('identity_fields')!=['PolicyName'] or entry.get('identity_match')!='exact':
+                    raise ValueError('Retained currency capture requires exact parent identity')
+                supplied_parents={r['policy_name'] for r in model['records']
+                    if r['entity']==entity and 'CurrencyCode' in r['values']}
+                retained_names={r['policy_name'] for r in model['records'] if r['policy_name'] not in supplied_parents
+                    and owning_policy(r['entity'])==entity}
+                for name in retained_names:
+                    if not name:
+                        continue
+                    rows=[dict(zip(grids[entity][0],row)) for row in grids[entity][1:]
+                          if row[grids[entity][0].index('PolicyName')].casefold()==str(name).casefold()]
+                    if len(rows)!=1 or rows[0]['PolicyName']!=name:
+                        raise ValueError('Retained currency requires one exact existing SINGLE parent')
+                    patches=[r['values'] for r in model['records'] if r['entity']==entity and r['policy_name']==name]
+                    if len(patches)>1:
+                        raise ValueError('Retained currency requires one exact parent input')
+                    resulting={**rows[0],**(patches[0] if patches else {})}
+                    if entity=='ORA_EXM_MISCELLANEOUS_POLICY':
+                        if resulting.get('RateTypeCode')=='PERCENT':
+                            if resulting.get('CurrencyCode') or resulting.get('CurrencyOptionCode'):
+                                raise ValueError('Miscellaneous PERCENT must not acquire a monetary currency')
+                            continue
+                        if resulting.get('RateTypeCode') not in {'LIMIT','BOTH'}:
+                            raise ValueError('Miscellaneous currency requires a supported resulting rate type')
+                    if resulting.get('CurrencyOptionCode')!='SINGLE' or not resulting.get('CurrencyCode'):
+                        raise ValueError('Retained currency requires one exact existing SINGLE parent')
+                    retained.add((entity,name,resulting['CurrencyCode']))
     actual = []
     for item in operations:
         if (not isinstance(item, dict) or set(item) != {'entity', 'policy_name', 'operation', 'currency_code'}
@@ -93,14 +126,15 @@ def main():
     props = read_properties(args.properties)
     if digest(args.properties)!=profile_digest:
         raise ValueError('Currency capture profile changed during validation')
-    if props.get('environment') != args.environment or origin(props.get('restBaseUrl')) != origin(args.target_origin):
+    if not same_environment(props.get('environment'), args.environment) or origin(props.get('restBaseUrl')) != origin(args.target_origin):
         raise ValueError('Core profile differs from the explicit target')
     operations = json.loads(args.operations.read_text())
     codes = operation_inputs(args.workbook, operations,baseline=args.baseline_zip,runtime_contract=args.runtime_contract)
     context = binding(args.workbook, args.baseline_zip, args.runtime_contract,
                       args.environment, args.target_origin, args.validation_date)
     client = repo / 'core/fusion-api/rest-api-client/scripts/fusion_rest_client.py'
-    transport={p:digest(p) for p in [client,client.with_name('rest_client_common.py'),Path(__file__)]}
+    auth_source=repo/'core/auth/fusion-oauth-authentication/scripts/fusion_auth.py'
+    transport={p:digest(p) for p in [client,client.with_name('rest_client_common.py'),auth_source,Path(__file__),Path(__file__).with_name('currency_core_transport.py')]}
     def unchanged():
         if digest(args.properties)!=profile_digest or any(digest(p)!=value for p,value in transport.items()):
             raise ValueError('Currency capture profile or transport changed')
@@ -117,25 +151,22 @@ def main():
                'adapter_sha256': digest(Path(__file__).with_name('currency_receipt.py')),
                'capture_sha256': digest(__file__), 'core_client_sha256': digest(client),
                'core_common_sha256': digest(client.with_name('rest_client_common.py')),
+               'core_auth_sha256': transport[auth_source],
+               'currency_transport_sha256': digest(Path(__file__).with_name('currency_core_transport.py')),
+               'transport_api': 'core_bound_token_request_bytes_cache_only',
+               'core_client_hash_scope': 'Shared CLI provenance retained for compatibility; CLI is not invoked',
                'operations': operations, 'currencies': {}, 'plan_sha256': digest(args.output_dir / 'plan.json')}
     try:
+        get=core_get(repo,args.properties,context)
         for index, code in enumerate(codes):
             pages, captures, offset = [], [], 0
             for page_index in range(100):
                 request = request_plan(code, args.validation_date, offset)
                 response = args.output_dir / f'currency-{index}-page-{page_index}.json'
                 unchanged()
-                command = [sys.executable, str(client), origin(args.target_origin)+request['path'], '--method', 'GET',
-                           '--properties', str(args.properties), '--token-cache', 'auto',
-                           '--timeout', '20', '--output', str(response)]
-                for key, value in request['query'].items():
-                    command.extend(['--query', f'{key}={value}'])
-                command.extend(['--header', 'REST-Framework-Version=9'])
-                result = subprocess.run(command, capture_output=True, text=True, timeout=55)
+                status=get(request,response)
                 unchanged()
-                # Auth output may contain a browser authorization URL. Never persist it.
-                if result.returncode or not re.search(r'^HTTP 200$', result.stdout, re.MULTILINE):
-                    raise CoreLookupFailed(result)
+                if status!=200:raise ValueError('Currency core GET did not return HTTP200')
                 page = json.loads(response.read_text())
                 captures.append({'request': request, 'response_file': response.name,
                                  'response_sha256': digest(response), 'http_status': 200})

@@ -17,6 +17,6 @@ This manifest records the Oracle implementation evidence used to maintain the bu
 
 ## Use in FSCR
 
-Use the bundled contract references during generation. No Oracle internal source browser or repository access is required or requested in the customer workflow.
+Use the bundled contract references during generation. No access to internal source browsers or repositories is required or requested in the customer workflow.
 
 If a provider requirement or the target environment conflicts with a bundled contract, record the affected field, observed evidence and unresolved mapping. Request the applicable supported contract or an updated skill package. Continue only within the existing candidate-generation and handoff rules; do not infer that an unverified mapping is deployable.

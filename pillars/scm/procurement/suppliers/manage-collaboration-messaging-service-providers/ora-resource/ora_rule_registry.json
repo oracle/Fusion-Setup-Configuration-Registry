@@ -5,8 +5,253 @@
     {
       "task_code": "ORA_CMK_COLLAB_MESG_SERVICE_PROVIDER",
       "task_name": "Manage Collaboration Messaging Service Providers",
-      "start_node": "CMKSP.INPUT_CONTRACT",
+      "start_node": "CMKSP.EARLY_DESIGN",
       "nodes": [
+        {
+          "id": "CMKSP.EARLY_DESIGN",
+          "node_type": "decision",
+          "sequence": 1,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "clear": "CMKSP.REQUEST_SHAPE",
+            "not_applicable": "CMKSP.REQUEST_SHAPE",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "First apply FSM-Only Route Enforcement: runbook_rest_operation, export_message_transformation_package and assisted UI setup/execute return blocked locally without any external call. Then apply Early Supplied-Value Design Checks only to explicit invalid combinations already established by the customer inputs. No external call occurs. For customer_acceptance_prepare, customer_acceptance_execute, customer_acceptance_verify, assisted_delivery_setup with no explicit invalid combination, assisted verification and every unrelated/unchanged-import stage return not_applicable without GET. Dynamic design checks remain downstream.",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 175
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.REQUEST_SHAPE",
+          "node_type": "decision",
+          "sequence": 2,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "task_composition": "CMKSP.COMPOSITION_INPUT",
+            "task_composition_verification": "CMKSP.COMPOSITION_STATE",
+            "identifier_update": "CMKSP.IDENTIFIER_UPDATE_INPUT",
+            "identifier_update_verification": "CMKSP.IDENTIFIER_UPDATE_STATE",
+            "combined_trial": "CMKSP.COMBINED_INPUT",
+            "combined_verification": "CMKSP.COMBINED_STATE",
+            "valid": "CMKSP.CONNECTION_DOCUMENT",
+            "not_applicable": "CMKSP.CONNECTION_DOCUMENT",
+            "issues": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.EARLY_DESIGN"
+          ],
+          "on_failure": "stop",
+          "applies_when": "For qualify_provider_task_composition_fsm select task_composition; for verify_provider_task_composition_fsm select task_composition_verification with original immutable intent and actual terminal native result. These independently bounded operations use Provider Task Composition and never broaden the old four-row combined_trial. For update_provider_identifier_fsm select identifier_update only for the bounded Existing Provider Identifier Update Inputs; for post_import_verify_provider_identifier_update select identifier_update_verification with the original approved correction intent and actual terminal result. These operations do not enter provider-create defaults or duplicate-create checks. For qualify_combined_provider_setup apply Combined Provider Creation Qualification and return combined_trial only for its bounded scope; for post_import_verify_combined_provider_setup return combined_verification only with original approved intent, successful terminal job evidence and complete fresh before/after snapshots; all other operations retain their existing paths. Apply Early Business Input Shape before any reference GET. Invalid connection field scope or missing explicit XSL inputs returns issues with the existing field-level customer correction. Do not query a reference merely to reject an already invalid shape. customer_acceptance_prepare, assisted_delivery_setup, assisted_delivery_verify, assisted_task_setup, assisted_task_verify and unrelated/verification/unchanged-import operations return not_applicable without GET. Valid applicable intake still reaches all existing reference, dependency, design and approval gates.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 943
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.CONNECTION_DOCUMENT",
+          "node_type": "decision",
+          "sequence": 3,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSP.CONNECTION_PROVIDER",
+            "not_applicable": "CMKSP.CONNECTION_PROVIDER",
+            "selection_required": "CMKSP.CONNECTION_DOCUMENT_REQUIRED",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.REQUEST_SHAPE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "For review_provider_setup, customer_acceptance_prepare, customer_acceptance_execute, customer_acceptance_verify, assisted_delivery_setup, assisted_delivery_verify, assisted_task_setup and assisted_task_verify return not_applicable without GET, runtime-route discovery or dropdown questions; assisted context is confirmed in its own branch. Otherwise: Create/add connection, ensure_connection_setup or post_import_verify_connection: apply Runtime Route Handoff and Recovery before resolve_cmk_connection_document, deriving direction from Document; every other BO and unchanged import skips without GET",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 503
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.CONNECTION_PROVIDER",
+          "node_type": "decision",
+          "sequence": 4,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSP.CONNECTION_MESSAGE",
+            "not_applicable": "CMKSP.CONNECTION_MESSAGE",
+            "selection_required": "CMKSP.CONNECTION_PROVIDER_REQUIRED",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.CONNECTION_DOCUMENT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "For review_provider_setup, customer_acceptance_prepare, customer_acceptance_execute, customer_acceptance_verify, assisted_delivery_setup, assisted_delivery_verify, assisted_task_setup and assisted_task_verify return not_applicable without GET, runtime-route discovery or dropdown questions; assisted context is confirmed in its own branch. Otherwise: Connection intake: execute only resolve_cmk_connection_provider after Document; standalone ensure_delivery_method_setup and create_delivery_method intake/prepared_import also resolve the selected provider without requiring a Document; other BOs and unchanged imports skip",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 504
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.CONNECTION_MESSAGE",
+          "node_type": "decision",
+          "sequence": 5,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSP.CONNECTION_STATUS",
+            "not_applicable": "CMKSP.CONNECTION_STATUS",
+            "selection_required": "CMKSP.CONNECTION_MESSAGE_REQUIRED",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.CONNECTION_PROVIDER"
+          ],
+          "on_failure": "stop",
+          "applies_when": "For review_provider_setup, customer_acceptance_prepare, customer_acceptance_execute, customer_acceptance_verify, assisted_delivery_setup, assisted_delivery_verify, assisted_task_setup and assisted_task_verify return not_applicable without GET, runtime-route discovery or dropdown questions; assisted context is confirmed in its own branch. Otherwise: Connection intake: execute only resolve_cmk_connection_message scoped to the verified Document, Provider-or-unassigned and supplied transformation mode; other BOs and unchanged imports skip",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 505
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.CONNECTION_STATUS",
+          "node_type": "decision",
+          "sequence": 6,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSP.CONNECTION_DELIVERY",
+            "not_applicable": "CMKSP.CONNECTION_DELIVERY",
+            "selection_required": "CMKSP.CONNECTION_STATUS_REQUIRED",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.CONNECTION_MESSAGE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "For review_provider_setup, customer_acceptance_prepare, customer_acceptance_execute, customer_acceptance_verify, assisted_delivery_setup, assisted_delivery_verify, assisted_task_setup and assisted_task_verify return not_applicable without GET, runtime-route discovery or dropdown questions; assisted context is confirmed in its own branch. Otherwise: Connection intake: execute only resolve_cmk_connection_status; other BOs and unchanged imports skip",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 506
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.CONNECTION_DELIVERY",
+          "node_type": "decision",
+          "sequence": 7,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSP.RESOLVE_PROVIDER_TYPES",
+            "not_applicable": "CMKSP.RESOLVE_PROVIDER_TYPES",
+            "selection_required": "CMKSP.CONNECTION_DELIVERY_REQUIRED",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.CONNECTION_STATUS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "For review_provider_setup, customer_acceptance_prepare, customer_acceptance_execute, customer_acceptance_verify, assisted_delivery_setup, assisted_delivery_verify, assisted_task_setup and assisted_task_verify return not_applicable without GET, runtime-route discovery or dropdown questions; assisted context is confirmed in its own branch. Otherwise: Outbound connection intake: execute only resolve_cmk_connection_delivery_methods, including its separately selected predefined_business_event_fsm branch when applicable; inbound skips GET and rejects supplied delivery inputs; other BOs and unchanged imports skip",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 507
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.RESOLVE_PROVIDER_TYPES",
+          "node_type": "decision",
+          "sequence": 8,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSP.RESOLVE_PROVIDER_ID_TYPES",
+            "not_applicable": "CMKSP.RESOLVE_PROVIDER_ID_TYPES",
+            "selection_required": "CMKSP.PROVIDER_TYPE_REQUIRED",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.CONNECTION_DELIVERY"
+          ],
+          "on_failure": "stop",
+          "applies_when": "For review_provider_setup, customer_acceptance_prepare, customer_acceptance_execute, customer_acceptance_verify, assisted_delivery_setup, assisted_delivery_verify, assisted_task_setup and assisted_task_verify return not_applicable without GET, runtime-route discovery or dropdown questions; assisted context is confirmed in its own branch. Otherwise: Provider business-input creation: execute only resolve_cmk_provider_types to resolve supplied or missing Provider Type before input/package qualification; other imports follow not_applicable without GET",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 508
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.RESOLVE_PROVIDER_ID_TYPES",
+          "node_type": "decision",
+          "sequence": 9,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSP.INPUT_CONTRACT",
+            "not_applicable": "CMKSP.INPUT_CONTRACT",
+            "selection_required": "CMKSP.ID_TYPE_REQUIRED",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.RESOLVE_PROVIDER_TYPES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "For review_provider_setup, customer_acceptance_prepare, customer_acceptance_execute, customer_acceptance_verify, assisted_delivery_setup, assisted_delivery_verify, assisted_task_setup and assisted_task_verify return not_applicable without GET, runtime-route discovery or dropdown questions; assisted context is confirmed in its own branch. Otherwise: Provider business-input creation: execute only resolve_cmk_provider_id_types to resolve required ID Type; missing or invalid selections require live choices; unchanged completed-export imports and other BOs follow not_applicable",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 509
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
         {
           "id": "CMKSP.INPUT_CONTRACT",
           "node_type": "step",
@@ -14,16 +259,142 @@
           "action_type": "validate_input",
           "execution_route": "local",
           "transitions": {
-            "validated": "CMKSP.RESOLVE_PREREQUISITES",
+            "message_export_verification_ready": "CMKSP.MESSAGE_EXPORT_STATE",
+            "external_intake_ready": "CMKSP.MESSAGE_REFERENCES",
+            "external_verification_ready": "CMKSP.EXTERNAL_EXPORT_STATE",
+            "connection_export_verification_ready": "CMKSP.CONNECTION_EXPORT_STATE",
+            "provider_verification_ready": "CMKSP.PROVIDER_STATE",
+            "provider_review_ready": "CMKSP.PROVIDER_REVIEW",
+            "acceptance_requested": "CMKSP.ACCEPTANCE_INPUT",
+            "acceptance_result_ready": "CMKSP.ACCEPTANCE_RESULT",
+            "assisted_operation_ready": "CMKSP.ASSISTED_CONTEXT",
+            "assisted_verification_ready": "CMKSP.ASSISTED_RESULT",
+            "validated": "CMKSP.APPLY_PROVIDER_DEFAULTS",
+            "rest_operation_ready": "CMKSP.REST_PREFLIGHT",
+            "rest_verification_ready": "CMKSP.REST_VERIFY",
+            "message_intake_ready": "CMKSP.MESSAGE_REFERENCES",
+            "message_validation_ready": "CMKSP.MESSAGE_REFERENCES",
+            "message_verification_ready": "CMKSP.MESSAGE_STATE",
+            "reconciliation_ready": "CMKSP.VERIFY_FEATURE_STATE",
+            "verification_ready": "CMKSP.VERIFY_FEATURE_STATE",
+            "delivery_intake_ready": "CMKSP.DELIVERY_FEATURE",
             "issues": "RETURN_ISSUES"
           },
-          "prerequisites": [],
+          "prerequisites": [
+            "CMKSP.RESOLVE_PROVIDER_ID_TYPES"
+          ],
           "on_failure": "stop",
-          "applies_when": "A task CSV import is requested",
+          "applies_when": "Before any applicable operation branch or early return, apply Current Request and Customer Result Inputs to bind the current request fingerprint, exact target/task/operation scope and actual selected attachment reference/SHA-256 when attached. For business-data intake apply Business Attachment Input Semantics; prepared_import and post-import verification retain their original immutable approved row and field states, so approved package blanks are never reinterpreted as unspecified. Verification binds the original request/attachment fingerprints, immutable intent and approved final artifact/result; never reconstruct intent from target state or a different attachment. For implementation_mode greenfield apply Greenfield Initial Setup Inputs at the current stage before the applicable operation branch. First post_import_verify_message_definition with verification_profile native_fsm_export applies Native FSM Message Verification Inputs and returns message_export_verification_ready or issues without reference GETs or export initiation. Otherwise create_external_message_definition with reference_profile native_fsm_external_definition applies Native FSM External Definition Inputs for its current stage and returns external_intake_ready or issues. post_import_verify_external_message_definition applies Native FSM External Definition Verification Inputs and returns external_verification_ready or issues without new create inputs or external calls. Otherwise post_import_verify_connection_export applies Connection Export Verification Inputs and returns connection_export_verification_ready or issues without current dropdown reads, new preparation or import. Otherwise post_import_verify_provider applies Provider Verification Inputs and returns provider_verification_ready or issues, without new create inputs, provider defaults, dropdown reads or import preparation. Otherwise review_provider_setup accepts optional readable provider name and requires configured target plus active project/task binding, returning provider_review_ready or issues without UI-runtime, CSV, supplier-create or import prerequisites. Otherwise customer_acceptance_prepare or customer_acceptance_execute applies Customer Acceptance Inputs and returns acceptance_requested or issues; customer_acceptance_verify requires actual observations and returns acceptance_result_ready or issues. These operations require no CSV, API discovery or new PO. Otherwise, assisted_delivery_setup or assisted_task_setup applies only Assisted Delivery Inputs and returns assisted_operation_ready or issues; assisted_delivery_verify or assisted_task_verify requires its bound preview and actual operator action/evidence, returning assisted_verification_ready or issues without export, CSV or API credential prerequisites. For runbook_rest_verify require the bound approved REST operation and actual dispatch result, then return rest_verification_ready or issues without import/source-export prerequisites. For runbook_rest_operation apply only Declared Run Book REST Inputs and current request/target binding; return rest_operation_ready or issues, without CSV/source-export requirements. Apply Current Request and Customer Result Inputs for attachment identity and stage-appropriate result evidence. For post_import_verify_message_definition under its existing public saved-state profile require completed approved import and immutable intent, then return message_verification_ready or issues without new source export. For create_message_definition or duplicate_message_definition, apply XSL Message Preparation below and return message_intake_ready at intake/source_export or message_validation_ready at prepared_import; missing required input returns issues. These branches do not ask provider-create dropdown questions. For ensure_delivery_method_setup, post_import_verify_delivery_method or create_delivery_method before prepared_import apply Standalone Delivery Method Inputs and return delivery_intake_ready or issues. For create_delivery_method at prepared_import apply Business Event Delivery Method Preparation first: a rejected user-defined Business Event row returns issues without approval. Otherwise evaluate the completed selected DM4 or DM5 preparation contract and immutable final ZIP, returning validated or issues; missing package evidence cannot return delivery_intake_ready. For ensure_connection_setup apply Connection Reconciliation Inputs and return reconciliation_ready or issues. For post_import_verify_connection apply only Connection Verification Inputs and return verification_ready or issues. Otherwise provider or connection business-input creation after applicable dropdown validation, or task-CSV import after non-applicable dropdown handling; evaluate input/export/preparation/final-package checks for the actual stage, never treating intake success as import approval  Apply All Object Package Validation to every selected package member at source review and final package stages; technical schema success never bypasses object-specific business preparation.",
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 35
+            "line": 421
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.MESSAGE_REFERENCES",
+          "node_type": "decision",
+          "sequence": 11,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "ready": "CMKSP.MESSAGE_PREPARATION_READY",
+            "prepared_valid": "CMKSP.APPLY_PROVIDER_DEFAULTS",
+            "source_export_required": "CMKSP.MESSAGE_REFERENCE_EXPORT",
+            "choice_required": "CMKSP.MESSAGE_FIELDS_REQUIRED",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.INPUT_CONTRACT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "For create_external_message_definition with native_fsm_external_definition execute only qualify_cmk_external_definition_references under its native contract. For create_message_definition or duplicate_message_definition for XSL execute only resolve_cmk_message_import_references. Intake readiness hands the selected native definition preparation to the Run Book; source_export_required requests only the owning shared exports. prepared_import follows prepared_valid only with the immutable final row, current reference bindings and complete Native FSM External Definition Inputs or XSL Message Preparation, as applicable",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 702
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.MESSAGE_STATE",
+          "node_type": "decision",
+          "sequence": 12,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSP.MESSAGE_VERIFIED",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.INPUT_CONTRACT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only post_import_verify_message_definition under the existing public saved-state profile with bound completed import and approved intent: execute verify_cmk_message_definition_state. No package preparation or write",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 715
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.APPLY_PROVIDER_DEFAULTS",
+          "node_type": "decision",
+          "sequence": 13,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "applied": "CMKSP.CHECK_PROVIDER_DUPLICATE",
+            "not_applicable": "CMKSP.CHECK_PROVIDER_DUPLICATE",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.INPUT_CONTRACT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "After input and preparation-contract validation; apply UserDefined and DelStatusUpdateEnabled defaults only to provider business-input creation; preserve supplied values and unchanged exported rows",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 25
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.CHECK_PROVIDER_DUPLICATE",
+          "node_type": "decision",
+          "sequence": 14,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "unique": "CMKSP.RESOLVE_PREREQUISITES",
+            "not_applicable": "CMKSP.RESOLVE_PREREQUISITES",
+            "duplicate": "RETURN_ISSUES",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.APPLY_PROVIDER_DEFAULTS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Execute only check_cmk_provider_duplicate after defaults for provider business-input create and final prepared-provider validation; other operations skip without GET",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 510
           },
           "readiness": {
             "status": "ready",
@@ -37,18 +408,73 @@
           "action_type": "reference_lookup",
           "execution_route": "fusion-rest",
           "transitions": {
-            "verified": "CMKSP.CHECK_DEPENDENCIES",
+            "verified": "CMKSP.CHECK_DELIVERY_DUPLICATE",
             "blocked": "RETURN_ISSUES"
           },
           "prerequisites": [
-            "CMKSP.INPUT_CONTRACT"
+            "CMKSP.CHECK_PROVIDER_DUPLICATE"
           ],
           "on_failure": "stop",
-          "applies_when": "Before task-CSV import approval",
+          "applies_when": "Before task-CSV import approval: execute only verify_cmksp_b2b_document_setup_enabled",
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 33
+            "line": 511
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.CHECK_DELIVERY_DUPLICATE",
+          "node_type": "decision",
+          "sequence": 16,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "unique": "CMKSP.VERIFY_DELIVERY_IMPORT_TYPE",
+            "not_applicable": "CMKSP.VERIFY_DELIVERY_IMPORT_TYPE",
+            "duplicate": "RETURN_ISSUES",
+            "review": "RETURN_ISSUES",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.RESOLVE_PREREQUISITES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "At create_delivery_method prepared_import execute only check_cmk_delivery_method_name_duplicate against the exact final row and target. Other BOs and unchanged completed-export imports return not_applicable without a GET",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 647
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.VERIFY_DELIVERY_IMPORT_TYPE",
+          "node_type": "decision",
+          "sequence": 17,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSP.CHECK_DEPENDENCIES",
+            "not_applicable": "CMKSP.CHECK_DEPENDENCIES",
+            "selection_required": "RETURN_ISSUES",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.CHECK_DELIVERY_DUPLICATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "At create_delivery_method prepared_import execute only resolve_cmk_delivery_method_type and require the final row still matches the current selected type and supported DM4/DM5 preparation profile. Business Event Native Qualification is a restriction, not create eligibility; a new user-defined Business Event row returns blocked. Other BOs and unchanged completed-export imports return not_applicable without a GET",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 648
           },
           "readiness": {
             "status": "ready",
@@ -62,11 +488,11 @@
           "action_type": "resolve_dependency",
           "execution_route": "local",
           "transitions": {
-            "ready": "CMKSP.IMPORT_GATE",
+            "ready": "CMKSP.ENFORCE_CHANGES",
             "blocked": "RETURN_ISSUES"
           },
           "prerequisites": [
-            "CMKSP.RESOLVE_PREREQUISITES"
+            "CMKSP.VERIFY_DELIVERY_IMPORT_TYPE"
           ],
           "on_failure": "stop",
           "applies_when": "Before task-CSV import approval",
@@ -81,9 +507,62 @@
           }
         },
         {
+          "id": "CMKSP.ENFORCE_CHANGES",
+          "node_type": "decision",
+          "sequence": 19,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "passed": "CMKSP.CHECK_CONNECTION_ACTIVATION",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.CHECK_DEPENDENCIES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Before task-CSV import approval: apply Design Rules to the exact requested BO and package; unchanged completed exports pass preparation-only policy as not applicable",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 47
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.CHECK_CONNECTION_ACTIVATION",
+          "node_type": "decision",
+          "sequence": 20,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "clear": "CMKSP.IMPORT_GATE",
+            "not_applicable": "CMKSP.IMPORT_GATE",
+            "conflict": "RETURN_ISSUES",
+            "blocked": "RETURN_ISSUES",
+            "association_conflict": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.ENFORCE_CHANGES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Before import approval execute check_cmk_connection_activation for any new connection to reject an existing exact provider/document/message association regardless of requested status. Only after that no-conflict result does Active enter its existing current activation check; unchanged imports and other BOs return not_applicable without GET. No deactivation, status substitution or test transmission.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 669
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
           "id": "CMKSP.IMPORT_GATE",
           "node_type": "step",
-          "sequence": 20,
+          "sequence": 21,
           "action_type": "execution_gate",
           "execution_route": "local",
           "transitions": {
@@ -91,14 +570,180 @@
             "blocked": "RETURN_ISSUES"
           },
           "prerequisites": [
-            "CMKSP.CHECK_DEPENDENCIES"
+            "CMKSP.CHECK_CONNECTION_ACTIVATION"
           ],
           "on_failure": "stop",
           "applies_when": "Before upload or import initiation",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 64
+            "line": 200
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.VERIFY_FEATURE_STATE",
+          "node_type": "decision",
+          "sequence": 22,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSP.VERIFY_CONNECTION_STATE",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.INPUT_CONTRACT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "For post_import_verify_connection or ensure_connection_setup: execute verify_cmksp_b2b_document_setup_enabled after the corresponding input checks; no export or import",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 512
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.VERIFY_CONNECTION_STATE",
+          "node_type": "decision",
+          "sequence": 23,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSP.VERIFICATION_DONE",
+            "blocked": "RETURN_ISSUES",
+            "reconciled": "CMKSP.RECONCILE_SETUP"
+          },
+          "prerequisites": [
+            "CMKSP.VERIFY_FEATURE_STATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Execute verify_cmk_connection_state only: strict post_import_verify_connection follows verified or blocked; ensure_connection_setup follows reconciled or blocked under Connection Reconciliation Comparison; no setup mutation or replay",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 513
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.VERIFICATION_DONE",
+          "node_type": "terminal",
+          "sequence": 24,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.VERIFY_CONNECTION_STATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return verified requested connection state and per-field coverage for the existing completed import. No claim of new insertion, whole-environment preservation or business invoice exchange; no import replay Apply Customer Result Presentation using current-request evidence; preserve the full operational result. Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 210
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.RECONCILE_SETUP",
+          "node_type": "decision",
+          "sequence": 25,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "reuse": "CMKSP.REUSE_DONE",
+            "create_needed": "CMKSP.CREATE_NEEDED",
+            "review_required": "CMKSP.REVIEW_REQUIRED",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.VERIFY_CONNECTION_STATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only ensure_connection_setup: apply Setup Reconciliation Policy to current comparison evidence; no write or import approval",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 48
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.REUSE_DONE",
+          "node_type": "terminal",
+          "sequence": 27,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.RECONCILE_SETUP"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return reused_and_verified for this requested-state scope with matched and preserved coverage, no changes and no broader historical-import claim Apply Customer Result Presentation using current-request evidence; preserve the full operational result. Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 211
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.CREATE_NEEDED",
+          "node_type": "terminal",
+          "sequence": 28,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.RECONCILE_SETUP"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return create_needed and the validated private request/evidence to the invoking Run Book's existing create workflow; no mutation or import approval here Apply Customer Result Presentation using current-request evidence; preserve the full operational result. Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 212
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.REVIEW_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 29,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.RECONCILE_SETUP"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return meaningful differences, exact missing decision or unsupported change and safe next action; no implicit update or create replay Apply Customer Result Presentation using current-request evidence; preserve the full operational result. Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 213
           },
           "readiness": {
             "status": "ready",
@@ -108,7 +753,7 @@
         {
           "id": "CMKSP.READY_FOR_APPROVAL",
           "node_type": "terminal",
-          "sequence": 30,
+          "sequence": 31,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
@@ -116,11 +761,1890 @@
             "CMKSP.IMPORT_GATE"
           ],
           "on_failure": "continue",
-          "applies_when": "All read-only import gates have passed",
+          "applies_when": "All read-only import gates have passed Apply Customer Result Presentation using current-request evidence; preserve the full operational result. Apply Business Name Presentation.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 65
+            "line": 201
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.DELIVERY_FEATURE",
+          "node_type": "decision",
+          "sequence": 32,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSP.DELIVERY_TYPE",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.INPUT_CONTRACT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only ensure_delivery_method_setup, create_delivery_method before prepared_import or post_import_verify_delivery_method: execute verify_cmksp_b2b_document_setup_enabled on the selected target; no writes",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 514
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.DELIVERY_TYPE",
+          "node_type": "decision",
+          "sequence": 33,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSP.DELIVERY_STATE",
+            "selection_required": "CMKSP.DELIVERY_INPUT_REQUIRED",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.DELIVERY_FEATURE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Execute only resolve_cmk_delivery_method_type for ensure_delivery_method_setup, create_delivery_method business intake or post_import_verify_delivery_method",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 515
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.DELIVERY_STATE",
+          "node_type": "decision",
+          "sequence": 34,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "reconciled": "CMKSP.DELIVERY_RECONCILE",
+            "verified": "CMKSP.DELIVERY_VERIFIED",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.DELIVERY_TYPE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Execute only verify_cmk_delivery_method_state using the reference_profile selected before this validation pass; native_fsm_delivery ensure uses Native FSM Delivery Reuse without a b2bDeliveryMethods binding; ensure follows reconciled; strict post-import verification follows verified; no mutation",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 516
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.DELIVERY_RECONCILE",
+          "node_type": "decision",
+          "sequence": 35,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "reuse": "CMKSP.DELIVERY_REUSED",
+            "create_needed": "CMKSP.DELIVERY_TRANSPORT_GATE",
+            "review_required": "CMKSP.DELIVERY_REVIEW_REQUIRED",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.DELIVERY_STATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only ensure_delivery_method_setup or strict create_delivery_method business intake: apply Delivery Method Reconciliation, preserving strict create intent; no mutation or import approval",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 49
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.DELIVERY_TRANSPORT_GATE",
+          "node_type": "decision",
+          "sequence": 36,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "profile_supported": "CMKSP.DELIVERY_NAME_CHECK",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.DELIVERY_RECONCILE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Before a new-method preparation handoff, apply Delivery Transport Capabilities for the selected model/type and supplied settings. Existing verified reuse and unchanged-package import do not enter this create-only gate",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 88
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.DELIVERY_NAME_CHECK",
+          "node_type": "decision",
+          "sequence": 37,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "unique": "CMKSP.DELIVERY_PREPARATION_CHECK",
+            "duplicate": "CMKSP.DELIVERY_NAME_CONFLICT",
+            "review": "CMKSP.DELIVERY_NAME_CONFLICT",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.DELIVERY_TRANSPORT_GATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Before an absent-method create_needed handoff, execute only check_cmk_delivery_method_name_duplicate; no export, import or mutation",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 649
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.DELIVERY_PREPARATION_CHECK",
+          "node_type": "decision",
+          "sequence": 38,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "ready_for_preparation": "CMKSP.APPLY_DELIVERY_DEFAULTS",
+            "selection_required": "CMKSP.DELIVERY_FIELDS_REQUIRED",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.DELIVERY_NAME_CHECK"
+          ],
+          "on_failure": "stop",
+          "applies_when": "For absent-method ensure or strict create intake, validate the selected DM4/DM5 transport-specific business fields and representations; Business Event Delivery Method Preparation rejects user-defined Business Event creation without requiring a ZIP. Ask only for missing fields applicable to the resolved supported type; an unsupported setting is a blocker, not missing input. Source-export and final-package checks occur at their declared Run Book stages and prepared_import INPUT_CONTRACT. Do not authorize or execute import",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 659
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.APPLY_DELIVERY_DEFAULTS",
+          "node_type": "decision",
+          "sequence": 39,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "applied": "CMKSP.DELIVERY_CREATE_NEEDED",
+            "not_applicable": "CMKSP.DELIVERY_CREATE_NEEDED",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.DELIVERY_PREPARATION_CHECK"
+          ],
+          "on_failure": "stop",
+          "applies_when": "After supported delivery intake and representation checks, return not_applicable: no delivery-specific default is declared by this public-guidance profile. Preserve supplied applicable values and optional blanks; no ZIP mutation or approval occurs here",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 26
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.CONNECTION_DOCUMENT_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 42,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.CONNECTION_DOCUMENT"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return MISSING: apply Connection Choice Presentation for Document in ora_reference_lookups.md; preserve other supplied values and derive Direction only after selection Apply Customer Result Presentation using current-request evidence; preserve the full operational result. Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 205
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.CONNECTION_PROVIDER_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 43,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.CONNECTION_PROVIDER"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return MISSING: apply Connection Choice Presentation for Provider in ora_reference_lookups.md; retain selected Document and derived Direction when applicable; standalone delivery setup retains its provider request without asking for Document Apply Customer Result Presentation using current-request evidence; preserve the full operational result. Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 206
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.CONNECTION_MESSAGE_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 44,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.CONNECTION_MESSAGE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return MISSING: ask only for missing transformation mode, then apply Connection Choice Presentation for Message Definition in ora_reference_lookups.md; do not create a definition Apply Customer Result Presentation using current-request evidence; preserve the full operational result. Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 207
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.CONNECTION_STATUS_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 45,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.CONNECTION_STATUS"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return MISSING: apply immediate Status choices under Connection Choice Presentation in ora_reference_lookups.md; retain resolved Document, Provider and Message Definition Apply Customer Result Presentation using current-request evidence; preserve the full operational result. Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 208
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.CONNECTION_DELIVERY_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 46,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.CONNECTION_DELIVERY"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return MISSING for outbound only: apply Connection Choice Presentation for the requested primary/alternate Delivery Method in ora_reference_lookups.md, retaining applicable skip behavior Apply Customer Result Presentation using current-request evidence; preserve the full operational result. Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 209
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.DELIVERY_REUSED",
+          "node_type": "terminal",
+          "sequence": 47,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.DELIVERY_STATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return reused_and_verified only for ensure_delivery_method_setup with current matched/preserved coverage. No import was required for this scope. Do not use this terminal for strict post-import verification or infer no historical changes; apply Customer Result Presentation Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 214
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.DELIVERY_CREATE_NEEDED",
+          "node_type": "terminal",
+          "sequence": 48,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.APPLY_DELIVERY_DEFAULTS"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return create_needed with supported DM4/DM5 preparation scope and retained private business inputs/evidence to the existing Run Book Prepare Delivery Method CSV ZIP step. End this rule evaluation only: the invoking Run Book continues the selected task into source_export or preparation without asking whether to proceed. Obtain a missing exact-task template through the shared exporter and its approval, then prepare the single-row ZIP and run Data Loader preflight. No creation or import approval is claimed; existing operation-specific approval gates remain mandatory. Unsupported settings follow RETURN_ISSUES instead Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 215
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.DELIVERY_REVIEW_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 49,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.DELIVERY_RECONCILE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return review_required with supplied/current business differences and supported next action; no overwrite, duplicate create or fabricated update Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 216
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.DELIVERY_INPUT_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 50,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.DELIVERY_TYPE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return MISSING with readable fresh Type choices and preserved other inputs; ask only for that business choice Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 217
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.DELIVERY_NAME_CONFLICT",
+          "node_type": "terminal",
+          "sequence": 51,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.DELIVERY_NAME_CHECK"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return the exact delivery-name collision or case-review result in business terms; preserve other supplied choices, disclose no protected collection rows and make no changes Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 339
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.DELIVERY_FIELDS_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 52,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.DELIVERY_PREPARATION_CHECK"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return MISSING with only the unresolved transport-specific business field, such as email recipients after Email was selected. Retain all current selections; do not request a developer ZIP, task code, internal ID or unsupported setting Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 359
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.DELIVERY_VERIFIED",
+          "node_type": "terminal",
+          "sequence": 53,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.DELIVERY_STATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Only strict post_import_verify_delivery_method: return verified saved settings with bound processing outcome, intended-field comparison coverage and actual prior side-effect evidence. Apply Delivery Import and Verification Results and Customer Result Presentation. This read performs no new mutation and does not imply reuse, a fully successful multi-object import or proven business-document delivery Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 378
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.MESSAGE_PREPARATION_READY",
+          "node_type": "terminal",
+          "sequence": 55,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.MESSAGE_REFERENCES"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return validated private definition inputs and reference fingerprints to the existing Run Book CSV/ZIP processing step for the selected XSL message or native external definition; continue preparation without another proceed question. Keep the selected object and exact one-row scope. This is not creation or import approval Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 395
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.MESSAGE_REFERENCE_EXPORT",
+          "node_type": "terminal",
+          "sequence": 56,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.MESSAGE_REFERENCES"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return source_export_required to the invoking Run Book: obtain the missing exact-task populated reference or header-only create template through the shared exporter and its normal approval, keep the create seed separate from populated reference rows, then resume MESSAGE_REFERENCES with retained inputs. Do not ask for an internal document or developer-generated ZIP Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 396
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.MESSAGE_FIELDS_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 57,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.MESSAGE_REFERENCES"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return only the unresolved readable Document/original/external-definition selection or native external-format business field, retaining valid inputs. Do not request DocOperationId or reinterpret a failed read as invalid customer data Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 397
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.MESSAGE_VERIFIED",
+          "node_type": "terminal",
+          "sequence": 58,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.MESSAGE_STATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return verified saved message settings and intended scalar/file coverage, preserving import processing status separately. Do not call this reuse, PO delivery success or approval to configure another object Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 404
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.PROVIDER_TYPE_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 59,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.RESOLVE_PROVIDER_TYPES"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Provider Type is missing or invalid; return MISSING with live choices and preserved other inputs Apply Customer Result Presentation using current-request evidence; preserve the full operational result. Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 203
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.ID_TYPE_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 60,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.RESOLVE_PROVIDER_ID_TYPES"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Required ID Type is missing or invalid; return MISSING with live choices and preserved other inputs Apply Customer Result Presentation using current-request evidence; preserve the full operational result. Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 204
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.REST_PREFLIGHT",
+          "node_type": "decision",
+          "sequence": 61,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "ready": "CMKSP.REST_GATE",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.INPUT_CONTRACT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only the declared runbook_rest_operation: execute verify_cmksp_runbook_rest_preflight. This node performs reads only and cannot approve or dispatch a mutation",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 728
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.REST_GATE",
+          "node_type": "step",
+          "sequence": 62,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "CMKSP.REST_APPROVAL_READY",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.REST_PREFLIGHT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Retained historical node only. FSM-Only Route Enforcement rejects new REST or assisted setup before this node; return the task failure outcome if reached for a new write. No Core helper, approval handoff, dispatch or operator Save is authorized.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 420
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.REST_APPROVAL_READY",
+          "node_type": "terminal",
+          "sequence": 63,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.REST_GATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Retained historical node only. FSM-Only Route Enforcement rejects new REST or assisted setup before this node; return the task failure outcome if reached for a new write. No Core helper, approval handoff, dispatch or operator Save is authorized. Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 421
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.REST_VERIFY",
+          "node_type": "decision",
+          "sequence": 64,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSP.REST_VERIFIED",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.INPUT_CONTRACT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only runbook_rest_verify: execute verify_cmksp_runbook_rest_state for the exact approved operation. No preparation, approval or dispatch",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 741
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.REST_VERIFIED",
+          "node_type": "terminal",
+          "sequence": 65,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.REST_VERIFY"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return actual action outcome and verified requested-state coverage separately. Preserve any credential/connectivity or partial-result boundary; do not claim another component is ready, infer no changes or report a PO delivered Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 428
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.ASSISTED_CONTEXT",
+          "node_type": "decision",
+          "sequence": 66,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "CMKSP.ASSISTED_DESIGN",
+            "context_required": "CMKSP.ASSISTED_CONTEXT_REQUIRED",
+            "issues": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.INPUT_CONTRACT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only assisted_delivery_setup or assisted_task_setup: evaluate Assisted Delivery Inputs and current operator context. No external call, export or credential collection",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 803
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.ASSISTED_CONTEXT_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 67,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.ASSISTED_CONTEXT"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return the exact current-screen identity/before-state confirmation step to the implementer through Core Run Book, retaining supplied nonsecret values. No mutation or secret collection Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 446
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.ASSISTED_DESIGN",
+          "node_type": "decision",
+          "sequence": 68,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "passed": "CMKSP.ASSISTED_GATE",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.ASSISTED_CONTEXT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only the selected assisted setup operation: evaluate Assisted Delivery Design against the original immutable review. Existing FSM/REST design rules retain their own scope",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 123
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.ASSISTED_GATE",
+          "node_type": "step",
+          "sequence": 69,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "CMKSP.ASSISTED_APPROVAL_READY",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.ASSISTED_DESIGN"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Retained historical node only. FSM-Only Route Enforcement rejects new REST or assisted setup before this node; return the task failure outcome if reached for a new write. No Core helper, approval handoff, dispatch or operator Save is authorized.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 447
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.ASSISTED_APPROVAL_READY",
+          "node_type": "terminal",
+          "sequence": 70,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.ASSISTED_GATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Retained historical node only. FSM-Only Route Enforcement rejects new REST or assisted setup before this node; return the task failure outcome if reached for a new write. No Core helper, approval handoff, dispatch or operator Save is authorized. Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 448
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.ASSISTED_RESULT",
+          "node_type": "decision",
+          "sequence": 71,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "verified": "CMKSP.ASSISTED_TRANSPORT_RESULT",
+            "unchanged": "CMKSP.ASSISTED_REUSED",
+            "state_only": "CMKSP.ASSISTED_STATE_ONLY",
+            "confirmation_required": "CMKSP.ASSISTED_CONFIRMATION_REQUIRED",
+            "credential_confirmation_required": "CMKSP.ASSISTED_CREDENTIAL_CONFIRMATION",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.INPUT_CONTRACT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only assisted_delivery_verify or assisted_task_verify: classify the bound historical evidence outcome using Assisted Delivery Inputs. This branch performs no new approval, save, import or API operation",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 804
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.ASSISTED_REUSED",
+          "node_type": "terminal",
+          "sequence": 73,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.ASSISTED_RESULT"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return unchanged with all requested nonsecret fields confirmed and no credential replacement. Do not claim a new method or new password was saved Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 450
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.ASSISTED_CONFIRMATION_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 74,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.ASSISTED_RESULT"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return the exact missing reopened-screen field/environment/scope confirmation and retain actual action outcome; no new save or approval step Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 451
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.ASSISTED_STATE_ONLY",
+          "node_type": "terminal",
+          "sequence": 75,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.ASSISTED_RESULT"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return requested configuration confirmed while action remains uncertain. Do not report creation, credential replacement, connectivity or receipt as proven and never replay Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 452
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.ASSISTED_CREDENTIAL_CONFIRMATION",
+          "node_type": "terminal",
+          "sequence": 76,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.ASSISTED_RESULT"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Ask only whether the authorized credential owner entered the values directly in Fusion and the save succeeded, without disclosing values. Retain action uncertainty; never infer this from masking or save again automatically Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 453
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.ASSISTED_TRANSPORT_RESULT",
+          "node_type": "decision",
+          "sequence": 77,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "CMKSP.ASSISTED_VERIFIED",
+            "not_applicable": "CMKSP.ASSISTED_VERIFIED",
+            "external_prerequisite_required": "CMKSP.EXTERNAL_TRANSPORT_REQUIRED",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.ASSISTED_RESULT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "After verified assisted configuration only: apply Assisted Object Scope and Transport Evidence. No external setup call or additional save occurs in this node",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 822
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.EXTERNAL_TRANSPORT_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 78,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.ASSISTED_TRANSPORT_RESULT"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return saved CMK method coverage plus external_prerequisite_required to the shared roadmap. Retain the requested scope and report the missing external transport evidence. This task provides no executor for the external prerequisite; do not select an undeclared task or operation. Do not mark transport/delivery complete or replay the CMK save Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 460
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.ASSISTED_VERIFIED",
+          "node_type": "terminal",
+          "sequence": 79,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.ASSISTED_TRANSPORT_RESULT"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return the actual saved outcome and every requested field's reopened-screen comparison, with operator-confirmed credential entry separately. Authentication/connectivity and supplier receipt are not inferred Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 449
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.ACCEPTANCE_INPUT",
+          "node_type": "decision",
+          "sequence": 80,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "preflight": "CMKSP.ACCEPTANCE_UI_READY",
+            "execute": "CMKSP.ACCEPTANCE_DESIGN",
+            "issues": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.INPUT_CONTRACT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Apply Customer Acceptance Inputs. prepare returns preflight only for complete local test intent; execute requires current observed UI context and returns execute only after required shape checks. No external call or mutation",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 842
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.ACCEPTANCE_UI_READY",
+          "node_type": "terminal",
+          "sequence": 81,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.ACCEPTANCE_INPUT"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return the declared read-only browser preflight handoff. This is not approval, a Process action or a live test pass Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 474
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.ACCEPTANCE_DESIGN",
+          "node_type": "step",
+          "sequence": 82,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "clear": "CMKSP.ACCEPTANCE_GATE",
+            "blocked": "CMKSP.ACCEPTANCE_BLOCKED"
+          },
+          "prerequisites": [
+            "CMKSP.ACCEPTANCE_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Enforce Customer Acceptance Design using actual current browser evidence; no configuration change or processing request",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 146
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.ACCEPTANCE_GATE",
+          "node_type": "step",
+          "sequence": 83,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "CMKSP.ACCEPTANCE_PROCESS_READY",
+            "blocked": "CMKSP.ACCEPTANCE_BLOCKED"
+          },
+          "prerequisites": [
+            "CMKSP.ACCEPTANCE_DESIGN"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Require exact current environment, existing test recipient, document, payload hash, destination/effect and approval under active project rules. The separate SKILL workflow owns a single UI Process; the graph does not dispatch",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 475
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.ACCEPTANCE_PROCESS_READY",
+          "node_type": "terminal",
+          "sequence": 84,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.ACCEPTANCE_GATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return exact browser processing handoff and immutable scope. No implicit retry or completion claim Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 476
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.ACCEPTANCE_RESULT",
+          "node_type": "decision",
+          "sequence": 85,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "passed": "CMKSP.ACCEPTANCE_PASSED",
+            "expected_rejection": "CMKSP.ACCEPTANCE_REJECTED",
+            "blocked": "CMKSP.ACCEPTANCE_BLOCKED",
+            "uncertain": "CMKSP.ACCEPTANCE_UNCERTAIN"
+          },
+          "prerequisites": [
+            "CMKSP.INPUT_CONTRACT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only customer_acceptance_verify: compare actual current observations with the case's declared expected behavior and coverage. Pass only when the specific expected evidence exists. Preserve input rejection, processing rejection, auth/environment blocker and uncertain dispatch separately",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 843
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.ACCEPTANCE_PASSED",
+          "node_type": "terminal",
+          "sequence": 86,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.ACCEPTANCE_RESULT"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Record the positive case passed only at its observed execution level, with receipt separately Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 477
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.ACCEPTANCE_REJECTED",
+          "node_type": "terminal",
+          "sequence": 87,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.ACCEPTANCE_RESULT"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Record the negative case passed only when the expected rejection actually occurred; preserve its validation or processing level Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 478
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.ACCEPTANCE_BLOCKED",
+          "node_type": "terminal",
+          "sequence": 88,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Record the actual input, auth/authz, transport/environment, catalog mismatch or approval blocker and one concrete resume action. No synthetic passing result Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 479
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.ACCEPTANCE_UNCERTAIN",
+          "node_type": "terminal",
+          "sequence": 89,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.ACCEPTANCE_RESULT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Preserve uncertain processing and reconcile through current visible history; never replay the action Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 480
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.PROVIDER_REVIEW",
+          "node_type": "decision",
+          "sequence": 90,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "matched": "CMKSP.PROVIDER_REVIEWED",
+            "not_found": "CMKSP.PROVIDER_NOT_FOUND",
+            "selection_required": "CMKSP.PROVIDER_SELECTION_REQUIRED",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.INPUT_CONTRACT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only review_provider_setup: execute resolve_cmk_public_provider_review through the existing Core client. Read identity/type only and stop before any preparation, write, import or reuse assertion",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 753
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.PROVIDER_REVIEWED",
+          "node_type": "terminal",
+          "sequence": 91,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.PROVIDER_REVIEW"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return observed matching identity/type and limited coverage; provider reuse, delivery and receipt remain unverified Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 486
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.PROVIDER_NOT_FOUND",
+          "node_type": "terminal",
+          "sequence": 92,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.PROVIDER_REVIEW"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return business provider name not found after complete live read; preserve request and ask for corrected name or separately scoped create, never create a supplier Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 487
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.PROVIDER_SELECTION_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 93,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.PROVIDER_REVIEW"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return readable current choices or ambiguity for the business user; no arbitrary first-row selection or technical IDs Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 488
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.PROVIDER_STATE",
+          "node_type": "decision",
+          "sequence": 94,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "verified": "CMKSP.PROVIDER_VERIFIED",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.INPUT_CONTRACT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only post_import_verify_provider: apply Provider Verification Inputs to the actual private completed export and bound import evidence. Compare all requested fields; no network operation, mutation or replay",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 929
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.PROVIDER_VERIFIED",
+          "node_type": "terminal",
+          "sequence": 95,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.PROVIDER_STATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return provider requested-state comparison coverage, actual processing result and separately qualified created-versus-existing disposition. No claim of a connection, supplier setup or document delivery Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 510
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.CONNECTION_EXPORT_STATE",
+          "node_type": "decision",
+          "sequence": 96,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "verified": "CMKSP.CONNECTION_EXPORT_VERIFIED",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.INPUT_CONTRACT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only post_import_verify_connection_export: apply Connection Export Verification Inputs to actual private completed exports, approved immutable row intent and successful import result. No external call or mutation; compare every requested mapped field and unrelated pre-existing rows.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 959
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.CONNECTION_EXPORT_VERIFIED",
+          "node_type": "terminal",
+          "sequence": 97,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.CONNECTION_EXPORT_STATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return successful import processing and exact exported business-state coverage separately, including matched fields, strict-create before/after identity counts and preserved rows. Do not report unobserved REST IDs, credentials, external delivery or PO receipt. Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 524
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.EXTERNAL_EXPORT_STATE",
+          "node_type": "decision",
+          "sequence": 98,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "verified": "CMKSP.EXTERNAL_EXPORT_VERIFIED",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.INPUT_CONTRACT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only post_import_verify_external_message_definition: apply Native FSM External Definition Verification Inputs to actual private completed before/after exports, approved immutable row and successful import result. Compare intended fields and preserved rows. No external call, preparation, mutation or import replay",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 1133
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.EXTERNAL_EXPORT_VERIFIED",
+          "node_type": "terminal",
+          "sequence": 99,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.EXTERNAL_EXPORT_STATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return successful native external-definition creation and exported intended-field comparison bound to the actual current request, final archive and completed import. State the exact creation scope; no collaboration-message transformation or delivery claim Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 15
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.MESSAGE_EXPORT_STATE",
+          "node_type": "decision",
+          "sequence": 101,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "verified": "CMKSP.MESSAGE_EXPORT_VERIFIED",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.INPUT_CONTRACT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only post_import_verify_message_definition with verification_profile native_fsm_export: execute verify_cmk_message_definition_export_state on the completed private before/after exports and immutable intended message row. No reference GET, export initiation, preparation or mutation",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 1134
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.MESSAGE_EXPORT_VERIFIED",
+          "node_type": "terminal",
+          "sequence": 102,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.MESSAGE_EXPORT_STATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return native exported intended-field and literal-file comparison bound to the approved message row and successful current FSM import. Report strict creation and unrelated-row preservation separately; no transformation or business-delivery claim Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 16
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.IDENTIFIER_UPDATE_INPUT",
+          "node_type": "decision",
+          "sequence": 103,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "CMKSP.IDENTIFIER_UPDATE_REFERENCES",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.REQUEST_SHAPE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Apply Existing Provider Identifier Update Inputs for the actual stage; preserve correction authority and exact target/request. No write",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 1223
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.IDENTIFIER_UPDATE_REFERENCES",
+          "node_type": "decision",
+          "sequence": 104,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "ready": "CMKSP.IDENTIFIER_UPDATE_PACKAGE",
+            "unchanged": "CMKSP.IDENTIFIER_UPDATE_UNCHANGED",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.IDENTIFIER_UPDATE_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only update_provider_identifier_fsm executes qualify_cmk_provider_identifier_update. Current identity, before value and all-object scope qualification; no write",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 1093
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.IDENTIFIER_UPDATE_PACKAGE",
+          "node_type": "decision",
+          "sequence": 105,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "prepare_needed": "CMKSP.IDENTIFIER_UPDATE_PREPARE",
+            "loader_ready": "CMKSP.IDENTIFIER_UPDATE_LOAD_READY",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.IDENTIFIER_UPDATE_REFERENCES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Intake/source_export returns prepare_needed; prepared_import returns loader_ready only after complete minimal update package, current references and immutable handoff checks. Neither outcome approves or submits an import",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 1224
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.IDENTIFIER_UPDATE_PREPARE",
+          "node_type": "terminal",
+          "sequence": 106,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.IDENTIFIER_UPDATE_PACKAGE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return prepare_needed and bounded existing-row correction contract; invoking Run Book owns assisted local preparation Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 602
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.IDENTIFIER_UPDATE_LOAD_READY",
+          "node_type": "terminal",
+          "sequence": 107,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.IDENTIFIER_UPDATE_PACKAGE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return loader_ready with immutable artifact and current reference evidence; Core Data Loader owns approval and submission Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 603
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.IDENTIFIER_UPDATE_STATE",
+          "node_type": "decision",
+          "sequence": 108,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "verified": "CMKSP.IDENTIFIER_UPDATE_VERIFIED",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.REQUEST_SHAPE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only post_import_verify_provider_identifier_update applies Actual saved result in Existing Provider Identifier Update Inputs. No external call, repair or import retry",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 1225
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.IDENTIFIER_UPDATE_VERIFIED",
+          "node_type": "terminal",
+          "sequence": 109,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.IDENTIFIER_UPDATE_STATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return updated_and_verified for the original correction only; no new operation Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 604
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.IDENTIFIER_UPDATE_UNCHANGED",
+          "node_type": "terminal",
+          "sequence": 110,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.IDENTIFIER_UPDATE_REFERENCES"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return unchanged with current field equality; no import required or submitted Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 605
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.COMBINED_INPUT",
+          "node_type": "decision",
+          "sequence": 111,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "CMKSP.COMBINED_REFERENCES",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.REQUEST_SHAPE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only explicit qualify_combined_provider_setup: apply Combined Provider Creation Qualification bounded request, field contracts, feature/dependency and same-package reference rules; unresolved fields stop before any preparation",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 1190
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.COMBINED_REFERENCES",
+          "node_type": "decision",
+          "sequence": 112,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "qualified": "CMKSP.COMBINED_PACKAGE",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.COMBINED_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "For qualify_combined_provider_setup selected at intake execute qualify_cmk_combined_provider_references with Combined Provider Public Capability Bootstrap, Declared Combined Public Reads and Combined Capability Outcomes before collection reads; apply Combined Provider Creation Qualification and all existing applicable field/lookup eligibility checks. Only this bounded operation permits declared public per-resource describes despite root omission; no general runtime-resource prerequisite or profile switch after failure. Package-local provider and delivery are intended references for this bounded profile, never claimed as already saved before import",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 1071
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.COMBINED_PACKAGE",
+          "node_type": "decision",
+          "sequence": 113,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "loader_ready": "CMKSP.COMBINED_LOAD_READY",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.COMBINED_REFERENCES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only prepared_import: apply Combined Provider Creation Qualification native package and import handoff rules, all-object schema and immutable source checks, complete lookup/duplicate evidence and Core preflight. No source edit, external write or approval is performed here",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 1191
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.COMBINED_LOAD_READY",
+          "node_type": "terminal",
+          "sequence": 114,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.COMBINED_PACKAGE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return the validated four-row immutable ZIP, request/intent/reference/source hashes and completed rule evidence to the invoking Run Book and Core Data Loader. This terminal establishes preapproval readiness only; the current run remains unverified until actual successful processing and complete before/after comparison. No import, polling or retry is performed by this node Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 578
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.COMBINED_STATE",
+          "node_type": "decision",
+          "sequence": 115,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "verified": "CMKSP.COMBINED_VERIFIED",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.REQUEST_SHAPE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only post_import_verify_combined_provider_setup: apply Combined Provider Creation Qualification Result qualification to original approved immutable row/field-state intent, terminal native job and complete fresh same-target exact-task before/after exports. Require all four creations, explicit settings, relationships, inactive status and all-six-object prior-row preservation. Compare optional unspecified Fusion values separately. No GET, new default, export initiation, import or retry",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 1198
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.COMBINED_VERIFIED",
+          "node_type": "terminal",
+          "sequence": 116,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.COMBINED_STATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return verified configuration for exactly the original four-component request with bound import/snapshot hashes, created component dispositions and preservation evidence. Report one combined import and actual per-object outcomes separately. This proves saved setup, not partner delivery, invoice processing, arbitrary batching or rollback Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 585
           },
           "readiness": {
             "status": "ready",
@@ -130,17 +2654,206 @@
         {
           "id": "RETURN_ISSUES",
           "node_type": "terminal",
-          "sequence": 40,
+          "sequence": 117,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
           "prerequisites": [],
           "on_failure": "continue",
-          "applies_when": "A validation or execution gate blocks import",
+          "applies_when": "A validation or execution gate blocks import. Apply Feature State Presentation when the blocker concerns the Simplified B2B Messaging feature. Apply Business Name Presentation.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 66
+            "line": 202
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.COMPOSITION_INPUT",
+          "node_type": "decision",
+          "sequence": 400,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "CMKSP.COMPOSITION_REFERENCES",
+            "blocked": "CMKSP.COMPOSITION_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.REQUEST_SHAPE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only qualify_provider_task_composition_fsm: apply Provider Task Composition exact shape, dependency firewall, literal inputs and per-row field states before any reference GET. Reject new external-to-message and new message-to-connection edges",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 1258
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.COMPOSITION_REFERENCES",
+          "node_type": "decision",
+          "sequence": 401,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "qualified": "CMKSP.COMPOSITION_PACKAGE",
+            "blocked": "CMKSP.COMPOSITION_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.COMPOSITION_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only qualify_provider_task_composition_fsm: execute qualify_cmk_provider_task_composition using all existing typed component sources and the Provider Task Composition dependency firewall. Graph readiness or a template alone is insufficient",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 1135
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.COMPOSITION_PACKAGE",
+          "node_type": "decision",
+          "sequence": 402,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "prepare_needed": "CMKSP.COMPOSITION_PREPARE",
+            "loader_ready": "CMKSP.COMPOSITION_LOAD_READY",
+            "blocked": "CMKSP.COMPOSITION_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.COMPOSITION_REFERENCES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Intake/source_export returns prepare_needed only after every component reference qualifies. prepared_import requires Provider Task Composition exact nine-row package, dependency firewall, round-trip and immutable Core checks; no mutation or approval",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 1259
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.COMPOSITION_PREPARE",
+          "node_type": "terminal",
+          "sequence": 403,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.COMPOSITION_PACKAGE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return qualified retained nine-row business intent to active Run Book assisted Prepare Provider Task Composition CSV ZIP. This is preparation-needed, not creation or approval. Continue owning workflow without another proceed question; preserve all blocked components",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 611
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.COMPOSITION_LOAD_READY",
+          "node_type": "terminal",
+          "sequence": 404,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.COMPOSITION_PACKAGE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return the one nine-row immutable native ZIP, exact task/target, all component rule outcomes and bound source/intent/reference hashes to Core Data Loader and Task Hook. Preserve their authoritative approvals and initiation terminal. A controlled qualification candidate is not a passed live import",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 612
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.COMPOSITION_STATE",
+          "node_type": "decision",
+          "sequence": 405,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "verified": "CMKSP.COMPOSITION_VERIFIED",
+            "blocked": "CMKSP.COMPOSITION_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSP.REQUEST_SHAPE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only verify_provider_task_composition_fsm: apply Provider Task Composition exported-state result to approved intent and actual successful or failed terminal result with private full snapshots. Partial failures remain blocked with per-component comparison; no reference GET, export, preparation or retry",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 1260
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.COMPOSITION_VERIFIED",
+          "node_type": "terminal",
+          "sequence": 406,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.COMPOSITION_STATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return actual single-job result, all nine component dispositions, per-object ProcessLog evidence, exact requested/saved cell comparisons and six-object full preservation evidence. Verify saved setup only; no transformation execution, activation, delivery, arbitrary batching or rollback claim",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 613
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSP.COMPOSITION_ISSUES",
+          "node_type": "terminal",
+          "sequence": 407,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSP.REQUEST_SHAPE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return the exact failing composition input/reference/package/job/cell check, actual per-component saved side effects and errors, complete source/request fingerprints and safe resume context. Do not omit scope, infer approval or retry a mutation",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 614
           },
           "readiness": {
             "status": "ready",

@@ -26,11 +26,13 @@ inputs:
   - "setup_task_scope"
   - "setup_data_artifacts"
   - "expenses_system_options_input_workbook (optional)"
+  - "ebs_profile_csv_and_source_bound_scope_decisions (optional)"
 outputs:
   - "setup_task_plan"
   - "setup_data_routing"
   - "validation_checkpoints"
   - "expenses_system_options_intake_validation (when workbook supplied)"
+  - "ebs_profile_workbook_and_source_lineage (when EBS CSV supplied)"
   - "skill_run_record"
   - "token_usage_record"
 depends_on:
@@ -169,6 +171,18 @@ Use this task metadata when invoking those skills:
 
 ## Input Workbook
 
+When input is an EBS profile CSV, use the parent [EBS profile intake](../references/ebs-profile-migration.md)
+first. It accounts for every profile and requests explicit scope/behavior
+decisions for unresolved mappings. Only reviewed mappings owned by this task
+may populate this workbook. Tax enablement routes to Manage Tax Fields. A
+profile display-name hint or user-approved proposed mapping is not a confirmed
+FSM field contract, and does not waive this task's rule-readiness gate.
+
+Use the [EBS workbook handoff](references/ebs-profile-intake.md) for source-bound
+conversion with `from-ebs`. The maintained approver mapping converts
+AP_WEB_ALLOW_OVERRIDE_APPROVER Y/N to Allow Overriding Approver Yes/No.
+It does not migrate approval workflow rules or identify an approver person.
+
 The [blank intake workbook](assets/ManageExpensesSystemOptions_Input.xlsx) uses the
 same title, instructions, gray headers, banded tables, and 500-row capacity as
 the Expense Report Templates input workbook. Its `User Options`, `Corporate
@@ -274,15 +288,19 @@ node scripts/expense_system_options_intake.mjs build-import \
   --manifest-output /absolute/path/import-manifest.json
 ```
 
+The builder compares each requested setting with the validated baseline and
+reports create, update, or no_change. When all settings already match, it
+writes a no-change manifest (when requested) and no ZIP; do not submit an
+unchanged setup package just to demonstrate an import. Mixed requests preserve
+unchanged settings and include only changed intent in the manifest records.
+
 The builder binds the supplied ProcessId to the export metadata or, for the
 observed `-999` placeholder, to the unchanged exporter ZIP. It verifies
 the validated workbook digest and every baseline CSV digest, preserves all
 four exported members, and changes the uniquely matched or newly inserted
 `(BuName, OptionCode)` rows in both `EXM_SETUP_OPTION.csv` and its paired
-`EXM_CASH_ADV_SETUP_AND_POLICY.csv`. It submits only the complete selected rows,
-retaining their existing non-value columns; unrelated rows are omitted from the
-submission and must remain unchanged in Fusion. Other members remain header-only.
-For a missing option in both paired files,
+`EXM_CASH_ADV_SETUP_AND_POLICY.csv`. It retains every unrelated row
+and existing non-value columns. For a missing option in both paired files,
 it appends a sparse row with BuName, OptionCode and ValueCode; global rows use
 blank BuName and OtherOrgId=-1. It never copies global IDs or audits into a BU.
 Confirmed scalar settings use BuName, SettingCode and SettingValue in
@@ -292,28 +310,6 @@ any unsupported field. The generated ZIP is a candidate artifact only: pass it
 unchanged to `core.data-loader`, which performs its own preflight, Task Hook
 validation, immutable approval, submission, monitoring, and ProcessLog
 verification. Never submit the package directly.
-
-### Selected-row submission and preservation evidence
-
-`build-import` now uses the selected-row contract above. A prior full-baseline
-regression changed last-update audits on an unrelated DFLT_CC_EXP_TEMPLATE_ID
-row, despite identical submitted cells. That historical failure is retained;
-full-baseline replay is no longer an ordinary builder behavior.
-
-A controlled nonproduction create and update verified the selected-row profile:
-48/48 create checks and 57/57 update checks passed, including preservation of
-all 978 unrelated transport rows and their audit cells. See the bounded
-[preservation evidence](references/selected-row-preservation.md). These cases
-cover a BU-specific confirmed option and scalar setting, not every input,
-global setting, target or release. Each run still needs fresh references,
-native preflight/Task Hook approval and full post-import reconciliation.
-
-For explicit developer qualification of a changed contract or scope, use the
-[maintainer workflow](references/selected-row-qualification.md). Its separate
-`build-qualification` command keeps the qualification-only warning and does not
-grant ordinary promotion. Never remove an alias, rewrite metadata, replay an
-uncertain import or repair audit fields to conceal a mismatch. No automatic
-restoration, deletion or cleanup is implied.
 
 ## Export Evidence and Mapping Limits
 

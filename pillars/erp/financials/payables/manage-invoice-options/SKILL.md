@@ -37,6 +37,7 @@ depends_on:
   - "shared.validation.reference-data-validator"
   - "core.data-loader"
   - "erp.financials.payables.manage-payment-options"
+  - "erp.financials.financial-reporting-structures.manage-chart-of-accounts-structure-instances"
 uses_core:
   - "core.auth.fusion-oauth-authentication"
   - "core.fusion-api.ucm-rest-client"
@@ -87,7 +88,10 @@ applicability:
     - "All"
   fusion_releases:
     - "Current Oracle Fusion Cloud release"
-side_effects: []
+side_effects:
+  - "Read-only account and COA lookups, and setup-data exports for classification."
+  - "Separately approved GL account-combination creation through the declared approval adapter; never from ordinary validation."
+  - "Eligible missing accounts may be deferred to creation during the separately approved Invoice Options FSM import."
 required_privileges: []
 ---
 
@@ -134,6 +138,63 @@ This task supports creating a new Invoice Options setup row and updating an exac
 - Route every import through `core.data-loader` in FSM mode. A static artifact
   never authorizes an import: Data Loader still requires an immutable preview
   and approval for that candidate.
+
+## Income Tax Reporting request labels
+
+Handle Income Tax Reporting requests in this skill using the following visible
+field labels. These controls appear on Manage Tax Reporting and Withholding Tax
+Options and map to columns already supported by this task's shared
+`AP_SYSTEM_PARAMETER` package.
+
+| Customer field label | Package field |
+|---|---|
+| Use combined filing program | `CombinedFilingFlag` |
+| Use supplier tax region | `IncomeTaxRegionFlag` |
+| Income Tax Region | `IncomeTaxRegion` |
+| Include withholding distributions in income tax reports | `Enable1099OnAwtFlag` |
+
+For example, “For Income Tax Reporting, enable Use combined filing program for
+`<business unit>`” requests `CombinedFilingFlag=Y`. An explicit disable requests
+`N`. Apply the same enable/disable interpretation to the other two checkbox
+labels. Keep canonical package field names in the normalized design and preview.
+
+A label alone, or a table containing “Use combined filing program” with an empty
+value cell, does not specify Yes or No. Ask for the intended setting and any
+missing business unit. Do not treat an empty cell as No, a default, or an explicit
+clear. Omitted fields retain their exported values, including existing blanks,
+except for the combined-filing dependent flag reset described below.
+
+When preparing a request that changes these settings, consider the resulting
+combined-filing and supplier-region choices together:
+
+- Setting Use combined filing program to No also sets Use supplier tax region
+  to No. Explain this dependent effect before import and show it in the effective
+  preview values. A fresh export with both flags set to No is the expected result.
+  If the request explicitly combines No with supplier tax region = Yes, explain
+  the conflict and ask for corrected choices before creating a candidate.
+  Income Tax Region must be blank; if an existing region is populated, ask for
+  an explicit clear or a different combined-filing choice.
+- With Use combined filing program enabled and Use supplier tax region disabled,
+  Income Tax Region is enabled and required. Reuse a populated existing region
+  when it is unchanged; otherwise ask for the intended LOV value.
+- With both options enabled, Income Tax Region is disabled because the supplier
+  tax region is used. Do not require a separate region or silently clear a
+  previously exported value. Reject a requested region change or clear unless
+  the same request switches Use supplier tax region to No and supplies a region.
+
+Check these dependencies against the fresh exported values plus the requested
+changes. A missing or whitespace-only required region, an explicit clear of a
+required region, or a change to a disabled region stops before candidate
+creation. A populated unchanged region can be reused. Changes unrelated to these
+three controls retain their existing values.
+
+Income Tax Region is LOV-based. Preserve the selected package value; Fusion
+validates it during the governed FSM import. Do not hardcode values or infer
+the complete LOV from an export. Do not claim a separate local LOV
+validation or automatic clearing of a populated region. Verify the documented
+supplier-flag reset separately from unrelated preservation checks. Include withholding
+distributions in income tax reports is a separate explicit checkbox choice;
+do not infer it from either combined-filing setting.
 
 ## Setup Task Skill Contract
 
@@ -223,9 +284,14 @@ For account changes, ledger changes affecting an existing account, or enabling
 interest invoices, run `scripts/resolve_lookup_prerequisites.py --baseline
 <fresh-export.zip>` before normalization. It uses the task-owned
 `scripts/interest_account_validation.py` and the unchanged core OAuth/HTTP client. Require a positive existing
-CCID with `DynamicInsertion=No`; invalid or unavailable validation blocks the
-candidate. Preserve receipt bindings to operation, BU, ledger, ordered segments
-and baseline. Never create a GL combination. Keep the builder's JSON report
+CCID with `DynamicInsertion=No`, the narrow approved SOAP-rejection/FSM
+deferral, or the explicit account business-validation override described below.
+Account business errors block the candidate by default. The user may explicitly
+approve submitting that exact account unchanged after seeing its error; retain
+the bound waiver and warning without claiming the account is valid. Service or
+context failures and uncertain results must be resolved before continuing.
+Preserve receipt bindings to operation, BU, ledger, ordered segments
+and baseline. Never create a GL combination from validation. Use the separately approved creation flow below for confirmed missing accounts. Keep the builder's JSON report
 with a generated ZIP. For offline `validate-upload`, pass that report through
 `--validation-context <build-report.json>`. It ties the original requests and
 lookup results to the exact ZIP and baseline, including interest-account
@@ -272,6 +338,17 @@ Data Loader's import result remains separate. `SUCCESS.DONE` in the pre-import
 Task Hook registry means pre-import readiness, not persisted configuration.
 
 ## Verifying Changes After Import
+
+For Interest Expense Distribution, read
+[account validation decisions and test cases](references/interest-account-validation.md)
+when resolving a rejected account, discussing creation, or testing this flow.
+Keep `DynamicInsertion=No` for validation of existing accounts. Require HTTP success, `Status=Valid`
+and one positive CCID; an existing ID alone is insufficient. Show the bounded
+Fusion error codes and message when rejected. `CcId=-1` means this validation
+did not return a usable account; it does not prove absence. Disabled,
+end-dated, future-dated and posting-restricted accounts must not receive a
+creation offer. FSM completion alone does not establish account eligibility or
+retention. Missing-account classification and separately approved creation use the flow below. Never turn the ordinary validation call into a creating call.
 
 `reconcile` can report `PASS` only after the workflow has observed a successful
 import and a later completed export from the same task and environment. Supply
@@ -333,3 +410,113 @@ requirements, not an execution order or a request to run both workflows.
 Dependency collection should include each skill once. A missing sibling runtime
 or descriptor blocks validation with an actionable error; do not replace it with
 weaker local checks. Keep both components together when distributing this pair.
+
+## Missing Interest Account: Check, Ask, Create Only After Approval
+
+For account changes, first obtain a fresh setup-data export for
+`GL_MANAGE_CHARTS_OF_ACCOUNTS_STRUCTURE_INSTANCES` through Task Level Export.
+Use the account batch review below with `--coa-configuration <export.zip>` to
+check exact combination existence before SOAP validation. Existing accounts
+are validated with No; missing accounts follow the configuration/approval flow.
+Reuse a matching export no older than 24 hours. This export supplies the actual
+`DynamicCombinationCreationAllowed` value and the physical segment mapping;
+`chartOfAccountsLOV` alone does not expose this setting. The export and Invoice
+Options baseline must match the independently selected environment and release.
+The resolver uses managed read-only ledger, COA and complete account LOV lookups.
+
+Read the returned `accountResolution` and show its message to the user:
+
+- Fusion explicitly rejects a segment value: show that service error and ask for a corrected account. Do not offer combination creation to create or repair a segment value.
+- Existing unusable account: explain the problem directly, for example “This account
+  exists but is disabled. Please choose another account.” For date or posting
+  restrictions, name that restriction. Do not preface the answer with “Fusion
+  rejected it.” Keep the raw service code/message in diagnostic evidence and
+  do not offer creation. If no specific reason was returned, say the existing
+  account could not be validated for use.
+- Confirmed missing, dynamic creation disabled: explain that creation is disabled.
+- Confirmed missing, configuration unknown: explain what is unconfirmed and stop creation.
+- Confirmed missing, configuration enabled: ask
+  whether to create the exact combination, use an existing account, or stop.
+  Explain that Fusion still validates cross-validation and other combination
+  rules during creation. Do not promise that creation will succeed.
+
+The resolver's creation question is a stop with no satisfied receipt or candidate.
+A user choosing creation authorizes preparation of the exact preview, not a silent
+write. Run `scripts/interest_account_creation.py --design <design.json> --baseline
+<invoice-options.zip> --coa-configuration <coa.zip> --operation-id <operation-id>
+--preview-output <new-preview.json> --token-cache auto`. This performs fresh
+read-only checks and prepares a creation request (logical `DynamicInsertion=Yes`, serialized as the GL service flag `Y`); it does not
+submit that request. Show the exact target, ledger, ordered segments and creation
+effect and obtain explicit approval immediately before execution.
+
+The approval JSON must be `fscr-soap-approval-v1`, with `approved: true`, a
+nonblank `approvalId`, and the exact preview `request` and `taskContext` objects.
+Do not manufacture approval from configuration or from a generic testing request.
+Then invoke the same command with `--approval-file <approval.json> --output
+<new-receipt.json>` instead of `--preview-output`. It rechecks absence and
+configuration, submits once through its own `scripts/account_combination_workflow.py` adapter
+and core OAuth/HTTP, records its receipt, and revalidates the returned positive
+CCID with `DynamicInsertion=No`. Failed or uncertain creation never retries automatically. Only the specific
+SOAP dynamic-insertion rejection may produce the separately documented FSM
+deferral after fresh missing/configuration checks. Keep the receipt and reconcile before any separately approved retry.
+
+On success rerun the ordinary resolver for a fresh baseline-bound account receipt,
+then continue normal Invoice Options preparation and Data Loader approval. Account
+creation does not save Invoice Options. Complete the existing post-import account
+verification after a separately approved setup import. If the user declines, use
+`--decline` or simply stop; no authentication, account creation or setup save occurs.
+
+Account creation is self-contained in Invoice Options. Its local
+`scripts/account_combination_workflow.py` binds the exact request approval, reserves
+and records the execution receipt, and submits once through the unchanged core
+OAuth/HTTP client. It does not load code from Common Options.
+Preserve the user's ordered segment values and blank positions in both validation
+and creation requests. Fusion decides requiredness, segment validity and combination
+eligibility. Do not block a blank segment or a value merely because it has not
+appeared in existing accounts. Existence/configuration checks and exact creation
+approval remain required; they do not replace Fusion's business validation.
+
+
+## Account batch review and FSM creation fallback
+
+For account changes, follow [Account checks and batch review](references/interest-account-batch-flow.md).
+Use `scripts/interest_account_batch.py review` with fresh COA evidence to check
+the exact combination before SOAP validation, and report every record before
+asking once about corrections, explicit account-business-validation overrides, exclusions or stopping. Prepare all
+missing-account creation previews together; one explicit answer may approve
+those exact requests, with separate bound execution records. Explain that any
+created GL accounts remain if the later Invoice Options import is cancelled or fails.
+
+Only an approved SOAP creation rejected solely with `GL_ASM_ACCOUNT_DYN_INSERT`
+can be deferred to FSM after fresh absence and configuration checks. The returned
+`deferred_to_fsm` receipt is not a positive CCID or an import approval. Other
+account business errors and existing unusable accounts stay blocked by default;
+the user may explicitly approve submitting the exact account unchanged through
+the [account-validation override workflow](references/account-validation-overrides.md).
+This waiver is separate from the automatic FSM creation fallback and does not
+apply to service or context failures or uncertain execution. Include each attempted
+account creation and the approved included/excluded record list in the normal
+Data Loader preview. Do not silently skip rows, bypass Task Hook or submit automatically.
+After import, use the batch verification command to check both persisted
+Invoice Options and usable CCIDs; report verified counts, errors and pending checks.
+
+## Fresh COA export evidence
+
+Use `scripts/export_interest_account_configuration.py` with the ordinary Task
+Level Export arguments `--task-code GL_MANAGE_CHARTS_OF_ACCOUNTS_STRUCTURE_INSTANCES
+--data --project-id <project> --token-cache auto`. It delegates export mechanics
+to the shared skill and records a `<export.zip>.observation.json` receipt beside
+the unchanged ZIP. Keep both files together. Native Fusion metadata may omit a
+timezone; in that case the account check uses the matching completed export
+run's UTC observations and ZIP hash, never a guessed server timezone or file
+modification time. Old, missing or mismatched observations remain blocked.
+
+## Explicit account business-validation overrides
+
+If the user explicitly wants to submit an account unchanged after seeing its
+validation error, follow [account-validation-overrides.md](references/account-validation-overrides.md).
+The batch selector supports a reasoned per-record override, and package checks
+retain its bound failure receipt and warning. Do not report the account valid.
+Show the waiver in the final preview and record affected Task Hook rules as
+`overridden`; normal Data Loader approval is still required. FSM may accept or
+reject the record, so verify the saved account and its usability afterward.

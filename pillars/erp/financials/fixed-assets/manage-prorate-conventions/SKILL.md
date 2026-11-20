@@ -32,6 +32,8 @@ outputs:
   - "skill_run_record"
   - "token_usage_record"
 depends_on:
+  - "core.fusion-api.apps-common.descriptive-flexfields"
+  - "erp.financials.fixed-assets.manage-fixed-assets-flexfield-value-sets"
   - "shared.setup-export.task-level-export"
   - "shared.validation.setup-data-validator"
   - "shared.validation.reference-data-validator"
@@ -39,6 +41,7 @@ depends_on:
   - "core.auth.fusion-oauth-authentication"
   - "core.fusion-api.rest-api-client"
 uses_core:
+  - "core.fusion-api.apps-common.descriptive-flexfields"
   - "core.auth.fusion-oauth-authentication"
   - "core.fusion-api.rest-api-client"
   - "core.project-mgmt.artifact-version-manager"
@@ -89,10 +92,12 @@ applicability:
   fusion_releases:
     - "Current Oracle Fusion Cloud release"
 side_effects:
+  - "Reads current Convention Types DFF definitions and validates supplied or preserved values through declared read-only workflows."
   - "Performs read-only target lookups for Reference Data Set identity, SetCode, and fiscal-year dates."
   - "May refresh local gitignored OAuth token caches through the shared authentication capability."
   - "Routes validation FSM exports and approved import operations to shared and core skills."
 required_privileges:
+  - "Read access to the selected DFF metadata export and applicable value-set scopes."
   - "Fusion access for FA_MANAGE_PRORATE_CONVENTION export and import."
   - "Fusion BOSS read access to assetFiscalYearDatesView."
   - "Fusion BOSS read access to commonAppsInfra setIdSets."

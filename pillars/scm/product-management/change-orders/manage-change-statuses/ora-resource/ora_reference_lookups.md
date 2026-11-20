@@ -48,7 +48,15 @@ Show this numbered catalog only when `StatusTypeName` is missing and the user mu
 
 - Current target FSM template: EGO_CHANGE_STATUS.csv and ASM_SETUP_CSV_METADATA.xml.
 - User-authorized populated FSM export for the current validation run.
-- Oracle 26C: https://docs.oracle.com/en/cloud/saas/supply-chain-and-manufacturing/26c/faipr/understand-change-order-statuses.html
-- Oracle import matching: https://docs.oracle.com/en/cloud/saas/supply-chain-and-manufacturing/25d/faipr/import-and-export-change-type-configuration.html
+- Oracle 26D status behavior (latest SCM documentation release verified on 2026-11-03): https://docs.oracle.com/en/cloud/saas/supply-chain-and-manufacturing/26d/faipr/understand-change-order-statuses.html
+- Oracle import matching, historical 25D fallback: https://docs.oracle.com/en/cloud/saas/supply-chain-and-manufacturing/25d/faipr/import-and-export-change-type-configuration.html
+
+Latest-release gap: on 2026-11-03, the corresponding 26D import/export topic
+could not be retrieved, and the targeted documentation search returned the 25D
+page. Retain that source as historical guidance, not verified 26D behavior.
+Recheck the latest Oracle documentation before use and validate import matching,
+CSV headers, and encodings against the fresh target FSM template and populated
+export; stop if the evidence conflicts. The status overview documents status
+behavior, not the numeric CSV import values.
 
 The string business code maps to StatusInternalName.

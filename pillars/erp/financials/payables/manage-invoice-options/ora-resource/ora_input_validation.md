@@ -92,3 +92,54 @@ Explicit valid choices may differ from defaults. Never change uploaded bytes.
 ## Update preservation
 
 For updates, `preserveOtherValues` must be `true` or omitted (defaults to `true`). Explicit `false` and nonboolean values are rejected before candidate preparation or validation. Omitted fields retain their baseline values.
+
+## Combined filing dependencies
+
+When a request sets Use combined filing program (`CombinedFilingFlag`) to No,
+Fusion also sets Use supplier tax region (`IncomeTaxRegionFlag`) to No. Show this
+dependent effect in the preview, include `IncomeTaxRegionFlag=N` in the effective
+candidate and requirements, and verify both values in the fresh export. Keep the
+original requested values visible. An exported supplier flag of No is an expected
+result of this operation, not a partial result by itself. All unrelated values
+and business units remain subject to normal preservation checks.
+
+If the user explicitly requests combined filing = No and supplier tax region =
+Yes, explain: “Turning off Use combined filing program also turns off Use supplier
+tax region. These choices cannot be kept together. Set both to No, or keep combined
+filing enabled to use the supplier tax region.” Stop for a corrected request;
+do not silently replace an explicit choice.
+
+Income Tax Region must be blank when combined filing is disabled. If it is
+populated in the export, ask for an explicit clear or a different combined-filing
+choice before preparing the update. Do not infer that disabling a control proves
+that an existing populated region will be cleared by import. Include withholding
+distributions in income tax reports remains independent of this dependency.
+
+## Income Tax Region request validation
+
+For a request involving combined filing, supplier tax region or Income Tax
+Region, validate the resulting settings using the fresh exported row plus the
+requested changes. When combined filing is Yes and supplier tax region is No,
+require a nonblank Income Tax Region. Reuse a populated unchanged region; stop
+for a region choice if it is missing, and reject an explicit clear of a required
+region. A whitespace-only value does not satisfy requiredness.
+
+When combined filing and supplier tax region are both Yes, reject a requested
+change or clear of Income Tax Region because that control is disabled. Ask
+whether to switch supplier tax region to No and use an explicit region, or keep
+the existing supplier-region setting. A request that switches supplier tax
+region to No and supplies a nonblank region in the same operation is valid.
+Preserve a hidden exported region when it is unchanged; do not clear it merely
+because the control is disabled. Unrelated updates preserve the existing values.
+These checks do not claim local validation of membership in the region LOV.
+
+## Explicit user account-validation waiver
+
+Account business errors block by default. After the error is explained, an
+explicit user decision to submit the exact account unchanged may retain the row
+through the bound `submit_interest_account_with_user_override` / `overridden`
+receipt. See [the override workflow](../references/account-validation-overrides.md).
+Preserve the error and reason; do not claim validation passed or invent a CCID.
+Mark affected Task Hook rule results `overridden`, keep all unrelated checks,
+and obtain the normal exact Data Loader import approval. FSM may accept or
+reject the account; post-import account usability must be checked separately.

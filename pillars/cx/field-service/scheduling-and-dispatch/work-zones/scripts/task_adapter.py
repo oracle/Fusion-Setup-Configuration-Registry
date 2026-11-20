@@ -13,6 +13,8 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT.parents[2] / "scripts"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
+from guarded_xlsx import GuardedWorkbook, column_index, shared_string
 from task_orchestration import WorkflowBlocked, resolve_execution_route
 
 
@@ -65,11 +67,7 @@ def _text(value: object, field: str, sheet: str) -> str:
     return rendered
 
 
-def _column_index(reference: str) -> int:
-    value = 0
-    for character in "".join(part for part in reference if part.isalpha()).upper():
-        value = value * 26 + ord(character) - ord("A") + 1
-    return value
+_column_index = column_index
 
 
 def _xlsx_rows(path: Path) -> list[tuple[str, list[list[object]]]]:
@@ -77,12 +75,12 @@ def _xlsx_rows(path: Path) -> list[tuple[str, list[list[object]]]]:
     rel = "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}"
     package = "{http://schemas.openxmlformats.org/package/2006/relationships}"
     try:
-        with zipfile.ZipFile(path) as archive:
-            workbook = ElementTree.fromstring(archive.read("xl/workbook.xml"))
-            relationships = ElementTree.fromstring(archive.read("xl/_rels/workbook.xml.rels"))
+        with GuardedWorkbook(path) as archive:
+            workbook = archive.xml("xl/workbook.xml")
+            relationships = archive.xml("xl/_rels/workbook.xml.rels")
             targets = {node.attrib["Id"]: node.attrib["Target"] for node in relationships.findall(f"{package}Relationship")}
             try:
-                strings = ["".join(node.itertext()) for node in ElementTree.fromstring(archive.read("xl/sharedStrings.xml")).findall(f"{main}si")]
+                strings = ["".join(node.itertext()) for node in archive.xml("xl/sharedStrings.xml").findall(f"{main}si")]
             except KeyError:
                 strings = []
             sheets: list[tuple[str, list[list[object]]]] = []
@@ -91,7 +89,7 @@ def _xlsx_rows(path: Path) -> list[tuple[str, list[list[object]]]]:
                 if not target:
                     raise WorkbookInputError("Workbook sheet relationship is missing.")
                 sheet_path = target.lstrip("/") if target.startswith("/") else "xl/" + target
-                document = ElementTree.fromstring(archive.read(sheet_path))
+                document = archive.xml(sheet_path)
                 rows: list[list[object]] = []
                 for row in document.findall(f"{main}sheetData/{main}row"):
                     cells: dict[int, object] = {}
@@ -103,7 +101,7 @@ def _xlsx_rows(path: Path) -> list[tuple[str, list[list[object]]]]:
                         elif value_node is None:
                             value = None
                         elif cell_type == "s":
-                            value = strings[int(value_node.text or "")]
+                            value = shared_string(strings, value_node.text)
                         elif cell_type == "b":
                             value = value_node.text == "1"
                         else:
@@ -112,7 +110,7 @@ def _xlsx_rows(path: Path) -> list[tuple[str, list[list[object]]]]:
                     rows.append([cells.get(index) for index in range(1, max(cells, default=0) + 1)])
                 sheets.append((sheet.attrib.get("name", ""), rows))
             return sheets
-    except (OSError, KeyError, ValueError, ElementTree.ParseError, zipfile.BadZipFile) as error:
+    except (OSError, KeyError, IndexError, ValueError, ElementTree.ParseError, zipfile.BadZipFile) as error:
         raise WorkbookInputError(f"Workbook could not be read: {error}") from error
 
 
@@ -314,10 +312,10 @@ class WorkZonesAdapter:
     def preflight(self, workbook: Path, get: Any, temp: Path) -> tuple[dict[str, Any], dict[str, dict[str, Any]]]:
         payload = build_preview_data(workbook)
         baselines: dict[str, dict[str, Any]] = {}
-        for request in payload["requests"]:
+        for sequence, request in enumerate(payload["requests"], 1):
             label = request["identity"]
             singular_path = request["path"]
-            baseline = get(singular_path, temp / f"{label}.json")
+            baseline = get(singular_path, temp / f"baseline-{sequence}.json")
             if baseline is not None:
                 baselines[label] = baseline
                 request.update(

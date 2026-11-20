@@ -46,7 +46,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 49
+            "line": 50
           },
           "readiness": {
             "status": "ready",
@@ -70,7 +70,7 @@
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 30
+            "line": 35
           },
           "readiness": {
             "status": "ready",
@@ -95,7 +95,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 16
+            "line": 17
           },
           "readiness": {
             "status": "ready",
@@ -119,7 +119,7 @@
           "source": {
             "file": "ora_defaulting_rules.md",
             "anchor": "task-nodes",
-            "line": 59
+            "line": 119
           },
           "readiness": {
             "status": "ready",
@@ -131,7 +131,7 @@
           "node_type": "step",
           "sequence": 6,
           "action_type": "process_bulk",
-          "execution_route": "fsm-task-csv-import",
+          "execution_route": "local",
           "transitions": {
             "ready": "COASTR.GATE"
           },

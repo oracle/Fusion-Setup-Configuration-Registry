@@ -1,6 +1,6 @@
 """Maintain the ordinary accepted Meals runtime; no network or import.
 
-Only Meals authoring contracts are retained. Run --dry-run to inspect the selected
+Meals and Accommodations authoring contracts are retained. Run --dry-run to inspect the selected
 contract; --write updates the generated runtime JSON after authoring review.
 """
 import argparse
@@ -104,6 +104,22 @@ def build(original):
                 for field in ['SingleInstanceLimit','DailyLimit']]
         result['entities'][entity] = entry
     result['entities'] = {entity: result['entities'][entity] for entity in (P,R)}
+    from accommodations_contract import extend
+    extend(result, catalog)
+    from entertainment_contract import extend as extend_entertainment
+    extend_entertainment(result, catalog)
+    from car_rental_contract import extend as extend_car_rental
+    extend_car_rental(result,catalog)
+    from airfare_contract import extend as extend_airfare
+    extend_airfare(result, catalog)
+    from miscellaneous_contract import extend as extend_miscellaneous
+    extend_miscellaneous(result, catalog)
+    from mileage_contract import extend as extend_mileage
+    extend_mileage(result, catalog)
+    from per_diem_contract import extend as extend_per_diem
+    extend_per_diem(result, catalog)
+    from dom_empty_element_contract import bind as bind_dom_empty_element
+    bind_dom_empty_element(result)
     result.pop('period_entity', None)
     result.pop('blocked_reason', None)
     date_source = result['sources']['LIVE-SELECTED-RATE-STARTDATE-ENCODING']

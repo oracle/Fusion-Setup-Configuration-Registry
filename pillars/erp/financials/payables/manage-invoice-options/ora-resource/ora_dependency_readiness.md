@@ -61,3 +61,14 @@
 |---|---|
 | A requested existing business unit has no AP_SYSTEM_PARAMETERS_ALL row | Permit a create operation only after exact BU preflight and deterministic EnterpriseId resolution under the documented precedence. The operation creates the invoice-options row; it must not create or alter the business unit. |
 | A matching AP_SYSTEM_PARAMETERS_ALL row already exists | Reject the create operation as a duplicate target and use the separate update operation when the requested change is intended. |
+
+## Explicit user account-validation waiver
+
+Account business errors block by default. After the error is explained, an
+explicit user decision to submit the exact account unchanged may retain the row
+through the bound `submit_interest_account_with_user_override` / `overridden`
+receipt. See [the override workflow](../references/account-validation-overrides.md).
+Preserve the error and reason; do not claim validation passed or invent a CCID.
+Mark affected Task Hook rule results `overridden`, keep all unrelated checks,
+and obtain the normal exact Data Loader import approval. FSM may accept or
+reject the account; post-import account usability must be checked separately.

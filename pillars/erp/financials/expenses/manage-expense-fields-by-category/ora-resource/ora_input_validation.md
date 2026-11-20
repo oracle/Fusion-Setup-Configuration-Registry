@@ -169,3 +169,16 @@ Regression coverage in `pillars/erp/financials/expenses/manage-expense-fields-by
 `prepare_fsm_package.py` consumes the same normalized JSON and fresh baseline ZIP. It requires exactly the task CSV and metadata members, 19 unique expected columns with matching XML attribute types, completed task identity, and exact agreement between parsed baseline rows and planner input. It rejects unresolved, partial, mixed assisted-removal and empty loads. Dry-run has no output artifact; preparation preserves metadata bytes, freezes the new file and never overwrites an existing archive. Central workflow validates environment association, freshness, privileges and approval independently. Test malformed metadata/headers, baseline mismatch, unselected audit policy and safe repeat/no-change behavior.
 
 Run all offline cases with `python3 pillars/erp/financials/expenses/manage-expense-fields-by-category/tests/run_tests.py` from the repository root. See [test coverage](../tests/coverage.md) for the 20 tests, including normalized workbook create/update scenarios.
+
+## EBS source input
+
+Follow [EBS migration intake](ora_ebs_migration.md) before workbook normalization.
+Retain `ebsSource` with its source checksum/rows and explicit BU crosswalk in the
+planner input. Blank EBS cells are unspecified, not Optional. Unmapped nonblank
+source fields block the entire batch. EBS audits are provenance, not target audit
+values. The package builder reuses the same EBS review gate.
+
+For mapped direct EBS fields, ENABLED means Required under the EBS intake
+contract and becomes Fusion REQUIRED. The Fusion-native Optional → ENABLED
+mapping above remains unchanged. Regenerate earlier EBS-derived candidates
+that used Optional for source ENABLED; never silently reuse their approval.

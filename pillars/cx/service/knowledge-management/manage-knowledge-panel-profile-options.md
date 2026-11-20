@@ -79,13 +79,13 @@ source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 
 ### View Knowledge Panel Profile Options
 
-View Knowledge Panel profile options.
+View Knowledge Panel profile options (ORA_CSO_ENABLE_KNOWLEDGE_INSERT_AS_TEXT, CSO_ENABLE_CATEGORY_FILTER, CSO_ENABLE_KNOWLEDGE_LINKING, CSO_ENABLE_LOCALE_FILTER, CSO_ENABLE_PRODUCT_FILTER, CSO_SHOW_ARTICLE_SNIPPET).
 
 1. Read the selected profile option with core.fusion-api.apps-common using the Profile Values REST.
 
 ### Update Knowledge Panel Profile Options
 
-Update Knowledge Panel profile options.
+Update Knowledge Panel profile options (ORA_CSO_ENABLE_KNOWLEDGE_INSERT_AS_TEXT, CSO_ENABLE_CATEGORY_FILTER, CSO_ENABLE_KNOWLEDGE_LINKING, CSO_ENABLE_LOCALE_FILTER, CSO_ENABLE_PRODUCT_FILTER, CSO_SHOW_ARTICLE_SNIPPET).
 
 1. Export Knowledge Panel profile options with shared.setup-export.task-level-export.
 2. Update the selected Knowledge Panel profile option(s).

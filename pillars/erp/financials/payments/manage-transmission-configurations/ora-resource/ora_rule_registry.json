@@ -1,0 +1,229 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "IBY_MANAGE_TRANSMISSION_CONFIGURATIONS",
+      "task_name": "Manage Transmission Configurations",
+      "start_node": "MTC.LOOKUP",
+      "nodes": [
+        {
+          "id": "MTC.LOOKUP",
+          "node_type": "step",
+          "sequence": 10,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "success": "MTC.INPUT",
+            "failure": "MTC.ERROR"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Always",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 30
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MTC.INPUT",
+          "node_type": "step",
+          "sequence": 20,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "success": "MTC.DEPENDENCY",
+            "failure": "MTC.ERROR"
+          },
+          "prerequisites": [
+            "MTC.LOOKUP"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Always",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 28
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MTC.DEPENDENCY",
+          "node_type": "step",
+          "sequence": 30,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "success": "MTC.DEFAULT",
+            "failure": "MTC.ERROR"
+          },
+          "prerequisites": [
+            "MTC.INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Always",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 34
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MTC.DEFAULT",
+          "node_type": "step",
+          "sequence": 40,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "success": "MTC.DESIGN",
+            "failure": "MTC.ERROR"
+          },
+          "prerequisites": [
+            "MTC.DEPENDENCY"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Always",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 17
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MTC.DESIGN",
+          "node_type": "step",
+          "sequence": 50,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "success": "MTC.GATE",
+            "failure": "MTC.ERROR"
+          },
+          "prerequisites": [
+            "MTC.DEFAULT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Always",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 39
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MTC.GATE",
+          "node_type": "step",
+          "sequence": 60,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "success": "RETURN_SUCCESS",
+            "failure": "MTC.ERROR"
+          },
+          "prerequisites": [
+            "MTC.DESIGN"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Always; returns validation only",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 35
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RETURN_SUCCESS",
+          "node_type": "terminal",
+          "sequence": 70,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "MTC.GATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Validation completed; no mutation authorized",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 35
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MTC.ERROR",
+          "node_type": "step",
+          "sequence": 80,
+          "action_type": "error_handler",
+          "execution_route": "local",
+          "transitions": {
+            "handled": "MTC.STOP"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Any declared failure",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 35
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MTC.STOP",
+          "node_type": "terminal",
+          "sequence": 90,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Failure handled",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 35
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

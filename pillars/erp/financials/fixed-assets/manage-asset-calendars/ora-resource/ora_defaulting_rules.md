@@ -4,6 +4,7 @@
 
 | Field | Internal | Resolved value | Applies When | User Override | Resolver |
 |---|---|---|---|---|---|
+| Calendar-header DFF values | No | Preserve supplied values. Leave omitted create values blank only when the batch-current definition permits it; preserve unchanged update values from verified exact-calendar evidence. Never invent required values. | After DFF resolution | Yes, subject to validation | resolve_calendar_dff_segments |
 | Calendar-period start basis | No | Start Date of the exact selected Start Fiscal Year row in the selected fiscal year | Initial setup | Yes | resolve_calendar_date_basis_from_fiscal_year |
 | Calendar-period end basis | No | Latest End Date from the selected Start Fiscal Year row forward in the exact selected fiscal year's complete contiguous date rows | Initial setup without a user-supplied calendar end basis | Yes | resolve_calendar_date_basis_from_fiscal_year |
 | Description | No | Human-readable sentence-case form of Calendar Name | User leaves it blank for a new definition | Yes | |

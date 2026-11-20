@@ -1,0 +1,196 @@
+{
+  "schema_version": "1.0",
+  "category": "Airfare",
+  "status": "source_qualified_create_preparation_live_pending_existing_updates_scoped",
+  "series": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64",
+  "label": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261028.0600.S",
+  "source_root": "fusionapps/fin/components/payables/exm/policy/",
+  "sources": [
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseAirfareService/applicationModule/ExpenseAirfareServiceAMImpl.java",
+      "sha256": "27f9906b3cc1dde3e50c59c854895fd0fb3685e35519a88122f3bd623f35e70a",
+      "reviewed": "import hook: parent and child AltKey resolution, own Airfare root readXML call and root commit; joined to pinned primary compiled helper evidence for the bounded create profile"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseAirfareService/applicationModule/ExpenseAirfareServiceAM.xml",
+      "sha256": "cddb562d40553ca06b41acd26afa414750c5b117e282a118da8fc5fcd19bb5e1",
+      "reviewed": "Airfare and AirfareLine view ownership"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseAirfareService/view/AirfareVO.xml",
+      "sha256": "c2755d61b4e5e1d4a3be2b483c6080eb8a11f56a38f1b828ba63180da3787684",
+      "reviewed": "own EO mapping, required PolicyName, nonupdateable audits"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseAirfareService/view/AirfareLineVO.xml",
+      "sha256": "5906cab982df7f735aa8c4dad86976f47d2459aaa960564ae8b0a5e8eed0c59c",
+      "reviewed": "own line EO, required StartDate, package business mappings and parent relationship"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/AirfarePolicyEO.xml",
+      "sha256": "55f9a64b16aaa369843158fb0fa1f87effdbac293f9fea1b9c36e5841858bd57",
+      "reviewed": "PolicyName AltKey and 60 character precision; Description 240; own column mappings and audit ownership"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/AirfarePolLineEO.xml",
+      "sha256": "1db39a4991701306071bca0d032ca3000912888728c875cd02207b7e2982b105",
+      "reviewed": "AltKey: parent, EndDate, FlightDurationThreshold, RoleId, StartDate, TypeOfRateCode; AltKey_NoStart; migration catch-all uniqueness condition"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/AirfarePolicyEOImpl.java",
+      "sha256": "46d02286807018139608b448a24ffc93e356d54c9fc1ca1974394fe4b4629a4a",
+      "reviewed": "create defaults include EnabledRoleFlag=Y and PolicyRoleCode=GRADE: cannot assume no-determinant create defaults; getDeterminants and direct setters"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/AirfarePolLineEOImpl.java",
+      "sha256": "10b4f1956ec5b3fc27a86088e538687910cb5bd88dceb0194ceb852a0b0cc658",
+      "reviewed": "service-root migration getter, raw role-name behavior in service context and direct flight-class setters"
+    },
+    {
+      "path": "airfare/model/src/oracle/apps/financials/expenses/policy/airfare/uiModel/applicationModule/FinExmPolicyAirfareAMImpl.java",
+      "sha256": "c8f8bb48cb1398fb9b4b0b9e9c2d6b466a0476fd3fae4f1dcd1480fe69e71e84",
+      "reviewed": "doCreateSingleRate explicitly sets CATCH_ALL before optional role/duration rows; DRAFT/VALID UI lifecycle; doValidateDates uses the shared policy date validator"
+    },
+    {
+      "path": "airfare/ui/src/oracle/apps/financials/expenses/policy/airfare/ui/bean/FinExmPolicyAirfareMainBean.java",
+      "sha256": "4d1a2d924d34d776ca8c50807ed743b0470334a03969dd64b1251ae11479f773",
+      "reviewed": "doPolicyEnforcement clears display-warning value for first/prevent choice; frontend branch evidence, not a demonstrated FSM validator"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseAirfareService/view/link/AirfareVOToAirfareLineVO.xml",
+      "sha256": "01b4380ea125319c8dcb2e3dd5c58d5fa5ad4ed6a55f89d6e16e2d798454da43",
+      "reviewed": "Owning create graph, globally unique keys/association, audit mutability and exported scalar accessor review; bounded no-determinant profile only"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/association/AirfarePolicyEOToAirfarePolLineEO.xml",
+      "sha256": "67f7979338af433c3f7af3ece22a7975c862a668d7b3f62b0a9e3fb72cd7f9e3",
+      "reviewed": "Owning create graph, globally unique keys/association, audit mutability and exported scalar accessor review; bounded no-determinant profile only"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseAirfareService/view/AirfareLineVORowImpl.java",
+      "sha256": "7ffd33e6ef0488c063b7a8d78f21ab2d0142ad3421d136a6256bad5b07447cf6",
+      "reviewed": "Owning create graph, globally unique keys/association, audit mutability and exported scalar accessor review; bounded no-determinant profile only"
+    },
+    {
+      "path": "airfare/model/src/oracle/apps/financials/expenses/policy/airfare/uiModel/view/TicketClassLOVVO.xml",
+      "sha256": "15333a8ffd59ab084ee2f394334bd3db186092da9b5d0333c8c75b30c7ec43c2",
+      "reviewed": "Own UI filters enabled EXM_TICKET_CLASS values and explicitly excludes FIRST through BindLookupCode; dropdown and local domain retain ANY/BUSINESS/COACH plus operation-bound target eligibility."
+    }
+  ],
+  "initial_profile": {
+    "policy_statuses": [
+      "DRAFT",
+      "VALID"
+    ],
+    "determinants": "Disabled role, flight type and duration; no retained determinant context",
+    "rate_type": "CATCH_ALL",
+    "rate_input": "FlightClassCode only; no domestic/international split without flight type",
+    "flight_classes": [
+      "ANY",
+      "BUSINESS",
+      "COACH"
+    ],
+    "enforcement": [
+      "PREVENT",
+      "VIOLATION"
+    ],
+    "lookups": "Existing target-bound preflight must resolve EXM_TICKET_CLASS, EXM_PREFERRED_ENFORCEMENT and applicable EXM_YES_NO values; local dropdown membership alone is insufficient",
+    "update_fields": {
+      "ORA_EXM_AIRFARE_POLICY": [
+        "Description",
+        "PolicyEnforcementCode",
+        "DispWarningToUserFlag"
+      ],
+      "ORA_EXM_AIRFARE_POLICY_LINE": [
+        "FlightClassCode"
+      ]
+    },
+    "identity_boundary": "Preserve complete existing alternate keys, dates, statuses, audits and disabled determinants; no key override",
+    "lookup_filter_boundary": "FIRST is excluded by the owning TicketClassLOVVO even when enabled in the target lookup. Target receipt alone cannot bypass the UI/source domain."
+  },
+  "remaining_unresolved": [
+    "Target native create acceptance, persisted-state verification and exact deployed-build parity remain pending.",
+    "Existing-row field-write combinations outside exact reviewed live cases retain their earlier exact-field decisions.",
+    "Role, flight-type/duration determinants, activation, key updates, deletion and retries remain outside this admission."
+  ],
+  "create_profile": {
+    "scope": "Airfare no-determinant parent and one ordinary CATCH_ALL rate",
+    "parent": {
+      "entity": "ORA_EXM_AIRFARE_POLICY",
+      "business_fields": [
+        "PolicyName",
+        "Description",
+        "PolicyEnforcementCode",
+        "DispWarningToUserFlag"
+      ],
+      "required_explicit_business_choices": [
+        "PolicyName",
+        "PolicyEnforcementCode",
+        "DispWarningToUserFlag"
+      ],
+      "proposed_consumer_managed": {
+        "Status": "DRAFT",
+        "EnabledRoleFlag": "N",
+        "EnabledFlightTypeFlag": "N",
+        "EnabledFlightDurationFlag": "N"
+      },
+      "deliberate_empty_fields": [
+        "PolicyRoleCode",
+        "FlightDurationCode"
+      ],
+      "system_audit_fields": [
+        "CreatedBy",
+        "CreationDate",
+        "LastUpdatedBy",
+        "LastUpdateDate",
+        "LastUpdateLogin"
+      ]
+    },
+    "rate": {
+      "entity": "ORA_EXM_AIRFARE_POLICY_LINE",
+      "business_fields": [
+        "ORA_EXM_AIRFARE_POLICY.PolicyName",
+        "StartDate",
+        "EndDate",
+        "FlightClassCode"
+      ],
+      "required_explicit_business_choices": [
+        "ORA_EXM_AIRFARE_POLICY.PolicyName",
+        "StartDate",
+        "FlightClassCode"
+      ],
+      "proposed_consumer_managed": {
+        "Status": "DRAFT",
+        "TypeOfRateCode": "CATCH_ALL"
+      },
+      "deliberate_empty_fields": [
+        "FlightDurationThreshold",
+        "RoleName",
+        "RoleCode",
+        "InvalidCode",
+        "FlightClassCodeDomestic",
+        "FlightClassCodeInternat"
+      ],
+      "system_audit_fields": [
+        "CreatedBy",
+        "CreationDate",
+        "LastUpdatedBy",
+        "LastUpdateDate",
+        "LastUpdateLogin"
+      ]
+    },
+    "mandatory_retained_controls": [
+      "Resolve operation-bound enforcement, warning and flight-class lookup choices from fresh target evidence when consumed",
+      "No client-generated parent or rate ID; use reviewed service key and association path",
+      "No current-date default: require customer StartDate",
+      "No role sentinel or flight-duration sentinel under the no-determinant profile",
+      "Validate inclusive periods and both alternate-key uniqueness boundaries",
+      "Explicit null clears EO default PolicyRoleCode GRADE; it is never omission/default preservation",
+      "Join complete owning field/declaration proof before changing the shared proof's qualified-use scope",
+      "Require ordinary public normalize/build/validate/determinism and failure recipes before promotion",
+      "Require later exact native import approval and fresh-export verification before live qualification"
+    ],
+    "qualification": "Source-qualified local preparation; no target/native create or persisted-state proof",
+    "blank_semantics": "Included CSV blanks become explicit null after EO create; parent PolicyRoleCode GRADE default is deliberately cleared. Service role-name getters retain null; no role sentinel is invented."
+  }
+}

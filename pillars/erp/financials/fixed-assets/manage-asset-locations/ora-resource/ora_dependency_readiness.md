@@ -41,6 +41,13 @@ unchanged batch. If the target environment or batch membership changes, or a
 new import batch starts, export again and recompute the required-input map
 before archive preparation.
 
+Retain a per-location DFF validation result containing the resolved context,
+required physical columns, input mappings, and value-validation outcomes.
+Each result references the same batch-level DFF definition export.
+All applicable checks must pass before preview. Archive preparation must
+also verify that the final serialized create rows preserve those values
+and satisfy the same required-field map.
+
 Use the template or specification package for immutable import-package shape
 only. Use complete exact BOSS `assetLocations` evidence as the primary Asset
 Location target-state source. Use the current same-target populated task export

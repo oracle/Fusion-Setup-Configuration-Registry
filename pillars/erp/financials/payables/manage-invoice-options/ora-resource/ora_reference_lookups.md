@@ -19,7 +19,7 @@
 | resolve_ss_unit_price_change | Nonblank `SsUpriceChangeForQtymatch` is supplied | Requested code | Built-in system allowlist; no REST request | exact code | A blank is permitted; otherwise allow `NO` (No), `PRICE DECREASE ONLY` (Price decrease only), `PRICE INCREASE ONLY` (Price increase only), or `PRICE INCREASE OR DECREASE` (Price increase or decrease). | Validated Quantity-Based Match Unit Price Change code | Block any other nonblank value. |
 | resolve_invoice_currency | `InvoiceCurrencyCode` is supplied | Requested `InvoiceCurrencyCode`, trimmed and uppercased, and a read-only currency receipt | `GET /fscmRestApi/resources/11.13.18.05/currenciesLOV?finder=CurrencyCodeAllRowsFinder;CurrencyCode=<canonical-code>`; `resolve_lookup_prerequisites.py` records the canonical receipt. | Returned record count | One readable result continues. Multiple results are advisory without selecting a returned value. | Canonical uppercase invoice currency code; returned values are corroborating evidence only. FSM validates the code in import context. | Block a readable zero-result. Multiple results or unavailable read access are advisory. |
 | resolve_payment_currency | `PaymentCurrencyCode` is supplied | Requested `PaymentCurrencyCode`, trimmed and uppercased, and a read-only currency receipt | `GET /fscmRestApi/resources/11.13.18.05/currenciesLOV?finder=CurrencyCodeAllRowsFinder;CurrencyCode=<canonical-code>`; `resolve_lookup_prerequisites.py` records the canonical receipt. | Returned record count | One readable result continues. Multiple results are advisory without selecting a returned value. | Canonical uppercase payment currency code; returned values are corroborating evidence only. FSM validates the code in import context. | Block a readable zero-result. Multiple results or unavailable read access are advisory. |
-| validate_account_segments_read_only | Nonblank effective account when InterestSegments or SOBName changes, or interest is enabled | Exact operation, target BU, effective ledger, ordered account segments and fresh baseline | Task-owned `scripts/interest_account_validation.py`, `POST /fscmService/AccountCombinationService` with DynamicInsertion=No through core SOAP transport | Status, CcId | Require HTTP success, Status=Valid, positive existing CCID and readOnly=true | Bound validation receipt only; no CCID column is written | Invalid, missing CCID, SOAP fault or unavailable service blocks candidate generation. Never create an account or downgrade this check to advisory. |
+| validate_account_segments_read_only | Nonblank effective account when InterestSegments or SOBName changes, or interest is enabled | Exact operation, target BU, effective ledger, ordered account segments and fresh baseline | Task-owned `scripts/interest_account_validation.py`, `POST /fscmService/AccountCombinationService` with DynamicInsertion=No through core SOAP transport | Status, CcId | Require HTTP success, Status=Valid, positive existing CCID and readOnly=true | Bound validation receipt only; no CCID column is written | Invalid, missing CCID, SOAP fault or unavailable service blocks candidate generation. Never create from this validation call or downgrade it to advisory. Classify the rejection with the fresh COA export and read-only LOV checks; separately preview and approve creation only for confirmed missing combinations. |
 | resolve_business_unit_primary_ledger | A new AP_SYSTEM_PARAMETER row is created from BuName | Requested `BuName` and two read-only REST receipts | `resolve_lookup_prerequisites.py` queries `finBusinessUnitsLOV` for the exact BU and `ledgersLOV/{PrimaryLedgerId}` for Name and CurrencyCode. | BU: `matchedBuName`, `primaryLedgerId`; ledger: `ledgerId`, `name` | Require one or more active exact BU rows with one shared, nonblank PrimaryLedgerId, and a ledger receipt whose ID and Name match it. | Attested SOBName and BaseCurrencyCode for the new row | Block a missing, malformed, or conflicting-primary-ledger receipt. |
 
 ## Business Labels to CSV Codes
@@ -108,3 +108,40 @@ Without an explicit context, the existing profile-name fallback remains; a
 mismatch blocks rather than guessing from a suffix, hostname, ZIP, or receipt.
 Timestamp freshness, source hashes, release compatibility and origin checks remain
 in force. This does not rename profiles, edit trust enrollment, or change OAuth.
+
+## Missing Account Classification
+
+Use `--coa-configuration` with a fresh completed setup-data export for
+`GL_MANAGE_CHARTS_OF_ACCOUNTS_STRUCTURE_INSTANCES`. Its instance row supplies
+`DynamicCombinationCreationAllowed`; its active structure segments map physical
+`SEGMENT1..30` positions to LOV attributes by SegmentCode/Name/ColumnName, never
+JSON key order. Require matching export environment/release and freshness.
+Resolve exact ledger Name through `ledgersLOV`, then its ChartOfAccountsId
+through `chartOfAccountsLOV` by StructureInstanceNumber. Query
+`accountCombinationsLOV` by `_CHART_OF_ACCOUNTS_ID` without a fields projection,
+complete bounded pagination, reject duplicates/missing mappings, and compare all
+ordered values. Existing rejected combinations do not receive a creation offer.
+No exact match plus enabled configuration permits
+the question only. Combination eligibility is still checked by Fusion during
+separately approved creation. Unknown configuration stops creation; no segment value or configuration is invented.
+Preserve supplied values and blank positions; Fusion validates segment requiredness,
+validity and combination rules. Do not require values to occur in existing accounts.
+
+
+For account batches, check the exact combination first using the fresh COA
+mapping and complete LOV. Existing accounts still require SOAP No validation.
+An explicit FSM-deferral receipt may replace only the existing-CCID requirement
+for its exact confirmed-missing account after the approved creation error and
+fresh enabled-configuration check. It does not relax any other reference or
+package validation. See [batch review](../references/interest-account-batch-flow.md).
+
+## Explicit user account-validation waiver
+
+Account business errors block by default. After the error is explained, an
+explicit user decision to submit the exact account unchanged may retain the row
+through the bound `submit_interest_account_with_user_override` / `overridden`
+receipt. See [the override workflow](../references/account-validation-overrides.md).
+Preserve the error and reason; do not claim validation passed or invent a CCID.
+Mark affected Task Hook rule results `overridden`, keep all unrelated checks,
+and obtain the normal exact Data Loader import approval. FSM may accept or
+reject the account; post-import account usability must be checked separately.

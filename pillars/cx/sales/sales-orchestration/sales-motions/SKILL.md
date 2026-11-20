@@ -17,7 +17,7 @@ source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 type: "verification"
 execution_mode: "hybrid"
 owner_team: "CX sales pillar team"
-version: "0.8.3"
+version: "0.8.4"
 inputs:
   - "implementation_objective"
   - "project_context"
@@ -284,7 +284,25 @@ cache with `--token-cache auto`. The cache is scoped to the selected OAuth
 profile under `~/.fusionaim/`; never store tokens in the checkout or project
 workspace or pass a historical repository-local cache path.
 
-## Preflight and Controlled Read Workflow
+## Read Preflight
+
+Before any live read, confirm that the active workflow selected the operation,
+the target environment is exact, the requested inputs and bounds passed the
+local validation/dependency rules, and the selected shared client supports the
+operation. Load the documented error handling before calling Fusion. Do not
+substitute a browser, another endpoint, or an unsupported client flag.
+
+The current shared core client binds cached credentials to an OAuth profile;
+it does not independently verify that a credential belongs to a separately
+named Fusion user. Treat `acting_user_identity` as requested context, not proof
+of the authenticated principal. A successful call establishes access for the
+credential actually used; never attribute it to an unverified named user. If
+the request requires proof of a particular user's identity or effective access,
+return `SOURCE_GAP` before authentication or a resource call until a governed
+principal-verification capability is available. Do not introduce `--expected-user`,
+UserInfo calls, or identity-scope changes in this pillar skill as a workaround.
+
+## Controlled Read Workflow
 
 1. Confirm the target environment, acting user, and requested LIST, GET, or
    QUERY operation.

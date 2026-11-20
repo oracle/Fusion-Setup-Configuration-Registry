@@ -1,6 +1,7 @@
 # Central FBDI handoff evaluation
 
 
+
 This is an assisted evaluation contract for ARCU.EXECUTION_GATE. A complete
 compiled registry means the instructions can be planned. Each candidate still
 requires actual evidence for every applicable check below. Neither compilation
@@ -34,28 +35,27 @@ submission, HTTP retry or generalized diagnostics infrastructure.
    as an uncertain business rule. Incomplete evidence is not a clear period.
    Do not resubmit just because the previous after-state values match.
    For a user-authorized data-design proposal, retain proposed-business-input
-   provenance and its input hash in finalData, disclose its values and origin,
+   provenance and its input hash in the Customer review, reference that review
+   in supported rule evidence, disclose its values and origin,
    and keep acceptance pending the normal exact-candidate approval. A ZIP alone
    cannot establish input provenance. Never infer acceptance from preview success.
-3. Run the normal core Data Loader validation-only flow for that final archive,
-   using the approved authentication profile. Retain its real preflight envelope,
-   including task routing, live action support for runBookTaskCode and FBDI
-   interface/UCM metadata. Do not simulate an upload to test access.
-4. Bind the actual core envelope and project Run Book control to a qualified
-   deployment. `customer_registration_review.analyze` checks supplied full
-   registration evidence against the reviewed argument/scope, validation and
-   status/error recipe. For normal runtime use, `analyze_published` combines
-   that retained deployment qualification with fresh complete core BO/FBDI
-   metadata pages, exact IDs/routes/prefixes and the parent BO update marker.
-   A reported update since qualification requires deployment review. The marker
-   does not prove child/private recipe immutability; full configuration is not
-   exposed by this REST response. Keep controlled registration changes and seed
-   qualification as deployment responsibilities. Data Loader resolves the
-   server recipe. Do not demand an implementor SQL query or claim the retained
-   recipe was freshly read over REST. Preserve resulting final_data for the
-   preview and use the corresponding `published_preview_context` or
-   `preview_context` to recompute the same evidence binding. A known changed
-   recipe or route must be reviewed before submission.
+3. Delegate the final archive to the selected checkout's core.data-loader with
+   the actual Run Book task context and explicit business object `customers`.
+   Follow that skill's supported validation, captured-source, preview and approval
+   workflow. Do not select old commands from task instructions or simulate an
+   upload to test access. Verify Customer prerequisites through the read-only
+   registration and capability checks below; core owns actual route resolution,
+   source integrity and execution. Compare the captured native CSV with the
+   reviewed ArUpdCustomers.csv before returning passing customer rule results.
+4. Use `customer_registration_review.review_delegated_registration` to bind
+   the exact candidate, active Run Book control and retained qualified recipe to
+   fresh complete public BO/FBDI metadata and loader action-capability evidence.
+   Follow [registration evidence](registration-evidence.md). This is customer
+   prerequisite evidence, not proof of core approval or an exported core plan.
+   A changed route or BO update marker requires deployment review. The marker
+   cannot prove child/private recipe immutability. The full recipe remains a
+   deployment qualification; do not require implementor SQL or claim REST read
+   the private recipe. Core resolves and binds its own execution route.
 5. Review authentication and authorization separately from metadata matching.
    Identify the actual core OAuth principal and retain the results of the
    applicable read-only preflight. Successful metadata reads establish read
@@ -70,17 +70,14 @@ submission, HTTP retry or generalized diagnostics infrastructure.
    or another import route. This is an execution-access check, not a business
    validation gap that a user waiver can override. Do not request passwords or
    expand permissions as a workaround.
-6. Use unchanged core Data Loader for one approved invocation. Preserve the exact
-   ZIP, preflight, local Run Book binding, ContentId and returned RequestId.
-   The exact-candidate preview and approval must cover core's documented bounded
-   rejection recovery: one authentication refresh on 401/403 and one 27503
-   recovery using the same ContentId without optional Run Book fields. If that
-   recovery is not authorized, do not invoke a client that can perform it.
-   Do not wrap core with task retries or resubmit after timeout/unknown outcome.
-   A missing server Run Book association remains unverified and blocks verified
-   completion, not permission to invent linkage. Keep the local approved binding;
-   reconcile the exact retained attempt and obtain a specific decision before
-   any further submission. Initiation acceptance means submitted, not loaded.
+6. Use unchanged core Data Loader for one approved invocation. Preserve the
+   exact ZIP, customer review, actual core public preview/decision/initiation
+   evidence, local Run Book binding, ContentId and returned RequestId. Use only
+   the selected core contract's recovery policy, disclosed in the candidate
+   decision. Do not introduce task retries or assume an older core's recovery
+   applies to another implementation. Unknown outcomes require status-only
+   recovery. Missing server Run Book association blocks verified completion;
+   never invent linkage or resubmit to obtain it. Submitted does not mean loaded.
 
 7. Review the candidate's generated [verification plan](verification-plan.md),
    before-state and expected effects under the
@@ -98,7 +95,8 @@ submission, HTTP retry or generalized diagnostics infrastructure.
    until returned. Any initial live mapping uncertainty must remain visible and
    require reconciliation; it never authorizes guessed IDs or resubmission.
 9. Disclose eligible business-validation gaps for the exact candidate. The
-   later decision is bound to the actual preview using `preview_context`; do not
+   later decision is bound to the actual public core preview reference, environment,
+   registration and arguments through the existing package review context; do not
    require a future preview ID to evaluate pre-preview readiness. Missing hard
    inputs and known-invalid data take the blocked transition.
 
@@ -123,16 +121,13 @@ an overridable evidence gap. Review an appropriate configured non-COMMON set.
 For update/mixed, resolve per-entity insert/reuse/update intent under the existing
 ownership contract; passing package inspection alone does not establish support.
 
-Use the core Task Hook `data-load` route after core has prepared the immutable
-archive. Evaluate every returned rule resource in order. Only if all applicable
-checks pass, invoke `build-data-load-preview` with the actual rule results and
-registration-bound finalData. The preview is not approval. Present the exact
-candidate, effects and eligible gaps through the normal core decision.
-
-After that decision, core alone owns preview approval, exact archive verification,
-UCM upload and initiation. Do not add a second upload client or direct ESS route.
-Retain the exact approved envelopes and selected core revision so their scope can
-be checked after interruption. Do not regenerate a candidate after approval.
+Follow [core delegation](core-delegation.md). Evaluate every planned rule
+resource in order against core's captured source. Only passing applicable checks
+permit a preview; a preview is not approval. Present the exact candidate, effects
+and eligible gaps through the selected core decision workflow. Preserve core's
+required presentation, approval and source-integrity controls. Retain its public
+evidence and revision; never manufacture a legacy envelope, an approval or a
+passed resource. Lost session or changed source follows core's restart policy.
 
 Monitoring and reconciliation follow the phase and verification contracts.
 Keep process status, business effects and Journey synchronization separate;
@@ -141,10 +136,6 @@ status-only recovery for an uncertain attempt.
 
 ## Implementation anchors
 
-The selected repository's core contracts are `core/data-loader/SKILL.md`,
-`core/data-loader/task-hook/scripts/task_hook.py` and
-`core/data-loader/scripts/upload_and_initiate.py`. Inspect
-`upload_approved_preflight`, `_require_approved_task_validation` and
-`_initiate_data_load` plus their regression tests. These are authoring anchors,
-not permission to bypass their declared workflow. The task helper intentionally
-does not obtain tokens, perform network operations or grant privileges.
+The runtime entry point is the selected repository's `core/data-loader/SKILL.md`.
+Its implementation and recovery mechanism are core responsibilities. Customer
+helpers do not obtain tokens, submit loads or grant execution permission.

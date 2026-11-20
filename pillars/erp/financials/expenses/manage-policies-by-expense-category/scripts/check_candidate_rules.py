@@ -27,10 +27,15 @@ def evaluate(workbook, baseline, contract, artifact, **context):
     if digest != review['candidate_sha256']:
         raise ValueError('Final upload artifact differs from the exact reviewed workbook/baseline candidate')
     pending = review['accepted_profile'].get('requires_live_qualification') is True
+    field_review=review.get('field_uncertainty_acceptance')
     return {'command':'rules','candidate_sha256':digest,'profile':review['accepted_profile'],
+        **({'field_uncertainty_acceptance':field_review} if field_review else {}),
         'ruleResults':[{'source':source,'status':'passed',
-            'issues':[{'severity':'warning','message':'Meals settings, batch/effective-date combinations or the selected target still require live reconciliation. Native approval authorizes an attempt, not a guaranteed outcome or batch atomicity.'}]
-                if pending and source=='ora_input_validation.md' else [],'changes':[],
+            'issues':([{'severity':'warning','message':'Accommodations authoring, expanded Meals settings, batch/effective-date combinations or the selected target still require live reconciliation. Native approval authorizes an attempt, not a guaranteed outcome or batch atomicity.'}]
+                if pending and source=='ora_input_validation.md' else [])+
+                ([{'severity':'warning','message':r['entity']+'.'+r['field']+': '+r['uncertainty']+' '+r['failure_surface']}
+                  for r in field_review['plan']['requests']]
+                 if field_review and source=='ora_input_validation.md' else []),'changes':[],
             'sourceSha256':hashlib.sha256((ROOT/'ora-resource'/source).read_bytes()).hexdigest()}
             for source in RESOURCES],
         'qualification_notice':('Settings, batch/effective-date combinations or selected target passed local validation but still need live reconciliation; disclose before native approval.' if pending
@@ -41,18 +46,25 @@ def evaluate(workbook, baseline, contract, artifact, **context):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ['workbook','baseline-zip','candidate-zip','baseline-receipt','baseline-export-plan',
-                 'baseline-export-approval','currency-receipt']:
+                 'baseline-export-approval']:
         parser.add_argument('--'+name,type=Path,required=True)
+    parser.add_argument('--currency-receipt',type=Path,
+        help='Operation-bound currency evidence where required by the selected category; not required for currency-free profiles')
     parser.add_argument('--runtime-contract',type=Path,default=ROOT/'references/fsm-runtime-contract.json')
     parser.add_argument('--project-root',type=Path)
+    parser.add_argument('--lookup-receipts',type=Path)
+    parser.add_argument('--field-acceptances',type=Path)
     for name in ['environment','baseline-process-id','target-origin','validation-date']:
         parser.add_argument('--'+name,required=True)
     args = parser.parse_args()
+    from policy_lookup_preflight import load_receipt_index
     result = evaluate(args.workbook,args.baseline_zip,args.runtime_contract,args.candidate_zip,
         expected_environment=args.environment,expected_process_id=args.baseline_process_id,
         baseline_receipt=args.baseline_receipt,baseline_export_plan=args.baseline_export_plan,
         baseline_export_approval=args.baseline_export_approval,currency_receipt=args.currency_receipt,
-        target_origin=args.target_origin,validation_date=args.validation_date,project_root=args.project_root)
+        target_origin=args.target_origin,validation_date=args.validation_date,project_root=args.project_root,
+        lookup_receipts=load_receipt_index(args.lookup_receipts) if args.lookup_receipts else None,
+        field_acceptances=args.field_acceptances)
     print(json.dumps(result,indent=2))
 
 

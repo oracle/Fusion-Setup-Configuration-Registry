@@ -3,9 +3,8 @@
 ## Standard Defaults
 
 Apply documented defaults automatically before asking for missing inputs.
-Resolve internal fields and import mappings without asking the user. Use the
-system date for Last Depreciation Run on create, resolve the selected ledger's
-identifier, and default Natural Account check to Yes. Preserve supported
+Resolve internal fields and import mappings without asking the user. Resolve
+the selected ledger's identifier. Preserve supported
 overrides and unchanged update values. Leave optional fields without defaults
 blank; resolve required mapping gaps internally before import.
 
@@ -34,10 +33,10 @@ blank; resolve required mapping gaps internally before import.
 | Copy additions | No | `NO`. Use `YES` only when the request or approved policy enables it. | New book when request/policy does not enable it | Yes |
 | Allow CIP assets | No | `NO`. Use `YES` only when the request or approved policy enables it. | New book when request/policy does not enable it | Yes |
 | Default revaluation for fully reserved assets | No | `NO`. Use `YES` only when the request or approved policy enables it. | New book when request/policy does not enable it | Yes |
-| Select Book by Clearing Account Segment: Natural Account check | No | `Y`. Use `N` only when the request or approved policy disables it. | New book when request/policy does not disable it | Yes |
 | Select Book by Clearing Account Segment: clearing-account | No | `N`. Use `Y` only when the request or approved policy enables it. | New book when request/policy does not enable it | Yes |
 | Select Book by Clearing Account Segment: Primary Balancing | No | `N`. Use `Y` only when the request or approved policy enables it. | New book when request/policy does not enable it | Yes |
-| Book Info | No | Blank; it is a descriptive flexfield. | No explicit DFF requirement | Yes |
+| Book Info and other FA_BOOK_CONTROLS segments | No | Preserve supplied values. Leave an omitted create value blank only when the batch-current definition permits it; preserve verified unchanged update values. Never invent a required value. | After resolve_asset_book_dff_segments | Yes, subject to DFF validation |
+| JGxFABookControls regional segments | No | Preserve supplied values. Resolve applicability and requiredness before permitting omitted create values; preserve verified unchanged update values in the same regional context. Never inherit ordinary DFF values or invent required values. | After resolve_asset_book_dff_segments | Yes, subject to regional validation |
 | Allow cost sign changes | No | Leave `Allow cost sign changes` blank when the request or policy does not set it. | Request/policy does not enable it | Yes |
 | Allow impairment | No | Blank. | Request/policy does not enable it | Yes |
 | Allow ledger posting | No | `NO`.  use `YES` only when the request or approved policy enables it. | New book when request/policy does not enable it | Yes |
@@ -46,8 +45,7 @@ blank; resolve required mapping gaps internally before import.
 | Use NBV threshold for depreciation | No | Blank. | Request/policy does not enable it | Yes |
 | Allow transfer to another book | No | Blank. | Request/policy does not enable it | Yes |
 | Allow annuity depreciation | No | Blank. | Request/policy does not enable it | Yes |
-| Last Depreciation Run | Yes | Runtime system date (`sysdate`). | Create mode | No |
-| Last Depreciation Run Status | Yes | `Completed`. | Create mode | No |
+| Depreciation Status | Yes | `Completed` in the supported `DeprnStatus` field. | Create mode | No |
 | Depreciation allocation | No | Map the business label `Evenly` to the technical CSV value `E` and `By Days` to `D`. Show `Evenly` or `By Days` in the preview. Never write a display label into `Depreciation allocation`. | Depreciation allocation is blank or supplied as the display label `Evenly` or `By Days` | Yes |
 | Asset Bonus Rules reference-data set | No | `Enterprise Set`. A supplied shared or field-specific Reference Data Set overrides this default. | Blank | Yes |
 | Asset Depreciation Ceilings reference-data set | No | `Enterprise Set`. A supplied shared or field-specific Reference Data Set overrides this default. | Blank | Yes |

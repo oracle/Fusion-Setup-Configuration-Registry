@@ -15,7 +15,7 @@ checks; never copy or derive them from exported CSV data rows.
 | Business date format | Yes | YYYY/MM/DD for business date fields; preview dates remain MM/DD/YYYY | Preparing business date cells; never infer format from exported values | No; format the date without changing it | |
 | Depreciate when placed in service format | Yes | Yes/Y maps to YES. No/N maps to NO. Preserve these uppercase values in DeprWhenAcquiredFlag. | Serializing the business flag | No | |
 | Fiscal-year boundary dates | Yes | Leave blank when omitted and preserve supplied values; omit columns absent from the current template | Preparing the parent row; no separate import-acceptance check or customer question is required | No | |
-| Unspecified Convention Info DFF columns | No | Blank for a create; preserve each current value returned by resolve_existing_prorate_parent for an update | Convention Info is absent or omits an export column during create or update preparation | No; never copy values from a different convention | resolve_existing_prorate_parent |
+| Unspecified Convention Info DFF columns | No | Blank on create only when the current definition permits; preserve verified unchanged same-parent values on update. Never invent required values or copy another convention's values. | After DFF resolution for create/update; never repair an immutable ZIP | No automatic replacement of supplied values | resolve_prorate_dff_segments |
 
 Apply the Enterprise Set default before required-input validation; do not ask the
 customer to supply a Reference Data Set when this default applies. Verify its

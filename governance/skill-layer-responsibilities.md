@@ -129,6 +129,13 @@ for ERP, HCM, SCM, CX, or common setup.
 - a copy of the complete FSM or setup dependency catalog; or
 - duplicated shared methodology or core execution plumbing.
 
+Pillar code must use governed core service interfaces rather than importing,
+calling or executing private Python helpers from Data Loader, authentication,
+FSM or REST clients. A leading underscore identifies a private symbol or
+module; standard Python dunder names are excluded. Other internal scripts
+require a service-contract determination rather than an inference from their
+filename. Unresolved helper origins require semantic review.
+
 ### Pillar audit evidence
 
 Confirm catalog-backed placement and naming, generator provenance where

@@ -131,7 +131,7 @@
           "node_type": "step",
           "sequence": 6,
           "action_type": "process_bulk",
-          "execution_route": "fsm-task-csv-import",
+          "execution_route": "local",
           "transitions": {
             "ready": "COAINS.GATE"
           },

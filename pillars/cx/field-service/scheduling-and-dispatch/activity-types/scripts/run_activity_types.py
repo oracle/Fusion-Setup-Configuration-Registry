@@ -11,7 +11,7 @@ import tempfile
 
 SHARED = Path(__file__).resolve().parents[3] / "scripts"
 sys.path.insert(0, str(SHARED))
-from task_orchestration import PartialExecutionBlocked, WorkflowBlocked, run
+from task_orchestration import REST_SERVICE, add_service_argument, PartialExecutionBlocked, WorkflowBlocked, run
 from task_adapter import ActivityTypesAdapter
 
 ROOT = Path(__file__).resolve().parents[6]
@@ -160,12 +160,14 @@ def _safe_result(result: dict[str, object], evidence: Path) -> dict[str, object]
         summary["failureCount"] = len(result["failures"])
     if result.get("status") == "approval_required" and isinstance(result.get("exactPreview"), dict):
         summary["exactPreview"] = result["exactPreview"]
+    summary["service"] = REST_SERVICE
     summary["redactedEvidence"] = str(evidence)
     return summary
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
+    add_service_argument(parser)
     parser.add_argument("--workbook", type=Path, required=True)
     parser.add_argument("--project-id", required=True)
     parser.add_argument("--execution-direction", choices=("ora_rest_execution", "core.data-loader.task-rest"))
@@ -183,6 +185,7 @@ def main() -> int:
             args.approve_checksum, args.properties, args.output,
             include_exact_preview=args.mode == "preview",
         )
+        result["service"] = REST_SERVICE
         result["executionDirection"] = args.execution_direction or "ora_rest_execution"
         result["stage"] = "preview" if result.get("status") == "approval_required" else "completed"
         evidence = _persist_redacted_evidence(args.project_id, result, args.properties)

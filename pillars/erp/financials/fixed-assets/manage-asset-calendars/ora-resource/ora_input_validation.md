@@ -51,6 +51,17 @@ one qualifying Fiscal Year; the customer may instead provide another exact
 Fiscal Year Name. If no qualifying Fiscal Year exists, request the Fiscal Year
 details required to create or extend it through `FA_MANAGE_FISCAL_YEAR`.
 
+## DFF Input Intake
+
+Preserve supplied calendar-header DFF context and segment values.
+For bulk input, associate them with the exact Calendar Name.
+Do not copy header DFF values into generated calendar-period rows.
+
+Discover required segments from the current environment definition through
+resolve_calendar_dff_segments; do not hardcode segment prompts or attribute
+columns. Recover supplied values before asking for missing business input.
+Retain the existing fiscal-year-first and Input Preview gates.
+
 ## Required Groups
 
 | Requirement group | Accepted fields | When missing | How to resolve | Applies when | Resolver |

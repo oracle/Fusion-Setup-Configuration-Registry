@@ -197,3 +197,31 @@ payloads, baselines, credentials, or tokens.
 ## Implementation Notes
 
 Use the parent functional-area skill `cx.field-service.scheduling-and-dispatch` for functional-area sequencing and scope decisions. Track token usage for any generated project artifact or skill-run record using the manifest policy.
+
+## Runner service selection
+
+The task runner accepts `--service field-service`, which is also its default
+and only supported service. Task REST preflight, approved writes, and read-back
+use `fs_restBaseUrl` and `fs_scope`. The route metadata and runner result identify
+`service: field-service`; the runner does not perform BOSS catalog discovery.
+
+New-project prevalidation and Run Book binding are separate project workflow
+steps. This service option does not skip those gates or authorize setup writes.
+
+## Workbook Intake Service
+
+Workbook adapters use the local guarded XLSX primitive in
+`pillars/cx/field-service/scripts/guarded_xlsx.py` for bounded ZIP/XML parsing.
+Task-specific field mapping and business rules remain in this package.
+The reader performs no external calls and does not select an execution route
+or grant load approval.
+
+## Caller-Only Exact Preview
+
+Use the task runner with `--mode preview --include-exact-preview` to return
+`exactPreview` (including the exact requests and checksum) to the active caller
+for approval. The option is rejected in execute mode before workflow calls.
+Default output and durable evidence remain redacted. Keep captured caller output
+in private OS-temporary storage; never copy request bodies or current-state
+baselines into project evidence. Review the exact target, methods, paths, headers
+and bodies before granting checksum-bound execution approval.

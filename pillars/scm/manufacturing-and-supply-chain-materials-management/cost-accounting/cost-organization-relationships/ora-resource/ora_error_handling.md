@@ -7,6 +7,7 @@
 | Oracle Important Points to Know Before Creating Cost Organization Relationships | https://docs.oracle.com/en/cloud/saas/supply-chain-and-manufacturing/26c/faims/important-points-to-know-before-creating-cost-organization-relationships.html | Association troubleshooting, restrictions, and no-retry remediation |
 | Oracle Cost Organization Relationship | https://docs.oracle.com/en/cloud/saas/supply-chain-and-manufacturing/26c/faims/cost-organization-relationship.html | Relationship and period-end-validation constraints |
 | Developer-validated Period End Validations Data Loader response behavior | A successful REST entity response may be recorded as a Data Loader object error; central team owns the registered response-contract correction | Safe disclosure and no-retry behavior for a response-classification failure |
+| Cost Organization Relationships deletion behavior | Cost Organization Relationships UI | Relationship and association deletion scope; the supplied source does not establish owned Period End Validation cleanup after Cost Book association deletion |
 
 ## Error Situations
 
@@ -28,6 +29,14 @@
 | Data Loader source or one of costOrgRelationships, costOrgInventoryOrgs, or costOrgCostBooks fails validation | Stop before preview, correct the source data, and revalidate through core.data-loader. |
 | A Data Loader upload or initiation is requested without a current immutable approval preview and a later standalone approval | Stop before the first POST. |
 | A direct REST submission is requested | Route the operation through core.data-loader; do not construct a direct REST request. |
+| A delete request reaches a create/update-only input, dependency, or defaulting node | Stop before preview; correct operation routing and revalidate through the deletion branch rather than requiring new setup data. |
+| Fusion rejects a deletion because of processed transactions, dependent references, or a changed target | Preserve the exact server error and confirmed partial outcomes. Stop; do not bypass the business restriction, expand the target scope, or automatically retry. |
+| Cost Book association DELETE reports Not Found but the scoped association lookup still returns the selected book | Stop and preserve diagnostics and partial outcomes. Reconcile failed targets through resolve_existing_cost_book_associations_by_cost_organization and fresh registered Data Loader metadata. If the failure remains unexplained, obtain HCM Data Loader Error Analysis or backend routing diagnostics before proposing another attempt. Correct only failed rows and require new validation and approval; never replay successful rows or submit the parent while Cost Books remain. |
+| A delete source or sample is needed | Delegate preparation to core.data-loader for only the requested costOrgRelationships, costOrgInventoryOrgs, or costOrgCostBooks objects, using its delete sample operation and metadata-declared keys. Do not use the default create-sample batch or request costOrgBookPeriodEndValidations deletion. The loader owns validation, preview, approval, submission, status, and result handling. |
+| Deletion initiation succeeds but completion is unconfirmed | Report initiation only. Do not submit a dependent parent deletion or report that the target is gone. A later status/verification request uses the owning workflow and existing request identifiers. |
+| Parent-only deletion completes or is rejected | Reconcile the actual relationship and child state after the load; preserve any server rejection without automatically deleting children. |
+| The last Cost Book association is deleted | Disclose that the retained parent can have an incomplete costing design; do not silently create a replacement association or delete the parent. |
+| Owned Period End Validation cleanup is claimed after Cost Book association deletion | Do not assume or promise cleanup; verify any claimed cleanup through the declared read-only lookup before reporting it. If no verification exists, disclose that cleanup is unverified. |
 
 ## Error Classifications
 
@@ -66,6 +75,8 @@
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|
 | COR.PREVIEW_GATE | decision | 18 | execution_gate | ready->COR.COMPLETE;blocked->COR.HANDLE_ISSUE | COR.ENFORCE_DESIGN | stop | A validated relationship change is ready for preview and later approval |
-| COR.HANDLE_ISSUE | step | 19 | error_handler | disclosed->RETURN_ISSUES | none | stop | A prior node reports invalid, blocked, or failed |
+| COR.HANDLE_ISSUE | step | 30 | error_handler | disclosed->RETURN_ISSUES | none | stop | A prior node reports invalid, blocked, or failed |
 | COR.COMPLETE | terminal | 20 | terminal | none | COR.PREVIEW_GATE | stop | The task-local validation and readiness workflow completed |
-| RETURN_ISSUES | terminal | 21 | terminal | none | none | stop | Error disclosure completed |
+| RETURN_ISSUES | terminal | 31 | terminal | none | none | stop | Error disclosure completed |
+| COR.DELETE_PREVIEW_GATE | decision | 26 | execution_gate | ready->COR.DELETE_COMPLETE;blocked->COR.HANDLE_ISSUE | COR.CHECK_DELETE_DEPENDENCIES | stop | The exact deletion source passed input and dependency validation and is ready for core Data Loader validation, preview, and its authoritative approval workflow |
+| COR.DELETE_COMPLETE | terminal | 27 | terminal | none | COR.DELETE_PREVIEW_GATE | stop | Task-local deletion validation completed; this terminal is not evidence of a completed live deletion |

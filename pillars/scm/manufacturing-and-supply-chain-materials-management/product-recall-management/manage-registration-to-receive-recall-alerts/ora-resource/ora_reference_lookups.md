@@ -11,9 +11,12 @@ These are read-only checks for the selected Fusion pod. Use the core skill named
 
 ## Authoritative Sources
 
-- [Internal TSA: Filtering Oracle Curated Recall Notices by Start Date Interval to Prevent Ingestion of Old Recalls](https://confluence.oraclecorp.com/confluence/display/HCSCM/TSA%3A+Filtering+Oracle+Curated+Recall+Notices+by+Start+Date+Interval+to+Prevent+Ingestion+of+Old+Recalls) identifies ORA_SCH_RECALL_INGEST_START_DATE and yyyy-MM-dd. Its proposed ingestion fallback is unresolved and is not used as a setup default.
+Release check on 2026-11-10: the Common Features REST guide and features operation were verified in 26D. SCM’s equivalent 26D content-curation topic was inaccessible, so its 26C setup topic below is the explicit older-release fallback. The profileOptions CRUD contract comes from the governed repository reference and requires target metadata verification; it is not claimed as a public 26D API.
+
+
+- The exact profile code ORA_SCH_RECALL_INGEST_START_DATE is retained from the task-owner input in this resource. Verify the definition and display name in the selected environment; the public setup guide supports the Site-level date requirement but does not publish this internal code.
 - [Oracle: Enable Oracle Content Curation Service](https://docs.oracle.com/en/cloud/saas/supply-chain-and-manufacturing/26c/faims/enable-oracle-content-curation-service.html) instructs enabling the named opt-in task and setting the start date at Site level.
-- [Oracle: Get all features](https://docs.oracle.com/en/cloud/saas/applications-common/26b/farca/op-fscmrestapi-resources-11.13.18.05-features-get.html) defines EnabledFlag Y and N.
+- [Oracle: Get all features](https://docs.oracle.com/en/cloud/saas/applications-common/26d/farca/op-fscmrestapi-resources-11.13.18.05-features-get.html) defines EnabledFlag Y and N.
 - [Core Apps Common profile-options guidance](../../../../../../core/fusion-api/apps-common/profile-options/references/profile-options.md) defines the configured site-level child resource and distinguishes it from effective profileValues.
 
 ## Task Nodes

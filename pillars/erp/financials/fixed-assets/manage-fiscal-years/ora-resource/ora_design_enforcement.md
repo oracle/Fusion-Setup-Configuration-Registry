@@ -23,8 +23,21 @@ the user's explicit choice.
 | First fiscal-year date row for an Oldest-DPIS-based creation | Its inclusive date range does not contain Oldest DPIS (`Start Date <= Oldest DPIS <= End Date`) | Reject it. This is mandatory validation after the reuse-or-create decision and before design preview; compare actual dates, not the fiscal-year label. |
 | Fiscal-year coverage | The design does not include the fiscal year that starts in the next calendar year | Extend the planned fiscal years before related calendar work. |
 
+## DFF Preview and Artifact Enforcement
+
+Show applicable DFF business prompts and reviewed values with each annual
+row. Include documented canonical conversions in the proposal.
+
+Before execution approval, inspect every annual row in the immutable ZIP
+against its required-field map, approved context/values, and current import
+headers. Reject missing required values, cross-year copying, unsupported
+header mappings, or serialization mismatches. Keep translations separate.
+
+Retain all existing cycle, coverage, Oldest DPIS, translation, package-creation,
+and execution-approval checks.
+
 ## Task Nodes
 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|
-| FY.ENFORCE_DESIGN | decision | 70 | design_enforcement | pass->FY.IMPORT_GATE;blocked->FY.HANDLE_DESIGN | FY.APPLY_DEFAULTS | stop | Defaults and lookup results are available; validate the design and render the required Design Preview. |
+| FY.ENFORCE_DESIGN | decision | 70 | design_enforcement | pass->FY.IMPORT_GATE;blocked->FY.HANDLE_DESIGN | FY.RESOLVE_DFF | stop | Defaults and lookup results are available; validate the design and render the required Design Preview. |

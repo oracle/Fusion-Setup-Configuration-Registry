@@ -16,6 +16,7 @@
 
 | Dependency ID | Dependency | Mandatory | Applies When | Status | Value Source | Resolver | Why | User Guidance | Values to Fill |
 |---|---|---|---|---|---|---|---|---|---|
+| ASSET_BOOK_DFF | Current DFF definition and per-book values | Yes | Create/update readiness and Existing-Identical classification | Verify | One completed same-environment definition export per immutable batch, supplied input, and permitted exact-book target evidence | resolve_asset_book_dff_segments | Enforces dynamic requiredness and valid resulting values | Supply unresolved required business values; verification never creates value-set members | Per-book context, field map, validated values, conversions, and evidence references |
 | FSM_CONTRACT | Current task CSV headers and structural metadata XML | Yes | FSM import or update | Verify | Fresh header-only target export | resolve_fsm_asset_book_contract | Establishes CSV members, headers, and column structure before first import; it is not a source of configuration values or defaults | Export and inspect only the structural contract | CSV files; XML files; headers; required/defaultable columns |
 | INPUT_RECOVERY | Current request, provided inputs, and current-project artifacts | Yes | Every request before a missing-input response | Lookup | Current request inputs, provided inputs, and refreshable project artifacts | resolve_asset_book_dependencies | Avoids asking users to restate visible or previously supplied business requirements while preventing stale evidence reuse | Reprocess current inputs first; prior artifacts are candidates that require current-target reconciliation | Normalized business values; source citations; refreshed candidate evidence; unresolved source gaps |
 | ASSET_BOOK_FOUNDATION | Ledger, depreciation calendar, current period and immediately preceding period, accounts, conventions, and all eight selected reference-data-set assignments | Yes | Every request | Verify | Current input recovery plus supported read-only metadata | resolve_asset_book_dependencies | Books depend on valid accounting foundations and internal Initial Date depends on the preceding period start date | Resolve calendar periods and all technical assignments automatically. Do not ask the user for technical identifiers or generate a partial package. | Codes/identifiers; active/effective state; compatibility result; Reference Data Set assignment for every field; preceding-period start date; resolved Initial Date |
@@ -23,6 +24,23 @@
 | CORPORATE_BOOK | Associated Corporate book | Yes | Book class is Tax | Verify | Supported read-only target lookup | resolve_associated_corporate_book | Tax books must associate to a Corporate book | Supply a valid existing Corporate book | Corporate book code and compatible ledger evidence |
 | ASSET_BOOK_EXISTENCE | Existing target book classification | Yes | Before create or update | Lookup | BOSS Asset Books evidence; when that route is unavailable, a user-authorized task-level setup-data export restricted to exact requested Asset Book Code matching | resolve_asset_book_existence | Prevents duplicate setup data and uncontrolled updates | Review identical/different classification before proceeding; never use exported rows for defaults or package values | Existing definition, complete BOSS no-data evidence, or a complete authorized data-export no-match result |
 | LIVE_IMPORT_APPROVAL | Explicit approval for the reviewed package | Yes | Before live import or update | Pending | Parent `Execution Approval Preview` and authoritative `core.data-loader` approval | | Keeps mutations separate from discovery and preview without asking twice | Present the exact target, operation, immutable ZIP, and SHA-256 through the parent/Data Loader gate | Approval record |
+
+## Required DFF Gate
+
+This gate covers FA_BOOK_CONTROLS and JGxFABookControls independently,
+using one batch-level definition export. Unverified regional definition,
+application identity, applicability, or context blocks readiness.
+Missing metadata cannot be treated as a nonapplicable result.
+
+The existing reference and dependency stages must include
+`resolve_asset_book_dff_segments`. Missing required DFF input, unresolved
+context, or invalid/unverified values blocks readiness before Design
+Preview, prerequisite preparation, or book-package generation.
+
+One batch-level definition export supports all per-book checks. A missing
+or incomplete export cannot be treated as evidence that no segments are
+required. A complete definition with no applicable required segments passes
+the required-input check without demanding additional values.
 
 ## Dependency Classification
 

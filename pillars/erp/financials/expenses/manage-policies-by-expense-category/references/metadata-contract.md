@@ -29,7 +29,11 @@ not a CSV business-cell mismatch. Retain both the accepted scoped result and
 the historical strict mismatch report. Do not use acceptance to enable a new
 descriptor without its own baseline binding or broaden product readiness.
 
-The available FPH CodeSearch index did not expose the FSM consumer of
-NodeSequence. Only unrelated symbols were found. Its broader semantics remain
-unproved; these checks enforce local artifact integrity rather than inventing
-an ordering contract.
+The original FPH CodeSearch search did not expose the FSM NodeSequence consumer;
+that search gap is historical. Subsequent reviewed producer/consumer evidence
+and the bounded current `export-local` comparison policy are documented in
+[metadata ordering evidence](metadata-sequence-evidence.md). That policy admits
+only validated sequence-only cross-export differences and preserves the raw
+differences; it establishes no arbitrary ordering equivalence, target binary
+parity or authority to alter a submission's baseline metadata. The strict
+submission and structural checks above remain unchanged.

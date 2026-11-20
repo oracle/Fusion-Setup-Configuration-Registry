@@ -16,14 +16,16 @@
           "transitions": {
             "collection_read": "MPG.LOOKUP_PRODUCT_GROUPS",
             "subgroup_collection_read": "MPG.RESOLVE_PARENT_PRODUCT_GROUP",
+            "filter_attribute_collection_read": "MPG.RESOLVE_PARENT_FOR_FILTER_ATTRIBUTES",
             "subgroup_create": "MPG.RESOLVE_PARENT_FOR_SUBGROUP_CREATE",
             "filter_attribute_create": "MPG.RESOLVE_PARENT_FOR_FILTER_ATTRIBUTE_CREATE",
             "relationship_collection_by_group": "MPG.RESOLVE_PRODUCT_GROUP_FOR_PRODUCT_RELATIONSHIPS",
             "relationship_collection_read": "MPG.LOOKUP_PRODUCT_RELATIONSHIPS",
+            "relationship_read": "MPG.RESOLVE_PRODUCT_RELATIONSHIP_READ",
+            "relationship_update": "MPG.RESOLVE_PRODUCT_RELATIONSHIP",
             "create": "MPG.EXECUTION_GATE",
             "relationship_create": "MPG.EXECUTION_GATE",
             "update_or_delete_or_lock_or_release": "MPG.RESOLVE_PRODUCT_GROUP",
-            "relationship_read_or_update": "MPG.RESOLVE_PRODUCT_RELATIONSHIP",
             "publish": "MPG.LOCK_REQUIRED",
             "fsm_import_requested": "MPG.GATE_FSM_IMPORT",
             "invalid": "MPG.BLOCKED"
@@ -34,7 +36,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 35
+            "line": 40
           },
           "readiness": {
             "status": "ready",
@@ -59,7 +61,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 32
+            "line": 45
           },
           "readiness": {
             "status": "ready",
@@ -109,7 +111,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 33
+            "line": 46
           },
           "readiness": {
             "status": "ready",
@@ -161,7 +163,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 34
+            "line": 47
           },
           "readiness": {
             "status": "ready",
@@ -186,7 +188,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 35
+            "line": 48
           },
           "readiness": {
             "status": "ready",
@@ -212,7 +214,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 36
+            "line": 49
           },
           "readiness": {
             "status": "ready",
@@ -237,7 +239,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 37
+            "line": 50
           },
           "readiness": {
             "status": "ready",
@@ -259,11 +261,11 @@
             "MPG.VALIDATE_REQUEST"
           ],
           "on_failure": "stop",
-          "applies_when": "A product relationship read or update is requested.",
+          "applies_when": "A product relationship update is requested; resolve the exact relationship before its mutation gate.",
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 38
+            "line": 51
           },
           "readiness": {
             "status": "ready",
@@ -289,7 +291,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 39
+            "line": 52
           },
           "readiness": {
             "status": "ready",
@@ -315,7 +317,84 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 40
+            "line": 53
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MPG.RESOLVE_PRODUCT_RELATIONSHIP_READ",
+          "node_type": "step",
+          "sequence": 13,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "MPG.RELATIONSHIP_READ_COMPLETE",
+            "unresolved": "MPG.BLOCKED",
+            "failure": "MPG.FAILED"
+          },
+          "prerequisites": [
+            "MPG.VALIDATE_REQUEST"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Read one product relationship using resolve_product_group_product_relationship; this GET requires no mutation preview or approval.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 64
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MPG.RESOLVE_PARENT_FOR_FILTER_ATTRIBUTES",
+          "node_type": "step",
+          "sequence": 14,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "MPG.LOOKUP_FILTER_ATTRIBUTES",
+            "unresolved": "MPG.BLOCKED",
+            "failure": "MPG.FAILED"
+          },
+          "prerequisites": [
+            "MPG.VALIDATE_REQUEST"
+          ],
+          "on_failure": "stop",
+          "applies_when": "A filter-attribute collection read requires resolve_product_group_identity for its exact parent.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 65
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MPG.LOOKUP_FILTER_ATTRIBUTES",
+          "node_type": "step",
+          "sequence": 15,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "all_pages_returned": "MPG.FILTER_ATTRIBUTES_COMPLETE",
+            "paging_failed": "MPG.FAILED"
+          },
+          "prerequisites": [
+            "MPG.RESOLVE_PARENT_FOR_FILTER_ATTRIBUTES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Run list_product_group_filter_attributes for the resolved parent; return all requested pages.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 66
           },
           "readiness": {
             "status": "ready",
@@ -325,7 +404,7 @@
         {
           "id": "MPG.EXECUTION_GATE",
           "node_type": "decision",
-          "sequence": 13,
+          "sequence": 53,
           "action_type": "execution_gate",
           "execution_route": "local",
           "transitions": {
@@ -336,117 +415,7 @@
             "MPG.VALIDATE_REQUEST"
           ],
           "on_failure": "stop",
-          "applies_when": "A requested mutation has completed its applicable validation, identity, and lock-before-publish checks.",
-          "source": {
-            "file": "ora_error_handling.md",
-            "anchor": "task-nodes",
-            "line": 30
-          },
-          "readiness": {
-            "status": "ready",
-            "blocking_reasons": []
-          }
-        },
-        {
-          "id": "MPG.COLLECTION_COMPLETE",
-          "node_type": "terminal",
-          "sequence": 14,
-          "action_type": "terminal",
-          "execution_route": "local",
-          "transitions": {},
-          "prerequisites": [
-            "MPG.LOOKUP_PRODUCT_GROUPS"
-          ],
-          "on_failure": "continue",
-          "applies_when": "The requested product-group collection pages have been returned.",
-          "source": {
-            "file": "ora_error_handling.md",
-            "anchor": "task-nodes",
-            "line": 31
-          },
-          "readiness": {
-            "status": "ready",
-            "blocking_reasons": []
-          }
-        },
-        {
-          "id": "MPG.READY",
-          "node_type": "terminal",
-          "sequence": 15,
-          "action_type": "terminal",
-          "execution_route": "local",
-          "transitions": {},
-          "prerequisites": [
-            "MPG.EXECUTION_GATE"
-          ],
-          "on_failure": "continue",
-          "applies_when": "A task-specific execution route, immutable preview, and current explicit approval are present; hand off the unchanged request to that route.",
-          "source": {
-            "file": "ora_error_handling.md",
-            "anchor": "task-nodes",
-            "line": 32
-          },
-          "readiness": {
-            "status": "ready",
-            "blocking_reasons": []
-          }
-        },
-        {
-          "id": "MPG.FSM_IMPORT_BLOCKED",
-          "node_type": "terminal",
-          "sequence": 16,
-          "action_type": "terminal",
-          "execution_route": "local",
-          "transitions": {},
-          "prerequisites": [
-            "MPG.GATE_FSM_IMPORT"
-          ],
-          "on_failure": "continue",
-          "applies_when": "FSM import is blocked because no supported catalog or authoritative import contract exists.",
-          "source": {
-            "file": "ora_error_handling.md",
-            "anchor": "task-nodes",
-            "line": 33
-          },
-          "readiness": {
-            "status": "ready",
-            "blocking_reasons": []
-          }
-        },
-        {
-          "id": "MPG.PRODUCT_RELATIONSHIPS_COMPLETE",
-          "node_type": "terminal",
-          "sequence": 17,
-          "action_type": "terminal",
-          "execution_route": "local",
-          "transitions": {},
-          "prerequisites": [
-            "MPG.LOOKUP_PRODUCT_RELATIONSHIPS"
-          ],
-          "on_failure": "continue",
-          "applies_when": "The requested product-relationship collection pages have been returned.",
-          "source": {
-            "file": "ora_error_handling.md",
-            "anchor": "task-nodes",
-            "line": 34
-          },
-          "readiness": {
-            "status": "ready",
-            "blocking_reasons": []
-          }
-        },
-        {
-          "id": "MPG.SUBGROUPS_COMPLETE",
-          "node_type": "terminal",
-          "sequence": 18,
-          "action_type": "terminal",
-          "execution_route": "local",
-          "transitions": {},
-          "prerequisites": [
-            "MPG.LOOKUP_PRODUCT_GROUP_SUBGROUPS"
-          ],
-          "on_failure": "continue",
-          "applies_when": "The requested parent-scoped subgroup collection pages have been returned.",
+          "applies_when": "A mutation is requested. Require an implemented task-specific execution route before preview or approval. For create-product-group require scripts/product_group_rest.py and its enabled exact-task contract; its preview/verify/create commands own Product Groups validation and delegate HTTP/auth to core. The registry grants no POST permission; return to that selected workflow for exact immediate approval and one verified attempt. Missing commands or changed/expired evidence block. Other mutations require their own implemented contract; generic REST is not a fallback.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
@@ -458,15 +427,17 @@
           }
         },
         {
-          "id": "MPG.BLOCKED",
+          "id": "MPG.COLLECTION_COMPLETE",
           "node_type": "terminal",
-          "sequence": 19,
+          "sequence": 54,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
-          "prerequisites": [],
+          "prerequisites": [
+            "MPG.LOOKUP_PRODUCT_GROUPS"
+          ],
           "on_failure": "continue",
-          "applies_when": "A documented validation, identity, dependency, route, or approval gate blocks the request.",
+          "applies_when": "The requested product-group collection pages have been returned.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
@@ -478,9 +449,117 @@
           }
         },
         {
+          "id": "MPG.READY",
+          "node_type": "terminal",
+          "sequence": 55,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "MPG.EXECUTION_GATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "A task-specific execution route, immutable preview, and current explicit approval are present; hand off the unchanged request to that route.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 37
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MPG.FSM_IMPORT_BLOCKED",
+          "node_type": "terminal",
+          "sequence": 56,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "MPG.GATE_FSM_IMPORT"
+          ],
+          "on_failure": "continue",
+          "applies_when": "FSM import is blocked because no supported catalog or authoritative import contract exists.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 38
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MPG.PRODUCT_RELATIONSHIPS_COMPLETE",
+          "node_type": "terminal",
+          "sequence": 57,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "MPG.LOOKUP_PRODUCT_RELATIONSHIPS"
+          ],
+          "on_failure": "continue",
+          "applies_when": "The requested product-relationship collection pages have been returned.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 39
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MPG.SUBGROUPS_COMPLETE",
+          "node_type": "terminal",
+          "sequence": 58,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "MPG.LOOKUP_PRODUCT_GROUP_SUBGROUPS"
+          ],
+          "on_failure": "continue",
+          "applies_when": "The requested parent-scoped subgroup collection pages have been returned.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 40
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MPG.BLOCKED",
+          "node_type": "terminal",
+          "sequence": 59,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "continue",
+          "applies_when": "A documented validation, identity, dependency, route, or approval gate blocks the request.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 41
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
           "id": "MPG.FAILED",
           "node_type": "terminal",
-          "sequence": 20,
+          "sequence": 60,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
@@ -490,7 +569,51 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 37
+            "line": 42
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MPG.RELATIONSHIP_READ_COMPLETE",
+          "node_type": "terminal",
+          "sequence": 70,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "MPG.RESOLVE_PRODUCT_RELATIONSHIP_READ"
+          ],
+          "on_failure": "stop",
+          "applies_when": "The requested relationship GET result is returned without a mutation preview, approval, or write handoff.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 51
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MPG.FILTER_ATTRIBUTES_COMPLETE",
+          "node_type": "terminal",
+          "sequence": 71,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "MPG.LOOKUP_FILTER_ATTRIBUTES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "The requested filter-attribute collection pages are returned; no write is authorized.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 52
           },
           "readiness": {
             "status": "ready",
@@ -521,15 +644,21 @@
             "usage_mode_collection_read": "PGU.RESOLVE_USAGE_FOR_MODES",
             "usage_preference_collection_read": "PGU.RESOLVE_USAGE_FOR_PREFERENCES",
             "usage_root_collection_read": "PGU.RESOLVE_USAGE_FOR_ROOTS",
+            "usage_engine_item_read": "PGU.RESOLVE_USAGE_FOR_ENGINE_ITEM",
+            "usage_mode_item_read": "PGU.RESOLVE_USAGE_FOR_MODE_ITEM",
+            "usage_preference_item_read": "PGU.RESOLVE_USAGE_FOR_PREFERENCE_ITEM",
+            "usage_root_item_read": "PGU.RESOLVE_USAGE_FOR_ROOT_ITEM",
+            "fsm_import_requested": "PGU.VALIDATE_FSM_HANDOFF",
+            "rest_mutation_requested": "PGU.BLOCKED",
             "invalid": "PGU.BLOCKED"
           },
           "prerequisites": [],
           "on_failure": "stop",
-          "applies_when": "Classify the documented Product Group Usage GET request and validate its required identifiers.",
+          "applies_when": "Classify a documented Product Group Usage GET, FSM import handoff, or unsupported REST mutation; validate the matching input contract.",
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 39
+            "line": 41
           },
           "readiness": {
             "status": "ready",
@@ -554,7 +683,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 50
+            "line": 54
           },
           "readiness": {
             "status": "ready",
@@ -580,7 +709,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 51
+            "line": 55
           },
           "readiness": {
             "status": "ready",
@@ -606,7 +735,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 52
+            "line": 56
           },
           "readiness": {
             "status": "ready",
@@ -631,7 +760,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 53
+            "line": 57
           },
           "readiness": {
             "status": "ready",
@@ -657,7 +786,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 54
+            "line": 58
           },
           "readiness": {
             "status": "ready",
@@ -682,7 +811,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 55
+            "line": 59
           },
           "readiness": {
             "status": "ready",
@@ -708,7 +837,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 56
+            "line": 60
           },
           "readiness": {
             "status": "ready",
@@ -733,7 +862,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 57
+            "line": 61
           },
           "readiness": {
             "status": "ready",
@@ -759,7 +888,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 58
+            "line": 62
           },
           "readiness": {
             "status": "ready",
@@ -784,7 +913,265 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 59
+            "line": 63
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PGU.RESOLVE_USAGE_FOR_ENGINE_ITEM",
+          "node_type": "step",
+          "sequence": 12,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "PGU.READ_ENGINE_ITEM",
+            "unresolved": "PGU.BLOCKED",
+            "failure": "PGU.FAILED"
+          },
+          "prerequisites": [
+            "PGU.VALIDATE_REQUEST"
+          ],
+          "on_failure": "stop",
+          "applies_when": "A engine child-item GET requires resolve_product_group_usage before reading the child.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 67
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PGU.READ_ENGINE_ITEM",
+          "node_type": "step",
+          "sequence": 13,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "PGU.ENGINE_ITEM_COMPLETE",
+            "unresolved": "PGU.BLOCKED",
+            "failure": "PGU.FAILED"
+          },
+          "prerequisites": [
+            "PGU.RESOLVE_USAGE_FOR_ENGINE_ITEM"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Run resolve_product_group_usage_engine for the selected child identifier under the resolved UsageCode; return the read result only.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 68
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PGU.RESOLVE_USAGE_FOR_MODE_ITEM",
+          "node_type": "step",
+          "sequence": 14,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "PGU.READ_MODE_ITEM",
+            "unresolved": "PGU.BLOCKED",
+            "failure": "PGU.FAILED"
+          },
+          "prerequisites": [
+            "PGU.VALIDATE_REQUEST"
+          ],
+          "on_failure": "stop",
+          "applies_when": "A mode child-item GET requires resolve_product_group_usage before reading the child.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 69
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PGU.READ_MODE_ITEM",
+          "node_type": "step",
+          "sequence": 15,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "PGU.MODE_ITEM_COMPLETE",
+            "unresolved": "PGU.BLOCKED",
+            "failure": "PGU.FAILED"
+          },
+          "prerequisites": [
+            "PGU.RESOLVE_USAGE_FOR_MODE_ITEM"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Run resolve_product_group_usage_mode for the selected child identifier under the resolved UsageCode; return the read result only.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 70
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PGU.RESOLVE_USAGE_FOR_PREFERENCE_ITEM",
+          "node_type": "step",
+          "sequence": 16,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "PGU.READ_PREFERENCE_ITEM",
+            "unresolved": "PGU.BLOCKED",
+            "failure": "PGU.FAILED"
+          },
+          "prerequisites": [
+            "PGU.VALIDATE_REQUEST"
+          ],
+          "on_failure": "stop",
+          "applies_when": "A preference child-item GET requires resolve_product_group_usage before reading the child.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 71
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PGU.READ_PREFERENCE_ITEM",
+          "node_type": "step",
+          "sequence": 17,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "PGU.PREFERENCE_ITEM_COMPLETE",
+            "unresolved": "PGU.BLOCKED",
+            "failure": "PGU.FAILED"
+          },
+          "prerequisites": [
+            "PGU.RESOLVE_USAGE_FOR_PREFERENCE_ITEM"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Run resolve_product_group_usage_preference for the selected child identifier under the resolved UsageCode; return the read result only.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 72
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PGU.RESOLVE_USAGE_FOR_ROOT_ITEM",
+          "node_type": "step",
+          "sequence": 18,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "PGU.READ_ROOT_ITEM",
+            "unresolved": "PGU.BLOCKED",
+            "failure": "PGU.FAILED"
+          },
+          "prerequisites": [
+            "PGU.VALIDATE_REQUEST"
+          ],
+          "on_failure": "stop",
+          "applies_when": "A root child-item GET requires resolve_product_group_usage before reading the child.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 73
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PGU.READ_ROOT_ITEM",
+          "node_type": "step",
+          "sequence": 19,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "PGU.ROOT_ITEM_COMPLETE",
+            "unresolved": "PGU.BLOCKED",
+            "failure": "PGU.FAILED"
+          },
+          "prerequisites": [
+            "PGU.RESOLVE_USAGE_FOR_ROOT_ITEM"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Run resolve_product_group_usage_root for the selected child identifier under the resolved UsageCode; return the read result only.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 74
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PGU.VALIDATE_FSM_HANDOFF",
+          "node_type": "decision",
+          "sequence": 20,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "PGU.FSM_HANDOFF_GATE",
+            "invalid": "PGU.BLOCKED"
+          },
+          "prerequisites": [
+            "PGU.VALIDATE_REQUEST"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Validate the supplied immutable source reference, exact task code and FSM mode against Required Groups. This is request-shape validation only; core.data-loader owns package/schema validation.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 42
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PGU.FSM_HANDOFF_GATE",
+          "node_type": "decision",
+          "sequence": 30,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "PGU.FSM_HANDOFF_READY",
+            "blocked": "PGU.BLOCKED"
+          },
+          "prerequisites": [
+            "PGU.VALIDATE_FSM_HANDOFF"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return validated business intent only when the active Run Book and core.data-loader FSM preflight identify this exact task and immutable source. Missing or ambiguous ownership blocks; task validation does not request load approval.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 57
           },
           "readiness": {
             "status": "ready",
@@ -794,7 +1181,7 @@
         {
           "id": "PGU.USAGES_COMPLETE",
           "node_type": "terminal",
-          "sequence": 12,
+          "sequence": 52,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
@@ -806,7 +1193,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 42
+            "line": 43
           },
           "readiness": {
             "status": "ready",
@@ -816,7 +1203,7 @@
         {
           "id": "PGU.USAGE_COMPLETE",
           "node_type": "terminal",
-          "sequence": 13,
+          "sequence": 53,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
@@ -828,7 +1215,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 43
+            "line": 44
           },
           "readiness": {
             "status": "ready",
@@ -838,7 +1225,7 @@
         {
           "id": "PGU.ENGINES_COMPLETE",
           "node_type": "terminal",
-          "sequence": 14,
+          "sequence": 54,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
@@ -850,7 +1237,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 44
+            "line": 45
           },
           "readiness": {
             "status": "ready",
@@ -860,7 +1247,7 @@
         {
           "id": "PGU.MODES_COMPLETE",
           "node_type": "terminal",
-          "sequence": 15,
+          "sequence": 55,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
@@ -872,7 +1259,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 45
+            "line": 46
           },
           "readiness": {
             "status": "ready",
@@ -882,7 +1269,7 @@
         {
           "id": "PGU.PREFERENCES_COMPLETE",
           "node_type": "terminal",
-          "sequence": 16,
+          "sequence": 56,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
@@ -894,7 +1281,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 46
+            "line": 47
           },
           "readiness": {
             "status": "ready",
@@ -904,7 +1291,7 @@
         {
           "id": "PGU.ROOTS_COMPLETE",
           "node_type": "terminal",
-          "sequence": 17,
+          "sequence": 57,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
@@ -916,7 +1303,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 47
+            "line": 48
           },
           "readiness": {
             "status": "ready",
@@ -926,7 +1313,7 @@
         {
           "id": "PGU.BLOCKED",
           "node_type": "terminal",
-          "sequence": 18,
+          "sequence": 58,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
@@ -936,7 +1323,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 48
+            "line": 49
           },
           "readiness": {
             "status": "ready",
@@ -946,7 +1333,7 @@
         {
           "id": "PGU.FAILED",
           "node_type": "terminal",
-          "sequence": 19,
+          "sequence": 59,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
@@ -956,7 +1343,117 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 49
+            "line": 50
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PGU.ENGINE_ITEM_COMPLETE",
+          "node_type": "terminal",
+          "sequence": 70,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "PGU.READ_ENGINE_ITEM"
+          ],
+          "on_failure": "stop",
+          "applies_when": "The requested engine child item is returned; no mutation preview or approval is required.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 53
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PGU.MODE_ITEM_COMPLETE",
+          "node_type": "terminal",
+          "sequence": 71,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "PGU.READ_MODE_ITEM"
+          ],
+          "on_failure": "stop",
+          "applies_when": "The requested mode child item is returned; no mutation preview or approval is required.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 54
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PGU.PREFERENCE_ITEM_COMPLETE",
+          "node_type": "terminal",
+          "sequence": 72,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "PGU.READ_PREFERENCE_ITEM"
+          ],
+          "on_failure": "stop",
+          "applies_when": "The requested preference child item is returned; no mutation preview or approval is required.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 55
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PGU.ROOT_ITEM_COMPLETE",
+          "node_type": "terminal",
+          "sequence": 73,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "PGU.READ_ROOT_ITEM"
+          ],
+          "on_failure": "stop",
+          "applies_when": "The requested root child item is returned; no mutation preview or approval is required.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 56
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PGU.FSM_HANDOFF_READY",
+          "node_type": "terminal",
+          "sequence": 74,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "PGU.FSM_HANDOFF_GATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return validation results to the owning Run Book/core.data-loader FSM workflow, which owns mapping, exact-artifact preview, approval, import, polling and verification. This terminal authorizes no direct POST, PATCH, or import.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 58
           },
           "readiness": {
             "status": "ready",

@@ -14,10 +14,13 @@ import sys
 
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT.parents[2] / "scripts"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
+from guarded_xlsx import GuardedWorkbook, column_index, shared_string
 from task_orchestration import WorkflowBlocked, resolve_execution_route
 
 
 TASK_CODE = "ORA_FFS_TS_WORK_SKILLS"
+MAX_WORKBOOK_RECORDS = 20000
 LIVE_DIRECTION = "ora_rest_execution"
 WORK_SKILLS_PATH = "/rest/ofscMetadata/v1/workSkills/"
 WORK_SKILL_GROUPS_PATH = "/rest/ofscMetadata/v1/workSkillGroups/"
@@ -114,11 +117,7 @@ def _as_ratio(value: Any, sheet: str) -> int:
     return ratio
 
 
-def _column_index(reference: str) -> int:
-    index = 0
-    for letter in "".join(character for character in reference if character.isalpha()).upper():
-        index = index * 26 + ord(letter) - ord("A") + 1
-    return index
+_column_index = column_index
 
 
 def _read_workbook(workbook_path: Path) -> list[tuple[str, dict[str, Any]]]:
@@ -128,11 +127,11 @@ def _read_workbook(workbook_path: Path) -> list[tuple[str, dict[str, Any]]]:
     if not workbook_path.is_file() or workbook_path.suffix.casefold() != ".xlsx":
         raise WorkSkillsInputError("workbook must be an existing .xlsx file.")
     try:
-        with zipfile.ZipFile(workbook_path) as archive:
-            workbook = ElementTree.fromstring(archive.read("xl/workbook.xml"))
-            relationships = ElementTree.fromstring(archive.read("xl/_rels/workbook.xml.rels"))
+        with GuardedWorkbook(workbook_path) as archive:
+            workbook = archive.xml("xl/workbook.xml")
+            relationships = archive.xml("xl/_rels/workbook.xml.rels")
             try:
-                shared_root = ElementTree.fromstring(archive.read("xl/sharedStrings.xml"))
+                shared_root = archive.xml("xl/sharedStrings.xml")
                 shared_strings = ["".join(item.itertext()) for item in shared_root.findall(f"{spreadsheet}si")]
             except KeyError:
                 shared_strings = []
@@ -141,14 +140,23 @@ def _read_workbook(workbook_path: Path) -> list[tuple[str, dict[str, Any]]]:
                 for item in relationships.findall(f"{package_relationship}Relationship")
             }
             result = []
+
+            def append_record(sheet_name: str, record: dict[str, Any]) -> None:
+                archive.check_time()
+                if len(result) >= MAX_WORKBOOK_RECORDS:
+                    raise WorkSkillsInputError("Work Skills workbook record limit exceeded.")
+                result.append((sheet_name, record))
+
             for sheet in workbook.findall(f"{spreadsheet}sheets/{spreadsheet}sheet"):
                 target = targets.get(sheet.attrib.get(f"{relationship}id", ""))
                 if not target:
                     raise WorkSkillsInputError("Workbook sheet relationship is missing.")
                 path = target.lstrip("/") if target.startswith("/") else "xl/" + target
-                root = ElementTree.fromstring(archive.read(path))
+                root = archive.xml(path)
+                archive.check_time()
                 rows: list[dict[int, Any]] = []
                 for row in root.findall(f"{spreadsheet}sheetData/{spreadsheet}row"):
+                    archive.check_time()
                     cells: dict[int, Any] = {}
                     for cell in row.findall(f"{spreadsheet}c"):
                         column = _column_index(cell.attrib.get("r", ""))
@@ -156,7 +164,7 @@ def _read_workbook(workbook_path: Path) -> list[tuple[str, dict[str, Any]]]:
                         if cell.attrib.get("t") == "inlineStr":
                             cells[column] = "".join(cell.itertext())
                         elif cell.attrib.get("t") == "s" and value is not None:
-                            cells[column] = shared_strings[int(value.text or "")]
+                            cells[column] = shared_string(shared_strings, value.text)
                         elif cell.attrib.get("t") == "b" and value is not None:
                             cells[column] = value.text == "1"
                         elif value is not None:
@@ -166,12 +174,21 @@ def _read_workbook(workbook_path: Path) -> list[tuple[str, dict[str, Any]]]:
                 sheet_name = sheet.attrib.get("name", "Unnamed worksheet")
                 free_format: dict[str, Any] = {}
                 for cells in rows:
+                    archive.check_time()
                     key = _normalized(cells.get(1))
                     if key and cells.get(2) is not None:
                         free_format[key] = cells[2]
                 table_detected = False
-                for header_index, headers in enumerate(rows):
-                    labels = {column: _normalized(value) for column, value in headers.items() if _normalized(value)}
+                active_labels: dict[int, str] = {}
+                # A header starts a new section. Each following data row belongs
+                # only to that section, never to all earlier headers.
+                for values in rows:
+                    archive.check_time()
+                    labels = {}
+                    for column, value in values.items():
+                        label = _normalized(value)
+                        if label:
+                            labels[column] = label
                     has_skill = (
                         any(alias in labels.values() for alias in FIELD_ALIASES["label"])
                         and any(alias in labels.values() for alias in FIELD_ALIASES["name"])
@@ -183,40 +200,39 @@ def _read_workbook(workbook_path: Path) -> list[tuple[str, dict[str, Any]]]:
                         and any(alias in labels.values() for alias in GROUP_FIELD_ALIASES["active"])
                     )
                     has_member = all(any(alias in labels.values() for alias in aliases) for aliases in MEMBER_FIELD_ALIASES.values())
-                    if not (has_skill or has_group or has_member):
+                    if has_skill or has_group or has_member:
+                        table_detected = True
+                        active_labels = labels
                         continue
-                    table_detected = True
-                    for values in rows[header_index + 1:]:
+                    if active_labels:
                         record = {
-                            labels[column]: value
+                            active_labels[column]: value
                             for column, value in values.items()
-                            if column in labels and labels[column]
+                            if column in active_labels
                         }
                         if (
                             any(alias in record for alias in FIELD_ALIASES["label"])
                             or any(alias in record for alias in GROUP_FIELD_ALIASES["label"])
                             or any(alias in record for alias in MEMBER_FIELD_ALIASES["group_label"])
                         ):
-                            result.append((sheet_name, record))
+                            append_record(sheet_name, record)
                 if free_format and not table_detected:
-                    result.append((sheet_name, free_format))
+                    append_record(sheet_name, free_format)
                 if "work skill condition" in _normalized(sheet_name):
-                    condition_header = next(
-                        (
-                            index
-                            for index, headers in enumerate(rows)
-                            if {"model code/skill", "condition label", "work skill label"}
-                            & {_normalized(value) for value in headers.values()}
-                        ),
-                        None,
-                    )
-                    if condition_header is not None and any(
-                        any(str(value or "").strip() for value in condition.values())
-                        for condition in rows[condition_header + 1:]
-                    ):
-                        result.append((sheet_name, {"__work_skill_conditions_configured": True}))
+                    condition_header_seen = False
+                    for condition in rows:
+                        archive.check_time()
+                        if condition_header_seen:
+                            if any(str(value or "").strip() for value in condition.values()):
+                                append_record(sheet_name, {"__work_skill_conditions_configured": True})
+                                break
+                        elif {"model code/skill", "condition label", "work skill label"} & {
+                            _normalized(value) for value in condition.values()
+                        }:
+                            condition_header_seen = True
+            archive.check_time()
             return result
-    except (KeyError, OSError, ValueError, ElementTree.ParseError, zipfile.BadZipFile) as error:
+    except (KeyError, IndexError, OSError, ValueError, ElementTree.ParseError, zipfile.BadZipFile) as error:
         raise WorkSkillsInputError(f"Workbook could not be read: {error}") from error
 
 
@@ -516,20 +532,20 @@ class WorkSkillsAdapter:
             if not isinstance(listed_groups, dict):
                 raise WorkflowBlocked("Work Skill Groups list could not be read from OFSC Metadata.")
         baselines = {}
-        for request in payload["requests"]:
+        for sequence, request in enumerate(payload["requests"], 1):
             label = request["label"]
-            baseline = get(request["path"], temp / f"{label}.json")
+            baseline = get(request["path"], temp / f"baseline-{sequence}.json")
             if request.get("operationId", "put-work-skill") == "put-work-skill":
                 baselines[label] = baseline
             else:
                 baselines[request["path"]] = baseline
-        for request in payload["requests"]:
+        for sequence, request in enumerate(payload["requests"], 1):
             if request.get("operationId") != "put-work-skill-group":
                 continue
-            for member in request["memberLabels"]:
+            for member_sequence, member in enumerate(request["memberLabels"], 1):
                 if member in payload["skillLabels"]:
                     continue
-                existing = get(f"{WORK_SKILLS_PATH}{quote(member, safe='')}", temp / f"member-{member}.json")
+                existing = get(f"{WORK_SKILLS_PATH}{quote(member, safe='')}", temp / f"member-baseline-{sequence}-{member_sequence}.json")
                 if existing is None:
                     raise WorkflowBlocked(
                         f"Work Skill Group {request['label']} references Work Skill {member}, which is absent from the workbook and target environment."

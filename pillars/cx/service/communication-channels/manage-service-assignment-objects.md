@@ -9,48 +9,55 @@ functional_area_code: "ORA_SVC_COMM_CHANNELS"
 available_flag: "Y"
 export_import_supported_flag: "Y"
 csv_export_import_supported_flag: "Y"
-dataloader_import_mode: "FSM"
 businessObject: ""
 source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
+execution_blocker: "Advisory only; task-specific execution contract is unavailable."
 ---
 
 # Manage Service Assignment Objects
 
-## Setup Task Metadata
+## Scope: Advisory Only
 
-- Task name: `Manage Service Assignment Objects`
+This repository entry supports catalog identification and requirements planning
+only. It does not implement validation, export, package preparation, preview,
+import or configuration execution for `ORA_SVC_MANAGE_SERVICE_REQUEST_ASSIGNMENT_OBJECTS`.
+
+The effective Fusion catalog marks this task available and export/import/CSV
+supported (`Y`). These are catalog facts, not an FSCR execution contract. No Data
+Loader import mode is selected by this skill. The local rule registry is still
+incomplete and the canonical resolver must refuse execution. The descriptive
+execution_blocker metadata is not a substitute for that runtime refusal.
+
+## Advisory Workflow
+
+1. Record the requested business objective, task code, Service offering,
+   Communication Channels area, selected project and environment as supplied.
+2. Identify the missing task-specific source contract and required evidence;
+   do not infer payload fields, keys, defaults or execution steps from another
+   task or from catalog support flags.
+3. Return `status: blocked`, `stage: capability_readiness`, failure class
+   `catalog_or_metadata_mismatch`, this task code and the recommended next action
+   through the owning project workflow. Retain sanitized diagnostics and any
+   existing artifact references. This local guidance makes no Fusion call.
+4. Obtain source-backed task guidance through the resource-authoring workflow,
+   compile/review the complete rules and rerun readiness and merge checks before
+   proposing this task as executable. No approval or readiness waiver can fill
+   the missing contract.
+
+## Execution Boundary
+
+Stop before invoking Data Loader, Task Hook preview, task export/import, REST,
+UI/browser automation or another substitute route for this task. Do not create
+an import package or treat this advisory entry as an implementation-ready task.
+Leave the existing incomplete rule registry intact so direct resolution remains
+fail-closed. Do not relabel its TBD rules as ready or bypass the resolver.
+
+## Catalog Identity
+
+- Task: `Manage Service Assignment Objects`
 - Task code: `ORA_SVC_MANAGE_SERVICE_REQUEST_ASSIGNMENT_OBJECTS`
-- Available: `Y`
-- Export/import supported: `Y`
-- CSV export/import supported: `Y`
-- CSV export/import routing: `supported`
-- Data Loader import mode: `FSM`
-- Business Object: ``
-
-## Guard Rails
-
-1. Require an authenticated Fusion user context before any Fusion operation; use `core.auth.fusion-oauth-authentication`.
-2. Do not use `core.fusion-api.rest-api-client` to create, update, or delete records.
-3. Do not use `shared.setup-import.task-level-import` to create, update, or delete records.
-
-## CSV Export, Import, and Validation Workflow
-
-`CSVExportImportSupportedFlag` is `Y` for this task, so route task setup data work through the relevant skills:
-
-1. Export task setup data with `shared.setup-export.task-level-export`.
-2. Validate exported or prepared task setup data with `shared.validation.setup-data-validator`.
-3. Import setup task data with `core.data-loader`.
-
-Use this task metadata when invoking those skills:
-
 - Offering: `Service`
-- Functional area / Setup Object: `Communication Channels`
-- Setup task name: `Manage Service Assignment Objects`
-- Setup task code: `ORA_SVC_MANAGE_SERVICE_REQUEST_ASSIGNMENT_OBJECTS`
-
-
-
-
-## Usage
-
-Use this metadata file when planning, sequencing, exporting, importing, or validating setup data for `Manage Service Assignment Objects` under `Communication Channels`.
+- Functional area: `Communication Channels`
+- Available / export-import / CSV flags: `Y / Y / Y` (catalog only)
+- FSCR capability: advisory planning only; execution unsupported
+- Data Loader import mode: not selected

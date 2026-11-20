@@ -15,6 +15,7 @@ from decimal import Decimal, InvalidOperation
 from pathlib import Path, PurePosixPath
 from zipfile import BadZipFile, ZipFile
 from category_scope import ENTITIES, allowed_input, require_scoped_records
+from project_artifact_paths import validate_artifact_path
 
 ROOT = Path(__file__).resolve().parents[1]
 TASK = 'ORA_EXM_MANAGE_POLICIES_BY_EXPENSE_CATEGORY'
@@ -25,7 +26,13 @@ NUMBER_TYPES = INTEGER_TYPES | {'decimal', 'double', 'float', 'number'}
 
 
 class IntakeError(ValueError):
-    pass
+    def __init__(self, message, *, issues=None):
+        self.issues = list(issues or [])
+        details = ['{}{}{}: {}'.format(
+            item.get('sheet', ''), '!'+item['cell'] if item.get('cell') else '',
+            ' ['+item['label']+']' if item.get('label') else '',
+            item['message']) for item in self.issues]
+        super().__init__(message + ('; ' + '; '.join(details) if details else ''))
 
 
 def load_catalog():
@@ -158,8 +165,10 @@ def read_workbook(path, catalog=None):
     result = {'schema_version': '1.0', 'task_code': TASK, 'workbook_sha256': sha256(Path(path).read_bytes()),
               'blocks': [], 'source_issues': [], 'issues': [], 'pending_checks': [], 'import_ready': False}
 
-    def issue(sheet, cell, message, source=False):
+    def issue(sheet, cell, message, source=False, field=None):
         item = {'sheet': sheet, 'cell': cell, 'message': message}
+        if field is not None:
+            item.update(field=field['field'], label=field['label'])
         result['issues'].append(item)
         if source:
             result['source_issues'].append(item)
@@ -184,6 +193,8 @@ def read_workbook(path, catalog=None):
         for spec in catalog['sheets']:
             name = spec['name']
             if name not in sheets:
+                if spec.get('qualification') == 'intake_supported_fsm_contracts_pending':
+                    continue  # Existing six-sheet workbooks remain readable.
                 issue(name, '', 'Missing required category sheet', True)
                 continue
             relation = relations[sheets[name].get('{'+REL+'}id')]
@@ -254,6 +265,20 @@ def read_workbook(path, catalog=None):
                     populated_rows.setdefault(ri, []).append((ci, value, formula))
             for ri, populated in sorted(populated_rows.items()):
                 record, locations = {}, {}
+                upper_flags = {'PolicyViolationFlag','DispWarningToUserFlag','PreventSubmissionFlag'}
+                upper_tolerances = {'WarningTolerance','ErrorTolerance'}
+                upper_selected = False
+                if spec['kind']=='policy' and spec['entity'] in {
+                        'ORA_EXM_MEALS_POLICY','ORA_EXM_ACCOM_POLICY',
+                        'ORA_EXM_ENTERTAINMENT_POLICY','ORA_EXM_CARRENTAL_POLICY',
+                        'ORA_EXM_MISCELLANEOUS_POLICY'}:
+                    for ci, value, formula in populated:
+                        field=columns.get(ci,{})
+                        if field.get('field')=='PolicyEnforcementCode' and not formula:
+                            try:
+                                upper_selected=normalize(value,field,date1904)=='UPPER'
+                            except (IntakeError, ValueError, OverflowError):
+                                pass  # The ordinary cell pass reports invalid enforcement.
                 for ci, value, formula in populated:
                     if ci not in columns:
                         issue(name, column(ci)+str(ri), 'Populated cell has no supported header', True)
@@ -263,22 +288,49 @@ def read_workbook(path, catalog=None):
                     if formula:
                         continue
                     try:
-                        normalized = normalize(value, field, date1904)
+                        if upper_selected and field['field'] in upper_flags:
+                            if value is False or (isinstance(value,str) and value.strip().casefold() in {'no','n'}):
+                                normalized='No'
+                            else:
+                                raise IntakeError(field['label']+' cannot be set for an upper limit policy; it must be No')
+                        elif upper_selected and field['field'] in upper_tolerances:
+                            raise IntakeError(field['label']+' cannot be set for an upper limit policy; it must be empty')
+                        else:
+                            normalized = normalize(value, field, date1904)
                         if normalized is not None:
                             if field.get('fixed_value') and normalized != field['fixed_value']:
-                                raise IntakeError(field['label']+' is fixed to '+field['fixed_value'])
+                                raise IntakeError(field['label']+' must be set to '+field['fixed_value']+' for '+name)
                             record[field['field']] = normalized
                     except (IntakeError, ValueError, OverflowError) as exc:
-                        issue(name, column(ci)+str(ri), str(exc))
+                        message = (field['label']+' must be set to '+field['fixed_value']+' for '+name
+                                   if field.get('fixed_value') else str(exc))
+                        issue(name, column(ci)+str(ri), message, field=field)
                 fixed = {c['field'] for c in spec['columns'] if c.get('fixed_value')}
                 if record and not (record.keys() - fixed) and all(
                         record.get(c['field'], c['fixed_value']) == c['fixed_value']
                         for c in spec['columns'] if c.get('fixed_value')):
                     continue  # Template's fixed Yes indicators do not create records.
+                if upper_selected:
+                    # These are UI-disabled consequences of the explicit mode,
+                    # including controlled tolerance clearing on an update.
+                    for field in upper_flags:
+                        record.setdefault(field,'No')
+                    for field in upper_tolerances:
+                        record.setdefault(field,'')
                 for field in spec['columns']:
+                    if (field.get('fixed_value') and field.get('workbook_only')
+                            and record.keys() - fixed):
+                        # One merged display indicator applies to every policy
+                        # row. An explicit invalid value was already reported
+                        # above; a blank cell inherits this category constant.
+                        record.setdefault(field['field'], field['fixed_value'])
+                    if (field.get('fixed_value') and record.keys() - fixed
+                            and record.get(field['field']) != field['fixed_value']):
+                        ci = next((i for i, c in columns.items() if c['field'] == field['field']), 1)
+                        issue(name, column(ci)+str(ri), field['label']+' must be set to '+field['fixed_value']+' for '+name, field=field)
                     if field.get('key') and field['field'] not in record:
                         ci = next((i for i, c in columns.items() if c['field'] == field['field']), 1)
-                        issue(name, column(ci)+str(ri), 'Required workbook association: '+field['label'])
+                        issue(name, column(ci)+str(ri), 'Required workbook association: '+field['label'], field=field)
                 if 'StartDate' in record and 'EndDate' in record and record['EndDate'] < record['StartDate']:
                     issue(name, locations['EndDate'], 'End date precedes start date')
                 block['rows'].append(record)
@@ -294,6 +346,10 @@ def read_workbook(path, catalog=None):
             ref = row.get('_Rate Reference', row.get('_Value Reference'))
             if spec['kind'] == 'rate':
                 identity = (policy, row.get('StartDate', ''), row.get('EndDate', ''))
+                if spec['entity']=='ORA_EXM_MILEAGE_LINE':
+                    identity += tuple(row.get(f,'') for f in ('TypeOfRateCode','PassengerThreshold','AdditionalRateCode','CalculationMethodCode'))
+                if spec['entity']=='ORA_EXM_PERDIEM_POLICY_LINE':
+                    identity += tuple(row.get(f,'') for f in ('TypeOfLineCode','LineHours','LineMinutes'))
             else:
                 identity = (policy, ref) if spec['kind'] in {'policy', 'value'} or ref else tuple(sorted(row.items()))
             key = (block['sheet'], identity)
@@ -317,6 +373,11 @@ def read_workbook(path, catalog=None):
         result['pending_checks'].append('Resolve target operations, required values, field domains, references and entity ownership before import')
     from reduced_rate_profile import workbook_limit_issues
     result['issues'].extend(workbook_limit_issues(result['records']))
+    from expanded_category_intake import issues as expanded_issues, preflight_requirements, ENTITIES as expanded_entities
+    result['issues'].extend(expanded_issues(result['records']))
+    result['lookup_preflight'] = preflight_requirements(result['records'])
+    if any(r['entity'] in expanded_entities for r in result['records']):
+        result['pending_checks'].append('New-category FSM field-operation and lookup-context qualification remains pending; intake acceptance is review-only')
     if result['issues']:
         result['status'] = 'needs_correction'
     return result
@@ -390,16 +451,9 @@ def csv_bytes(headers, records):
 
 
 def artifact_output(destination, project_root):
-    """Delegate new output-path admission to the core artifact service."""
-    import importlib.util
-    service = ROOT.parents[4]/'core/project-mgmt/artifact-registry-manager/scripts/project_artifact_paths.py'
-    if not service.is_file():
-        raise IntakeError('Core artifact path preflight is unavailable')
-    spec = importlib.util.spec_from_file_location('fscr_project_artifact_paths', service)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+    """Validate new policy outputs with the task-local preflight."""
     try:
-        return module.validate_artifact_path(destination, project_root)
+        return validate_artifact_path(destination, project_root)
     except ValueError as error:
         raise IntakeError(str(error)) from error
 

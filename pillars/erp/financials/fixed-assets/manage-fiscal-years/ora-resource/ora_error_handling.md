@@ -1,5 +1,14 @@
 # Manage Fiscal Years: Error Handling
 
+## DFF Failures
+
+Report Fiscal Year Name, annual Fiscal Year, context, and segment prompt.
+Recover supplied input first, then request only missing business values.
+Stop before Design Preview/package work for missing required input or invalid
+values. Definition, mapping, membership, and visibility gaps remain unverified.
+Never create value-set values, copy values from another year, substitute a
+context, or modify an existing fiscal year to satisfy reuse criteria.
+
 ## Error Situations
 
 | Situation | What Should Happen |
@@ -71,12 +80,12 @@ After the parent reports verified completion, any dependent task reuses the exac
 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|
-| FY.IMPORT_GATE | decision | 80 | execution_gate | approved->FY.HANDED_OFF_TO_PARENT;approval_missing->FY.HANDLE_APPROVAL | FY.ENFORCE_DESIGN | stop | The Final ZIP Preview identifies one validated immutable package for live import. |
+| FY.IMPORT_GATE | decision | 80 | execution_gate | ready->FY.VALIDATED;incomplete->FY.HANDLE_READINESS | FY.ENFORCE_DESIGN | stop | Require applicable read-only task validation and immutable-artifact checks for the exact target and requested scope. Return ready without requiring upload approval or a submission receipt: core.data-loader obtains submission approval after task validation. This node does not submit, poll, or report acceptance. Missing, stale, or mismatched validation/artifact evidence returns incomplete. |
 | FY.HANDLE_INPUT | step | 90 | error_handler | handled->FY.ISSUES | FY.VALIDATE_INPUT | stop | Input is invalid. |
 | FY.HANDLE_DEPENDENCY | step | 100 | error_handler | handled->FY.ISSUES | FY.RESOLVE_DEPENDENCIES | stop | A prerequisite or required decision is unresolved. |
 | FY.HANDLE_LOOKUP | step | 110 | error_handler | handled->FY.ISSUES | FY.LOOKUP_EXISTING | stop | Lookup evidence is missing, different, or ambiguous. |
 | FY.HANDLE_DESIGN | step | 120 | error_handler | handled->FY.ISSUES | FY.ENFORCE_DESIGN | stop | A design rule blocks the request. |
-| FY.HANDLE_APPROVAL | step | 130 | error_handler | handled->FY.ISSUES | FY.IMPORT_GATE | stop | Import approval is missing. |
-| FY.HANDED_OFF_TO_PARENT | terminal | 170 | terminal | none | FY.IMPORT_GATE | continue | Fiscal Years import is accepted — pending parent verification. |
+| FY.HANDLE_READINESS | step | 130 | error_handler | handled->FY.ISSUES | FY.IMPORT_GATE | stop | Required task validation or immutable-artifact evidence is missing, stale, or mismatched. Return the issue for correction; do not request submission approval, submit, or claim acceptance during task validation. |
+| FY.VALIDATED | terminal | 170 | terminal | none | FY.IMPORT_GATE | stop | Return validated_for_import for the current validation scope; no upload approval, submission, acceptance, or Fusion completion is implied. The parent/Core workflow may report accepted only after its accepted-initiation response supplies a request ID correlated to the exact target and reviewed immutable archive/hash. Parent verification remains required. |
 | FY.DONE_EXISTS | terminal | 180 | terminal | none | FY.RESOLVE_DEPENDENCIES | continue | Matching fiscal year already exists or user selected verified reuse. |
 | FY.ISSUES | terminal | 190 | terminal | none | none | continue | Any validation, lookup, dependency, design, or approval issue. |

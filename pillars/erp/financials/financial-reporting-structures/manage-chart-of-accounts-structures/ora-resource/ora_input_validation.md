@@ -10,7 +10,7 @@
 | Required segment attributes | KeyFlexfieldCode, ApplicationId, StructureCode, SegmentCode, SegmentIdentifier, ColumnName, Name, Prompt, ShortPrompt, SequenceNumber, EnabledFlag, DisplayWidth, DefaultValueSetCode | Block | Derive SegmentIdentifier from SegmentCode using the documented normalization rule; derive other fields only from the complete export, supported read-only Fusion metadata, workbook, or user input |
 | Required structure-instance attributes | KeyFlexfieldCode, ApplicationId, StructureInstanceCode, Name, EnabledFlag, DynamicCombinationCreationAllowed, ShorthandAliasEnabledFlag, StructureCode | Block | Apply workbook constants or derived defaults; do not create an instance until its referenced StructureCode is resolved. |
 | Required structure-instance segment attributes | KeyFlexfieldCode, ApplicationId, StructureInstanceCode, SegmentCode, RequiredFlag, DisplayFlag, BIEnabledFlag, QueryRequiredType, ValueSetCode | Block | Resolve ValueSetCode through verified value-set metadata and apply workbook defaults only where the user has not supplied a value. |
-| Referenced value-set resolution | Exactly one compatible ValueSetCode, ValueSetId, ValidationType, ValueDataType, ValueSubtype, MaximumLength, and flags for every requested segment | Block | Resolve the explicit ValueSetCode or SegmentCode_VS lookup candidate through read-only value-set metadata before structure package generation. |
+| Referenced value-set resolution | One uniquely resolved ValueSetCode with compatible ValidationType, ValueDataType, ValueSubtype, MaximumLength, and flags for every requested segment; ValueSetId is optional metadata | Block | Use find_value_set before structure package generation. Require its unique compatible code-match result; do not require ValueSetId for code-based CSV references. |
 | Import contract | Complete same-task FSM CSV export and ASM_SETUP_CSV_METADATA.xml | Block | Obtain complete same-task export; template-only output is supplementary only |
 
 ## Field Validation
@@ -26,6 +26,7 @@
 | SegmentCode | Reject values longer than 30 characters. |
 | SegmentIdentifier length | Reject values longer than 30 characters after validating or deriving the identifier. |
 | Segment length | If supplied, require the segment value length to be a numeric integer from 1 through 150. If blank, default it to 6 before value-set readiness and package generation. Never replace an explicitly supplied valid length with the default. |
+| ValueSetId | Optional metadata only. Retain it when returned; its absence must not block a unique compatible ValueSetCode match or code-based CSV import. Do not derive it from an opaque resource key or add an ID column absent from the target export. |
 | DefaultValueSetCode | Require a verified compatible ValueSetCode for every segment. SegmentCode_VS is a lookup candidate only and must not be used in a package without a successful value-set lookup. |
 | Delimiter | Allow only exclamation mark, asterisk, plus sign, hyphen, period, colon, equals sign, caret, tilde, or vertical bar. |
 | SequenceNumber zero | Reject SequenceNumber 0 before package generation. |

@@ -1,0 +1,128 @@
+{
+  "source_id": "MILEAGE-CREATE-SERIALIZATION",
+  "revision": {
+    "series": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64",
+    "label": "261028.0600.S"
+  },
+  "evidence_kind": "Pinned primary compiled implementation plus task-owned Java and XML declarations",
+  "libraries": [
+    {
+      "path": "fmwtools/BUILD_HOME/atgpf/fsext/modules/oracle.fs.fsext/AdfFunctionalSetupPublicModel.jar",
+      "sha256": "528e6b6cbc653f16a9ce892932f7c461992894c2c925075052ec89510b9cc9a7"
+    },
+    {
+      "path": "fmwtools/BUILD_HOME/oracle_common/modules/oracle.adf.model/adfm.jar",
+      "sha256": "e56e55d7b84721dce9b63a671b4dff789b1a61fe2f3d44a4648c049975df2321"
+    }
+  ],
+  "facts": [
+    {
+      "symbol": "oracle.adf.model.adapter.dataformat.csv.CSVParser.getNextValue(boolean,boolean)",
+      "offsets": "254-273",
+      "fact": "An empty value buffer returns Java null; empty quoted text is not an omission instruction."
+    },
+    {
+      "symbol": "oracle.apps.setupHub.xml.transform.CSVXmlTransform.populateXmlRequest",
+      "offsets": "1104-1126",
+      "fact": "Nonnull scalar input is stored in the row data map; SQL staging and header inclusion still govern the emitted XML."
+    },
+    {
+      "symbol": "oracle.apps.setupHub.xml.transform.CSVXmlTransform.createViewObject/getIncludedAttrMap",
+      "offsets": "createViewObject 250-287; getIncludedAttrMap 36-121",
+      "fact": "CSV attribute/header mappings determine included XML attributes independently of each scalar cell's null value."
+    },
+    {
+      "symbol": "oracle.apps.setupHub.xml.transform.CSVXmlTransform.markVOsToUseXMLExplicitNull; oracle.apps.setupHub.common.util.model.ModelUtil.markVOToUseXMLExplicitNull",
+      "fact": "The transform marks its dynamic VOs with XML_EXPLICIT_NULL=true before XML writing."
+    },
+    {
+      "symbol": "oracle.jbo.server.ViewRowImpl.renderAttributeValueInXMLElement",
+      "offsets": "60-100",
+      "fact": "An included null value under explicit-null mode renders an element with null=true."
+    },
+    {
+      "symbol": "oracle.jbo.server.AttributeDefImpl.getXMLValue",
+      "offsets": "170-184,374-376",
+      "fact": "An element marked null=true reads as Java null."
+    },
+    {
+      "symbol": "oracle.jbo.server.ViewRowImpl.readAttributeFromXMLElement/readAttrsFromXML",
+      "fact": "Absent XML scalars are skipped; present changed values, including explicit null, reach the attribute setter list. Non-updateable VO attributes are skipped."
+    },
+    {
+      "symbol": "oracle.apps.setupHub.remoteApp.publicModel.migrator.MigratorHelper.updatePrimaryKeysInXML",
+      "offsets": "138-286,598-674,735-944",
+      "fact": "Alternate-key matches reuse existing primary keys; supported single globally-unique primary-key definitions generate IDs on a miss and propagate matching association keys to nested children. No client ID is needed or admitted."
+    },
+    {
+      "symbol": "oracle.jbo.server.ViewObjectImpl.updateRowSetFromXML; oracle.jbo.server.ViewRowImpl.updateRowFromXML",
+      "fact": "Primary-key lookup supplies the existing row or null; a null row invokes createAndInitRow/createRow before XML attribute application. This generic create path does not establish every entity's defaults."
+    }
+  ],
+  "qualified_use": [
+    "Mileage no-determinant SINGLE parent plus explicit MILEAGE/PASSENGER/ADDITIONAL lines only. No implicit rate kind, calculation method, sentinel, code, amount or start date.",
+    "Source AM parent/child AltKey hooks190/315 and readXML322 join the own one-global-key EO definitions and parent-child association; no client IDs.",
+    "The import VOs mark five audit inputs and object version non-updateable; caller audits remain empty under reviewed history ownership.",
+    "Explicit DRAFT, SINGLE and disabled determinant flags are consumer-owned scope values. All eight eligibility/add-on flags require explicit user choices; enabled commute requires its explicit package code.",
+    "Commute getter2056/setter2067 maps ORA_EXM_REQUIRED to rawY, all others toN. Explicit user No plus an omitted inactive mode cell has the exact source-owned create encoding ORA_EXM_OPTIONAL, recorded as a derived-create review; no active business choice or EO default is inferred. Existing updates do not acquire that encoding.",
+    "Service migration suppresses line currency inheritance; line CurrencyCode remains raw empty. Null geo/role/raw getters return null without consuming excluded lookups.",
+    "PASSENGER SINGLE/RANGE and ADDITIONAL choices are explicit and validated against the resulting parent. Dynamic company captures bind every retained/proposed consumed code and actual create/update operation."
+  ],
+  "boundaries": [
+    "Source-qualified local preparation only; no live create, target build parity, native acceptance or persisted-state qualification.",
+    "Existing business updates retain field-specific uncertainty and native approval. No key/status/currency conversion/audit update or Rate Determinants admitted.",
+    "Fresh operation-bound currency/static/dynamic reference evidence, native immutable validation, later exact import approval and fresh-export reconciliation remain mandatory."
+  ],
+  "source_closure": "CONFIRMED",
+  "common_source_assessment": "The pinned default Oracle provider/no-child explicit-null path is joined in fsm-dom-empty-element-contract.json. Earlier frozen prototype holds remain historical; target provider/build parity and live creation are unverified.",
+  "owning_sources": [
+    {
+      "path": "policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseMileageService/applicationModule/ExpenseMileageServiceAMImpl.java",
+      "sha256": "bb19b3a1ac1d0535958099e86fd504bfd4a91220a2b3b1829cb24babe9ef623d"
+    },
+    {
+      "path": "policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseMileageService/applicationModule/ExpenseMileageServiceAM.xml",
+      "sha256": "e76e2668edd28792020d9a9c8ef545f2297c3710a39b9770da50c2fd8be32d69"
+    },
+    {
+      "path": "policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseMileageService/view/MileageVO.xml",
+      "sha256": "afd98aaf74fe5cc4b86cdf782b55fb2a4aa8457e80d88248c5c7e4876dc63688"
+    },
+    {
+      "path": "policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseMileageService/view/MileageLineVO.xml",
+      "sha256": "e8726b89f9184fa3f9122b213cc5b591ab0711db247419ab3d4d28810d5d812a"
+    },
+    {
+      "path": "policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseMileageService/view/MileageLineVORowImpl.java",
+      "sha256": "d6882f460f362dfada1dac5d3e9a4f8fa2d8485d3b40d9aac087d40d106447db"
+    },
+    {
+      "path": "policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseMileageService/view/link/MileageVOToMileageLineVO.xml",
+      "sha256": "895721f8693eae0a3a0cbd9e28e452c2154ef84b9cf29fb35e99e1725feb7bd6"
+    },
+    {
+      "path": "policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/MileagePolicyEO.xml",
+      "sha256": "354af772a3e1dee4dd2542dcc19faa207c926d344ed7782371d545f7dbb2f4b3"
+    },
+    {
+      "path": "policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/MileagePolLineEO.xml",
+      "sha256": "64a603811f7d31dc5b1012131b9a7ea4f6a3551c6fe86216339468c6424c4845"
+    },
+    {
+      "path": "policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/MileagePolicyEOImpl.java",
+      "sha256": "fb904f5939f938cac26fc1da2328d9a8ecc1a1861e1ab5a6e9e04d61f9a7cb82"
+    },
+    {
+      "path": "policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/MileagePolLineEOImpl.java",
+      "sha256": "c8c1759fc91d317700dc379f086ac7adb49c5613e841ed1a21da357d231dfe75"
+    },
+    {
+      "path": "policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/association/MileagePolicyEOToMileagePolLineEO.xml",
+      "sha256": "386801543151b7c445b2f50ffdcce654d90456e275d0ca6d1a58d0774bcfeaea"
+    },
+    {
+      "path": "policy/mileage/model/src/oracle/apps/financials/expenses/policy/mileage/uiModel/applicationModule/FinExmPolicyMileageAMImpl.java",
+      "sha256": "296cdf29e9476196abe7d17aa1dc6040233fecda97eced03bcdf50564061e37f"
+    }
+  ]
+}

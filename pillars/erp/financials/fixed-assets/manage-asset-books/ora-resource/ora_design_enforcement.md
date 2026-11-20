@@ -16,6 +16,7 @@ Before any missing-input prompt or dependency blocker, run the full input-recove
 
 | Applies When | Severity | Required Lookup | Blocking Condition | Recommendation | Fix Allowed? |
 |---|---|---|---|---|---|
+| Every create/update | Blocker | resolve_asset_book_dff_segments | Required DFF input is missing; any supplied value is invalid or unverified; context/update preservation is ambiguous; or batch definition evidence is incomplete | Resolve against the current definition using read-only verification before Design Preview | Yes |
 | Every create/update | Blocker | resolve_asset_book_existence | Duplicate Asset Book Code; Asset Book Code or Book Name not matching `^[A-Z][A-Z0-9 ]{0,29}$`; missing/invalid Asset Book Code; multiple exact-code matches; an unsupported Existing-Identical classification; or Existing-Different without a user update/new-book decision | Use a unique, valid Asset Book Code or Book Name that starts with an uppercase letter and contains only uppercase letters, digits, and spaces (maximum 30 characters). Compare every applicable field before declaring identity, then reconcile the existing definition. | Yes |
 | Reporting-only request | Blocker | resolve_asset_book_dependencies | The requested need can be satisfied by a ledger, chart-of-accounts segment, reporting hierarchy, or role design without creating or changing an asset book | Use the appropriate reporting or security design instead of changing an asset book | Yes |
 | Account Defaults | Blocker | resolve_ledger_book_accounts | Account Defaults remains missing after permitted derivation, or its required input, COA format, or import serialization is invalid | Apply the supplied-input rule in ora_reference_lookups.md. Do not search or require an existing full combination, a dynamic-creation flag, or a waiver. Preserve supplied values exactly; retain omitted-value derivation and other book-account checks. | No |
@@ -32,13 +33,36 @@ Before any missing-input prompt or dependency blocker, run the full input-recove
 6. Validate the completed immutable ZIP before execution approval. Inspect every generated `asset book data file` row against the current target headers and `ora_defaulting_rules.md` using this two-stage contract:
    - For a Corporate-book-only package, reject `FA_ALTERNATE_BOOK.csv` when it has no data rows. Omit it from the ZIP unless current target metadata explicitly requires that header-only member; record the exact requirement as validation evidence. Do not count an exported template member or XML object listing alone as such a requirement.
    - Require a valid Asset Book Code or Book Name and a Depreciation Calendar. When Asset Book Code is blank and Book Name is valid, apply the documented Asset Book Code default before validation.
-   - Apply the documented import defaults, then validate the resulting value is non-null for Asset Book Name, Book Class, Initial Date, Last Depreciation Run, Allow amortized changes, Allow ledger posting, Current Fiscal Year, Select Book by Clearing Account Segment: Natural Account check, Select Book by Clearing Account Segment: Code Combination check, Select Book by Clearing Account Segment: Primary Balancing check, Set of Books ID, and Prorate Calendar.
+   - Apply the documented import defaults, then validate the resulting value is non-null for Asset Book Name, Book Class, Initial Date, Allow amortized changes, Allow ledger posting, Current Fiscal Year, Select Book by Clearing Account Segment: Code Combination check, Select Book by Clearing Account Segment: Primary Balancing check, Set of Books ID, and Prorate Calendar.
    - For Set of Books ID and Prorate Calendar, use only the deliberate import defaults in `ora_defaulting_rules.md`; neither has an EO metadata default. For Asset Book Name and Book Class, use only the deliberate import defaults in `ora_defaulting_rules.md`; neither has an EO metadata default.
    - Verify that Associated Corporate Book is materialized in the current contract's `DistributionSourceBook` column in each applicable parent-book row: use the resolved current `Asset Book Name` for a Corporate book, or one exact resolved Corporate book with the supported ledger relationship for a Tax book. A blank `DistributionSourceBook` blocks the package.
    - Check that the prepared import contains the selected ledger and complete supplied or derived Account Defaults in the supported format, preserving segment values, widths, and order.
 
    Check each required import field once. Correct missing, duplicate, or invalid values before approval. Use the template's supported fields and let Fusion resolve system-managed identifiers.
 7. Render the Final ZIP Preview, obtain execution approval for that exact target, operation, ZIP, and hash, then hand the accepted request to the Fixed Assets parent. The parent owns polling, ProcessLog review, and fresh target read-back.
+
+## DFF Design and Artifact Enforcement
+
+Include applicable FA_BOOK_CONTROLS and JGxFABookControls prompts and reviewed
+values separately in previews. Check their independent contexts and import
+mappings in every applicable parent-book member of the immutable ZIP.
+Ordinary/regional value crossover, missing required regional values,
+unverified applicability, or preservation mismatches blocks execution approval.
+
+Before Design Preview, require passed DFF definition, context, required-input,
+and value-validation outcomes. Show each applicable business segment prompt
+and its proposed value as a separate preview row. Keep physical columns and
+metadata identifiers internal unless diagnostics are requested.
+
+The DFF definition export is an explicit exception to the header-only rule:
+its rows establish DFF requirements, never book defaults or copied book values.
+
+At `FA_BOOK.FINAL_ZIP_VALIDATED`, inspect every applicable parent-book row.
+Require the approved context and DFF values in the contract-defined headers,
+including matching values across members representing the same book.
+Recheck requiredness, serialization, and unchanged update preservation against
+the batch's definition and approved design. Missing or ambiguous mappings,
+blank required values, or mismatches block execution approval.
 
 ## Customer-Facing Preview Rules
 
@@ -67,10 +91,20 @@ Customer-facing exceptions are limited to values such as Asset Book Code, Asset
 Book Name, book class, ledger, calendars, fiscal year/current period, selected
 reference data set, approved account business values/descriptions, operation,
 ZIP/hash, request/process identifiers, and explicit runtime-resolution status.
+Include DFF business prompts and reviewed values among customer-facing
+fields. Keep physical columns and metadata identifiers internal.
 Keep internal codes and IDs, pre-import `BookControlId`, raw endpoint names,
 WHO/audit fields, raw CSV metadata, import-only status/event flags, AP/internal
 routing fields, and other `Internal: Yes` values internal unless the user asks
 for diagnostics.
+
+Before rendering any Asset Books preview, remove rows marked `Internal: Yes`
+and prose describing their values, defaults, omissions, or runtime exceptions.
+Show only one
+generic result: `Technical validation: Passed` or `Technical validation: Unresolved`.
+Do not add generic commentary about optional fields remaining blank. Keep the
+detailed findings and approved exceptions in internal validation records unless
+the user explicitly requests diagnostics. Preserve all validation and approval gates.
 
 ### Header-only export rule
 
@@ -96,7 +130,7 @@ the owner of the applicable ledger, tax policy, asset accounting, and security
 roles; validate them in a non-production environment before production import
 or update.
 
-- Confirm the book class, ledger, calendars, current period, last depreciation-run state, posting behavior, and accounting policy are internally consistent and approved.
+- Confirm the book class, ledger, calendars, current period, posting behavior, and accounting policy are internally consistent and approved.
 - For a posting book, confirm the depreciation calendar uses the exact general-ledger period names; confirm referenced depreciation objects and lookups are visible through the selected reference data set.
 - Document Tax-book association and policy differences separately from the Corporate book. Verify category-book defaults for representative placed-in-service dates after book creation.
 - Plan explicit book-level data access by approved role and activity. Creating a book does not grant transaction access, and transaction users must not access unrelated books.
@@ -108,6 +142,7 @@ For approval enablement, verify legacy migration is complete and there are no un
 
 | Resolver | When Required | Values Needed | Source File |
 |---|---|---|---|
+| resolve_asset_book_dff_segments | Create/update and Existing-Identical classification | Batch-current definition, per-book context, validated required/supplied values, and comparison evidence | ora_reference_lookups.md |
 | resolve_asset_book_existence | Before create/update | Exact code match and field-difference classification | ora_reference_lookups.md |
 | resolve_associated_corporate_book | Tax book | Corporate-book identity and compatible ledger evidence | ora_reference_lookups.md |
 | resolve_asset_book_dependencies | Every request | Ledger, calendar, period, account, reference-data, and compatibility evidence | ora_reference_lookups.md |

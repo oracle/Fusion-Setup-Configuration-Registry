@@ -24,7 +24,7 @@
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 35
+            "line": 36
           },
           "readiness": {
             "status": "ready",
@@ -50,7 +50,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 60
+            "line": 63
           },
           "readiness": {
             "status": "ready",
@@ -76,7 +76,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 61
+            "line": 64
           },
           "readiness": {
             "status": "ready",
@@ -104,7 +104,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 62
+            "line": 65
           },
           "readiness": {
             "status": "ready",
@@ -132,7 +132,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 63
+            "line": 66
           },
           "readiness": {
             "status": "ready",
@@ -157,7 +157,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 79
+            "line": 82
           },
           "readiness": {
             "status": "ready",
@@ -258,7 +258,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 77
+            "line": 85
           },
           "readiness": {
             "status": "ready",
@@ -285,7 +285,7 @@
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 32
+            "line": 37
           },
           "readiness": {
             "status": "ready",
@@ -312,7 +312,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 56
+            "line": 68
           },
           "readiness": {
             "status": "ready",
@@ -334,7 +334,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 94
+            "line": 106
           },
           "readiness": {
             "status": "ready",
@@ -354,7 +354,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 95
+            "line": 107
           },
           "readiness": {
             "status": "ready",
@@ -388,7 +388,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 66
+            "line": 83
           },
           "readiness": {
             "status": "ready",
@@ -413,7 +413,7 @@
           "source": {
             "file": "ora_defaulting_rules.md",
             "anchor": "task-nodes",
-            "line": 28
+            "line": 54
           },
           "readiness": {
             "status": "ready",
@@ -438,7 +438,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 79
+            "line": 99
           },
           "readiness": {
             "status": "ready",
@@ -460,7 +460,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 80
+            "line": 100
           },
           "readiness": {
             "status": "ready",
@@ -480,7 +480,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 81
+            "line": 101
           },
           "readiness": {
             "status": "ready",
@@ -516,7 +516,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 76
+            "line": 84
           },
           "readiness": {
             "status": "ready",
@@ -543,7 +543,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 55
+            "line": 67
           },
           "readiness": {
             "status": "ready",
@@ -565,7 +565,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 91
+            "line": 102
           },
           "readiness": {
             "status": "ready",
@@ -587,7 +587,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 92
+            "line": 103
           },
           "readiness": {
             "status": "ready",
@@ -612,7 +612,7 @@
           "source": {
             "file": "ora_defaulting_rules.md",
             "anchor": "task-nodes",
-            "line": 46
+            "line": 55
           },
           "readiness": {
             "status": "ready",
@@ -634,7 +634,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 93
+            "line": 104
           },
           "readiness": {
             "status": "ready",
@@ -654,7 +654,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 94
+            "line": 105
           },
           "readiness": {
             "status": "ready",
@@ -688,7 +688,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 80
+            "line": 81
           },
           "readiness": {
             "status": "ready",
@@ -714,7 +714,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 59
+            "line": 60
           },
           "readiness": {
             "status": "ready",
@@ -740,7 +740,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 60
+            "line": 61
           },
           "readiness": {
             "status": "ready",
@@ -766,7 +766,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 61
+            "line": 62
           },
           "readiness": {
             "status": "ready",
@@ -921,25 +921,52 @@
     {
       "task_code": "ORA_CJM_MANAGE_CHANNEL_VALUE_SETS",
       "task_name": "Manage Channel Value Sets",
-      "start_node": "CJMVS.VALIDATE_FSM_INPUT",
+      "start_node": "CJMVS.RESOLVE_VALUE_SET",
       "nodes": [
+        {
+          "id": "CJMVS.RESOLVE_VALUE_SET",
+          "node_type": "decision",
+          "sequence": 1,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "found": "CJMVS.VALIDATE_FSM_INPUT",
+            "not_found": "CJMVS.VALIDATE_FSM_INPUT",
+            "ambiguous": "RETURN_ISSUES",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Resolve a non-empty exact supplied value-set code before enforcing create-only input requirements; missing code blocks lookup and preparation",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 70
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
         {
           "id": "CJMVS.VALIDATE_FSM_INPUT",
           "node_type": "step",
-          "sequence": 1,
+          "sequence": 2,
           "action_type": "validate_input",
           "execution_route": "local",
           "transitions": {
             "valid": "CJMVS.RESOLVE_PARENT_CARRIER",
             "invalid": "RETURN_ISSUES"
           },
-          "prerequisites": [],
+          "prerequisites": [
+            "CJMVS.RESOLVE_VALUE_SET"
+          ],
           "on_failure": "stop",
-          "applies_when": "A Data Loader-orchestrated Manage Channel Value Sets FSM package is prepared for validation",
+          "applies_when": "Validate operation-specific inputs after the exact lookup selects create or update",
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 82
+            "line": 88
           },
           "readiness": {
             "status": "ready",
@@ -949,22 +976,22 @@
         {
           "id": "CJMVS.RESOLVE_PARENT_CARRIER",
           "node_type": "decision",
-          "sequence": 2,
+          "sequence": 3,
           "action_type": "resolve_dependency",
           "execution_route": "local",
           "transitions": {
-            "resolved": "CJMVS.RESOLVE_VALUE_SET",
+            "resolved": "CJMVS.RESOLVE_MODULE",
             "blocked": "RETURN_ISSUES"
           },
           "prerequisites": [
             "CJMVS.VALIDATE_FSM_INPUT"
           ],
           "on_failure": "stop",
-          "applies_when": "A value-set source identifies its parent code and selected FSM template",
+          "applies_when": "Evaluate parent-carrier availability after identity resolution and operation-specific input validation",
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 37
+            "line": 38
           },
           "readiness": {
             "status": "ready",
@@ -972,14 +999,15 @@
           }
         },
         {
-          "id": "CJMVS.RESOLVE_VALUE_SET",
+          "id": "CJMVS.RESOLVE_MODULE",
           "node_type": "decision",
-          "sequence": 3,
+          "sequence": 4,
           "action_type": "reference_lookup",
           "execution_route": "fusion-rest",
           "transitions": {
-            "found": "CJMVS.PRESERVE_PARENT_CARRIER",
-            "not_found": "CJMVS.PRESERVE_PARENT_CARRIER",
+            "resolved": "CJMVS.PRESERVE_PARENT_CARRIER",
+            "not_applicable": "CJMVS.PRESERVE_PARENT_CARRIER",
+            "not_found": "RETURN_ISSUES",
             "ambiguous": "RETURN_ISSUES",
             "blocked": "RETURN_ISSUES"
           },
@@ -987,11 +1015,11 @@
             "CJMVS.RESOLVE_PARENT_CARRIER"
           ],
           "on_failure": "stop",
-          "applies_when": "Resolve the exact supplied value-set code before package preview",
+          "applies_when": "Invoke resolve_value_set_module for every new parent and for existing-parent module input; otherwise preserve the exported module without a lookup",
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 60
+            "line": 71
           },
           "readiness": {
             "status": "ready",
@@ -1001,7 +1029,7 @@
         {
           "id": "CJMVS.PRESERVE_PARENT_CARRIER",
           "node_type": "step",
-          "sequence": 4,
+          "sequence": 5,
           "action_type": "apply_default",
           "execution_route": "local",
           "transitions": {
@@ -1010,10 +1038,10 @@
             "blocked": "RETURN_ISSUES"
           },
           "prerequisites": [
-            "CJMVS.RESOLVE_VALUE_SET"
+            "CJMVS.RESOLVE_MODULE"
           ],
           "on_failure": "stop",
-          "applies_when": "An existing value set has one current FSM parent carrier or a new parent has all required template-supported fields",
+          "applies_when": "Preserve an existing parent carrier or retain only supplied and previously documented technical parent values before archive review",
           "source": {
             "file": "ora_defaulting_rules.md",
             "anchor": "task-nodes",
@@ -1027,7 +1055,7 @@
         {
           "id": "CJMVS.CONFIRM_ARCHIVE",
           "node_type": "decision",
-          "sequence": 5,
+          "sequence": 6,
           "action_type": "execution_gate",
           "execution_route": "local",
           "transitions": {
@@ -1042,7 +1070,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 106
+            "line": 109
           },
           "readiness": {
             "status": "ready",
@@ -1052,7 +1080,7 @@
         {
           "id": "CJMVS.RETURN_READY",
           "node_type": "terminal",
-          "sequence": 6,
+          "sequence": 7,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
@@ -1064,7 +1092,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 107
+            "line": 110
           },
           "readiness": {
             "status": "ready",
@@ -1074,7 +1102,7 @@
         {
           "id": "RETURN_ISSUES",
           "node_type": "terminal",
-          "sequence": 7,
+          "sequence": 8,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
@@ -1084,7 +1112,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 108
+            "line": 111
           },
           "readiness": {
             "status": "ready",

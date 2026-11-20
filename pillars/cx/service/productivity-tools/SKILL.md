@@ -26,11 +26,17 @@ depends_on:
   - "shared.implementation-planning.offering-task-map-builder"
   - "shared.implementation-planning.task-dependency-resolver"
   - "shared.setup-export.functional-area-export"
+  - "shared.setup-export.task-level-export"
+  - "shared.validation.setup-data-validator"
 uses_core:
   - "core.project-mgmt.artifact-version-manager"
   - "core.project-mgmt.artifact-registry-manager"
   - "core.project-mgmt.project-state-manager"
   - "core.diagnostics.role-access-check"
+  - "core.fusion-api.apps-common.profile-options"
+  - "core.fusion-api.rest-api-client"
+  - "core.data-loader"
+  - "core.auth.fusion-oauth-authentication"
 persists_project_state: true
 token_usage_tracking:
   enabled: true
@@ -140,3 +146,54 @@ Use this functional-area skill after Service scope is confirmed and the project 
 ## Implementation Notes
 
 Use the generated setup-task metadata files for task-level planning and sequencing. Track token usage for any generated project artifact or skill-run record using the manifest policy.
+
+## Rule Validation and Execution Handoff
+
+Read the selected task's rows in `ora-resource/ora_input_validation.md`,
+`ora_reference_lookups.md`, `ora_defaulting_rules.md`,
+`ora_design_enforcement.md`, and `ora_error_handling.md` with the compiled
+`ora_rule_registry.json`. These resources return task-validation results; a
+ready terminal does not mean that Fusion was changed or that a write is approved.
+
+Configured Global Search Site values are read through
+`core.fusion-api.apps-common.profile-options`. Its configured-profile service
+contract and privileges must be available; otherwise stop with the missing
+prerequisite. The public effective-session `profileValues` resource cannot
+establish configured Site state. Keep the current value and requested stored
+`Y` or `N` separate; `Yes` and `No` are display labels only.
+
+For catalog-supported setup changes, including Dynamic Link creation/updates,
+Tag creation/updates and Note Type Meaning updates, retain the selected Run Book task and use `core.data-loader`
+with its FSM workflow. That workflow prepares the source from the selected
+task's export and live schema, completes source and Task Hook validation, and
+owns the immutable preview, approval, submission and verification. Do not
+construct a CSV layout from REST fields. Task rules must not request a separate
+load approval, submit a POST/PATCH, or switch to direct REST after validation.
+Missing Run Book, source, schema or supported execution steps block the handoff.
+
+After the owning workflow confirms a Global Search change, verify its configured
+Site value and ask the user to sign out and sign back in before checking search
+visibility. Session refresh is a post-change check, not a pre-preview condition.
+
+## Review Scenarios
+
+| Scenario | Expected rule result |
+|---|---|
+| Current Site N, enable requested with Y | Accept the planned change; current N does not block preview. |
+| Enable requested without a supplied value | Default the requested stored value to Y; preserve the current value. |
+| Current Site Y, disable requested with N | Preserve N and return the validated disable intent. |
+| Disable requested with Y, or an unsupported stored value | Reject the contradictory or invalid request. |
+| User effective value Y but configured Site N | Use the configured Site result; do not treat the session value as Site evidence. |
+| Site definition, configured value or required privilege unavailable | Stop with the missing prerequisite; do not substitute the effective-session API. |
+| Tag duplicate found | Block the create intent; no mutation or retry. |
+| Tag absent, valid intent and matching FSM preflight | Return validation to Data Loader for its exact-artifact approval; do not POST here. |
+| Note Type target missing or ambiguous | Block the update intent. |
+| Unique Note Type target and valid Meaning | Return validation to the owning FSM workflow; do not PATCH here. |
+
+| Dynamic Link FSM create with exact same-task source and no existing match | Return validated intent to its owning FSM workflow; no direct REST write. |
+| Dynamic Link or Tag FSM update with zero/multiple exported targets | Block the update; retain source evidence without selecting another target. |
+| Dynamic Link or Tag FSM update with one target and approved export-supported changes | Preserve identity and unchanged values; return evidence to the owning FSM workflow. |
+| New administrator Tag with omitted intent flag | Default boolean intent to true; serialize only using confirmed same-task FSM encoding. |
+| Generic Tag create with omitted intent flag | Default boolean intent to false; do not assume the FSM encoding. |
+| Explicit Tag true/false or an unchanged exported update flag | Preserve the supplied or retained value; create defaults do not overwrite it. |
+| FSM flag encoding or owner/preflight unavailable | Block before preview; do not guess Y/N or switch execution routes. |

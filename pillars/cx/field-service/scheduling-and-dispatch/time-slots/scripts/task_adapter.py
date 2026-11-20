@@ -13,9 +13,9 @@ class TimeSlotsAdapter:
  continue_independent_write_failures=True
  def resolve_route(self,direction:str|None)->dict[str,str]:return resolve_execution_route(ROOT.parent/'ora-resource'/'ora_rest_execution.md',self.task_code,direction)
  def preflight(self,workbook:Path,get:Any,temp:Path):
+  payload=PAYLOADS.build_preview_data(workbook);baselines={}
   access=get('/api/field-service/configuration/v1/timeSlots/',temp/'time-slots.json')
   if access is None:raise RuntimeError('Target environment does not expose the Time Slots collection.')
-  payload=PAYLOADS.build_preview_data(workbook);baselines={}
   for sequence,request in enumerate(payload['requests'],1):
    baseline=get(request['path'],temp/f'baseline-{sequence}.json')
    current=baseline or {'state':'not_found','identity':request['identity']}

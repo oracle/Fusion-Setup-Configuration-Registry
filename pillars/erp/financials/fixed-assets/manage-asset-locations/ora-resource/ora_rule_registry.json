@@ -23,7 +23,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 59
+            "line": 79
           },
           "readiness": {
             "status": "ready",
@@ -39,17 +39,18 @@
           "transitions": {
             "resolved": "MAL.RESOLVE_SEGMENT_VALUES",
             "required_input_missing": "MAL.HANDLE_INPUT",
+            "invalid_dff_value": "MAL.HANDLE_INPUT",
             "unresolved_or_ambiguous": "MAL.HANDLE_LOOKUP"
           },
           "prerequisites": [
             "MAL.VALIDATE_INPUT"
           ],
           "on_failure": "stop",
-          "applies_when": "Resolve System Controls and LOC# structure; map all physical segments and stop on missing required segment input. Then export the batch-current DFF definition, identify required FA_LOCATIONS columns, and stop on missing DFF input before value-set lookup or prerequisite preparation.",
+          "applies_when": "Resolve System Controls and LOC# structure; stop on missing required segment input. For location creation, execute resolve_location_dff_segments using one definition export per immutable batch. Check required DFF input before value-set verification, then validate every supplied DFF value read-only. Missing input, invalid values, and unverified evidence stop before prerequisite preparation.",
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 129
+            "line": 180
           },
           "readiness": {
             "status": "ready",
@@ -75,7 +76,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 130
+            "line": 181
           },
           "readiness": {
             "status": "ready",
@@ -100,7 +101,7 @@
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 159
+            "line": 166
           },
           "readiness": {
             "status": "ready",
@@ -126,7 +127,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 131
+            "line": 182
           },
           "readiness": {
             "status": "ready",

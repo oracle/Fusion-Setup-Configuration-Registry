@@ -23,7 +23,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 219
+            "line": 230
           },
           "readiness": {
             "status": "ready",
@@ -44,11 +44,11 @@
             "CAL.CLASSIFY_REQUEST"
           ],
           "on_failure": "stop",
-          "applies_when": "An explicit reuse request names one Calendar",
+          "applies_when": "An explicit reuse request names one Calendar. If DFF criteria are supplied, execute resolve_calendar_dff_segments and require matching target values before verified reuse. Do not require missing create inputs or infer an update.",
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 284
+            "line": 340
           },
           "readiness": {
             "status": "ready",
@@ -73,7 +73,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 220
+            "line": 231
           },
           "readiness": {
             "status": "ready",
@@ -98,7 +98,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 221
+            "line": 232
           },
           "readiness": {
             "status": "ready",
@@ -124,7 +124,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 285
+            "line": 341
           },
           "readiness": {
             "status": "ready",
@@ -151,7 +151,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 222
+            "line": 233
           },
           "readiness": {
             "status": "ready",
@@ -177,7 +177,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 286
+            "line": 342
           },
           "readiness": {
             "status": "ready",
@@ -202,7 +202,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 223
+            "line": 234
           },
           "readiness": {
             "status": "ready",
@@ -227,7 +227,7 @@
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 155
+            "line": 167
           },
           "readiness": {
             "status": "ready",
@@ -250,11 +250,11 @@
             "CAL.RESOLVE_DEPENDENCIES"
           ],
           "on_failure": "stop",
-          "applies_when": "Dependencies are ready",
+          "applies_when": "Fiscal-year and import-contract dependencies are ready. Resolve complete existing-calendar state, then execute resolve_calendar_dff_segments for the resulting create/update proposal before preview or package preparation. A match requires complete applicable DFF comparison evidence. Missing or invalid DFF input and unverified evidence follow the unresolved stop path.",
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 287
+            "line": 343
           },
           "readiness": {
             "status": "ready",
@@ -280,7 +280,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 288
+            "line": 344
           },
           "readiness": {
             "status": "ready",
@@ -305,7 +305,7 @@
           "source": {
             "file": "ora_defaulting_rules.md",
             "anchor": "task-nodes",
-            "line": 90
+            "line": 91
           },
           "readiness": {
             "status": "ready",
@@ -326,11 +326,11 @@
             "CAL.APPLY_DEFAULTS"
           ],
           "on_failure": "stop",
-          "applies_when": "Defaults and lookup results are available",
+          "applies_when": "Defaults and lookup results are available. Require passed DFF outcomes, complete DFF preview disclosure, and final-artifact checks before import approval, retaining every existing preview and package-creation gate.",
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 37
+            "line": 50
           },
           "readiness": {
             "status": "ready",
@@ -344,18 +344,18 @@
           "action_type": "execution_gate",
           "execution_route": "local",
           "transitions": {
-            "approved_and_accepted": "CAL.HANDED_OFF_TO_PARENT",
-            "blocked": "CAL.HANDLE_APPROVAL"
+            "ready": "CAL.VALIDATED",
+            "incomplete": "CAL.HANDLE_READINESS"
           },
           "prerequisites": [
             "CAL.ENFORCE_DESIGN"
           ],
           "on_failure": "stop",
-          "applies_when": "Require the parent-governed approvals for the exact immutable package and core.data-loader acceptance before returning accepted; approval alone is not acceptance.",
+          "applies_when": "Require applicable read-only task validation and immutable-artifact checks for the exact target and requested scope. Return ready without requiring upload approval or a submission receipt: core.data-loader obtains submission approval after task validation. This node does not submit, poll, or report acceptance. Missing, stale, or mismatched validation/artifact evidence returns incomplete.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 83
+            "line": 85
           },
           "readiness": {
             "status": "ready",
@@ -377,7 +377,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 84
+            "line": 86
           },
           "readiness": {
             "status": "ready",
@@ -399,7 +399,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 85
+            "line": 87
           },
           "readiness": {
             "status": "ready",
@@ -421,7 +421,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 86
+            "line": 88
           },
           "readiness": {
             "status": "ready",
@@ -445,7 +445,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 87
+            "line": 89
           },
           "readiness": {
             "status": "ready",
@@ -453,7 +453,7 @@
           }
         },
         {
-          "id": "CAL.HANDLE_APPROVAL",
+          "id": "CAL.HANDLE_READINESS",
           "node_type": "step",
           "sequence": 110,
           "action_type": "error_handler",
@@ -465,11 +465,11 @@
             "CAL.IMPORT_GATE"
           ],
           "on_failure": "stop",
-          "applies_when": "Import approval is missing",
+          "applies_when": "Required task validation or immutable-artifact evidence is missing, stale, or mismatched. Return the issue for correction; do not request submission approval, submit, or claim acceptance during task validation.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 88
+            "line": 90
           },
           "readiness": {
             "status": "ready",
@@ -491,7 +491,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 89
+            "line": 91
           },
           "readiness": {
             "status": "ready",
@@ -513,7 +513,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 90
+            "line": 92
           },
           "readiness": {
             "status": "ready",
@@ -535,7 +535,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 91
+            "line": 93
           },
           "readiness": {
             "status": "ready",
@@ -555,7 +555,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 92
+            "line": 94
           },
           "readiness": {
             "status": "ready",
@@ -563,7 +563,7 @@
           }
         },
         {
-          "id": "CAL.HANDED_OFF_TO_PARENT",
+          "id": "CAL.VALIDATED",
           "node_type": "terminal",
           "sequence": 170,
           "action_type": "terminal",
@@ -572,12 +572,12 @@
           "prerequisites": [
             "CAL.IMPORT_GATE"
           ],
-          "on_failure": "continue",
-          "applies_when": "Calendar import is accepted \u2014 pending parent verification.",
+          "on_failure": "stop",
+          "applies_when": "Return validated_for_import for the current validation scope; no upload approval, submission, acceptance, or Fusion completion is implied. The parent/Core workflow may report accepted only after its accepted-initiation response supplies a request ID correlated to the exact target and reviewed immutable archive/hash. Parent verification remains required.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 93
+            "line": 95
           },
           "readiness": {
             "status": "ready",

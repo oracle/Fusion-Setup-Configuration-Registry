@@ -32,11 +32,14 @@ outputs:
   - "skill_run_record"
   - "token_usage_record"
 depends_on:
+  - "core.fusion-api.apps-common.descriptive-flexfields"
+  - "erp.financials.fixed-assets.manage-fixed-assets-flexfield-value-sets"
   - "shared.setup-export.task-level-export"
   - "shared.validation.setup-data-validator"
   - "shared.validation.reference-data-validator"
   - "core.data-loader"
 uses_core:
+  - "core.fusion-api.apps-common.descriptive-flexfields"
   - "core.fusion-api.rest-api-client"
   - "core.project-mgmt.artifact-version-manager"
   - "core.project-mgmt.artifact-registry-manager"
@@ -85,8 +88,10 @@ applicability:
     - "All"
   fusion_releases:
     - "Current Oracle Fusion Cloud release"
-side_effects: []
-required_privileges: []
+side_effects:
+  - "Reads current DFF definitions and value-set evidence on the confirmed create path; imports remain delegated to core.data-loader."
+required_privileges:
+  - "Read access to the selected DFF metadata export and applicable value-set scopes."
 ---
 
 # Manage System Controls Setup Task Guidance

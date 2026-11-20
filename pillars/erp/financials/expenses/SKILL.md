@@ -10,18 +10,21 @@ functional_area_code: "FIN_EXPENSES_DEPLOYED"
 type: "planning"
 execution_mode: "assisted"
 owner_team: "ERP financials pillar team"
-version: "0.1.3"
+version: "0.2.0"
 inputs:
   - "implementation_objective"
   - "project_context"
   - "expenses_scope"
   - "expenses_requirements"
+  - "ebs_profile_csv (optional)"
+  - "source_bound_migration_decisions (optional)"
 outputs:
   - "functional_area_setup_plan"
   - "configuration_guidance"
   - "validation_checkpoints"
   - "skill_run_record"
   - "token_usage_record"
+  - "ebs_profile_intake_report (when CSV supplied)"
 depends_on:
   - "shared.implementation-planning.offering-task-map-builder"
   - "shared.implementation-planning.task-dependency-resolver"
@@ -83,6 +86,8 @@ required_setup_tasks:
   - "EXM_MANAGE_TAX_FIELDS"
   - "ORA_EXM_MANAGE_AUTO_SUBMISSION_AND_MATCHING_OPTIONS"
   - "ORA_EXM_MANAGE_POLICIES_BY_EXPENSE_CATEGORY"
+  - "EXM_MANAGE_CORPORATE_CARD_PROGRAMS"
+  - "EXM_MANAGE_AUDIT_LOOKUP_TYPES"
 applicability:
   industries:
     - "All"
@@ -90,7 +95,8 @@ applicability:
     - "All"
   fusion_releases:
     - "Current Oracle Fusion Cloud release"
-side_effects: []
+side_effects:
+  - "Optional local EBS profile intake report and token-usage log; no external calls."
 required_privileges: []
 ---
 
@@ -112,6 +118,13 @@ Use this functional-area skill after Financials scope is confirmed and the proje
 
 ## Setup Tasks
 
+For EBS profile-option CSVs, first use the [shared Expenses profile intake](references/ebs-profile-migration.md)
+and `scripts/ebs_profile_intake.py`. Account for every profile, retain unknown
+profiles as explicit mapping questions, and route maintained mappings to their
+owning task. Do not infer the task from the source filename. Scope, exclusions
+and missing behavior choices require explicit user intent; technical mapping
+evidence and the owning task's import gates remain separate requirements.
+
 1. [Manage Expense Fields by Category](manage-expense-fields-by-category/SKILL.md) (`EXM_MANAGE_EXPENSE_FIELDS_BY_CATEGORY`)
 2. [Manage Expense Report Templates](manage-expense-report-templates/SKILL.md) (`EXM_MANAGE_EXPENSE_REPORT_TEMPLATES`)
 3. [Manage Expenses System Options](manage-expenses-system-options/SKILL.md) (`EXM_MANAGE_EXPENSES_SYSTEM_OPTIONS`)
@@ -119,6 +132,8 @@ Use this functional-area skill after Financials scope is confirmed and the proje
 5. [Manage Auto Submission and Matching Options](manage-auto-submission-and-matching-options/SKILL.md) (`ORA_EXM_MANAGE_AUTO_SUBMISSION_AND_MATCHING_OPTIONS`)
 6. [Manage Conversion Rates and Policies](manage-conversion-rates-and-policies/SKILL.md) (`EXM_MANAGE_CONVERSION_RATES_AND_POLICIES`)
 7. [Manage Policies by Expense Category](manage-policies-by-expense-category/SKILL.md) (`ORA_EXM_MANAGE_POLICIES_BY_EXPENSE_CATEGORY`)
+8. [Manage Corporate Card Programs](manage-corporate-card-programs/SKILL.md) (`EXM_MANAGE_CORPORATE_CARD_PROGRAMS`)
+9. [Manage Expense Report Auditing Lookup Types](manage-expense-report-auditing-lookup-types/SKILL.md) (`EXM_MANAGE_AUDIT_LOOKUP_TYPES`)
 
 For Report Templates, System Options, and Conversion Rates and Policies, use each linked skill's task-local
 input workbook and setup contract.

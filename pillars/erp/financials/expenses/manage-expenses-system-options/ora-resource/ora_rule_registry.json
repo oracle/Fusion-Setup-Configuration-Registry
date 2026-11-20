@@ -23,7 +23,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 41
+            "line": 40
           },
           "readiness": {
             "status": "ready",
@@ -73,7 +73,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 18
+            "line": 17
           },
           "readiness": {
             "status": "ready",
@@ -95,7 +95,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 19
+            "line": 18
           },
           "readiness": {
             "status": "ready",
@@ -115,7 +115,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 20
+            "line": 19
           },
           "readiness": {
             "status": "ready",

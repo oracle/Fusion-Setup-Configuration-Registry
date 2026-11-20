@@ -6,9 +6,77 @@
     "knowledge/setup-task-catalog/pre_release/setupTasks_supplement.json",
     "knowledge/setup-task-catalog/custom/setupTasksAll.json"
   ],
-  "removedCodes": [],
-  "count": 2618,
-  "totalResults": 2618,
+  "removedCodes": [
+    "CST_MANAGE_COST_ANALYSIS_GROUPS",
+    "CST_MANAGE_COST_BOOKS",
+    "CST_MANAGE_COST_COMPONENT_MAPPINGS",
+    "CST_MANAGE_COST_ELEMENTS",
+    "CST_MANAGE_COST_ORGANIZATIONS",
+    "CST_MANAGE_COST_ORGANIZATION_RELATIONSHIPS",
+    "CST_MANAGE_COST_PROFILES",
+    "CST_MANAGE_DEFAULT_COST_PROFILES",
+    "CST_MANAGE_ITEM_COST_PROFILE",
+    "CST_MANAGE_OVERHEAD_COST_ELEMENT_GROUPS",
+    "CST_MANAGE_OVERHEAD_EXPENSE_POOLS",
+    "CST_MANAGE_VALUATION_STRUCTURES",
+    "CST_MANAGE_VALUATION_UNITS",
+    "INV_MANAGE_ABC_ASSIGNMENT_GROUPS",
+    "INV_MANAGE_ABC_CLASSES",
+    "INV_MANAGE_ABC_CLASSIFICATION_SETS",
+    "INV_MANAGE_ACCOUNT_ALIASES",
+    "INV_MANAGE_INTERORGANIZATION_PARAMETERS",
+    "INV_MANAGE_INVENTORY_TRANSACTION_REASONS",
+    "INV_MANAGE_INVENTORY_TRANSACTION_SOURCES_AND_TYPES",
+    "INV_MANAGE_ITEM_TRANSACTION_DEFAULTS",
+    "INV_MANAGE_LOT_AND_SERIAL_ATTRIBUTES_MAPPING",
+    "INV_MANAGE_LOT_EXPIRATION_ACTIONS",
+    "INV_MANAGE_LOT_GRADES",
+    "INV_MANAGE_MATERIAL_STATUSES",
+    "INV_MANAGE_PICKING_RULES",
+    "INV_MANAGE_PICKING_RULE_ASSIGNMENTS",
+    "INV_MANAGE_PICK_SLIP_GROUPING_RULES",
+    "INV_MANAGE_SUBINVENTORIES_AND_LOCATORS",
+    "JMF_MANAGE_INTRASTAT_COUNTRY_CHARACTERISTICS",
+    "JMF_MANAGE_INTRASTAT_PARAMETERS",
+    "JMF_MANAGE_INTRASTAT_RULES",
+    "ORA_CML_SET_UP_CHARGE_NAMES",
+    "ORA_CML_SET_UP_REFERENCE_TYPES",
+    "ORA_CML_SET_UP_ROUTES",
+    "ORA_FOS_DEFINE_PROFIT_CENTER_BUSINESS_UNIT_PARTY_RELATIONSHIP",
+    "ORA_FOS_DEFINE_TRADE_AND_ACCOUNTING_RULES",
+    "ORA_FOS_DEFINE_TRANSFER_PRICING_RULES",
+    "ORA_FOS_MANAGE_DROP_SHIP_AGREEMENTS_NEW",
+    "ORA_FOS_MANAGE_SUPPLY_CHAIN_FINANCIAL_TRADE_AGREEMENTS",
+    "ORA_FOS_MANAGE_SYSTEM_OPTIONS",
+    "ORA_FOS_MANAGE_TRADE_QUALIFIER",
+    "ORA_INV_MANAGE_INTERSUBINVENTORY_PARAMETERS",
+    "ORA_INV_MANAGE_INVENTORY_CONSUMPTION_RULES",
+    "ORA_INV_MANAGE_UNITS_OF_MEASURE_USAGES",
+    "ORA_MANAGE_INVENTORY_BUSINESS_EVENT_CONFIGURATIONS",
+    "ORA_MANAGE_INVENTORY_DOCUMENT_OUTPUT_PREFERENCES",
+    "ORA_MANAGE_MIN_MAX_CLASSIFICATION_GROUPS",
+    "ORA_MANAGE_MIN_MAX_PLANNING_POLICY_PROFILES",
+    "ORA_MANAGE_MIN_MAX_PLANNING_POLICY_PROFILE_ASSIGNMENTS",
+    "ORA_MANAGE_SHIPPING_DOCUMENT_OUTPUT_PREFERENCES",
+    "ORA_RCL_AUTO_PROCESSING_RULE",
+    "ORA_RCL_MANAGE_BILLING_TYPES",
+    "ORA_RCL_MANAGE_RETURN_ROUTING_RULES",
+    "ORA_RCL_MANAGE_SERVICE_ACTIVITIES",
+    "ORA_RCL_MANAGE_STOCK_LOCATIONS",
+    "ORA_RCL_MANAGE_TECH_SETUP",
+    "ORA_RCL_RESOURCE_ITEM_MAPPING",
+    "RCV_MANAGE_RECEIVING_PARAMETERS",
+    "WSH_MANAGE_DEFAULT_PACKING_CONFIGURATIONS",
+    "WSH_MANAGE_PICK_WAVE_RELEASE_RULES",
+    "WSH_MANAGE_RELEASE_SEQUENCE_RULES",
+    "WSH_MANAGE_SHIPPING_COST_TYPES",
+    "WSH_MANAGE_SHIPPING_EXCEPTIONS",
+    "WSH_MANAGE_SHIPPING_PARAMETERS",
+    "WSH_MANAGE_SHIP_CONFIRM_RULES",
+    "WSH_MANAGE_TRANSPORTATION_SCHEDULES"
+  ],
+  "count": 2556,
+  "totalResults": 2556,
   "items": [
     {
       "TaskCode": "AP_DEFINE_AUTOMATED_INVOICE_PROCESSING_CONFIGURATION",
@@ -986,97 +1054,6 @@
     {
       "TaskCode": "CST_MANAGE_COSTING_KEY_FLEXFIELDS",
       "TaskName": "Manage Costing Key Flexfields",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "CST_MANAGE_COST_ANALYSIS_GROUPS",
-      "TaskName": "Manage Cost Analysis Groups",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "CST_MANAGE_COST_BOOKS",
-      "TaskName": "Manage Cost Books",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "CST_MANAGE_COST_COMPONENT_MAPPINGS",
-      "TaskName": "Manage Cost Component Mappings",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "CST_MANAGE_COST_ELEMENTS",
-      "TaskName": "Manage Cost Elements",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "CST_MANAGE_COST_ORGANIZATIONS",
-      "TaskName": "Manage Cost Organizations",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "CST_MANAGE_COST_ORGANIZATION_RELATIONSHIPS",
-      "TaskName": "Manage Cost Organization Relationships",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "CST_MANAGE_COST_PROFILES",
-      "TaskName": "Manage Cost Profiles",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "CST_MANAGE_DEFAULT_COST_PROFILES",
-      "TaskName": "Manage Default Cost Profiles",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "CST_MANAGE_ITEM_COST_PROFILE",
-      "TaskName": "Manage Item Cost Profiles",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "CST_MANAGE_OVERHEAD_COST_ELEMENT_GROUPS",
-      "TaskName": "Manage Overhead Cost Element Groups",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "CST_MANAGE_OVERHEAD_EXPENSE_POOLS",
-      "TaskName": "Manage Overhead Expense Pools",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "CST_MANAGE_VALUATION_STRUCTURES",
-      "TaskName": "Manage Valuation Structures",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "CST_MANAGE_VALUATION_UNITS",
-      "TaskName": "Manage Valuation Units",
       "AvailableFlag": "Y",
       "ExportImportSupportedFlag": "Y",
       "CSVExportImportSupportedFlag": "Y"
@@ -3994,41 +3971,6 @@
       "CSVExportImportSupportedFlag": "Y"
     },
     {
-      "TaskCode": "INV_MANAGE_ABC_ASSIGNMENT_GROUPS",
-      "TaskName": "Manage ABC Assignment Groups",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "INV_MANAGE_ABC_CLASSES",
-      "TaskName": "Manage ABC Classes",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "INV_MANAGE_ABC_CLASSIFICATION_SETS",
-      "TaskName": "Manage ABC Classification Sets",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "INV_MANAGE_ACCOUNT_ALIASES",
-      "TaskName": "Manage Account Aliases",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "INV_MANAGE_INTERORGANIZATION_PARAMETERS",
-      "TaskName": "Manage Interorganization Parameters",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
       "TaskCode": "INV_MANAGE_INVENTORY_ACCOUNT_ALIAS_KEY_FLEXFIELD",
       "TaskName": "Manage Inventory Account Alias Key Flexfield",
       "AvailableFlag": "Y",
@@ -4071,83 +4013,6 @@
       "CSVExportImportSupportedFlag": "Y"
     },
     {
-      "TaskCode": "INV_MANAGE_INVENTORY_TRANSACTION_REASONS",
-      "TaskName": "Manage Inventory Transaction Reasons",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "INV_MANAGE_INVENTORY_TRANSACTION_SOURCES_AND_TYPES",
-      "TaskName": "Manage Inventory Transaction Sources and Types",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "INV_MANAGE_ITEM_TRANSACTION_DEFAULTS",
-      "TaskName": "Manage Item Transaction Defaults",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "INV_MANAGE_LOT_AND_SERIAL_ATTRIBUTES_MAPPING",
-      "TaskName": "Manage Lot and Serial Attributes Mapping",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "INV_MANAGE_LOT_EXPIRATION_ACTIONS",
-      "TaskName": "Manage Lot Expiration Actions",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "INV_MANAGE_LOT_GRADES",
-      "TaskName": "Manage Lot Grades",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "INV_MANAGE_MATERIAL_STATUSES",
-      "TaskName": "Manage Material Statuses",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "INV_MANAGE_PICKING_RULES",
-      "TaskName": "Manage Picking Rules",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "INV_MANAGE_PICKING_RULE_ASSIGNMENTS",
-      "TaskName": "Manage Picking Rule Assignments",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "INV_MANAGE_PICK_SLIP_GROUPING_RULES",
-      "TaskName": "Manage Pick Slip Grouping Rules",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "INV_MANAGE_SUBINVENTORIES_AND_LOCATORS",
-      "TaskName": "Manage Subinventories and Locators",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
       "TaskCode": "INV_MANAGE_TASK_CONFIGURATIONS",
       "TaskName": "Manage Task Configurations for Supply Chain Management",
       "AvailableFlag": "Y",
@@ -4183,29 +4048,8 @@
       "CSVExportImportSupportedFlag": "Y"
     },
     {
-      "TaskCode": "JMF_MANAGE_INTRASTAT_COUNTRY_CHARACTERISTICS",
-      "TaskName": "Manage Intrastat Country Characteristics",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
       "TaskCode": "JMF_MANAGE_INTRASTAT_LOOKUPS",
       "TaskName": "Manage Intrastat Lookups",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "JMF_MANAGE_INTRASTAT_PARAMETERS",
-      "TaskName": "Manage Intrastat Parameters",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "JMF_MANAGE_INTRASTAT_RULES",
-      "TaskName": "Manage Intrastat Rules",
       "AvailableFlag": "Y",
       "ExportImportSupportedFlag": "Y",
       "CSVExportImportSupportedFlag": "Y"
@@ -5534,27 +5378,6 @@
       "CSVExportImportSupportedFlag": "Y"
     },
     {
-      "TaskCode": "ORA_CML_SET_UP_CHARGE_NAMES",
-      "TaskName": "Manage Charge Names",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "ORA_CML_SET_UP_REFERENCE_TYPES",
-      "TaskName": "Manage Landed Cost Reference Types",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "ORA_CML_SET_UP_ROUTES",
-      "TaskName": "Manage Routes",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
       "TaskCode": "ORA_CMP_MANAGE_COMPENSATION_GRADE_LADDER",
       "TaskName": "Progression Grade Ladders",
       "AvailableFlag": "Y",
@@ -6682,29 +6505,8 @@
       "CSVExportImportSupportedFlag": "Y"
     },
     {
-      "TaskCode": "ORA_FOS_DEFINE_PROFIT_CENTER_BUSINESS_UNIT_PARTY_RELATIONSHIP",
-      "TaskName": "Manage Profit Center Business Unit Party Relationship",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "ORA_FOS_DEFINE_TRADE_AND_ACCOUNTING_RULES",
-      "TaskName": "Manage Supply Chain Financial Orchestration Documentation and Accounting Rules",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
       "TaskCode": "ORA_FOS_DEFINE_TRADE_AND_ACCOUNTING_RULES_NEW",
       "TaskName": "Documentation and Accounting Rules",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "ORA_FOS_DEFINE_TRANSFER_PRICING_RULES",
-      "TaskName": "Manage Supply Chain Financial Orchestration Transfer Pricing Rules",
       "AvailableFlag": "Y",
       "ExportImportSupportedFlag": "Y",
       "CSVExportImportSupportedFlag": "Y"
@@ -6738,22 +6540,8 @@
       "CSVExportImportSupportedFlag": "Y"
     },
     {
-      "TaskCode": "ORA_FOS_MANAGE_DROP_SHIP_AGREEMENTS_NEW",
-      "TaskName": "Drop Ship Financial Flows",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
       "TaskCode": "ORA_FOS_MANAGE_LOOKUPS",
       "TaskName": "Manage Supply Chain Financial Orchestration Lookups",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "ORA_FOS_MANAGE_SUPPLY_CHAIN_FINANCIAL_TRADE_AGREEMENTS",
-      "TaskName": "Manage Supply Chain Financial Orchestration Flows",
       "AvailableFlag": "Y",
       "ExportImportSupportedFlag": "Y",
       "CSVExportImportSupportedFlag": "Y"
@@ -6766,22 +6554,8 @@
       "CSVExportImportSupportedFlag": "Y"
     },
     {
-      "TaskCode": "ORA_FOS_MANAGE_SYSTEM_OPTIONS",
-      "TaskName": "Manage Supply Chain Financial Orchestration System Options",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
       "TaskCode": "ORA_FOS_MANAGE_SYSTEM_OPTIONS_NEW",
       "TaskName": "Financial Orchestration System Options",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "ORA_FOS_MANAGE_TRADE_QUALIFIER",
-      "TaskName": "Manage Supply Chain Financial Orchestration Qualifiers",
       "AvailableFlag": "Y",
       "ExportImportSupportedFlag": "Y",
       "CSVExportImportSupportedFlag": "Y"
@@ -8530,29 +8304,8 @@
       "CSVExportImportSupportedFlag": "Y"
     },
     {
-      "TaskCode": "ORA_INV_MANAGE_INTERSUBINVENTORY_PARAMETERS",
-      "TaskName": "Manage Intersubinventory Parameters",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "ORA_INV_MANAGE_INVENTORY_CONSUMPTION_RULES",
-      "TaskName": "Manage Consumption Rules",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
       "TaskCode": "ORA_INV_MANAGE_INVENTORY_VALUE_SETS",
       "TaskName": "Manage Inventory Value Sets",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "ORA_INV_MANAGE_UNITS_OF_MEASURE_USAGES",
-      "TaskName": "Manage Units of Measure Usages",
       "AvailableFlag": "Y",
       "ExportImportSupportedFlag": "Y",
       "CSVExportImportSupportedFlag": "Y"
@@ -9538,20 +9291,6 @@
       "CSVExportImportSupportedFlag": "Y"
     },
     {
-      "TaskCode": "ORA_MANAGE_INVENTORY_BUSINESS_EVENT_CONFIGURATIONS",
-      "TaskName": "Manage Inventory Business Event Configurations",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "ORA_MANAGE_INVENTORY_DOCUMENT_OUTPUT_PREFERENCES",
-      "TaskName": "Manage Inventory Document Output Preferences",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
       "TaskCode": "ORA_MANAGE_ITEM_SPECIFIC_UOM_CONVERSIONS",
       "TaskName": "Manage Item-Specific UOM Conversions",
       "AvailableFlag": "Y",
@@ -9655,27 +9394,6 @@
       "AvailableFlag": "Y",
       "ExportImportSupportedFlag": "N",
       "CSVExportImportSupportedFlag": "N"
-    },
-    {
-      "TaskCode": "ORA_MANAGE_MIN_MAX_CLASSIFICATION_GROUPS",
-      "TaskName": "Manage Min-Max Planning Classification Groups",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "ORA_MANAGE_MIN_MAX_PLANNING_POLICY_PROFILES",
-      "TaskName": "Manage Min-Max Planning Policy Profiles",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "ORA_MANAGE_MIN_MAX_PLANNING_POLICY_PROFILE_ASSIGNMENTS",
-      "TaskName": "Manage Min-Max Planning Policy Profile Assignments",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
     },
     {
       "TaskCode": "ORA_MANAGE_MOVEMENT_REQUEST_APPROVAL",
@@ -9879,13 +9597,6 @@
       "AvailableFlag": "Y",
       "ExportImportSupportedFlag": "N",
       "CSVExportImportSupportedFlag": "N"
-    },
-    {
-      "TaskCode": "ORA_MANAGE_SHIPPING_DOCUMENT_OUTPUT_PREFERENCES",
-      "TaskName": "Manage Shipping Document Output Preferences",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
     },
     {
       "TaskCode": "ORA_MANAGE_SHIPPING_PROFILE_OPTIONS",
@@ -12618,13 +12329,6 @@
       "CSVExportImportSupportedFlag": "Y"
     },
     {
-      "TaskCode": "ORA_RCL_AUTO_PROCESSING_RULE",
-      "TaskName": "Manage Auto Processing Rules for Charges",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
       "TaskCode": "ORA_RCL_AUTO_PROCESSING_RULES_FOR_CHARGES",
       "TaskName": "Auto Processing Rules for Charges",
       "AvailableFlag": "Y",
@@ -12646,13 +12350,6 @@
       "CSVExportImportSupportedFlag": "Y"
     },
     {
-      "TaskCode": "ORA_RCL_MANAGE_BILLING_TYPES",
-      "TaskName": "Manage Billing Types",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
       "TaskCode": "ORA_RCL_MANAGE_LOOKUPS",
       "TaskName": "Manage Service Logistics Lookups",
       "AvailableFlag": "Y",
@@ -12662,41 +12359,6 @@
     {
       "TaskCode": "ORA_RCL_MANAGE_PROFILE_OPTIONS",
       "TaskName": "Manage Service Logistics Profile Options",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "ORA_RCL_MANAGE_RETURN_ROUTING_RULES",
-      "TaskName": "Manage Return Routing Rules",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "ORA_RCL_MANAGE_SERVICE_ACTIVITIES",
-      "TaskName": "Manage Service Activities",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "ORA_RCL_MANAGE_STOCK_LOCATIONS",
-      "TaskName": "Manage Stocking Locations",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "ORA_RCL_MANAGE_TECH_SETUP",
-      "TaskName": "Manage Field Service Technicians",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "ORA_RCL_RESOURCE_ITEM_MAPPING",
-      "TaskName": "Manage Resource to Item Mapping",
       "AvailableFlag": "Y",
       "ExportImportSupportedFlag": "Y",
       "CSVExportImportSupportedFlag": "Y"
@@ -16713,13 +16375,6 @@
       "CSVExportImportSupportedFlag": "Y"
     },
     {
-      "TaskCode": "RCV_MANAGE_RECEIVING_PARAMETERS",
-      "TaskName": "Manage Receiving Parameters",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
       "TaskCode": "RCV_MANAGE_RECEIVING_PROFILE_OPTIONS",
       "TaskName": "Manage Receiving Profile Options",
       "AvailableFlag": "Y",
@@ -16729,34 +16384,6 @@
     {
       "TaskCode": "WSH_MANAGE_CARRIERS",
       "TaskName": "Manage Carriers",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "WSH_MANAGE_DEFAULT_PACKING_CONFIGURATIONS",
-      "TaskName": "Manage Default Packing Configurations",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "WSH_MANAGE_PICK_WAVE_RELEASE_RULES",
-      "TaskName": "Manage Pick Wave Release Rules",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "WSH_MANAGE_RELEASE_SEQUENCE_RULES",
-      "TaskName": "Manage Release Sequence Rules",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "WSH_MANAGE_SHIPPING_COST_TYPES",
-      "TaskName": "Manage Shipping Cost Types",
       "AvailableFlag": "Y",
       "ExportImportSupportedFlag": "Y",
       "CSVExportImportSupportedFlag": "Y"
@@ -16776,22 +16403,8 @@
       "CSVExportImportSupportedFlag": "Y"
     },
     {
-      "TaskCode": "WSH_MANAGE_SHIPPING_EXCEPTIONS",
-      "TaskName": "Manage Shipping Exceptions",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
       "TaskCode": "WSH_MANAGE_SHIPPING_LOOKUPS",
       "TaskName": "Manage Shipping Lookups",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "WSH_MANAGE_SHIPPING_PARAMETERS",
-      "TaskName": "Manage Shipping Parameters",
       "AvailableFlag": "Y",
       "ExportImportSupportedFlag": "Y",
       "CSVExportImportSupportedFlag": "Y"
@@ -16804,22 +16417,8 @@
       "CSVExportImportSupportedFlag": "Y"
     },
     {
-      "TaskCode": "WSH_MANAGE_SHIP_CONFIRM_RULES",
-      "TaskName": "Manage Ship Confirm Rules",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
       "TaskCode": "WSH_MANAGE_TRANSIT_TIMES",
       "TaskName": "Manage Transit Times",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "Y",
-      "CSVExportImportSupportedFlag": "Y"
-    },
-    {
-      "TaskCode": "WSH_MANAGE_TRANSPORTATION_SCHEDULES",
-      "TaskName": "Manage Transportation Schedules",
       "AvailableFlag": "Y",
       "ExportImportSupportedFlag": "Y",
       "CSVExportImportSupportedFlag": "Y"
@@ -18140,18 +17739,6 @@
       "FunctionalAreaName": "Pricing"
     },
     {
-      "TaskCode": "CUSTOM_CREATE_CONTRACT",
-      "TaskName": "Create Contract",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "N",
-      "CSVExportImportSupportedFlag": "N",
-      "Pillar": "CX",
-      "OfferingCode": "OKC_CONTRACTS",
-      "OfferingName": "Enterprise Contracts",
-      "FunctionalAreaCode": "ORA_OKC_ENT_CONTRACTS_BASE",
-      "FunctionalAreaName": "Enterprise Contracts Base"
-    },
-    {
       "TaskCode": "CUSTOM_MANAGE_SALES_FUNCTIONAL_AREA_CATALOG",
       "TaskName": "Manage Sales Functional Area Catalog",
       "AvailableFlag": "Y",
@@ -18905,6 +18492,78 @@
       "OfferingName": "Manufacturing and Supply Chain Materials Management",
       "FunctionalAreaCode": "ORA_WIS_COMMON_MFG_WORK_SETUP",
       "FunctionalAreaName": "Manufacturing Master Data"
+    },
+    {
+      "TaskCode": "CUSTOM_MANAGE_CONTRACT_VALIDATIONS",
+      "TaskName": "Manage Contract Validations",
+      "AvailableFlag": "Y",
+      "ExportImportSupportedFlag": "N",
+      "CSVExportImportSupportedFlag": "N",
+      "Pillar": "CX",
+      "OfferingCode": "OKC_CONTRACTS",
+      "OfferingName": "Enterprise Contracts",
+      "FunctionalAreaCode": "ORA_OKC_ENT_CONTRACTS_BASE",
+      "FunctionalAreaName": "Enterprise Contracts Base"
+    },
+    {
+      "TaskCode": "CUSTOM_MANAGE_CONTRACT_COLLABORATION",
+      "TaskName": "Manage Contract Collaboration",
+      "AvailableFlag": "Y",
+      "ExportImportSupportedFlag": "N",
+      "CSVExportImportSupportedFlag": "N",
+      "Pillar": "CX",
+      "OfferingCode": "OKC_CONTRACTS",
+      "OfferingName": "Enterprise Contracts",
+      "FunctionalAreaCode": "ORA_OKC_ENT_CONTRACTS_BASE",
+      "FunctionalAreaName": "Enterprise Contracts Base"
+    },
+    {
+      "TaskCode": "CUSTOM_MANAGE_CONTRACT_WORD_ADD_IN",
+      "TaskName": "Manage Contract Word Add-in",
+      "AvailableFlag": "Y",
+      "ExportImportSupportedFlag": "N",
+      "CSVExportImportSupportedFlag": "N",
+      "Pillar": "CX",
+      "OfferingCode": "OKC_CONTRACTS",
+      "OfferingName": "Enterprise Contracts",
+      "FunctionalAreaCode": "ORA_OKC_ENT_CONTRACTS_BASE",
+      "FunctionalAreaName": "Enterprise Contracts Base"
+    },
+    {
+      "TaskCode": "CUSTOM_MANAGE_ASSET_SUPPLIER_WARRANTY_COVERAGES",
+      "TaskName": "Manage Asset Supplier Warranty Coverages",
+      "AvailableFlag": "Y",
+      "ExportImportSupportedFlag": "N",
+      "CSVExportImportSupportedFlag": "N",
+      "Pillar": "SCM",
+      "OfferingCode": "ORA_MANUFACTURING_AND_SUPPLY_C",
+      "OfferingName": "Manufacturing and Supply Chain Materials Management",
+      "FunctionalAreaCode": "ORA_MNT_MGMT",
+      "FunctionalAreaName": "Maintenance Management"
+    },
+    {
+      "TaskCode": "CUSTOM_MANAGE_METER_TEMPLATE_APPLICABILITY",
+      "TaskName": "Manage Meter Template Applicability",
+      "AvailableFlag": "Y",
+      "ExportImportSupportedFlag": "N",
+      "CSVExportImportSupportedFlag": "N",
+      "Pillar": "SCM",
+      "OfferingCode": "ORA_MANUFACTURING_AND_SUPPLY_C",
+      "OfferingName": "Manufacturing and Supply Chain Materials Management",
+      "FunctionalAreaCode": "ORA_MNT_MGMT",
+      "FunctionalAreaName": "Maintenance Management"
+    },
+    {
+      "TaskCode": "CUSTOM_IMPORT_MAINTENANCE_WORK_DEFINITIONS",
+      "TaskName": "Import Maintenance Work Definitions",
+      "AvailableFlag": "Y",
+      "ExportImportSupportedFlag": "N",
+      "CSVExportImportSupportedFlag": "N",
+      "Pillar": "SCM",
+      "OfferingCode": "ORA_MANUFACTURING_AND_SUPPLY_C",
+      "OfferingName": "Manufacturing and Supply Chain Materials Management",
+      "FunctionalAreaCode": "ORA_MNT_MGMT",
+      "FunctionalAreaName": "Maintenance Management"
     }
   ]
 }

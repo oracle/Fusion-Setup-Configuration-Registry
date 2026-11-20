@@ -1,0 +1,125 @@
+{
+  "schema_version": "3.0",
+  "sheet_name": "Lookup Codes",
+  "header_row": 8,
+  "first_data_row": 9,
+  "fields": [
+    {
+      "label": "Lookup Type",
+      "key": "lookup_type",
+      "kind": "text",
+      "maximum": 30,
+      "required_for": "always",
+      "nullable": false
+    },
+    {
+      "label": "Lookup Code",
+      "key": "lookup_code",
+      "kind": "text",
+      "maximum": 30,
+      "required_for": "always",
+      "nullable": false
+    },
+    {
+      "label": "Reference Data Set Code",
+      "key": "set_code",
+      "kind": "text",
+      "maximum": 30,
+      "required_for": "always",
+      "nullable": false
+    },
+    {
+      "label": "Meaning",
+      "key": "meaning",
+      "kind": "text",
+      "maximum": 80,
+      "required_for": "create",
+      "nullable": false
+    },
+    {
+      "label": "Description",
+      "key": "description",
+      "kind": "text",
+      "maximum": 240,
+      "required_for": "optional",
+      "nullable": true
+    },
+    {
+      "label": "Enabled?",
+      "key": "enabled",
+      "kind": "choice",
+      "maximum": null,
+      "required_for": "optional",
+      "nullable": false
+    },
+    {
+      "label": "Start Date",
+      "key": "start_date",
+      "kind": "date",
+      "maximum": null,
+      "required_for": "optional",
+      "nullable": false
+    },
+    {
+      "label": "End Date",
+      "key": "end_date",
+      "kind": "date",
+      "maximum": null,
+      "required_for": "optional",
+      "nullable": true
+    },
+    {
+      "label": "Display Sequence",
+      "key": "display_sequence",
+      "kind": "integer",
+      "maximum": null,
+      "required_for": "optional",
+      "nullable": true
+    },
+    {
+      "label": "Tag",
+      "key": "tag",
+      "kind": "text",
+      "maximum": 150,
+      "required_for": "optional",
+      "nullable": true
+    }
+  ],
+  "optional_reference_sheets": [
+    "Reference Lists"
+  ],
+  "legacy_header_rows": [
+    4
+  ],
+  "type_sheet": {
+    "sheet_name": "Lookup Types",
+    "header_row": 8,
+    "first_data_row": 9,
+    "fields": [
+      {
+        "label": "Lookup Type",
+        "key": "lookup_type",
+        "kind": "text",
+        "maximum": 30,
+        "required_for": "always",
+        "nullable": false
+      },
+      {
+        "label": "Meaning",
+        "key": "meaning",
+        "kind": "text",
+        "maximum": 80,
+        "required_for": "optional",
+        "nullable": false
+      },
+      {
+        "label": "Description",
+        "key": "description",
+        "kind": "text",
+        "maximum": 240,
+        "required_for": "optional",
+        "nullable": true
+      }
+    ]
+  }
+}

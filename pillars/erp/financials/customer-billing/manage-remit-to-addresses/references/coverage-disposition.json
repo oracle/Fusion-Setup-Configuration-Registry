@@ -5,7 +5,7 @@
   "reviewedSourceCommit": "123da9a7ee8d9aebac4e6cd8b6352d68cdf5efc1",
   "catalog": {
     "path": "e2e-test-catalog.json",
-    "sha256": "e7e72683d3dcd9a8995a9c6cbc29971973caa1b1ea670a26c6c68d0e1d8342b7",
+    "sha256": "67055a9661df5ec6d51832202ee7a82ce16bda2beaca74d33e80d877ee97091e",
     "digestFormat": "JSON sorted keys, compact separators, ensure_ascii=true, ASCII bytes",
     "variantCount": 236
   },

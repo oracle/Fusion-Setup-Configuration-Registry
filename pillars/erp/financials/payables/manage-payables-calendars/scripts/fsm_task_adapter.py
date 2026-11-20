@@ -764,8 +764,21 @@ def _validate_calendar_type_semantics(
     start_text = str(merged.get("StartDate", "")).strip()
     effective_from_text = str(merged.get("EffectiveFrom", "")).strip()
     effective_to_text = str(merged.get("EffectiveTo", "")).strip()
-    if operation["action"] == "create" and not (start_text and effective_from_text):
-        return
+    frequency = str(merged.get("PeriodFrequency", "")).strip()
+    if (operation["action"] == "create"
+            and frequency in {"MONTHLY", "WEEKLY", "QUARTERLY", "4-4-5", "4-5-4", "5-4-4"}
+            and not start_text):
+        raise AdapterError(
+            f"Operation {operation_id} requires header StartDate for {frequency} frequency."
+        )
+    if operation["action"] == "create" and frequency == "OTHER":
+        if start_text or str(merged.get("PeriodNameFormat", "")).strip():
+            raise AdapterError(
+                f"Operation {operation_id} OTHER calendars must leave header StartDate "
+                "and PeriodNameFormat blank; periods are manually defined."
+            )
+    # Effective dates are optional; compare only the supplied date pairs.
+    # Never synthesize effective dates from a generation setting.
     if start_text and effective_from_text and (
         _source_calendar_date(effective_from_text, operation_id, "EffectiveFrom")
         < _source_calendar_date(start_text, operation_id, "StartDate")
@@ -1025,6 +1038,63 @@ def _satisfied_prerequisites(
     return satisfied
 
 
+def _review_ebs_period_names(blueprint: dict[str, Any], *, apply: bool = False) -> None:
+    """Bind each EBS create rename to an explicit, unchanged per-row decision."""
+    scope = blueprint.get("resolvedScope", {})
+    if not isinstance(scope, dict) or scope.get("sourceSystem") not in {
+        "EBS", "R12", "Oracle E-Business Suite"
+    }:
+        return
+    decisions = scope.get("periodNameDecisions", [])
+    if not isinstance(decisions, list):
+        raise AdapterError("EBS_PERIOD_NAME_REVIEW: periodNameDecisions must be a list.")
+    reviewed = []
+    unresolved = []
+    changes = []
+    for operation in blueprint.get("operations", []):
+        if operation.get("action") != "create" or operation.get("entity") != "AP_OTHER_PERIOD_PERIOD":
+            continue
+        values = operation.get("values", {})
+        target = operation.get("targetKey", {})
+        prefix, year = values.get("EnteredPeriodName"), values.get("PeriodYear")
+        if not isinstance(prefix, str) or not prefix or not str(year).isdigit():
+            # The ordinary field validator reports missing/invalid business inputs.
+            continue
+        derived = prefix + "-" + str(int(year) % 100).zfill(2)
+        source = operation.get("sourcePeriodName", target.get("PeriodName"))
+        if source == derived:
+            continue
+        change = {"CalendarName": target.get("CalendarName"),
+                  "CalendarType": target.get("CalendarType"),
+                  "sourcePeriodName": source, "EnteredPeriodName": prefix,
+                  "PeriodYear": str(year), "PeriodNum": str(values.get("PeriodNum", "")),
+                  "predictedPeriodName": derived}
+        matches = [decision for decision in decisions if isinstance(decision, dict)
+                   and all(decision.get(key) == value for key, value in change.items())
+                   and decision.get("choice") == "accept-derived-name"]
+        if len(matches) != 1:
+            unresolved.append(change)
+            continue
+        reviewed.append(matches[0])
+        if apply:
+            operation["sourcePeriodName"] = source
+            operation["targetKey"]["PeriodName"] = derived
+            changes.append(change)
+        elif target.get("PeriodName") != derived:
+            unresolved.append(change)
+    # A changed/deferred row must not retain an unrelated old approval.
+    if unresolved or any(decision not in reviewed for decision in decisions):
+        raise AdapterError(
+            "EBS_PERIOD_NAME_REVIEW: explicit row-specific decisions are required before "
+            "candidate creation. Show source name, prefix, period year, sequence and predicted "
+            "Fusion name; accept derived names or defer affected records. Do not alter years "
+            "or dates to preserve names. Unresolved changes: " + json.dumps(unresolved, sort_keys=True)
+        )
+    if changes:
+        warnings = blueprint.setdefault("warnings", [])
+        warnings.append("User accepted derived Fusion period names: " + json.dumps(changes, sort_keys=True))
+
+
 def _normalized_blueprint(
     contract: dict[str, Any], design: dict[str, Any]
 ) -> dict[str, Any]:
@@ -1110,6 +1180,7 @@ def _normalized_blueprint(
         "prerequisites": design.get("prerequisites", []),
         "warnings": warnings,
     }
+    _review_ebs_period_names(blueprint, apply=True)
     return blueprint
 
 
@@ -1127,6 +1198,7 @@ def _validate_blueprint(
     operations = blueprint.get("operations")
     if not isinstance(operations, list) or not operations:
         raise AdapterError("Blueprint must contain at least one operation.")
+    _review_ebs_period_names(blueprint)
     entities = _entity_map(contract)
     allowed = set(contract["normalization"]["supportedOperations"])
     satisfied = _satisfied_prerequisites(blueprint, contract)
@@ -1211,8 +1283,21 @@ def _validate_blueprint(
             raise AdapterError(
                 f"Operation {operation_id} cannot change key/audit fields: {sorted(invalid)}."
             )
+        if (action in {"update", "end-date"}
+                and entity_name == "AP_OTHER_PERIOD_TYPE" and "EffectiveFrom" in values):
+            raise AdapterError(
+                f"Operation {operation_id} cannot change or clear From Date "
+                "(EffectiveFrom) on an existing calendar: this field is "
+                "create-only through FSM import. Preserve its existing value."
+            )
         # Apply every concrete source-backed deterministic field rule.
         for field in values:
+            if (action == "create" and entity_name == "AP_OTHER_PERIOD_TYPE"
+                    and (field in {"EffectiveFrom", "EffectiveTo"}
+                         or (field == "StartDate" and values.get("PeriodFrequency") == "OTHER"))
+                    and values[field] == ""):
+                # Optional create dates serialize as blank; this is not an update clear.
+                continue
             _validate_field_value(entity, field, values[field], operation_id)
         _validate_period_parent_context(entity, operation)
         if action == "create":
@@ -1528,6 +1613,16 @@ def _requirement_contract(
     return expected
 
 
+def _customer_view(value):
+    """Return a display copy without internal provenance; never mutate execution data."""
+    if isinstance(value, dict):
+        return {key: _customer_view(item) for key, item in value.items()
+                if key not in {"sourceIds", "sourceEvidence"}}
+    if isinstance(value, list):
+        return [_customer_view(item) for item in value]
+    return value
+
+
 def normalize_design(
     contract: dict[str, Any],
     baseline_path: Path,
@@ -1563,7 +1658,7 @@ def normalize_design(
         "warnings": blueprint["warnings"],
         "requirementCount": len(requirements),
     }
-    return blueprint, preview, requirements
+    return blueprint, _customer_view(preview), requirements
 
 
 def _supporting_parent_keys(
@@ -2531,6 +2626,7 @@ def main(argv: list[str] | None = None) -> int:
             )
         else:
             raise AdapterError(f"Unknown command {args.command!r}.")
+        result = _customer_view(result)
         if args.report:
             _write_new_json(args.report, result)
         print(json.dumps(result, indent=2, sort_keys=True, ensure_ascii=False))

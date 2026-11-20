@@ -62,14 +62,14 @@ an accepted-but-unverified request.
 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---:|---|---|---|---|---|
-| VSET.IMPORT_GATE | decision | 60 | execution_gate | approved->VSET.HANDED_OFF_TO_PARENT;approval_missing->VSET.HANDLE_APPROVAL | VSET.ENFORCE_DESIGN | stop | A validated package is proposed for live import; reaching the approved transition confirms only the approved submission gate, not target-state creation |
+| VSET.IMPORT_GATE | decision | 60 | execution_gate | ready->VSET.VALIDATED;incomplete->VSET.HANDLE_READINESS | VSET.ENFORCE_DESIGN | stop | Require applicable read-only task validation and immutable-artifact checks for the exact target and requested scope. Return ready without requiring upload approval or a submission receipt: core.data-loader obtains submission approval after task validation. This node does not submit, poll, or report acceptance. Missing, stale, or mismatched validation/artifact evidence returns incomplete. |
 | VSET.HANDLE_INPUT | step | 70 | error_handler | handled->VSET.ISSUES | VSET.VALIDATE_INPUT | stop | Input is invalid |
 | VSET.HANDLE_DEPENDENCY | step | 80 | error_handler | handled->VSET.ISSUES | VSET.RESOLVE_DEPENDENCIES | stop | Dependency is blocked |
 | VSET.HANDLE_LOOKUP | step | 90 | error_handler | handled->VSET.ISSUES | VSET.LOOKUP_EXISTING | stop | Lookup is blocked |
 | VSET.HANDLE_VALUES | step | 95 | error_handler | handled->VSET.ISSUES | VSET.CHECK_VALUE_SCOPE | stop | Requested value scope cannot be verified or safely added to the existing definition |
 | VSET.HANDLE_DESIGN | step | 100 | error_handler | handled->VSET.ISSUES | VSET.ENFORCE_DESIGN | stop | Design rule blocks the package |
-| VSET.HANDLE_APPROVAL | step | 110 | error_handler | handled->VSET.ISSUES | VSET.IMPORT_GATE | stop | Approval is absent |
-| VSET.HANDED_OFF_TO_PARENT | terminal | 120 | terminal | none | VSET.IMPORT_GATE | continue | Accepted — pending parent verification. The Fixed Assets parent applies fresh target-state verification and controls dependent-task progression; core.data-loader retrieves terminal status and ProcessLog. |
+| VSET.HANDLE_READINESS | step | 110 | error_handler | handled->VSET.ISSUES | VSET.IMPORT_GATE | stop | Required task validation or immutable-artifact evidence is missing, stale, or mismatched. Return the issue for correction; do not request submission approval, submit, or claim acceptance during task validation. |
+| VSET.VALIDATED | terminal | 120 | terminal | none | VSET.IMPORT_GATE | stop | Return validated_for_import for the current validation scope; no upload approval, submission, acceptance, or Fusion completion is implied. The parent/Core workflow may report accepted only after its accepted-initiation response supplies a request ID correlated to the exact target and reviewed immutable archive/hash. Parent verification remains required. |
 | VSET.DONE_MATCH | terminal | 125 | terminal | none | VSET.CHECK_VALUE_SCOPE | stop | Existing definition matches and the request is definition-only; no import is needed |
 | VSET.DONE_VALUES | terminal | 126 | terminal | none | VSET.CHECK_VALUE_SCOPE | stop | Existing definition and every requested value/parent/material field already match current verified state; no import is needed |
 | VSET.ISSUES | terminal | 130 | terminal | none | none | stop | A blocker is handled |

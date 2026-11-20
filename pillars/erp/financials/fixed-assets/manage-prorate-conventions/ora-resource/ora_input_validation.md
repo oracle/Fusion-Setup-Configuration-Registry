@@ -38,14 +38,31 @@ When the applicable input checks pass, continue through
 
 ## Field Validation
 
+### Flag Value Normalization
+
+Accept affirmative user input (Yes or Y) and negative user input (No or N)
+case-insensitively. Before field validation, storage, or serialization,
+translate that input to the exact uppercase affirmative or negative value
+listed for its database column below. Never choose a representation at runtime
+or serialize user-facing wording directly. Reject unrecognized input.
+
+The table specifies populated boolean values only. It does not add defaults,
+make optional fields mandatory, authorize changes to read-only or system-managed
+fields, or change existing blank and update-preservation rules. Retain returned
+target values as evidence; do not normalize them to conceal a target mismatch.
+
+| Database table | Database column | Affirmative stored value | Negative stored value |
+|---|---|---|---|
+| FA_CONVENTION_TYPES | DEPR_WHEN_ACQUIRED_FLAG | `YES` | `NO` |
+
 | Check | What Happens | Applies When | Resolver |
 |---|---|---|---|
 | Name | Nonblank, at most 10 characters including spaces. Never truncate or rename. | Create/update | |
 | Description | If supplied and nonblank, at most 40 characters including spaces. Never truncate or rewrite. Blank/omitted uses Standard Defaults. | Create/update | |
 | Reference Data Set | Default to Enterprise Set when omitted for create; preserve explicit selections and existing selections on update. Apply this default before Required Groups and correction questions. Existence and code remain lookup-owned. | Create/update | validate_reference_data_set_name |
 | Fiscal Year Name or month cycle | Accept an exact nonblank name or explicit start/end months, including cycle text in the Fiscal year name column. Recognize month names and common abbreviations case-insensitively, or explicitly labelled numeric months 1–12. Preserve order across December; normalize to startMonth/endMonth and retain any separately supplied exact name as a constraint. For an incomplete cycle, ask only for its unclear or missing month. Do not pass cycle text as a literal name or infer the selector from Name, Reference Data Set, or Prorate basis. | Create/update or inquiry | resolve_prorate_fiscal_year_range |
-| Convention Info | Optional; preserve supplied values for export-backed mapping. | When supplied | resolve_convention_info_mapping |
-| Depreciate when placed in service | Optional Yes/No or Y/N; preserve the business meaning. Omission uses Standard Defaults. | Create/update | |
+| Convention Info | Preserve supplied context and values. Discover required global and selected-context segments through current DFF metadata, even when Convention Info was omitted. Recover supplied input before asking for missing business values. | Create/update and existing-ZIP validation | resolve_prorate_dff_segments |
+| Depreciate when placed in service | Optional; translate affirmative user input to `YES` and negative user input to `NO`, case-insensitively, for `FA_CONVENTION_TYPES.DEPR_WHEN_ACQUIRED_FLAG`. Validate and serialize only `YES` or `NO`. Omission uses Standard Defaults. | Create/update | |
 | Prorate basis | Use [Prorate Basis Resolution](#prorate-basis-resolution); an existing-ZIP basis hint is optional. | Create/update or supplied archive hint | |
 | User-supplied dates | Preserve supplied Start Date, End Date, Prorate Date, ranges, and date rows. Generate only missing dates using the Generation Contract. Report conflicts without changing supplied values; a description discrepancy alone is advisory. | Inputs outside an immutable ZIP | |
 | Existing-ZIP task data | Accept the archive and any explicit runtime properties-path override. Do not request replacement dates or create/update fields. Dependency readiness owns the extracted comparison context. | Existing-ZIP import | |

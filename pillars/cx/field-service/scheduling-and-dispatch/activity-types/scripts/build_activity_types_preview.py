@@ -12,6 +12,9 @@ from urllib.parse import quote
 import xml.etree.ElementTree as ElementTree
 import zipfile
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
+from guarded_xlsx import GuardedWorkbook, column_index, shared_string
+
 
 FEATURE_KEYS = (
     "isTeamworkAvailable",
@@ -108,17 +111,12 @@ def _worksheet_values(worksheet: Any) -> dict[str, Any]:
     return values
 
 
-def _column_index(cell_reference: str) -> int:
-    letters = "".join(character for character in cell_reference if character.isalpha())
-    index = 0
-    for letter in letters.upper():
-        index = index * 26 + ord(letter) - ord("A") + 1
-    return index
+_column_index = column_index
 
 
-def _read_shared_strings(archive: zipfile.ZipFile) -> list[str]:
+def _read_shared_strings(archive: GuardedWorkbook) -> list[str]:
     try:
-        root = ElementTree.fromstring(archive.read("xl/sharedStrings.xml"))
+        root = archive.xml("xl/sharedStrings.xml")
     except KeyError:
         return []
     namespace = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
@@ -130,9 +128,9 @@ def _read_xlsx_worksheets(workbook_path: Path) -> list[_Worksheet]:
     relationship = "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}"
     package_relationship = "{http://schemas.openxmlformats.org/package/2006/relationships}"
     try:
-        with zipfile.ZipFile(workbook_path) as archive:
-            workbook = ElementTree.fromstring(archive.read("xl/workbook.xml"))
-            relationships = ElementTree.fromstring(archive.read("xl/_rels/workbook.xml.rels"))
+        with GuardedWorkbook(workbook_path) as archive:
+            workbook = archive.xml("xl/workbook.xml")
+            relationships = archive.xml("xl/_rels/workbook.xml.rels")
             targets = {
                 item.attrib["Id"]: item.attrib["Target"]
                 for item in relationships.findall(f"{package_relationship}Relationship")
@@ -145,7 +143,7 @@ def _read_xlsx_worksheets(workbook_path: Path) -> list[_Worksheet]:
                 if not target:
                     raise PreviewInputError("Workbook sheet relationship is missing.")
                 sheet_path = target.lstrip("/") if target.startswith("/") else "xl/" + target
-                root = ElementTree.fromstring(archive.read(sheet_path))
+                root = archive.xml(sheet_path)
                 rows: list[tuple[Any, Any]] = []
                 for row in root.findall(f"{spreadsheet}sheetData/{spreadsheet}row"):
                     values: dict[int, Any] = {}
@@ -160,7 +158,7 @@ def _read_xlsx_worksheets(workbook_path: Path) -> list[_Worksheet]:
                         elif value_node is None:
                             value = None
                         elif cell_type == "s":
-                            value = shared_strings[int(value_node.text or "")]
+                            value = shared_string(shared_strings, value_node.text)
                         elif cell_type == "b":
                             value = (value_node.text == "1")
                         else:
@@ -169,7 +167,7 @@ def _read_xlsx_worksheets(workbook_path: Path) -> list[_Worksheet]:
                     rows.append((values.get(1), values.get(2)))
                 result.append(_Worksheet(sheet.attrib.get("name", ""), rows))
             return result
-    except (KeyError, OSError, ValueError, ElementTree.ParseError, zipfile.BadZipFile) as error:
+    except (KeyError, IndexError, OSError, ValueError, ElementTree.ParseError, zipfile.BadZipFile) as error:
         raise PreviewInputError(f"Workbook could not be read: {error}") from error
 
 

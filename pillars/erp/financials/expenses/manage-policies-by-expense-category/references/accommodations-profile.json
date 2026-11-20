@@ -1,0 +1,323 @@
+{
+  "profile_id": "accommodations-single-currency-v1",
+  "authority": "User requested Accommodations policy/rate support equivalent to Meals, always Daily Limit Yes, single currency and no rate determinants.",
+  "ui_evidence": {
+    "policy": "User-provided Accommodations Policy setup screenshot, 2026-10-26",
+    "rates": "User-provided Accommodations Policy Rates setup screenshot, 2026-10-26",
+    "facts": [
+      "Daily limit is always enabled; no DailyLimitFlag exists in the parent export schema.",
+      "Rates expose Daily Limit, Start Date, optional End Date.",
+      "Role, location, seasonal rate and gender determinants are excluded from this implementation."
+    ]
+  },
+  "engineering_extension": {
+    "operations": [
+      "create",
+      "update"
+    ],
+    "parent_status": "DRAFT",
+    "rate_status": "DRAFT",
+    "currency_mode": "SINGLE",
+    "date_encoding": "YYYY/MM/DD follows the existing Meals authoring path; Accommodations serialization remains live pending.",
+    "boolean_encoding": "Yes/No to Y/N follows the existing EXM_YES_NO authoring convention; Accommodations CSV acceptance remains live pending.",
+    "empty_serialization": "Noninput cells remain empty, audit cells are system managed; consumer sets DRAFT and disabled determinant flags. This is a candidate authoring recipe, not observed server behavior.",
+    "qualification": "No live Accommodations create/update observations are claimed. Every Accommodations candidate requires native preflight, approval and live reconciliation."
+  },
+  "historical_source_snapshot": {
+    "commit": "bebd2328e",
+    "sources": {
+      "EO-AccomPolicy": {
+        "path": "fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/AccomPolicyEO.xml",
+        "sha256": "abbb9a3c37812a938482cd43fe73f8fb5ea07d42a89c07a5ca2aeffab718032d",
+        "series": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64",
+        "label": "261013.0000.S",
+        "claim_scope": "Declared keys and validators only; not target import qualification"
+      },
+      "EO-AccomPolLine": {
+        "path": "fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/AccomPolLineEO.xml",
+        "sha256": "797312c33b65350f651d759605c94fb94e0b01222a3e0ff95c0fb4510659b30e",
+        "series": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64",
+        "label": "261013.0000.S",
+        "claim_scope": "Declared keys and validators only; not target import qualification"
+      },
+      "AM-Accom": {
+        "path": "fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseAccomService/applicationModule/ExpenseAccomServiceAMImpl.java",
+        "sha256": "e799db8ecde6b012b8410247b5b0878ec87e89e63b4b08466af4a8b27c22b5f3",
+        "series": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64",
+        "label": "261013.0000.S",
+        "reviewed_method": "importData",
+        "reviewed_calls": [
+          {
+            "line": 136,
+            "context": "boRootElement = files.get(\"EXM_ACCOM_POLICIES\" + \".xml\");  if (boRootElement != null) {"
+          },
+          {
+            "line": 143,
+            "context": "MigratorHelper.updatePrimaryKeysInXML(boRootElement, (ViewObjectImpl)this.getAccom(), \"AltKey\", false);"
+          },
+          {
+            "line": 204,
+            "context": "MigratorHelper.updateElementAttribute(element, \"InvalidCode\", \"MISSING_ROLE\");  String sWarning = migStatus.getProcessingWarning();"
+          },
+          {
+            "line": 257,
+            "context": "MigratorHelper.updateElementAttribute(element, \"InvalidCode\", \"MISSING_GEOGRAPHY\");  String sWarning = migStatus.getProcessingWarning();"
+          },
+          {
+            "line": 277,
+            "context": "MigratorHelper.updatePrimaryKeysInXML(boRootElement, (ViewObjectImpl)this.getAccomLine(), \"AltKey\", false);"
+          },
+          {
+            "line": 285,
+            "context": "MigratorHelper.readXML(migStatus, this.getAccom(), boRootElement, -1, true, true); "
+          },
+          {
+            "line": 288,
+            "context": "if (this.getName().equals(this.getRootApplicationModule().getName())) this.getTransaction().commit();  }"
+          },
+          {
+            "line": 292,
+            "context": "migStatus.setProcessingError(e.getLocalizedMessage()); } "
+          }
+        ],
+        "claim_scope": "Task-owned XML import hook calls, not shared helper behavior"
+      }
+    },
+    "entities": {
+      "ORA_EXM_ACCOM_POLICY": {
+        "ready": false,
+        "review_status": "source_facts_reviewed_framework_semantics_pending",
+        "declared_alternate_keys": [
+          {
+            "name": "AltKey",
+            "attributes": [
+              "PolicyName"
+            ]
+          }
+        ],
+        "declared_validators": [
+          {
+            "tag": "CompareValidationBean",
+            "attrs": {
+              "Name": "WarningTolerance_Rule_0",
+              "ResId": "FND:::FND_CMN_POSITIVE_OR_ZERO",
+              "ResBundleId": "oracle.apps.fnd.applcore.messages.FndMessagesResourceBundle",
+              "OnAttribute": "WarningTolerance",
+              "OperandType": "LITERAL",
+              "Inverse": "false",
+              "CompareType": "GREATERTHANEQUALTO",
+              "CompareValue": "0"
+            },
+            "text": ""
+          },
+          {
+            "tag": "ExpressionValidationBean",
+            "attrs": {
+              "Name": "WarningTolerance_Rule_1",
+              "OperandType": "EXPR",
+              "Inverse": "false"
+            },
+            "text": "newValue != null && ErrorTolerance != null\n      \n        \n      \n      \nnewValue < ErrorTolerance"
+          },
+          {
+            "tag": "CompareValidationBean",
+            "attrs": {
+              "Name": "ErrorTolerance_Rule_0",
+              "ResId": "FND:::FND_CMN_POSITIVE_OR_ZERO",
+              "ResBundleId": "oracle.apps.fnd.applcore.messages.FndMessagesResourceBundle",
+              "OnAttribute": "ErrorTolerance",
+              "OperandType": "LITERAL",
+              "Inverse": "false",
+              "CompareType": "GREATERTHANEQUALTO",
+              "CompareValue": "0"
+            },
+            "text": ""
+          },
+          {
+            "tag": "ExpressionValidationBean",
+            "attrs": {
+              "Name": "ErrorTolerance_Rule_1",
+              "OperandType": "EXPR",
+              "Inverse": "false"
+            },
+            "text": "newValue != null && WarningTolerance != null\n      \n        \n      \n      \nnewValue > WarningTolerance"
+          },
+          {
+            "tag": "UniqueKeyValidationBean",
+            "attrs": {
+              "Name": "AccomPolicyEO_Rule_0",
+              "ResId": "FND:::FND_CMN_RCRD_VAL",
+              "ResBundleId": "oracle.apps.fnd.applcore.messages.FndMessagesResourceBundle",
+              "KeyName": "AltKey"
+            },
+            "text": "PolicyName"
+          }
+        ],
+        "seed_routing": {
+          "ServiceName": "oracle.apps.financials.expenses.policy.shared.expenseAccomService.ExpenseAccomService",
+          "ObsoleteFlag": "N",
+          "MigrationModeFlag": "Y",
+          "XmlFileName": "EXM_ACCOM_POLICIES.xml",
+          "XmlNodePath": "/AccomVO/AccomVORow"
+        },
+        "source_ids": [
+          "EO-AccomPolicy"
+        ],
+        "unresolved": [
+          "CSV-to-XML transformation and blank/null handling",
+          "MigratorHelper key-resolution and readXML semantics",
+          "Operation-specific field acceptance and resulting-state requiredness",
+          "Target-release/reference qualification"
+        ],
+        "seed_key_attributes": [
+          {
+            "XmlAttributeName": "PolicyName",
+            "AlternateKeyFlag": "Y",
+            "UpdateEnabledFlag": "N"
+          }
+        ]
+      },
+      "ORA_EXM_ACCOM_POLICY_LINE": {
+        "ready": false,
+        "review_status": "source_facts_reviewed_framework_semantics_pending",
+        "declared_alternate_keys": [
+          {
+            "name": "AltKey",
+            "attributes": [
+              "AccomPolicyId",
+              "CurrencyCode",
+              "EndDate",
+              "GeographyId",
+              "RoleId",
+              "SeasonEndDay",
+              "SeasonEndMonth",
+              "SeasonStartDay",
+              "SeasonStartMonth",
+              "StartDate",
+              "TypeOfRateCode",
+              "ZoneCode",
+              "GenderCode"
+            ]
+          },
+          {
+            "name": "AltKey_NoStart",
+            "attributes": [
+              "AccomPolicyId",
+              "CurrencyCode",
+              "EndDate",
+              "GeographyId",
+              "RoleId",
+              "SeasonEndDay",
+              "SeasonEndMonth",
+              "SeasonStartDay",
+              "SeasonStartMonth",
+              "TypeOfRateCode",
+              "ZoneCode",
+              "GenderCode"
+            ]
+          }
+        ],
+        "declared_validators": [
+          {
+            "tag": "UniqueKeyValidationBean",
+            "attrs": {
+              "Name": "AccomPolLineEO_Rule_0",
+              "ResId": "FND:::FND_CMN_REC_COMB_VALS_EXST",
+              "ResBundleId": "oracle.apps.fnd.applcore.messages.FndMessagesResourceBundle",
+              "KeyName": "AltKey"
+            },
+            "text": "MigrationFlag == true"
+          },
+          {
+            "tag": "UniqueKeyValidationBean",
+            "attrs": {
+              "Name": "PerDiemPolLineEO_Rule_1",
+              "ResId": "FND:::FND_CMN_RCRD_VAL",
+              "ResBundleId": "oracle.apps.fnd.applcore.messages.FndMessagesResourceBundle",
+              "KeyName": "AltKey_NoStart"
+            },
+            "text": "MigrationFlagType == true\n    \n    \n      \"Policy/TypeOfRateCode=\" + AccomPolicyId + \"/\" + TypeOfRateCode"
+          }
+        ],
+        "seed_routing": {
+          "ServiceName": "oracle.apps.financials.expenses.policy.shared.expenseAccomService.ExpenseAccomService",
+          "ObsoleteFlag": "N",
+          "MigrationModeFlag": "Y",
+          "XmlFileName": "EXM_ACCOM_POLICIES.xml",
+          "XmlNodePath": "/AccomVO/AccomVORow/AccomLine/AccomLineVORow"
+        },
+        "source_ids": [
+          "EO-AccomPolLine"
+        ],
+        "unresolved": [
+          "CSV-to-XML transformation and blank/null handling",
+          "MigratorHelper key-resolution and readXML semantics",
+          "Operation-specific field acceptance and resulting-state requiredness",
+          "Target-release/reference qualification"
+        ],
+        "seed_key_attributes": [
+          {
+            "XmlAttributeName": "CurrencyCode",
+            "AlternateKeyFlag": "Y",
+            "UpdateEnabledFlag": "N"
+          },
+          {
+            "XmlAttributeName": "EndDate",
+            "AlternateKeyFlag": "Y",
+            "UpdateEnabledFlag": "N"
+          },
+          {
+            "XmlAttributeName": "GeoLocName",
+            "AlternateKeyFlag": "Y",
+            "UpdateEnabledFlag": "N"
+          },
+          {
+            "XmlAttributeName": "FSMPolicyName",
+            "AlternateKeyFlag": "Y",
+            "UpdateEnabledFlag": "N"
+          },
+          {
+            "XmlAttributeName": "RoleName",
+            "AlternateKeyFlag": "Y",
+            "UpdateEnabledFlag": "N"
+          },
+          {
+            "XmlAttributeName": "SeasonEndDay",
+            "AlternateKeyFlag": "Y",
+            "UpdateEnabledFlag": "N"
+          },
+          {
+            "XmlAttributeName": "SeasonEndMonth",
+            "AlternateKeyFlag": "Y",
+            "UpdateEnabledFlag": "N"
+          },
+          {
+            "XmlAttributeName": "SeasonStartDay",
+            "AlternateKeyFlag": "Y",
+            "UpdateEnabledFlag": "N"
+          },
+          {
+            "XmlAttributeName": "SeasonStartMonth",
+            "AlternateKeyFlag": "Y",
+            "UpdateEnabledFlag": "N"
+          },
+          {
+            "XmlAttributeName": "StartDate",
+            "AlternateKeyFlag": "Y",
+            "UpdateEnabledFlag": "N"
+          },
+          {
+            "XmlAttributeName": "TypeOfRateCode",
+            "AlternateKeyFlag": "Y",
+            "UpdateEnabledFlag": "N"
+          },
+          {
+            "XmlAttributeName": "ZoneCode",
+            "AlternateKeyFlag": "Y",
+            "UpdateEnabledFlag": "N"
+          }
+        ]
+      }
+    }
+  }
+}

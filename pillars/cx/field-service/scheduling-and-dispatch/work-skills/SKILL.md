@@ -68,7 +68,10 @@ applicability:
     - "Current Oracle Fusion Cloud release"
 side_effects:
   - "Delegates default Task REST requests without fallback and performs explicit REST PUTs only after immutable preview and checksum-bound approval."
-required_privileges: []
+required_privileges:
+  - "Access to the target Oracle Field Service environment and required OAuth scope."
+  - "Permission to read Work Skill metadata for preflight and GET verification."
+  - "Permission to create or update Work Skill metadata for an explicitly approved REST PUT."
 ---
 
 # Work Skills Setup Task Guidance
@@ -192,3 +195,29 @@ Do not route CSV export work to `shared.setup-export.task-level-export` or CSV i
 Use the parent functional-area skill `cx.field-service.scheduling-and-dispatch`
 for scope decisions. Persist only redacted run evidence under
 `project/{project_id}`; never persist tokens, credentials, or customer payloads.
+
+## Runner service selection
+
+The task runner accepts `--service field-service`, which is also its default
+and only supported service. Task REST preflight, approved writes, and read-back
+use `fs_restBaseUrl` and `fs_scope`. The route metadata and runner result identify
+`service: field-service`; the runner does not perform BOSS catalog discovery.
+
+New-project prevalidation and Run Book binding are separate project workflow
+steps. This service option does not skip those gates or authorize setup writes.
+
+## Workbook Intake Service
+
+Workbook adapters use the local guarded XLSX primitive in
+`pillars/cx/field-service/scripts/guarded_xlsx.py` for bounded ZIP/XML parsing.
+Task-specific field mapping and business rules remain in this package.
+The reader performs no external calls and does not select an execution route
+or grant load approval.
+
+## Caller-Only Exact Preview
+
+Use `--mode preview --include-exact-preview` to return the full `exactPreview`
+for checksum-bound approval. Default caller output remains the implementation
+summary, and durable evidence remains redacted. The option is rejected in
+execute mode. Completed and no-change runs do not require a preview to report
+their terminal result. Keep captured exact output in private OS-temporary storage.

@@ -1,0 +1,207 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "AP_MANAGE_REPORTING_ENTITIES",
+      "task_name": "Manage Reporting Entities",
+      "start_node": "MRE.INPUT",
+      "nodes": [
+        {
+          "id": "MRE.INPUT",
+          "node_type": "step",
+          "sequence": 10,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "success": "MRE.DEP",
+            "failure": "MRE.ERROR"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Create or update Reporting Entities",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 34
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MRE.DEP",
+          "node_type": "step",
+          "sequence": 20,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "success": "MRE.LOOKUP",
+            "failure": "MRE.ERROR"
+          },
+          "prerequisites": [
+            "MRE.INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Create or update within the approved task scope",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 24
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MRE.LOOKUP",
+          "node_type": "step",
+          "sequence": 30,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "success": "MRE.DEFAULT",
+            "failure": "MRE.ERROR"
+          },
+          "prerequisites": [
+            "MRE.DEP"
+          ],
+          "on_failure": "stop",
+          "applies_when": "References require verification or a location context must be derived",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 25
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MRE.DEFAULT",
+          "node_type": "step",
+          "sequence": 40,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "success": "MRE.DESIGN",
+            "failure": "MRE.ERROR"
+          },
+          "prerequisites": [
+            "MRE.LOOKUP"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Apply only source-backed derivation or preserve existing values",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 17
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MRE.DESIGN",
+          "node_type": "step",
+          "sequence": 50,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "success": "MRE.GATE",
+            "failure": "MRE.ERROR"
+          },
+          "prerequisites": [
+            "MRE.DEFAULT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Before preview and before governed application validation",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 31
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MRE.GATE",
+          "node_type": "step",
+          "sequence": 60,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "success": "MRE.DONE",
+            "failure": "MRE.ERROR"
+          },
+          "prerequisites": [
+            "MRE.DESIGN"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Validation returns to active Run Book/Data Loader; no direct writes",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 26
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MRE.DONE",
+          "node_type": "terminal",
+          "sequence": 70,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "MRE.GATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Task-rule evaluation complete; return to workflow owner",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 27
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MRE.ERROR",
+          "node_type": "terminal",
+          "sequence": 80,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Any earlier rule fails",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 28
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

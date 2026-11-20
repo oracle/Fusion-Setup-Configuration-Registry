@@ -23,7 +23,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 68
+            "line": 92
           },
           "readiness": {
             "status": "ready",
@@ -49,7 +49,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 130
+            "line": 184
           },
           "readiness": {
             "status": "ready",
@@ -63,7 +63,7 @@
           "action_type": "validate_input",
           "execution_route": "local",
           "transitions": {
-            "valid": "SYS.RESOLVE_DEPENDENCIES",
+            "valid": "SYS.RESOLVE_DFF",
             "invalid": "SYS.HANDLE_INPUT"
           },
           "prerequisites": [
@@ -74,7 +74,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 69
+            "line": 93
           },
           "readiness": {
             "status": "ready",
@@ -96,7 +96,33 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 39
+            "line": 51
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "SYS.RESOLVE_DFF",
+          "node_type": "decision",
+          "sequence": 37,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "SYS.RESOLVE_DEPENDENCIES",
+            "missing_or_invalid_input": "SYS.HANDLE_INPUT",
+            "unverified": "SYS.HANDLE_LOOKUP"
+          },
+          "prerequisites": [
+            "SYS.COLLECT_CREATE_INPUTS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "System Controls absence is confirmed and local creation inputs are valid. Execute resolve_system_controls_dff_segments before structure dependency resolution, reference preview, or package preparation.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 185
           },
           "readiness": {
             "status": "ready",
@@ -114,14 +140,14 @@
             "blocked": "SYS.HANDLE_DEPENDENCY"
           },
           "prerequisites": [
-            "SYS.COLLECT_CREATE_INPUTS"
+            "SYS.RESOLVE_DFF"
           ],
           "on_failure": "stop",
           "applies_when": "Existing System Controls absence is confirmed and creation inputs are valid",
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 30
+            "line": 31
           },
           "readiness": {
             "status": "ready",
@@ -146,7 +172,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 131
+            "line": 186
           },
           "readiness": {
             "status": "ready",
@@ -171,7 +197,7 @@
           "source": {
             "file": "ora_defaulting_rules.md",
             "anchor": "task-nodes",
-            "line": 22
+            "line": 23
           },
           "readiness": {
             "status": "ready",
@@ -196,7 +222,7 @@
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 21
+            "line": 34
           },
           "readiness": {
             "status": "ready",
@@ -210,18 +236,18 @@
           "action_type": "execution_gate",
           "execution_route": "local",
           "transitions": {
-            "approved": "SYS.DONE_READY",
-            "blocked": "SYS.HANDLE_APPROVAL"
+            "ready": "SYS.VALIDATED",
+            "incomplete": "SYS.HANDLE_READINESS"
           },
           "prerequisites": [
             "SYS.ENFORCE_DESIGN"
           ],
           "on_failure": "stop",
-          "applies_when": "A reviewed package is proposed for import",
+          "applies_when": "Require applicable read-only task validation and immutable-artifact checks for the exact target and requested scope. Return ready without requiring upload approval or a submission receipt: core.data-loader obtains submission approval after task validation. This node does not submit, poll, or report acceptance. Missing, stale, or mismatched validation/artifact evidence returns incomplete.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 40
+            "line": 52
           },
           "readiness": {
             "status": "ready",
@@ -245,7 +271,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 41
+            "line": 53
           },
           "readiness": {
             "status": "ready",
@@ -269,7 +295,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 42
+            "line": 54
           },
           "readiness": {
             "status": "ready",
@@ -293,7 +319,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 43
+            "line": 55
           },
           "readiness": {
             "status": "ready",
@@ -317,7 +343,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 44
+            "line": 56
           },
           "readiness": {
             "status": "ready",
@@ -325,7 +351,7 @@
           }
         },
         {
-          "id": "SYS.HANDLE_APPROVAL",
+          "id": "SYS.HANDLE_READINESS",
           "node_type": "step",
           "sequence": 110,
           "action_type": "error_handler",
@@ -337,11 +363,11 @@
             "SYS.IMPORT_GATE"
           ],
           "on_failure": "stop",
-          "applies_when": "Import approval is missing",
+          "applies_when": "Required task validation or immutable-artifact evidence is missing, stale, or mismatched. Return the issue for correction; do not request submission approval, submit, or claim acceptance during task validation.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 45
+            "line": 57
           },
           "readiness": {
             "status": "ready",
@@ -349,7 +375,7 @@
           }
         },
         {
-          "id": "SYS.DONE_READY",
+          "id": "SYS.VALIDATED",
           "node_type": "terminal",
           "sequence": 120,
           "action_type": "terminal",
@@ -358,12 +384,12 @@
           "prerequisites": [
             "SYS.IMPORT_GATE"
           ],
-          "on_failure": "continue",
-          "applies_when": "Package is ready for approved import",
+          "on_failure": "stop",
+          "applies_when": "Return validated_for_import for the current validation scope; no upload approval, submission, acceptance, or Fusion completion is implied. The parent/Core workflow may report accepted only after its accepted-initiation response supplies a request ID correlated to the exact target and reviewed immutable archive/hash. Parent verification remains required.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 46
+            "line": 58
           },
           "readiness": {
             "status": "ready",
@@ -383,7 +409,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 47
+            "line": 59
           },
           "readiness": {
             "status": "ready",

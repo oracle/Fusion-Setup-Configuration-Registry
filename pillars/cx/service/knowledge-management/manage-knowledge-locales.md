@@ -34,12 +34,12 @@ source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 - `referenceKey`: Use TENANT as the locale-root reference key. Do not create a new locale root or substitute a different tenant reference key.
 - `recordId`: Use the locale identifier in language-and-territory form, such as en_US. Do not invent or reformat this value.
 - `defaultLocale`: Read and retain the current value from the completed export. For an approved change, validate the requested language-and-territory code against the static Available Knowledge Locales list in the task guidance, then match it to exactly one ORA_CSO_ACTIVE_LOCALE_OBJECT.recordId row. Write that row's exact export representation, such as en_US rather than a reformatted code; do not select a supported locale that is absent from the active-locale object.
-- `defaultPreferredLocale`: Read and retain the current value from the completed export. For an approved change, validate the requested language-and-territory code against the static Available Knowledge Locales list in the task guidance, then write the exact current-export representation for the selected supported locale. Do not infer a locale code from its display name. When the approved operation deactivates the current default preferred locale, use the export-defined value that resets this setting to none.
+- `defaultPreferredLocale`: Read and retain the current value from the completed export. Before a locale change, if this value is missing or blank, obtain customer approval to use the effective defaultLocale or another supported locale. Reuse an explicitly requested preferred value; stop if no value is approved. For a default-locale change, the effective defaultLocale is the proposed new default; otherwise it is the current default. Preserve populated preferences unless their change is requested. For an approved change, validate the requested language-and-territory code against the static Available Knowledge Locales list in the task guidance, then write the exact current-export representation for the selected supported locale. Do not infer a locale code from its display name. Locale deactivation is unsupported by this workflow; do not prepare that change.
 
 ### ORA_CSO_ACTIVE_LOCALE_OBJECT
 
 - `ORA_CSO_LOCALE_OBJECT.referenceKey`: Use TENANT as the active-locale row's parent linkage. Do not add an active-locale row without this matching parent relationship.
-- `recordId`: Validate the requested language-and-territory code against the static Available Knowledge Locales list in the task guidance and use its exact current-export representation as the locale-code value. Match it to an existing active-locale row for review, disable, or default-locale selection. For an approved enable, add the supported locale using the fresh export's row shape. Activity is represented by row presence in ORA_CSO_ACTIVE_LOCALE_OBJECT.csv, not by an Active column or the Get Locales REST response.
+- `recordId`: Validate the requested language-and-territory code against the static Available Knowledge Locales list in the task guidance and use its exact current-export representation as the locale-code value. Match it to an existing active-locale row for review or default-locale selection. For an approved enable, add the supported locale using the fresh export's row shape. Activity is represented by row presence in ORA_CSO_ACTIVE_LOCALE_OBJECT.csv, not by an Active column or the Get Locales REST response. Do not remove an active-locale row to deactivate it; FSM deactivation is unsupported.
 ## Guard Rails
 
 1. Require an authenticated Fusion user context before any Fusion operation; use `core.auth.fusion-oauth-authentication`.
@@ -89,44 +89,41 @@ View the default preferred Knowledge locale.
 Activate a Knowledge locale.
 
 1. Export locales with shared.setup-export.task-level-export.
-2. Set the selected supported locale to active.
-3. Validate the FSM package with shared.validation.setup-data-validator.
-4. Import the approved ZIP with core.data-loader.
-5. Verify the locale is active with a fresh export.
+2. If defaultPreferredLocale is missing or blank, obtain customer approval to use the effective defaultLocale or another supported locale. Reuse an explicitly requested preferred value. Explain the impact on users without their own preference; wait for approval and stop if declined. Preserve a populated preference unless its change is requested.
+3. Set the selected supported locale to active.
+4. Validate the FSM package with shared.validation.setup-data-validator.
+5. Import the approved ZIP with core.data-loader.
+6. Verify the locale is active with a fresh export.
 
 ### Deactivate Knowledge Locale
 
 Deactivate a Knowledge locale.
 
-1. Export locales with shared.setup-export.task-level-export.
-2. Show "The default locale cannot be deactivated." and stop if the selected locale is the default locale.
-3. Show "Warning! Deactivation of a locale will cause all objects including existing KB content in this locale to become inaccessible but they will not be deleted." and wait for confirmation.
-4. Set the selected locale to inactive.
-5. Validate the FSM package with shared.validation.setup-data-validator.
-6. Import the approved ZIP with core.data-loader.
-7. Verify the locale is inactive with a fresh export.
+Not supported. Locale deactivation is not supported.
 
 ### Change Default Locale
 
 Change the default API locale.
 
 1. Export locales with shared.setup-export.task-level-export.
-2. Show "Changing the default locale will impact the display language for knowledge objects that are not available in the requested language or locale and are therefore displayed in the default locale. Before a locale can be set to the new knowledge default locale, all knowledge objects must be translated into this locale." and wait for confirmation.
-3. Set an active locale as the default locale.
-4. Validate the FSM package with shared.validation.setup-data-validator.
-5. Import the approved ZIP with core.data-loader.
-6. Verify the default locale with a fresh export.
+2. If defaultPreferredLocale is missing or blank, obtain customer approval to use the effective defaultLocale or another supported locale. Reuse an explicitly requested preferred value. Explain the impact on users without their own preference; wait for approval and stop if declined. Preserve a populated preference unless its change is requested.
+3. Show "Changing the default locale will impact the display language for knowledge objects that are not available in the requested language or locale and are therefore displayed in the default locale. Before a locale can be set to the new knowledge default locale, all knowledge objects must be translated into this locale." and wait for confirmation.
+4. Set an active locale as the default locale.
+5. Validate the FSM package with shared.validation.setup-data-validator.
+6. Import the approved ZIP with core.data-loader.
+7. Verify the default locale with a fresh export.
 
 ### Change Default Preferred Knowledge Locale
 
 Change the default preferred Knowledge locale.
 
 1. Export locales with shared.setup-export.task-level-export.
-2. Set the selected locale as the default preferred Knowledge locale.
-3. Show "Changes to this setting will change the default locale in My Knowledge, the Knowledge Panel and Knowledge Authoring for users who have not set a preferred knowledge locale in their user preferences. Do you want to change the default preferred knowledge locale?" and wait for confirmation.
-4. Validate the FSM package with shared.validation.setup-data-validator.
-5. Import the approved ZIP with core.data-loader.
-6. Verify the default preferred locale with a fresh export.
+2. If defaultPreferredLocale is missing or blank, obtain customer approval to use the effective defaultLocale or another supported locale. Reuse an explicitly requested preferred value. Explain the impact on users without their own preference; wait for approval and stop if declined. Preserve a populated preference unless its change is requested.
+3. Set the selected locale as the default preferred Knowledge locale.
+4. Show "Changes to this setting will change the default locale in My Knowledge, the Knowledge Panel and Knowledge Authoring for users who have not set a preferred knowledge locale in their user preferences. Do you want to change the default preferred knowledge locale?" and wait for confirmation.
+5. Validate the FSM package with shared.validation.setup-data-validator.
+6. Import the approved ZIP with core.data-loader.
+7. Verify the default preferred locale with a fresh export.
 
 ### Create Knowledge Locale
 
@@ -214,3 +211,15 @@ Use Oracle's [List of Available Locales](https://docs.oracle.com/en/cloud/saas/f
 ## Usage
 
 Use this metadata file when planning, sequencing, exporting, importing, or validating setup data for `Manage Knowledge Locales` under `Knowledge Management`.
+
+
+## Locale Identifier Comparison
+
+For supported-locale checks only, compare language/territory codes without case
+sensitivity and treat a hyphen and underscore as equivalent separators. This
+comparison does not supply an FSM identifier. Resolve exactly one matching
+owner-task export row and retain its recordId/localeId byte for byte for package
+serialization and parent links. If normalized comparison matches multiple rows,
+stop rather than choose a spelling. If an enable operation has no active row,
+require approved same-task schema/validation evidence for the supplied new code;
+do not generate a code by replacing separators or deriving a display name.

@@ -44,6 +44,34 @@ class PreflightError(RuntimeError):
     """A safe, actionable read-only preflight failure."""
 
 
+def recovery_guidance(receipt: dict[str, object]) -> dict[str, object]:
+    """Classify a no-create response without inferring account absence."""
+    if receipt["valid"]:
+        return {
+            "outcome": "VALIDATED",
+            "nextAction": "RESUME_AP_PREPARATION",
+            "message": "Read-only account validation passed. Retain the receipt and resume AP preparation; do not create this combination again.",
+        }
+    if receipt["soapFault"] or not 200 <= receipt["httpStatus"] < 300:
+        return {
+            "outcome": "SERVICE_FAILURE",
+            "nextAction": "RESOLVE_SERVICE_FAILURE",
+            "message": "Account validation could not complete. Resolve the service or access failure and obtain a new read-only receipt; this is not evidence that the account is missing.",
+        }
+    if receipt["responseFields"].get("Status") == ["Invalid"]:
+        return {
+            "outcome": "INVALID_COMBINATION",
+            "nextAction": "REVIEW_ACCOUNT_RECOVERY",
+            "choices": ["CORRECT_OR_USE_EXISTING_ACCOUNT", "REVIEW_APPROVED_CREATION", "STOP"],
+            "message": "GL returned Invalid. This may mean a missing combination or another GL rule; absence and creation eligibility are unverified. Offer to correct or use an existing account, review separately approved creation, or stop. Honor any prohibition on GL creation. Never create automatically; after approved creation, verify with DynamicInsertion=No before resuming AP preparation.",
+        }
+    return {
+        "outcome": "INCONCLUSIVE_RESPONSE",
+        "nextAction": "RESOLVE_RESPONSE_FAILURE",
+        "message": "GL did not return an unambiguous validation result. Retain the receipt and resolve the response failure before continuing; do not infer a missing account or initiate creation.",
+    }
+
+
 def local_name(tag: str) -> str:
     return tag.rsplit("}", 1)[-1]
 
@@ -131,7 +159,7 @@ def response_summary(
             fields["CcId"] = combination_ids
     valid = (not fault_present and 200 <= http_status < 300
              and fields.get("Status") == ["Valid"])
-    return {
+    summary = {
         "httpStatus": http_status,
         "readOnly": read_only,
         "dynamicInsertion": dynamic_insertion,
@@ -139,6 +167,9 @@ def response_summary(
         "soapFault": SOAP_FAULT_MESSAGE if fault_present else None,
         "responseFields": fields,
     }
+    if read_only and dynamic_insertion == "No":
+        summary["recovery"] = recovery_guidance(summary)
+    return summary
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -173,7 +204,7 @@ def main(argv: list[str] | None = None) -> int:
     else:
         print(rendered, end="")
     if not receipt["valid"]:
-        raise PreflightError("GL did not return an unambiguous valid account combination; retain the receipt.")
+        raise PreflightError(receipt["recovery"]["message"])
     return 0
 
 

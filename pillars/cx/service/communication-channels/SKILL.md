@@ -26,7 +26,14 @@ depends_on:
   - "shared.implementation-planning.offering-task-map-builder"
   - "shared.implementation-planning.task-dependency-resolver"
   - "shared.setup-export.functional-area-export"
+  - "shared.setup-export.task-level-export"
+  - "shared.validation.setup-data-validator"
 uses_core:
+  - "core.fusion-api.apps-common"
+  - "core.fusion-api.apps-common.profile-options"
+  - "core.fusion-api.rest-api-client"
+  - "core.auth.fusion-oauth-authentication"
+  - "core.data-loader"
   - "core.project-mgmt.artifact-version-manager"
   - "core.project-mgmt.artifact-registry-manager"
   - "core.project-mgmt.project-state-manager"
@@ -82,9 +89,6 @@ required_setup_tasks:
   - "ORA_SVC_MANAGE_EMAIL_FILTERS"
   - "ORA_SVC_MANAGE_OMNI_CHANNEL_PROFILE_OPTS"
   - "ORA_MANAGE_MCA_PROFILE_OPTIONS"
-  - "ORA_SVC_MANAGE_SERVICE_REQUEST_ASSIGNMENT_OBJECTS"
-  - "ORA_SVC_MANAGE_SERVICE_ZONES"
-  - "ORA_SVC_MANAGE_SERVICE_REQUEST_ASSIGNMENT_RULES"
   - "ORA_SVC_INTERACTION_PROFILE_OPTIONS"
   - "ORA_MANAGE_EMAIL_PROFILE_OPTIONS"
 applicability:
@@ -122,11 +126,25 @@ Use this functional-area skill after Service scope is confirmed and the project 
 4. [Manage E-Mail Filters](manage-e-mail-filters.md) (`ORA_SVC_MANAGE_EMAIL_FILTERS`)
 5. [Manage Omnichannel Profile Options](manage-omnichannel-profile-options.md) (`ORA_SVC_MANAGE_OMNI_CHANNEL_PROFILE_OPTS`)
 6. [Manage MCA Profile Options](manage-mca-profile-options.md) (`ORA_MANAGE_MCA_PROFILE_OPTIONS`)
-7. [Manage Service Assignment Objects](manage-service-assignment-objects.md) (`ORA_SVC_MANAGE_SERVICE_REQUEST_ASSIGNMENT_OBJECTS`)
-8. [Manage Service Regions](manage-service-regions.md) (`ORA_SVC_MANAGE_SERVICE_ZONES`)
-9. [Manage Service Assignment Rules](manage-service-assignment-rules.md) (`ORA_SVC_MANAGE_SERVICE_REQUEST_ASSIGNMENT_RULES`)
-10. [Manage Interaction Profile Options](manage-interaction-profile-options.md) (`ORA_SVC_INTERACTION_PROFILE_OPTIONS`)
-11. [Manage Email Profile Options](manage-email-profile-options.md) (`ORA_MANAGE_EMAIL_PROFILE_OPTIONS`)
+7. [Manage Interaction Profile Options](manage-interaction-profile-options.md) (`ORA_SVC_INTERACTION_PROFILE_OPTIONS`)
+8. [Manage Email Profile Options](manage-email-profile-options.md) (`ORA_MANAGE_EMAIL_PROFILE_OPTIONS`)
+
+### Advisory-Only Catalog Entries
+
+The following entries are excluded from `required_setup_tasks` and executable
+implementation scope. They identify catalog tasks and missing source contracts
+only; their catalog Y flags do not enable execution.
+
+- [Manage Service Assignment Objects](manage-service-assignment-objects.md) (`ORA_SVC_MANAGE_SERVICE_REQUEST_ASSIGNMENT_OBJECTS`) — advisory only; execution unsupported.
+- [Manage Service Regions](manage-service-regions.md) (`ORA_SVC_MANAGE_SERVICE_ZONES`) — advisory only; execution unsupported.
+- [Manage Service Assignment Rules](manage-service-assignment-rules.md) (`ORA_SVC_MANAGE_SERVICE_REQUEST_ASSIGNMENT_RULES`) — advisory only; execution unsupported.
+
+These three tasks must stop before validation execution, export, package
+preparation, preview, import or mutation. Preserve the incomplete registry and
+canonical resolver refusal; do not waive readiness or substitute another route.
+Use their advisory workflow to record the gap and request source-backed task
+contracts. Only after resource authoring, recompilation and readiness/audit review
+may they be proposed as executable implementation tasks.
 
 ## Inputs
 
@@ -146,3 +164,34 @@ Use this functional-area skill after Service scope is confirmed and the project 
 ## Implementation Notes
 
 Use the generated setup-task metadata files for task-level planning and sequencing. Track token usage for any generated project artifact or skill-run record using the manifest policy.
+
+## Profile Task Handoff
+
+Before profile reads or FSM preparation, load the exact selected task and its
+matching validation, lookup, dependency, default, design and error rules from
+`ora-resource/`. Use `core.fusion-api.apps-common.profile-options` for technical
+reads only after the active workflow selects them and checks identity, access
+and scope. Preserve the original task code, sequence, environment, project and
+Run Book binding throughout.
+
+Inbound and Outbound E-Mail Profile Options use Manage Email Profile Options
+(`ORA_MANAGE_EMAIL_PROFILE_OPTIONS`) as an assisted guidance handoff. Load that
+exact task and its matching resources in addition to the original task's rules.
+This is not an automatic core task redirect: do not rewrite the original task
+identity or reuse an approval for another task. Missing or ambiguous guidance
+blocks the handoff.
+
+Distinguish current-session effective values from configured-level values.
+`profileValues` may answer an explicitly effective-value question, but cannot
+prove the configured value for a requested Site or User target. Resolve the
+profile definition and the exact configured child/key through the selected core
+profile-options workflow and task lookup rules. Do not enable a level or infer
+scope from an effective value; reject unsupported or unresolved targets.
+
+FSM changes require same-task export/XML, task-owned profile identity, verified
+enabled/updateable level, retained keys, explicit approved replacement, package
+validation and the owning `core.data-loader` preview, approval, execution and
+verification gates. Verify the exact configured target using a fresh scoped
+read or same-task export; effective-value reads are supplementary only. A ready
+rule plan or lookup result never grants write permission. No direct REST write
+or substitute execution route is enabled by this handoff.

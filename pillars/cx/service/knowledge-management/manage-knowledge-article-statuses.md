@@ -47,7 +47,7 @@ source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 ### ORA_KNOWLEDGE_ARTICLE_STATUS_LOCALIZED_ATTRIBUTE_OBJECT
 
 - `ORA_CSO_KNOWLEDGE_ARTICLE_STATUS.referenceKey`: Link every localized-attribute row to its Knowledge Article Status parent with that status's exact exported or approved reference key. Do not add an orphan localized row.
-- `localeId`: Fetch active Knowledge locales through the Manage Knowledge Locales task and use the selected active locale's exact locale ID, such as en_Us. Do not infer a locale ID from a display name.
+- `localeId`: Fetch active Knowledge locales through the Manage Knowledge Locales task and use the selected active locale's exact locale ID, such as en_US only when that is the exact returned export value. Do not infer a locale ID from a display name.
 - `name`: Retain the exported localized status text unless it is an approved localized-text change. For an approved new or changed localized row, use the customer-provided localized text.
 ## Guard Rails
 

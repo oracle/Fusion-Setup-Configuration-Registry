@@ -1,6 +1,7 @@
 # Customers Reference Lookups
 
 
+
 ## Local Lookups
 
 | Resolver | Runs When | Source Values | Match Rule | Values to Fill | If No Match or Many Matches |
@@ -41,6 +42,12 @@ The scoped Customer Account Sites LOV GET in `references/rest-reconciliation.md`
 The same reference documents the separately qualified `hubSourceSystemReferences` GET and offline reference classifier. It can corroborate seven entity IDs using the full source-code, owner-entity and reference tuple. Keep missing/duplicate matches and date-only precision visible; it does not complete ownership, values, source-name resolution or existing-target authorization. Developer SQL remains test-only and is not a fallback functional route.
 
 ## Task Nodes
+
+At the reached ARCU.EXECUTION_GATE, follow the declared read-only loader
+capability and targeted registration checks in
+[registration evidence](../references/registration-evidence.md), through the
+existing core REST client. They do not replace shared environment prevalidation
+or authorize an import.
 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|

@@ -1,0 +1,228 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "AP_MANAGE_DISTRIBUTION_SETS",
+      "task_name": "Manage Distribution Sets",
+      "start_node": "DS.INPUT",
+      "nodes": [
+        {
+          "id": "DS.INPUT",
+          "node_type": "step",
+          "sequence": 10,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "DS.DEFAULT",
+            "invalid": "DS.ISSUES"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Create or update request",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 100
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "DS.DEFAULT",
+          "node_type": "step",
+          "sequence": 20,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "complete": "DS.LOOKUPS",
+            "invalid": "DS.ISSUES"
+          },
+          "prerequisites": [
+            "DS.INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "After input validation",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 18
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "DS.LOOKUPS",
+          "node_type": "step",
+          "sequence": 30,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "DS.DEPENDENCIES",
+            "not_requested": "DS.DEPENDENCIES",
+            "invalid": "DS.ISSUES"
+          },
+          "prerequisites": [
+            "DS.DEFAULT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Automatically check new-line and changed account or ledger references; resolve new or changed nonblank income tax input repository-first; only additional optional preflight requires a request; disclosed unverified explicit tax codes may resolve with warnings",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 29
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "DS.DEPENDENCIES",
+          "node_type": "decision",
+          "sequence": 40,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "satisfied": "DS.DESIGN",
+            "blocked": "DS.ISSUES"
+          },
+          "prerequisites": [
+            "DS.LOOKUPS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Before candidate readiness",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 35
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "DS.DESIGN",
+          "node_type": "decision",
+          "sequence": 50,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "passed": "DS.GATE",
+            "blocked": "DS.ISSUES"
+          },
+          "prerequisites": [
+            "DS.DEPENDENCIES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "After required dependency validation",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 29
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "DS.GATE",
+          "node_type": "decision",
+          "sequence": 60,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "validated": "DS.READY",
+            "blocked": "DS.ISSUES"
+          },
+          "prerequisites": [
+            "DS.DESIGN"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Validation completion only; separate live preview/approval remains mandatory",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 35
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "DS.ISSUES",
+          "node_type": "terminal",
+          "sequence": 70,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Return exact missing or invalid facts; no write",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 36
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "DS.ERROR",
+          "node_type": "terminal",
+          "sequence": 80,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Return sanitized runtime failure; no retry",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 37
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "DS.READY",
+          "node_type": "terminal",
+          "sequence": 90,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "DS.GATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return validation results to Run Book; never grant mutation authority",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 38
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

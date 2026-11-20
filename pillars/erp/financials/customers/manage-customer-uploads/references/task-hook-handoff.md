@@ -1,6 +1,7 @@
 # Customers FBDI phase contract
 
 
+
 The central Task Hook plans non-write, nonterminal registry nodes before the
 candidate preview. It does not schedule a task-owned post-import phase. Keep
 these responsibilities distinct:
@@ -13,11 +14,11 @@ these responsibilities distinct:
 | Business reconciliation | Declared read-only route: persisted identities, ownership, requested values, defaults and intended update/reuse effects compared with reviewed expectations | Verified, mismatched or incomplete business outcome |
 | Journey completion or recovery | Run Book: separate synchronization evidence and normal human completion/retry decision | Recorded completion, or a new corrected candidate and approval |
 
-Use `core/data-loader/task-hook/scripts/task_hook.py` with the actual selected
-Run Book task context. Its `data-load` command resolves the plan;
-`build-data-load-preview` consumes ordered evaluated rule results and
-`finalData.archiveSha256`. After explicit approval, the central approval and
-archive-verification commands produce the Data Loader validation envelope.
+Use the selected `core/data-loader/SKILL.md` with the actual selected Run Book
+task context and business object `customers`. Core resolves the plan, captures
+the source, accepts ordered evaluated rules, presents its preview and enforces
+its current approval and source-integrity protocol. Retain the public evidence
+that this core produces; the task does not require an exported execution plan.
 The task skill must not manufacture passed rule results, a run ID, an approval
 or a verification envelope. A synthetic integration test is not run evidence.
 

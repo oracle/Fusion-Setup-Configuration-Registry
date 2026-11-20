@@ -13,6 +13,7 @@
 
 | Applies When | Severity | Required Lookup | Blocking Condition | Recommendation | Fix Allowed? |
 |---|---|---|---|---|---|
+| Convention Info integrity | Error | resolve_prorate_dff_segments | Required values are blank; supplied/preserved values, context, or mappings are invalid/unverified; or actual parent rows differ from reviewed values | Return package_gap and stop approval. Do not repair a supplied immutable ZIP. | No automatic repair |
 | Fiscal-year setup preservation | Error | | Preparation creates or changes fiscal-year setup instead of consuming the resolved intervals. | Return generation_failed. | No automatic repair |
 | Fiscal-year sequence | Error | resolve_prorate_fiscal_year_range | The normalized intervals do not form one continuous non-overlapping sequence: each start must be no later than its end, and each next start exactly one day after the preceding end. Never invent absent years or trim boundaries. | Return generation_failed. | No automatic repair |
 | Requested-scope coverage | Error | resolve_prorate_fiscal_year_range | Dates differ from supplied starting dates or requested row count, have gaps, overlaps or duplicate ranges, or exceed verified fiscal-year coverage. With no supplied scope, use the documented full-coverage defaults. | Report conflicts without changing supplied values. If verified coverage remains after the requested schedule, show the remaining months and ask whether to retain or extend it; never extend automatically. | No automatic repair |
@@ -27,6 +28,7 @@
 
 | Resolver | When Required | Values Needed | Source File |
 |---|---|---|---|
+| resolve_prorate_dff_segments | Create/update and existing-ZIP parent validation | Batch-current definition, context, required-field map, validated values, and preservation evidence | ora_reference_lookups.md |
 | resolve_prorate_fiscal_year_range | Date integrity | Complete normalized exact-name fiscal-year intervals | ora_reference_lookups.md |
 | resolve_prorate_export_metadata | Audit and package fidelity | Fresh export contract | ora_reference_lookups.md |
 | resolve_existing_prorate_parent | Explicit-update audit integrity | Exact same-parent/detail evidence | ora_reference_lookups.md |

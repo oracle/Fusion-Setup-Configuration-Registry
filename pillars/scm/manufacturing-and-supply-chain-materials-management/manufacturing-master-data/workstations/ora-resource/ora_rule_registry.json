@@ -23,7 +23,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 42
+            "line": 37
           },
           "readiness": {
             "status": "ready",
@@ -174,7 +174,7 @@
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 57
+            "line": 48
           },
           "readiness": {
             "status": "ready",

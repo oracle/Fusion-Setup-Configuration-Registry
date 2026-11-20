@@ -295,16 +295,16 @@ class ResourceTypesAdapter:
             raise WorkflowBlocked("Resource Types collection endpoint returned HTTP 404.")
         baselines: dict[str, dict[str, Any]] = {}
         if self.test_payload_file:
-            for request in payload["requests"]:
+            for sequence, request in enumerate(payload["requests"], 1):
                 label = request["identity"]
-                current = get(request["path"], temp / f"{label}.json")
+                current = get(request["path"], temp / f"baseline-{sequence}.json")
                 baselines[label] = current or {"label": label, "state": "not_found"}
         else:
             details = self._details_by_label(workbook)
-            for record in WORKBOOK._resource_types_rows(workbook):
+            for sequence, record in enumerate(WORKBOOK._resource_types_rows(workbook), 1):
                 label = str(record["label"])
                 path = f"{RESOURCE_TYPES_PATH}/{quote(label, safe='')}"
-                current = get(path, temp / f"{label}.json")
+                current = get(path, temp / f"baseline-{sequence}.json")
                 if current is None:
                     values = record["values"]
                     assert isinstance(values, dict)

@@ -26,6 +26,33 @@ structure in a selected KFF, not for inventing its segment design.
 
 ## Field Validation
 
+### Flag Value Normalization
+
+Accept affirmative user input (Yes or Y) and negative user input (No or N)
+case-insensitively. Before field validation, storage, or serialization,
+translate that input to the exact uppercase affirmative or negative value
+listed for its database column below. Never choose a representation at runtime
+or serialize user-facing wording directly. Reject unrecognized input.
+
+The table specifies populated boolean values only. It does not add defaults,
+make optional fields mandatory, authorize changes to read-only or system-managed
+fields, or change existing blank and update-preservation rules. Retain returned
+target values as evidence; do not normalize them to conceal a target mismatch.
+
+| Database table | Database column | Affirmative stored value | Negative stored value |
+|---|---|---|---|
+| FND_KF_STRUCTURES_B | ENABLED_FLAG | `Y` | `N` |
+| FND_KF_SEGMENTS_B | ENABLED_FLAG | `Y` | `N` |
+| FND_KF_STR_INSTANCES_B | ENABLED_FLAG | `Y` | `N` |
+| FND_KF_STR_INSTANCES_B | DYNAMIC_COMBO_CREATION_FLAG | `Y` | `N` |
+| FND_KF_STR_INSTANCES_B | SHA_ENABLED_FLAG | `Y` | `N` |
+| FND_KF_SEGMENT_INSTANCES | REQUIRED_FLAG | `Y` | `N` |
+| FND_KF_SEGMENT_INSTANCES | DISPLAY_FLAG | `Y` | `N` |
+| FND_KF_SEGMENT_INSTANCES | BI_ENABLED_FLAG | `Y` | `N` |
+| FND_KF_SEGMENT_LABELS_B | GLOBAL_FLAG | `Y` | `N` |
+| FND_KF_SEGMENT_LABELS_B | REQUIRED_FLAG | `Y` | `N` |
+| FND_KF_SEGMENT_LABELS_B | UNIQUE_FLAG | `Y` | `N` |
+
 | Check | What Happens | Applies When | Resolver |
 |---|---|---|---|
 | KFF code and application | Accept only CAT#/140, KEY#/140, or LOC#/140. | Field is in the requested scope | |

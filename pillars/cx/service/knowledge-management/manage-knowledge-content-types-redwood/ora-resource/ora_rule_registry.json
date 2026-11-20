@@ -5,21 +5,299 @@
     {
       "task_code": "ORA_CSO_CONTENT_TYPES_INDEXING_MGMT_REDWOOD",
       "task_name": "Manage Knowledge Content Types Redwood",
-      "start_node": "CONTENT_TYPES_REDWOOD.BASELINE_CONTRACT",
+      "start_node": "CONTENT_TYPES_REDWOOD.VALIDATE",
       "nodes": [
+        {
+          "id": "CONTENT_TYPES_REDWOOD.VALIDATE",
+          "node_type": "decision",
+          "sequence": 1,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "review": "CONTENT_TYPES_REDWOOD.REVIEW_EXPORT",
+            "change": "CONTENT_TYPES_REDWOOD.VALIDATE_CHANGE",
+            "invalid": "CONTENT_TYPES_REDWOOD.BLOCKED"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Classify an export-based review or an FSM create/update for this exact task; reject unsupported deletion or direct mutation. Review requires a current same-task export reference; change requires approved operation and source references.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 25
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CONTENT_TYPES_REDWOOD.REVIEW_EXPORT",
+          "node_type": "step",
+          "sequence": 2,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "found": "CONTENT_TYPES_REDWOOD.REVIEW_COMPLETE",
+            "failure": "CONTENT_TYPES_REDWOOD.BLOCKED"
+          },
+          "prerequisites": [
+            "CONTENT_TYPES_REDWOOD.VALIDATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Run local resolve_content_types_fsm_export for review and return exported setup data only; no mutation validation or title/default requirement is applied to a read.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 30
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CONTENT_TYPES_REDWOOD.VALIDATE_CHANGE",
+          "node_type": "step",
+          "sequence": 4,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "CONTENT_TYPES_REDWOOD.BASELINE_LOOKUP",
+            "invalid": "CONTENT_TYPES_REDWOOD.BLOCKED"
+          },
+          "prerequisites": [
+            "CONTENT_TYPES_REDWOOD.VALIDATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Validate Required Groups and Field Validation: preserve approved root keys, require supplied department mapping/counter prefix and a present required title, validate allowed attribute types and parent links. A false required title rejects; never repair it by a default. Resolve cross-record locale/visibility evidence through subsequent nodes.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 26
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CONTENT_TYPES_REDWOOD.BASELINE_LOOKUP",
+          "node_type": "step",
+          "sequence": 5,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "found": "CONTENT_TYPES_REDWOOD.LOCALES_LOOKUP",
+            "failure": "CONTENT_TYPES_REDWOOD.BLOCKED"
+          },
+          "prerequisites": [
+            "CONTENT_TYPES_REDWOOD.VALIDATE_CHANGE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Run local resolve_content_types_fsm_export; require the current exact task baseline, actual schema/member contract and one exported target for update, or an approved unique new identity for create.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 31
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CONTENT_TYPES_REDWOOD.LOCALES_LOOKUP",
+          "node_type": "step",
+          "sequence": 6,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "found": "CONTENT_TYPES_REDWOOD.DEFAULT_LOCALE_LOOKUP",
+            "failure": "CONTENT_TYPES_REDWOOD.BLOCKED"
+          },
+          "prerequisites": [
+            "CONTENT_TYPES_REDWOOD.BASELINE_LOOKUP"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Run local resolve_active_knowledge_locales through completed owner-task export evidence; retain exact locale identifiers for required localization.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 32
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CONTENT_TYPES_REDWOOD.DEFAULT_LOCALE_LOOKUP",
+          "node_type": "step",
+          "sequence": 7,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "found": "CONTENT_TYPES_REDWOOD.DEPENDENCIES",
+            "failure": "CONTENT_TYPES_REDWOOD.BLOCKED"
+          },
+          "prerequisites": [
+            "CONTENT_TYPES_REDWOOD.LOCALES_LOOKUP"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Run local resolve_default_knowledge_locale for the source-defined localized-row ordering; keep every locale row and value unchanged except approved edits.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 33
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CONTENT_TYPES_REDWOOD.DEPENDENCIES",
+          "node_type": "step",
+          "sequence": 8,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "satisfied": "CONTENT_TYPES_REDWOOD.VISIBILITY_REQUIRED",
+            "blocked": "CONTENT_TYPES_REDWOOD.BLOCKED"
+          },
+          "prerequisites": [
+            "CONTENT_TYPES_REDWOOD.DEFAULT_LOCALE_LOOKUP"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Check Dependency Rules using the supplied department and resolved locale evidence. Do not infer a department-to-stripe mapping or create a missing reference object.",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 28
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CONTENT_TYPES_REDWOOD.VISIBILITY_REQUIRED",
+          "node_type": "decision",
+          "sequence": 9,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "required": "CONTENT_TYPES_REDWOOD.VISIBILITY_LOOKUP",
+            "not_required": "CONTENT_TYPES_REDWOOD.DEFAULTS",
+            "blocked": "CONTENT_TYPES_REDWOOD.BLOCKED"
+          },
+          "prerequisites": [
+            "CONTENT_TYPES_REDWOOD.DEPENDENCIES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Restricted attribute visibility requires the declared department user-group lookup. Unrestricted visibility needs no group GET; record the dependency not applicable and use the separate not_required transition.",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 29
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CONTENT_TYPES_REDWOOD.VISIBILITY_LOOKUP",
+          "node_type": "step",
+          "sequence": 10,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "found": "CONTENT_TYPES_REDWOOD.DEFAULTS",
+            "not_found": "CONTENT_TYPES_REDWOOD.BLOCKED",
+            "failure": "CONTENT_TYPES_REDWOOD.BLOCKED"
+          },
+          "prerequisites": [
+            "CONTENT_TYPES_REDWOOD.VISIBILITY_REQUIRED"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Run resolve_department_user_groups only for requested restricted visibility; use the caller-supplied department stripe code, finish paging and resolve each selected group exactly once.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 34
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CONTENT_TYPES_REDWOOD.DEFAULTS",
+          "node_type": "step",
+          "sequence": 11,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "applied": "CONTENT_TYPES_REDWOOD.DESIGN",
+            "invalid": "CONTENT_TYPES_REDWOOD.BLOCKED"
+          },
+          "prerequisites": [
+            "CONTENT_TYPES_REDWOOD.DEPENDENCIES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Apply Standard Defaults and Value Precedence only to omitted values in their create/attribute scope after checking source evidence. Preserve explicit values and all unchanged exported update values; never derive a replacement root key or override mandatory title validation.",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 38
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CONTENT_TYPES_REDWOOD.DESIGN",
+          "node_type": "step",
+          "sequence": 12,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "passed": "CONTENT_TYPES_REDWOOD.BASELINE_CONTRACT",
+            "blocked": "CONTENT_TYPES_REDWOOD.BLOCKED"
+          },
+          "prerequisites": [
+            "CONTENT_TYPES_REDWOOD.DEFAULTS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Evaluate every applicable Design Rule with prior evidence: required title, supplied stripe mapping/counter prefix, exact active-locale coverage, parent/xpath linkage and resolved restricted-visibility groups. Require business acceptance before allowing unsafe HTML/JavaScript; unresolved or conflicting evidence blocks.",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 34
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
         {
           "id": "CONTENT_TYPES_REDWOOD.BASELINE_CONTRACT",
           "node_type": "decision",
-          "sequence": 1,
+          "sequence": 13,
           "action_type": "execution_gate",
           "execution_route": "local",
           "transitions": {
             "ready": "CONTENT_TYPES_REDWOOD.COMPLETE",
             "unavailable_or_unclear": "CONTENT_TYPES_REDWOOD.BLOCKED"
           },
-          "prerequisites": [],
+          "prerequisites": [
+            "CONTENT_TYPES_REDWOOD.DESIGN"
+          ],
           "on_failure": "stop",
-          "applies_when": "A content type create or update is requested",
+          "applies_when": "Require evidence for all reached validation, source, locale, dependency, default and design nodes plus the matching active Run Book/core.data-loader FSM preflight and immutable source. Return intent only; core owns exact-artifact preview, approval, import and verification.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
@@ -33,7 +311,7 @@
         {
           "id": "CONTENT_TYPES_REDWOOD.COMPLETE",
           "node_type": "terminal",
-          "sequence": 2,
+          "sequence": 14,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
@@ -41,7 +319,7 @@
             "CONTENT_TYPES_REDWOOD.BASELINE_CONTRACT"
           ],
           "on_failure": "stop",
-          "applies_when": "The baseline package structure and required relationships are clear and all required validation passes",
+          "applies_when": "Return the validated intent and accumulated node evidence to the owning Run Book/core.data-loader FSM workflow; no direct import, POST, PATCH, retry or duplicate approval is authorized.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
@@ -53,21 +331,41 @@
           }
         },
         {
-          "id": "CONTENT_TYPES_REDWOOD.BLOCKED",
+          "id": "CONTENT_TYPES_REDWOOD.REVIEW_COMPLETE",
           "node_type": "terminal",
-          "sequence": 3,
+          "sequence": 90,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
           "prerequisites": [
-            "CONTENT_TYPES_REDWOOD.BASELINE_CONTRACT"
+            "CONTENT_TYPES_REDWOOD.REVIEW_EXPORT"
           ],
           "on_failure": "stop",
-          "applies_when": "The baseline is unavailable or a required package relationship remains unclear",
+          "applies_when": "Return the requested task-export review result without mutation handoff.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
             "line": 22
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CONTENT_TYPES_REDWOOD.BLOCKED",
+          "node_type": "terminal",
+          "sequence": 99,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Stop on any missing/ambiguous source, invalid input, lookup failure, unresolved reference, declined policy acceptance or unavailable owner binding; persist sanitized diagnostics and the missing prerequisite.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 23
           },
           "readiness": {
             "status": "ready",

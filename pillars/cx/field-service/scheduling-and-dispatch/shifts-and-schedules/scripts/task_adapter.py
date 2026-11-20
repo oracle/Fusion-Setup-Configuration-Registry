@@ -14,10 +14,11 @@ import sys
 
 TASK_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(TASK_ROOT.parents[1] / "scripts"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
+from guarded_xlsx import GuardedWorkbook, column_index, shared_string
 from task_orchestration import WorkflowBlocked, resolve_execution_route
 
 NS = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
-COLUMN = re.compile(r"([A-Z]+)")
 REQUIRED = {"work_schedule_label", "itemId", "type", "startDate"}
 WORK_SCHEDULES_PATH = "/api/field-service/configuration/v1/workSchedules"
 SHIFTS_PATH = "/api/field-service/configuration/v1/shifts"
@@ -25,23 +26,20 @@ ON_CALL_DECORATIONS = {"yellow", "orange", "red", "blue", "green", "purple"}
 
 
 def _column_index(reference: str) -> int:
-    result = 0
-    for char in COLUMN.match(reference).group(1):
-        result = result * 26 + ord(char) - 64
-    return result - 1
+    return column_index(reference) - 1
 
 
 def _workbook_rows(workbook: Path) -> list[dict[str, Any]]:
-    """Read the named payload table without an optional Python spreadsheet dependency."""
+    """Read payload rows through bounded, DTD-rejecting OOXML parsing (F5)."""
     try:
-        with zipfile.ZipFile(workbook) as archive:
+        with GuardedWorkbook(workbook) as archive:
             shared: list[str] = []
             if "xl/sharedStrings.xml" in archive.namelist():
-                root = ET.fromstring(archive.read("xl/sharedStrings.xml"))
+                root = archive.xml("xl/sharedStrings.xml")
                 shared = ["".join(node.itertext()) for node in root.findall(f"{NS}si")]
-            rels = ET.fromstring(archive.read("xl/_rels/workbook.xml.rels"))
+            rels = archive.xml("xl/_rels/workbook.xml.rels")
             paths = {rel.attrib["Id"]: rel.attrib["Target"].lstrip("/") for rel in rels}
-            book = ET.fromstring(archive.read("xl/workbook.xml"))
+            book = archive.xml("xl/workbook.xml")
             sheet = next((s for s in book.findall(f".//{NS}sheet") if s.attrib.get("name") == "Shift Items REST Payload"), None)
             if sheet is None:
                 raise WorkflowBlocked("Workbook has no 'Shift Items REST Payload' worksheet.")
@@ -50,67 +48,71 @@ def _workbook_rows(workbook: Path) -> list[dict[str, Any]]:
                 raise WorkflowBlocked("Shift Items REST Payload worksheet relationship is unreadable.")
             if not target.startswith("xl/"):
                 target = "xl/" + target
-            root = ET.fromstring(archive.read(target))
-    except (OSError, zipfile.BadZipFile, KeyError, ET.ParseError) as error:
+            root = archive.xml(target)
+        rows: list[list[Any]] = []
+        for row in root.findall(f".//{NS}sheetData/{NS}row"):
+            archive.check_time()
+            values: list[Any] = []
+            for cell in row.findall(f"{NS}c"):
+                index = _column_index(cell.attrib["r"])
+                values.extend([None] * (index + 1 - len(values)))
+                raw = cell.findtext(f"{NS}v")
+                if cell.attrib.get("t") == "s" and raw is not None:
+                    value: Any = shared_string(shared, raw)
+                elif cell.attrib.get("t") == "inlineStr":
+                    value = "".join(cell.itertext())
+                else:
+                    value = raw
+                values[index] = value
+            rows.append(values)
+        header_at = next((i for i, row in enumerate(rows) if row and str(row[0]).strip().casefold() == "operation"), None)
+        if header_at is None:
+            raise WorkflowBlocked("Shift Items REST Payload table has no operation header.")
+        headers = [str(x).strip() if x is not None else "" for x in rows[header_at]]
+        return [{headers[i]: row[i] if i < len(row) else None for i in range(len(headers))}
+                for row in rows[header_at + 1:] if any(value not in (None, "") for value in row)]
+
+    except (OSError, zipfile.BadZipFile, KeyError, ET.ParseError, ValueError) as error:
         raise WorkflowBlocked(f"Filled workbook cannot be read: {error}") from error
-    rows: list[list[Any]] = []
-    for row in root.findall(f".//{NS}sheetData/{NS}row"):
-        values: list[Any] = []
-        for cell in row.findall(f"{NS}c"):
-            index = _column_index(cell.attrib["r"])
-            values.extend([None] * (index + 1 - len(values)))
-            raw = cell.findtext(f"{NS}v")
-            if cell.attrib.get("t") == "s" and raw is not None:
-                value: Any = shared[int(raw)]
-            elif cell.attrib.get("t") == "inlineStr":
-                value = "".join(cell.itertext())
-            else:
-                value = raw
-            values[index] = value
-        rows.append(values)
-    header_at = next((i for i, row in enumerate(rows) if row and str(row[0]).strip().casefold() == "operation"), None)
-    if header_at is None:
-        raise WorkflowBlocked("Shift Items REST Payload table has no operation header.")
-    headers = [str(x).strip() if x is not None else "" for x in rows[header_at]]
-    return [{headers[i]: row[i] if i < len(row) else None for i in range(len(headers))}
-            for row in rows[header_at + 1:] if any(value not in (None, "") for value in row)]
 
 
 def _named_rows(workbook: Path, sheet_name: str, first_header: str) -> list[dict[str, Any]]:
-    """Read a customer-input sheet, accepting a visual required-field asterisk."""
+    """Read parent rows through the same guarded XML path as payload rows (F5)."""
     try:
-        with zipfile.ZipFile(workbook) as archive:
+        with GuardedWorkbook(workbook) as archive:
             shared: list[str] = []
             if "xl/sharedStrings.xml" in archive.namelist():
-                root = ET.fromstring(archive.read("xl/sharedStrings.xml"))
+                root = archive.xml("xl/sharedStrings.xml")
                 shared = ["".join(node.itertext()) for node in root.findall(f"{NS}si")]
-            rels = ET.fromstring(archive.read("xl/_rels/workbook.xml.rels"))
+            rels = archive.xml("xl/_rels/workbook.xml.rels")
             paths = {rel.attrib["Id"]: rel.attrib["Target"].lstrip("/") for rel in rels}
-            book = ET.fromstring(archive.read("xl/workbook.xml"))
+            book = archive.xml("xl/workbook.xml")
             sheet = next((s for s in book.findall(f".//{NS}sheet") if s.attrib.get("name") == sheet_name), None)
             if sheet is None:
                 raise WorkflowBlocked(f"Workbook has no '{sheet_name}' worksheet.")
             target = paths.get(sheet.attrib.get("{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id", ""))
             if not target:
                 raise WorkflowBlocked(f"{sheet_name} worksheet relationship is unreadable.")
-            root = ET.fromstring(archive.read(target if target.startswith("xl/") else "xl/" + target))
-    except (OSError, zipfile.BadZipFile, KeyError, ET.ParseError) as error:
+            root = archive.xml(target if target.startswith("xl/") else "xl/" + target)
+        rows: list[list[Any]] = []
+        for row in root.findall(f".//{NS}sheetData/{NS}row"):
+            archive.check_time()
+            values: list[Any] = []
+            for cell in row.findall(f"{NS}c"):
+                index = _column_index(cell.attrib["r"])
+                values.extend([None] * (index + 1 - len(values)))
+                raw = cell.findtext(f"{NS}v")
+                values[index] = shared_string(shared, raw) if cell.attrib.get("t") == "s" and raw is not None else ("".join(cell.itertext()) if cell.attrib.get("t") == "inlineStr" else raw)
+            rows.append(values)
+        header_at = next((i for i, row in enumerate(rows) if row and str(row[0]).strip().rstrip("*").casefold() == first_header.casefold()), None)
+        if header_at is None:
+            raise WorkflowBlocked(f"{sheet_name} worksheet has no '{first_header}' header.")
+        headers = [str(value).strip().rstrip("*").strip() if value is not None else "" for value in rows[header_at]]
+        return [{headers[i]: row[i] if i < len(row) else None for i in range(len(headers))}
+                for row in rows[header_at + 1:] if any(value not in (None, "") for value in row)]
+
+    except (OSError, zipfile.BadZipFile, KeyError, ET.ParseError, ValueError) as error:
         raise WorkflowBlocked(f"Filled workbook cannot be read: {error}") from error
-    rows: list[list[Any]] = []
-    for row in root.findall(f".//{NS}sheetData/{NS}row"):
-        values: list[Any] = []
-        for cell in row.findall(f"{NS}c"):
-            index = _column_index(cell.attrib["r"])
-            values.extend([None] * (index + 1 - len(values)))
-            raw = cell.findtext(f"{NS}v")
-            values[index] = shared[int(raw)] if cell.attrib.get("t") == "s" and raw is not None else ("".join(cell.itertext()) if cell.attrib.get("t") == "inlineStr" else raw)
-        rows.append(values)
-    header_at = next((i for i, row in enumerate(rows) if row and str(row[0]).strip().rstrip("*").casefold() == first_header.casefold()), None)
-    if header_at is None:
-        raise WorkflowBlocked(f"{sheet_name} worksheet has no '{first_header}' header.")
-    headers = [str(value).strip().rstrip("*").strip() if value is not None else "" for value in rows[header_at]]
-    return [{headers[i]: row[i] if i < len(row) else None for i in range(len(headers))}
-            for row in rows[header_at + 1:] if any(value not in (None, "") for value in row)]
 
 
 def _text(row: dict[str, Any], field: str) -> str:
@@ -364,7 +366,67 @@ class ShiftsAndSchedulesAdapter:
             key = f"workScheduleItems:{label}"
             if key not in baselines:
                 baselines[key] = get(request["verifyPath"], temp / f"baseline-{len(baselines) + 1}.json")
-        return {"requests": requests}, baselines
+        reconciled = []
+        planned_creations = set()
+        for request in requests:
+            if request["resourceType"] != "workScheduleItem" or request["method"] != "POST":
+                reconciled.append(request)
+                continue
+            label = request["workScheduleLabel"]
+            creation_key = (label, self._item_key(request["body"]))
+            if creation_key in planned_creations:
+                raise WorkflowBlocked("Duplicate schedule-item creation keys in workbook; resolve before preview.")
+            planned_creations.add(creation_key)
+            current = baselines[f"workScheduleItems:{label}"]
+            if current is None and baselines.get(f"workSchedule:{label}") is None:
+                items = []  # A missing parent has no existing item collection.
+            elif not isinstance(current, dict) or not isinstance(current.get("items"), list):
+                raise WorkflowBlocked("Schedule-item baseline is missing or invalid; reconcile before creation.")
+            else:
+                if current.get("hasMore") or any(link.get("rel") == "next" for link in current.get("links", []) if isinstance(link, dict)):
+                    raise WorkflowBlocked("Schedule-item baseline is incomplete; resolve pagination before creation.")
+                items = current["items"]
+            if any(not isinstance(item, dict) for item in items):
+                raise WorkflowBlocked("Schedule-item baseline contains invalid items.")
+            candidates = [item for item in items if self._item_key(item) == creation_key[1]]
+            if len(candidates) > 1:
+                raise WorkflowBlocked("Multiple existing schedule items match the creation key; reconcile duplicates before preview.")
+            if candidates:
+                item = candidates[0]
+                item_id = _integer(item.get("itemId"), "existing itemId", 0)
+                if self.verify({**request, "itemId": item_id}, {"items": [item]}):
+                    raise WorkflowBlocked("Existing schedule item conflicts with the proposed creation; use an explicit itemId update.")
+                continue  # The exact item already exists; do not POST it again.
+            request = {**request, "existingItemIds": [_integer(item.get("itemId"), "existing itemId", 0) for item in items]}
+            reconciled.append(request)
+        return {"requests": reconciled}, baselines
+
+    @staticmethod
+    def _item_key(item: dict[str, Any]) -> str:
+        # Comments are editable content, not permission to create the same shift again.
+        recurrence = item.get("recurrence") or {}
+        if not isinstance(recurrence, dict):
+            raise WorkflowBlocked("Schedule-item recurrence baseline is invalid.")
+        identity = {key: item.get(key) for key in ("type", "label", "shiftType", "startDate")}
+        identity["recurrence"] = {key: recurrence.get(key) for key in ("type", "every", "weekdays")}
+        days = identity["recurrence"]["weekdays"]
+        if days is not None:
+            if not isinstance(days, list) or not all(isinstance(day, str) for day in days):
+                raise WorkflowBlocked("Schedule-item weekday baseline is invalid.")
+            identity["recurrence"]["weekdays"] = sorted(days)
+        return json.dumps(identity, sort_keys=True, separators=(",", ":"))
+
+    def verification_request(self, request: dict[str, Any], response_output: Path) -> dict[str, Any]:
+        if request["resourceType"] != "workScheduleItem" or request["method"] != "POST":
+            return request
+        try:
+            response = json.loads(response_output.read_text(encoding="utf-8"))
+            item_id = _integer(response.get("itemId"), "created itemId", 0)
+        except (OSError, ValueError, AttributeError, WorkflowBlocked) as error:
+            raise WorkflowBlocked("Created schedule-item response has no valid itemId; reconcile the write before retry.", failure_class="fusion_api_error") from error
+        if item_id in request.get("existingItemIds", []):
+            raise WorkflowBlocked("Returned schedule itemId existed before POST; reconcile the write before retry.", failure_class="fusion_api_error")
+        return {**request, "itemId": item_id}
 
     def build_preview(self, payload: dict[str, Any], environment: str, baselines: dict[str, Any]) -> dict[str, Any]:
         preview = {"taskCode": self.task_code, "executionDirection": "ora_rest_execution", "environment": environment,
@@ -386,27 +448,26 @@ class ShiftsAndSchedulesAdapter:
         matched = next((item for item in items if item_id and str(item.get("itemId")) == str(item_id)), None)
         if request["method"] == "DELETE":
             return [] if matched is None else ["item_id still present"]
-        if request["method"] == "POST":
-            body = request["body"]
-            def matches_post(item: dict[str, Any]) -> bool:
-                for key, value in body.items():
-                    if key == "recurrence":
-                        actual_recurrence = item.get("recurrence", {})
-                        for recurrence_key in ("type", "every", "weekdays"):
-                            if recurrence_key in value and actual_recurrence.get(recurrence_key) != value[recurrence_key]:
-                                return False
-                    elif item.get(key) != value:
-                        return False
-                return True
-            matched = next((item for item in items if matches_post(item)), None)
+        if request["method"] == "POST" and not item_id:
+            return ["created itemId is missing from write response"]
         if not isinstance(matched, dict):
             return ["created or updated item not found"]
         differences = []
         for key, value in request["body"].items():
             if key == "recurrence":
                 actual_recurrence = matched.get("recurrence", {})
-                if any(actual_recurrence.get(part) != value[part] for part in ("type", "every", "weekdays") if part in value):
+                if not isinstance(actual_recurrence, dict):
                     differences.append(key)
+                    continue
+                for part in ("type", "every", "weekdays"):
+                    if part not in value:
+                        continue
+                    observed, expected = actual_recurrence.get(part), value[part]
+                    if part == "weekdays" and isinstance(observed, list) and all(isinstance(day, str) for day in observed):
+                        observed, expected = sorted(observed), sorted(expected)
+                    if observed != expected:
+                        differences.append(key)
+                        break
             elif matched.get(key) != value:
                 differences.append(key)
         return differences

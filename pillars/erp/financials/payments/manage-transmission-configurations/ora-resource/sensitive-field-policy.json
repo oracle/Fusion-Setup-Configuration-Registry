@@ -1,0 +1,737 @@
+{
+  "schemaVersion": 1,
+  "version": "2026-10-20.1",
+  "defaultHandling": "manual_omit",
+  "sourceFacts": {
+    "source": "SRC-SEED-PROTOCOLS: reviewed protocol seed metadata",
+    "revision": "/st_fusionapps_pt-v2mibfphdev/11 2025/10/29; indexed 2026-10-05",
+    "boundary": "Seed definitions, not proof of target customization state. Compare target protocol/parameter membership and metadata; do not use this to overwrite protocol definitions.",
+    "protocols": {
+      "AS2_SEND": {
+        "count": 25,
+        "required": [
+          "AS2_FROM",
+          "AS2_SUBJECT",
+          "AS2_TO",
+          "CONTENT_TYPE",
+          "HTTP_HOST",
+          "HTTP_PROXY_HOST",
+          "HTTP_REMOTE_DIR",
+          "HTTP_REMOTE_FILE"
+        ],
+        "secured": [
+          "PGP_PRIVATE_KEY_PASSWORD",
+          "WALLET_PASSWORD"
+        ]
+      },
+      "CES_INBOUND": {
+        "count": 6,
+        "required": [
+          "CES_FLOW_CODE",
+          "CES_SUBFLOW_CODE",
+          "CES_VENDOR_CODE"
+        ],
+        "secured": []
+      },
+      "CES_OUTBOUND": {
+        "count": 10,
+        "required": [
+          "CES_FLOW_CODE",
+          "CES_SUBFLOW_CODE",
+          "CES_VENDOR_CODE"
+        ],
+        "secured": []
+      },
+      "CITI_BATCH_3_0_ACK_GET": {
+        "count": 3,
+        "required": [
+          "LOCAL_DIR",
+          "MERCHANT_NAME"
+        ],
+        "secured": []
+      },
+      "CITI_BATCH_3_0_PUT": {
+        "count": 7,
+        "required": [
+          "DATA_CLASS_SIZE",
+          "FILE_NAME",
+          "HOST_IP",
+          "HOST_PORT",
+          "LOCAL_DIR",
+          "PASSWORD",
+          "USERNAME"
+        ],
+        "secured": [
+          "PASSWORD",
+          "USERNAME"
+        ]
+      },
+      "CITI_DIRDEB_MSG_1_8_PUT": {
+        "count": 8,
+        "required": [
+          "HOST_IP",
+          "HOST_PORT",
+          "LOCAL_DIR",
+          "MERCHANT_ID",
+          "PASSWORD",
+          "REMOTE_DIR",
+          "USERNAME"
+        ],
+        "secured": []
+      },
+      "CITI_ONLINE_3_0_SOCKET": {
+        "count": 4,
+        "required": [
+          "SOCKET_IP",
+          "SOCKET_PORT"
+        ],
+        "secured": []
+      },
+      "FDN_AUTH_SOCKET_20021024": {
+        "count": 4,
+        "required": [
+          "SOCKET_IP",
+          "SOCKET_PORT"
+        ],
+        "secured": []
+      },
+      "FDN_BATCH_2003_1_ACK_GET": {
+        "count": 8,
+        "required": [
+          "HOST_IP",
+          "HOST_PORT",
+          "LOCAL_DIR",
+          "PASSWORD",
+          "REMOTE_DIR",
+          "USERNAME"
+        ],
+        "secured": [
+          "PASSWORD",
+          "USERNAME"
+        ]
+      },
+      "FDN_BATCH_2003_1_PUT": {
+        "count": 8,
+        "required": [
+          "HOST_IP",
+          "HOST_PORT",
+          "LOCAL_DIR",
+          "PASSWORD",
+          "REMOTE_DIR",
+          "USERNAME"
+        ],
+        "secured": [
+          "PASSWORD",
+          "USERNAME"
+        ]
+      },
+      "FILE_DUMP": {
+        "count": 9,
+        "required": [],
+        "secured": [
+          "PGP_PRIVATE_KEY_PASSWORD"
+        ]
+      },
+      "FILE_PULL": {
+        "count": 7,
+        "required": [],
+        "secured": [
+          "PGP_PRIVATE_KEY_PASSWORD"
+        ]
+      },
+      "FTP_GET": {
+        "count": 7,
+        "required": [
+          "FILE_NAME",
+          "HOST_IP",
+          "PASSWORD",
+          "REMOTE_DIR",
+          "USERNAME"
+        ],
+        "secured": [
+          "PASSWORD",
+          "USERNAME"
+        ]
+      },
+      "FTP_PUT": {
+        "count": 10,
+        "required": [
+          "HOST_IP",
+          "PASSWORD",
+          "REMOTE_DIR",
+          "USERNAME"
+        ],
+        "secured": [
+          "PASSWORD",
+          "USERNAME"
+        ]
+      },
+      "HTTP_GET": {
+        "count": 17,
+        "required": [
+          "HTTP_URL"
+        ],
+        "secured": [
+          "CLIENT_AUTH_PRIV_KEY_PASSWD",
+          "PGP_PRIVATE_KEY_PASSWORD"
+        ]
+      },
+      "HTTP_MPART": {
+        "count": 12,
+        "required": [
+          "FILE_NAME",
+          "HTTP_URL",
+          "SEND_CONTENT_TYPE"
+        ],
+        "secured": [
+          "PASSWORD",
+          "USERNAME",
+          "WALLET_PASSWD"
+        ]
+      },
+      "HTTP_POST": {
+        "count": 24,
+        "required": [
+          "HTTP_URL",
+          "RECEIVE_CONTENT_TYPE",
+          "SEND_CONTENT_TYPE"
+        ],
+        "secured": [
+          "CLIENT_AUTH_PRIV_KEY_PASSWD",
+          "PASSWORD",
+          "PGP_PRIVATE_KEY_PASSWORD",
+          "USERNAME",
+          "WALLET_PASSWD",
+          "XML_SIGNATURE_KEY_PASSWORD"
+        ]
+      },
+      "IBY_DELIVERY_ENVELOPE": {
+        "count": 4,
+        "required": [
+          "WEB_URL"
+        ],
+        "secured": [
+          "PASSWORD",
+          "USERNAME"
+        ]
+      },
+      "OAUTH_2_0": {
+        "count": 12,
+        "required": [
+          "OAUTH_REQ_URL"
+        ],
+        "secured": [
+          "OAUTH_CLIENT_ID",
+          "OAUTH_SECRET_KEY"
+        ]
+      },
+      "PTECH_BATCH_2_1_0_ACK_GET": {
+        "count": 7,
+        "required": [
+          "HOST_IP",
+          "HOST_PORT",
+          "LOCAL_DIR",
+          "PASSWORD",
+          "REMOTE_DIR",
+          "USERNAME"
+        ],
+        "secured": [
+          "PASSWORD",
+          "USERNAME"
+        ]
+      },
+      "PTECH_BATCH_2_1_0_PUT": {
+        "count": 8,
+        "required": [
+          "HOST_IP",
+          "REMOTE_DIR"
+        ],
+        "secured": [
+          "PASSWORD",
+          "USERNAME"
+        ]
+      },
+      "PTECH_ONLINE_SOCKET_7_2": {
+        "count": 4,
+        "required": [
+          "SOCKET_IP",
+          "SOCKET_PORT"
+        ],
+        "secured": []
+      },
+      "PTK_SECURE_FTP_PUT": {
+        "count": 7,
+        "required": [
+          "REMOTE_DIR",
+          "USERNAME"
+        ],
+        "secured": [
+          "PASSWORD",
+          "USERNAME"
+        ]
+      },
+      "SECURE_FTP_GET": {
+        "count": 17,
+        "required": [
+          "FILE_NAME",
+          "HOST_NAME",
+          "LOCAL_DIR",
+          "REMOTE_DIR",
+          "USERNAME"
+        ],
+        "secured": [
+          "PASSWORD",
+          "PGP_PRIVATE_KEY_PASSWORD",
+          "PRIVATE_KEY_PASSWORD",
+          "USERNAME"
+        ]
+      },
+      "SECURE_FTP_PUT": {
+        "count": 16,
+        "required": [
+          "HOST_IP",
+          "REMOTE_DIR",
+          "USERNAME"
+        ],
+        "secured": [
+          "PASSWORD",
+          "PGP_PRIVATE_KEY_PASSWORD",
+          "PRIVATE_KEY_PASSWORD",
+          "USERNAME"
+        ]
+      },
+      "UCM_READ": {
+        "count": 8,
+        "required": [
+          "ACCOUNT",
+          "FILE_NAME"
+        ],
+        "secured": [
+          "PGP_PRIVATE_KEY_PASSWORD"
+        ]
+      },
+      "UCM_WRITE": {
+        "count": 9,
+        "required": [
+          "ACCOUNT",
+          "FILE_NAME"
+        ],
+        "secured": [
+          "PGP_PRIVATE_KEY_PASSWORD"
+        ]
+      }
+    },
+    "credentialResolvers": {
+      "AS2_SEND": {
+        "PGP_PRIVATE_KEY": "PGP",
+        "PGP_PUBLIC_KEY": "PGP"
+      },
+      "FILE_DUMP": {
+        "PGP_PRIVATE_KEY": "PGP",
+        "PGP_PUBLIC_KEY": "PGP"
+      },
+      "FILE_PULL": {
+        "PGP_PRIVATE_KEY": "PGP",
+        "PGP_PUBLIC_KEY": "PGP"
+      },
+      "HTTP_GET": {
+        "CLIENT_AUTH_PRIVATE_KEY_FILE": "PK12",
+        "PGP_PRIVATE_KEY": "PGP",
+        "PGP_PUBLIC_KEY": "PGP",
+        "WALLET_LOCATION": "SSL"
+      },
+      "HTTP_POST": {
+        "CLIENT_AUTH_PRIVATE_KEY_FILE": "PK12",
+        "PGP_PRIVATE_KEY": "PGP",
+        "PGP_PUBLIC_KEY": "PGP",
+        "WALLET_LOC": "SSL",
+        "XML_SIGNATURE_KEY": "PK12"
+      },
+      "SECURE_FTP_GET": {
+        "PGP_PRIVATE_KEY": "PGP",
+        "PGP_PUBLIC_KEY": "PGP",
+        "PRIVATE_KEY_FILE": "SSH"
+      },
+      "SECURE_FTP_PUT": {
+        "PGP_PRIVATE_KEY": "PGP",
+        "PGP_PUBLIC_KEY": "PGP",
+        "PRIVATE_KEY_FILE": "SSH"
+      },
+      "UCM_READ": {
+        "PGP_PRIVATE_KEY": "PGP",
+        "PGP_PUBLIC_KEY": "PGP"
+      },
+      "UCM_WRITE": {
+        "PGP_PRIVATE_KEY": "PGP",
+        "PGP_PUBLIC_KEY": "PGP"
+      }
+    },
+    "oauthIdParameters": {
+      "HTTP_GET": [
+        "OAUTH_TRANSMIT_CONFIG"
+      ],
+      "HTTP_POST": [
+        "OAUTH_TRANSMIT_CONFIG"
+      ]
+    },
+    "notes": [
+      "required lists exclude DynamicFlag=Y. Hidden MandatoryFlag=D parameters must not be mistaken for required values.",
+      "SecuredFlag is encryption behavior, not a complete data-sensitivity classifier. Treat every parameter value as potentially sensitive; for example HTTP_GET PASSWORD has SecuredFlag=N in this seed.",
+      "Credential resolver classification does not establish portable export/import of credential material. Resolve on target before changing such parameters."
+    ]
+  },
+  "reviewedParameterTypes": {
+    "AS2_SEND": {
+      "FORMATTED_FILE_NAME": "VARCHAR2",
+      "PGP_KEY_ALIAS": "VARCHAR2",
+      "PGP_PRIVATE_KEY": "VARCHAR2",
+      "PGP_PRIVATE_KEY_PASSWORD": "VARCHAR2",
+      "PGP_PUBLIC_KEY": "VARCHAR2",
+      "KEEP_FILE": "VARCHAR2",
+      "CONTENT_TYPE": "VARCHAR2",
+      "HTTP_HOST": "VARCHAR2",
+      "HTTP_PORT": "VARCHAR2",
+      "HTTP_REMOTE_DIR": "VARCHAR2",
+      "HTTP_REMOTE_FILE": "VARCHAR2",
+      "HTTP_PROXY_HOST": "VARCHAR2",
+      "ENCRYPT_MSG": "VARCHAR2",
+      "SIGN_MSG": "VARCHAR2",
+      "WALLET_PASSWORD": "VARCHAR2",
+      "SERVER_CERT": "VARCHAR2",
+      "ENCRYPTION_ALG": "VARCHAR2",
+      "HASH_ALG": "VARCHAR2",
+      "AS2_FROM": "VARCHAR2",
+      "AS2_TO": "VARCHAR2",
+      "AS2_SUBJECT": "VARCHAR2",
+      "FILE_NAME": "VARCHAR2",
+      "SYSTEM_GENERATED_CRED": "VARCHAR2",
+      "REQ_RECEIPT": "VARCHAR2",
+      "WALLET_FILE": "VARCHAR2"
+    },
+    "CES_INBOUND": {
+      "OPERATION_MODE": "VARCHAR2",
+      "OPERATION_NAME": "VARCHAR2",
+      "PROTOCOL_CODE": "VARCHAR2",
+      "CES_FLOW_CODE": "VARCHAR2",
+      "CES_SUBFLOW_CODE": "VARCHAR2",
+      "CES_VENDOR_CODE": "VARCHAR2"
+    },
+    "CES_OUTBOUND": {
+      "FORMATTED_OPERATION_NAME": "VARCHAR2",
+      "OPERATION_MODE": "VARCHAR2",
+      "OPERATION_NAME": "VARCHAR2",
+      "PROTOCOL_CODE": "VARCHAR2",
+      "FORMATTED_CES_VENDOR_CODE": "VARCHAR2",
+      "EXTRA_HEADERS": "VARCHAR2",
+      "FORMATTED_HEADERS": "VARCHAR2",
+      "CES_VENDOR_CODE": "VARCHAR2",
+      "CES_FLOW_CODE": "VARCHAR2",
+      "CES_SUBFLOW_CODE": "VARCHAR2"
+    },
+    "CITI_BATCH_3_0_ACK_GET": {
+      "LOCAL_DIR": "VARCHAR2",
+      "MERCHANT_NAME": "VARCHAR2",
+      "BATCH_NAME": "VARCHAR2"
+    },
+    "CITI_BATCH_3_0_PUT": {
+      "HOST_PORT": "NUMBER",
+      "PASSWORD": "VARCHAR2",
+      "HOST_IP": "VARCHAR2",
+      "USERNAME": "VARCHAR2",
+      "LOCAL_DIR": "VARCHAR2",
+      "DATA_CLASS_SIZE": "VARCHAR2",
+      "FILE_NAME": "VARCHAR2"
+    },
+    "CITI_DIRDEB_MSG_1_8_PUT": {
+      "REMOTE_DIR": "VARCHAR2",
+      "BATCH_NAME": "VARCHAR2",
+      "LOCAL_DIR": "VARCHAR2",
+      "HOST_IP": "VARCHAR2",
+      "MERCHANT_ID": "VARCHAR2",
+      "USERNAME": "VARCHAR2",
+      "HOST_PORT": "NUMBER",
+      "PASSWORD": "VARCHAR2"
+    },
+    "CITI_ONLINE_3_0_SOCKET": {
+      "MAX_CONNECT_ATTEMPTS": "NUMBER",
+      "CONNECT_RETRY_INTERVAL": "NUMBER",
+      "SOCKET_PORT": "NUMBER",
+      "SOCKET_IP": "VARCHAR2"
+    },
+    "FDN_AUTH_SOCKET_20021024": {
+      "SOCKET_PORT": "NUMBER",
+      "SOCKET_IP": "VARCHAR2",
+      "MAX_CONNECT_ATTEMPTS": "NUMBER",
+      "CONNECT_RETRY_INTERVAL": "NUMBER"
+    },
+    "FDN_BATCH_2003_1_ACK_GET": {
+      "BATCH_NAME": "VARCHAR2",
+      "HOST_PORT": "NUMBER",
+      "REMOTE_DIR": "VARCHAR2",
+      "HOST_IP": "VARCHAR2",
+      "USERNAME": "VARCHAR2",
+      "PASSWORD": "VARCHAR2",
+      "LOCAL_DIR": "VARCHAR2",
+      "ACK_ADG": "VARCHAR2"
+    },
+    "FDN_BATCH_2003_1_PUT": {
+      "HOST_IP": "VARCHAR2",
+      "BATCH_NAME": "VARCHAR2",
+      "HOST_PORT": "NUMBER",
+      "PASSWORD": "VARCHAR2",
+      "LOCAL_DIR": "VARCHAR2",
+      "REMOTE_DIR": "VARCHAR2",
+      "SUBMISSION_ADG": "VARCHAR2",
+      "USERNAME": "VARCHAR2"
+    },
+    "FILE_DUMP": {
+      "FORMATTED_FILE_NAME": "VARCHAR2",
+      "FILE_DIR": "VARCHAR2",
+      "FILE_NAME": "VARCHAR2",
+      "PGP_KEY_ALIAS": "VARCHAR2",
+      "PGP_PRIVATE_KEY": "VARCHAR2",
+      "PGP_PRIVATE_KEY_PASSWORD": "VARCHAR2",
+      "PGP_PUBLIC_KEY": "VARCHAR2",
+      "SYSTEM_GENERATED_CRED": "VARCHAR2",
+      "APPEND_FLAG": "VARCHAR2"
+    },
+    "FILE_PULL": {
+      "FULL_FILE_PATH": "VARCHAR2",
+      "PGP_PRIVATE_KEY": "VARCHAR2",
+      "PGP_PRIVATE_KEY_PASSWORD": "VARCHAR2",
+      "PGP_PUBLIC_KEY": "VARCHAR2",
+      "SYSTEM_GENERATED_CRED": "VARCHAR2",
+      "FORMATTED_FILE_NAME": "VARCHAR2",
+      "PGP_KEY_ALIAS": "VARCHAR2"
+    },
+    "FTP_GET": {
+      "FILE_NAME": "VARCHAR2",
+      "HOST_IP": "VARCHAR2",
+      "HOST_PORT": "NUMBER",
+      "REMOTE_DIR": "VARCHAR2",
+      "USERNAME": "VARCHAR2",
+      "FORMATTED_FILE_NAME": "VARCHAR2",
+      "PASSWORD": "VARCHAR2"
+    },
+    "FTP_PUT": {
+      "FORMATTED_FILE_NAME": "VARCHAR2",
+      "HOST_IP": "VARCHAR2",
+      "LOCAL_DIR": "VARCHAR2",
+      "REMOTE_DIR": "VARCHAR2",
+      "MODE": "VARCHAR2",
+      "HOST_PORT": "NUMBER",
+      "KEEP_FILE": "VARCHAR2",
+      "PASSWORD": "VARCHAR2",
+      "USERNAME": "VARCHAR2",
+      "FILE_NAME": "VARCHAR2"
+    },
+    "HTTP_GET": {
+      "PASSWORD": "VARCHAR2",
+      "EXTRA_HEADERS": "VARCHAR2",
+      "PGP_KEY_ALIAS": "VARCHAR2",
+      "PGP_PRIVATE_KEY": "VARCHAR2",
+      "PGP_PRIVATE_KEY_PASSWORD": "VARCHAR2",
+      "PGP_PUBLIC_KEY": "VARCHAR2",
+      "SYSTEM_GENERATED_CRED": "VARCHAR2",
+      "GET_STRING": "VARCHAR2",
+      "HTTP_URL": "VARCHAR2",
+      "USERNAME": "VARCHAR2",
+      "WALLET_LOCATION": "VARCHAR2",
+      "WALLET_PASSWORD": "VARCHAR2",
+      "OAUTH_TRANSMIT_CONFIG": "NUMBER",
+      "FORMATTED_HEADERS": "VARCHAR2",
+      "FORMATTED_HTTP_URL": "VARCHAR2",
+      "CLIENT_AUTH_PRIVATE_KEY_FILE": "VARCHAR2",
+      "CLIENT_AUTH_PRIV_KEY_PASSWD": "VARCHAR2"
+    },
+    "HTTP_MPART": {
+      "FILE_NAME": "VARCHAR2",
+      "FORMATTED_FILE_NAME": "VARCHAR2",
+      "HTTP_CHARSET": "VARCHAR2",
+      "HTTP_URL": "VARCHAR2",
+      "NO_PROXY_DOMAIN": "VARCHAR2",
+      "PASSWORD": "VARCHAR2",
+      "PROXY": "VARCHAR2",
+      "RECEIVE_CONTENT_TYPE": "VARCHAR2",
+      "SEND_CONTENT_TYPE": "VARCHAR2",
+      "USERNAME": "VARCHAR2",
+      "WALLET_LOC": "VARCHAR2",
+      "WALLET_PASSWD": "VARCHAR2",
+      "NO_ACK": "VARCHAR2"
+    },
+    "HTTP_POST": {
+      "HTTP_URL": "VARCHAR2",
+      "USERNAME": "VARCHAR2",
+      "PASSWORD": "VARCHAR2",
+      "PROXY": "VARCHAR2",
+      "NO_PROXY_DOMAIN": "VARCHAR2",
+      "WALLET_LOC": "VARCHAR2",
+      "WALLET_PASSWD": "VARCHAR2",
+      "SEND_CONTENT_TYPE": "VARCHAR2",
+      "RECEIVE_CONTENT_TYPE": "VARCHAR2",
+      "XML_SIGNATURE_KEY": "VARCHAR2",
+      "XML_SIGNATURE_KEY_ALIAS": "VARCHAR2",
+      "XML_SIGNATURE_KEY_PASSWORD": "VARCHAR2",
+      "EXTRA_HEADERS": "VARCHAR2",
+      "FORMATTED_HEADERS": "VARCHAR2",
+      "FORMATTED_HTTP_URL": "VARCHAR2",
+      "NO_ACK": "VARCHAR2",
+      "PGP_KEY_ALIAS": "VARCHAR2",
+      "PGP_PRIVATE_KEY": "VARCHAR2",
+      "PGP_PRIVATE_KEY_PASSWORD": "VARCHAR2",
+      "PGP_PUBLIC_KEY": "VARCHAR2",
+      "SYSTEM_GENERATED_CRED": "VARCHAR2",
+      "OAUTH_TRANSMIT_CONFIG": "NUMBER",
+      "CLIENT_AUTH_PRIVATE_KEY_FILE": "VARCHAR2",
+      "CLIENT_AUTH_PRIV_KEY_PASSWD": "VARCHAR2"
+    },
+    "IBY_DELIVERY_ENVELOPE": {
+      "WEB_URL": "VARCHAR2",
+      "USERNAME": "VARCHAR2",
+      "PASSWORD": "VARCHAR2",
+      "PAYLOAD_UNIQUE_NAME": "VARCHAR2"
+    },
+    "OAUTH_2_0": {
+      "EXTRA_HEADERS": "VARCHAR2",
+      "FORMATTED_HEADERS": "VARCHAR2",
+      "FORMATTED_HTTP_URL": "VARCHAR2",
+      "FORMATTED_REQ_PARAMS": "VARCHAR2",
+      "OAUTH_CLIENT_ID": "VARCHAR2",
+      "OAUTH_GRANT_TYPE": "VARCHAR2",
+      "OAUTH_REQ_PARAMS": "VARCHAR2",
+      "OAUTH_REQ_URL": "VARCHAR2",
+      "OAUTH_RESP_PARAMS": "VARCHAR2",
+      "OAUTH_SECRET_KEY": "VARCHAR2",
+      "RECEIVE_CONTENT_TYPE": "VARCHAR2",
+      "SEND_CONTENT_TYPE": "VARCHAR2"
+    },
+    "PTECH_BATCH_2_1_0_ACK_GET": {
+      "HOST_IP": "VARCHAR2",
+      "HOST_PORT": "NUMBER",
+      "USERNAME": "VARCHAR2",
+      "PASSWORD": "VARCHAR2",
+      "LOCAL_DIR": "VARCHAR2",
+      "BATCH_NAME": "VARCHAR2",
+      "REMOTE_DIR": "VARCHAR2"
+    },
+    "PTECH_BATCH_2_1_0_PUT": {
+      "FILE_NAME": "VARCHAR2",
+      "HOST_IP": "VARCHAR2",
+      "HOST_PORT": "NUMBER",
+      "LOCAL_DIR": "VARCHAR2",
+      "MODE": "VARCHAR2",
+      "PASSWORD": "VARCHAR2",
+      "REMOTE_DIR": "VARCHAR2",
+      "USERNAME": "VARCHAR2"
+    },
+    "PTECH_ONLINE_SOCKET_7_2": {
+      "SOCKET_IP": "VARCHAR2",
+      "SOCKET_PORT": "NUMBER",
+      "MAX_CONNECT_ATTEMPTS": "NUMBER",
+      "CONNECT_RETRY_INTERVAL": "NUMBER"
+    },
+    "PTK_SECURE_FTP_PUT": {
+      "FILE_NAME": "VARCHAR2",
+      "FILE_PERMISSION": "VARCHAR2",
+      "HOST_IP": "VARCHAR2",
+      "HOST_PORT": "NUMBER",
+      "PASSWORD": "VARCHAR2",
+      "REMOTE_DIR": "VARCHAR2",
+      "USERNAME": "VARCHAR2"
+    },
+    "SECURE_FTP_GET": {
+      "FILE_NAME": "VARCHAR2",
+      "HOST_PORT": "NUMBER",
+      "KEEP_FILE": "VARCHAR2",
+      "LOCAL_DIR": "VARCHAR2",
+      "PASSWORD": "VARCHAR2",
+      "REMOTE_DIR": "VARCHAR2",
+      "USERNAME": "VARCHAR2",
+      "FILE_PERMISSION": "VARCHAR2",
+      "FORMATTED_FILE_NAME": "VARCHAR2",
+      "HOST_NAME": "VARCHAR2",
+      "PGP_KEY_ALIAS": "VARCHAR2",
+      "PGP_PRIVATE_KEY": "VARCHAR2",
+      "PGP_PRIVATE_KEY_PASSWORD": "VARCHAR2",
+      "PGP_PUBLIC_KEY": "VARCHAR2",
+      "PRIVATE_KEY_FILE": "VARCHAR2",
+      "PRIVATE_KEY_PASSWORD": "VARCHAR2",
+      "SYSTEM_GENERATED_CRED": "VARCHAR2"
+    },
+    "SECURE_FTP_PUT": {
+      "FORMATTED_FILE_NAME": "VARCHAR2",
+      "HOST_IP": "VARCHAR2",
+      "KEEP_FILE": "VARCHAR2",
+      "PRIVATE_KEY_PASSWORD": "VARCHAR2",
+      "HOST_PORT": "NUMBER",
+      "USERNAME": "VARCHAR2",
+      "PASSWORD": "VARCHAR2",
+      "PRIVATE_KEY_FILE": "VARCHAR2",
+      "REMOTE_DIR": "VARCHAR2",
+      "FILE_NAME": "VARCHAR2",
+      "FILE_PERMISSION": "VARCHAR2",
+      "PGP_KEY_ALIAS": "VARCHAR2",
+      "PGP_PRIVATE_KEY": "VARCHAR2",
+      "PGP_PRIVATE_KEY_PASSWORD": "VARCHAR2",
+      "PGP_PUBLIC_KEY": "VARCHAR2",
+      "SYSTEM_GENERATED_CRED": "VARCHAR2"
+    },
+    "UCM_READ": {
+      "ACCOUNT": "VARCHAR2",
+      "FILE_NAME": "VARCHAR2",
+      "FORMATTED_FILE_NAME": "VARCHAR2",
+      "PGP_KEY_ALIAS": "VARCHAR2",
+      "PGP_PRIVATE_KEY": "VARCHAR2",
+      "PGP_PRIVATE_KEY_PASSWORD": "VARCHAR2",
+      "PGP_PUBLIC_KEY": "VARCHAR2",
+      "SYSTEM_GENERATED_CRED": "VARCHAR2"
+    },
+    "UCM_WRITE": {
+      "CONTENT_TYPE": "VARCHAR2",
+      "FILE_NAME": "VARCHAR2",
+      "ACCOUNT": "VARCHAR2",
+      "FORMATTED_FILE_NAME": "VARCHAR2",
+      "PGP_PRIVATE_KEY_PASSWORD": "VARCHAR2",
+      "PGP_PUBLIC_KEY": "VARCHAR2",
+      "SYSTEM_GENERATED_CRED": "VARCHAR2",
+      "PGP_KEY_ALIAS": "VARCHAR2",
+      "PGP_PRIVATE_KEY": "VARCHAR2"
+    }
+  },
+  "alwaysManualParameters": [
+    "PASSWORD",
+    "PRIVATE_KEY_PASSWORD",
+    "PGP_PRIVATE_KEY_PASSWORD",
+    "CLIENT_AUTH_PRIV_KEY_PASSWD",
+    "WALLET_PASSWORD",
+    "WALLET_PASSWD",
+    "XML_SIGNATURE_KEY_PASSWORD",
+    "OAUTH_SECRET_KEY",
+    "PGP_PUBLIC_KEY",
+    "PGP_PRIVATE_KEY",
+    "PRIVATE_KEY_FILE",
+    "XML_SIGNATURE_KEY",
+    "CLIENT_AUTH_PRIVATE_KEY_FILE",
+    "WALLET_LOCATION",
+    "WALLET_LOC",
+    "PGP_KEY_ALIAS",
+    "SYSTEM_GENERATED_CRED"
+  ],
+  "ordinaryImportExceptions": [],
+  "createPlaceholders": [
+    {
+      "protocol": "SECURE_FTP_GET",
+      "parameter": "USERNAME",
+      "value": "changeit"
+    },
+    {
+      "protocol": "SECURE_FTP_PUT",
+      "parameter": "USERNAME",
+      "value": "changeit"
+    }
+  ],
+  "sensitiveIdentifierParameters": [
+    "USERNAME",
+    "OAUTH_CLIENT_ID"
+  ]
+}

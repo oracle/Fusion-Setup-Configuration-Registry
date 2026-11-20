@@ -9,6 +9,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 from currency_reference import classify, iso_day, request_plan
+from environment_identity import same_binding
 
 ROUTE = 'policy-currency-core-client-v1'
 
@@ -43,7 +44,7 @@ def verify(receipt_path, expected_binding, entity, policy_name, operation, code)
     path = Path(receipt_path)
     receipt = json.loads(path.read_text())
     if (receipt.get('schema_version') != '1.0' or receipt.get('route') != ROUTE
-            or receipt.get('status') != 'captured' or receipt.get('binding') != expected_binding):
+            or receipt.get('status') != 'captured' or not same_binding(receipt.get('binding'), expected_binding)):
         raise ValueError('Currency receipt identity/binding mismatch')
     if receipt.get('adapter_sha256') != digest(__file__):
         raise ValueError('Currency receipt adapter changed; recapture required')

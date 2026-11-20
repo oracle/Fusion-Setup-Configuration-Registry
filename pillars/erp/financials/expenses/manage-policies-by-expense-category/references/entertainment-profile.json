@@ -1,0 +1,123 @@
+{
+  "profile": "entertainment-no-determinants-v1",
+  "qualification": "authoring_extension_live_pending",
+  "import_approved": false,
+  "evidence": {
+    "source_series": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64",
+    "source_label": "261026.0531.S",
+    "release_boundary": "Central source snapshot; not proof of the target deployed release or import acceptance",
+    "implementation": [
+      "ExpenseEntertainmentServiceAMImpl.java: importData, updatePrimaryKeysAltKey, MigratorHelper.readXML",
+      "EntertainmentPolicyEOImpl.java: create",
+      "EntertainmentPolicyEO.xml and EntertainmentPolLineEO.xml: attributes and alternate keys",
+      "FinExmPolicyEntertainmentMainBean.java: attendee toggles, yearly period, helperSave, validViolation",
+      "FinExmPolicyEntertainmentMain.jsff: conditional requiredness and numeric ranges",
+      "FinExmPolicyEntertainmentMainPageDef.xml: MONTH lookup binding",
+      "EXM_SEED_LOOKUP.sql: EXM_FIELD_BEHAVIOUR"
+    ],
+    "ui": "Read-only walkthrough plus unsaved attendee-count selection, discarded through Cancel; supplied policy and rate screenshots",
+    "export_observations": "Same-task data and template exports establish ordered columns, MONTH codes 01-12, field behavior codes and current row shapes; no CSV write qualification",
+    "product_help": "https://docs.oracle.com/en/cloud/saas/financials/26d/faiex/entertainment-expense-policy.html",
+    "source_files": [
+      {
+        "path": "/ade_autofs/ud522_fa/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64.rdd/LATEST/fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseEntertainmentService/applicationModule/ExpenseEntertainmentServiceAMImpl.java",
+        "sha256": "91a7d87b7b0b817c125171dc59fe8c834da386e46d4a2ddaf4b0800e03c1df7f"
+      },
+      {
+        "path": "/ade_autofs/ud522_fa/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64.rdd/LATEST/fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseEntertainmentService/applicationModule/ExpenseEntertainmentServiceAM.xml",
+        "sha256": "70fdc8f3dfcc86097a29cbdbec26f904506244a332deb44e215bc3e33a1081d9"
+      },
+      {
+        "path": "/ade_autofs/ud522_fa/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64.rdd/LATEST/fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseEntertainmentService/view/EntertainmentVO.xml",
+        "sha256": "05c6af5fcfb3882b9d8fbbb17d1f167f954552eeabed33f2753b48e8c0f152c3"
+      },
+      {
+        "path": "/ade_autofs/ud522_fa/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64.rdd/LATEST/fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseEntertainmentService/view/EntertainmentLineVO.xml",
+        "sha256": "e26fdaf326e9fdb71b683bad2b8b029d0be79a645c594012264c0a82b8e3f336"
+      },
+      {
+        "path": "/ade_autofs/ud522_fa/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64.rdd/LATEST/fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/EntertainmentPolicyEO.xml",
+        "sha256": "633827a4b181e3cf077ffd711e501ee7e65b569619a0aa44f35af4adce03854a"
+      },
+      {
+        "path": "/ade_autofs/ud522_fa/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64.rdd/LATEST/fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/EntertainmentPolicyEOImpl.java",
+        "sha256": "7ad894ba182077dab7746cec0f5cfb5f5f50df8dc9b0e628cf28425476a097ed"
+      },
+      {
+        "path": "/ade_autofs/ud522_fa/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64.rdd/LATEST/fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/EntertainmentPolLineEO.xml",
+        "sha256": "39d50d234558bf06ba9638ed658219254e6b806ae327f256e40148d1b9c61393"
+      },
+      {
+        "path": "/ade_autofs/ud522_fa/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64.rdd/LATEST/fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/EntertainmentPolLineEOImpl.java",
+        "sha256": "550cea377ef21c872be9e6fbcc8908891278e95727c4107d822d9ae150dfc08c"
+      },
+      {
+        "path": "/ade_autofs/ud522_fa/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64.rdd/LATEST/fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/association/EntertainmentPolicyEOToEntertainmentPolLineEO.xml",
+        "sha256": "3862380f48a0b7466349dd12e3bb58b8de0054ab0ca74853aa94d61cc5b7d480"
+      },
+      {
+        "path": "/ade_autofs/ud522_fa/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64.rdd/LATEST/fusionapps/fin/components/payables/exm/policy/entertainment/model/src/oracle/apps/financials/expenses/policy/entertainment/uiModel/applicationModule/FinExmPolicyEntertainmentAMImpl.java",
+        "sha256": "e89f4f2ecb7c7c4e0f38279eff4f110bd604f402c9978a2f060b66df5f801196"
+      },
+      {
+        "path": "/ade_autofs/ud522_fa/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64.rdd/LATEST/fusionapps/fin/components/payables/exm/policy/entertainment/model/src/oracle/apps/financials/expenses/policy/entertainment/uiModel/applicationModule/FinExmPolicyEntertainmentAM.xml",
+        "sha256": "bdd379246e5bb529431cc3a065aa5f252d2b68d625cc8f29d79a555428c984bf"
+      },
+      {
+        "path": "/ade_autofs/ud522_fa/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64.rdd/LATEST/fusionapps/fin/components/payables/exm/policy/entertainment/model/src/oracle/apps/financials/expenses/policy/entertainment/uiModel/view/EntertainmentPolicyVO.xml",
+        "sha256": "176eb4763bd2480497a5c563ab24d9181442a65f7042789250aa27c2f8c64414"
+      },
+      {
+        "path": "/ade_autofs/ud522_fa/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64.rdd/LATEST/fusionapps/fin/components/payables/exm/policy/entertainment/model/src/oracle/apps/financials/expenses/policy/entertainment/uiModel/view/EntertainmentPolicyVORowImpl.java",
+        "sha256": "9f22fa58f24ef524240e1b94161785bed2845c5b57b3dd11d4745b4d3d4a091a"
+      },
+      {
+        "path": "/ade_autofs/ud522_fa/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64.rdd/LATEST/fusionapps/fin/components/payables/exm/policy/entertainment/model/src/oracle/apps/financials/expenses/policy/entertainment/uiModel/view/EntertainmentPolLinesVO.xml",
+        "sha256": "211d7be71273419cef3f3dbfc20bb48feed3f65af32db931690219d487ab135c"
+      },
+      {
+        "path": "/ade_autofs/ud522_fa/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64.rdd/LATEST/fusionapps/fin/components/payables/exm/policy/entertainment/model/src/oracle/apps/financials/expenses/policy/entertainment/uiModel/view/EntertainmentPolLinesVORowImpl.java",
+        "sha256": "3b1898defb35d58bdde9a6af67b0eb7bc98f605d3680db952af61bd6b903479e"
+      },
+      {
+        "path": "/ade_autofs/ud522_fa/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64.rdd/LATEST/fusionapps/fin/components/payables/exm/policy/entertainment/ui/public_html/oracle/apps/financials/expenses/policy/entertainment/ui/page/FinExmPolicyEntertainmentMain.jsff",
+        "sha256": "85f5d70dc693b7ca1c89a8fb5b9aa97140b839bfc9d7b469c94a45d989e9bb33"
+      },
+      {
+        "path": "/ade_autofs/ud522_fa/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64.rdd/LATEST/fusionapps/fin/components/payables/exm/policy/entertainment/ui/src/oracle/apps/financials/expenses/policy/entertainment/ui/bean/FinExmPolicyEntertainmentMainBean.java",
+        "sha256": "c5edfb9c1e98ee37c41b5e93f8af9e96df6ca6995e809d143f2eceac595a6cb2"
+      },
+      {
+        "path": "/ade_autofs/ud522_fa/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64.rdd/LATEST/fusionapps/fin/components/payables/exm/policy/entertainment/ui/adfmsrc/oracle/apps/financials/expenses/policy/entertainment/ui/page/FinExmPolicyEntertainmentPageDef.xml",
+        "sha256": "f46ea46dd672614ccd817b26ecbf46423cc34a98d5270b75dec1876910edd325"
+      },
+      {
+        "path": "/ade_autofs/ud522_fa/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64.rdd/LATEST/fusionapps/fin/components/payables/exm/policy/entertainment/ui/adfmsrc/oracle/apps/financials/expenses/policy/entertainment/ui/DataBindings.cpx",
+        "sha256": "88b14c7494cb0cc593e1cac05cecb186c5afbc0eb36feecc29e5e64eed16eb16"
+      }
+    ]
+  },
+  "field_behavior": {
+    "Hidden": "DISABLED",
+    "Optional": "ENABLED",
+    "Required": "REQUIRED"
+  },
+  "annual_period": {
+    "month_codes": "01 through 12",
+    "day": "1 through month maximum; February 1 through 28"
+  },
+  "fixed_authoring_recipe": {
+    "new_status": "DRAFT",
+    "rate_currency_when_enabled": "SINGLE",
+    "RateLimitTypeCode": "ATTENDEE",
+    "excluded_determinants": "N"
+  },
+  "boundaries": [
+    "No business choices defaulted from blank inputs",
+    "Blank updates preserve stored values; no implicit clearing or mode conversion",
+    "No activation, deletion, automatic closing of rates, child currency derivation or Rate Determinants",
+    "No determinants means rates apply to total receipt, not an individual attendee",
+    "Editable Draft and Valid updates preserve status; new records use a reviewed Draft authoring recipe",
+    "Shared import framework create/update and empty serialization still need target reconciliation"
+  ]
+}

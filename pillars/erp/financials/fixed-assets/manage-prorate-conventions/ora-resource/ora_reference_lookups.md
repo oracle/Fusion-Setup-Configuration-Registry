@@ -5,7 +5,7 @@
 | Resolver | Runs When | Source Values | Match Rule | Values to Fill | If No Match or Many Matches |
 |---|---|---|---|---|---|
 | resolve_prorate_export_metadata | After Reference Data Set/Fiscal Year verification, before create/update preview | For every create request, use a fresh completed same-target FA_MANAGE_PRORATE_CONVENTION template/spec export from shared.setup-export.task-level-export without --data. Update preparation uses the declared same-task export route. | Exact task code and target | Exact CSV member names, headers/column order, encoding/BOM, audit-column presence, DFF columns, and metadata. Business values and serialization come from validated inputs and task rules, not existing export rows. | A header-only template is valid structural evidence for creation, even when the target already contains conventions. Wrong task/target, missing required structure, or an unresolved technical mapping remains a gap. Audit values use Audit-Field Defaults. |
-| resolve_convention_info_mapping | Convention Info is supplied and fresh export metadata is available | Supplied Convention Info, fresh parent CSV headers, and explicit same-target DFF metadata when UI labels are used | Accept exact AttributeCategoryCode or Attribute1 through Attribute15 keys; otherwise require one exact label-to-column mapping for every supplied entry | Proven Convention Info target columns and values | Stop when any supplied value is unmapped or ambiguous; do not omit it or guess Attribute1 |
+| resolve_convention_info_mapping | Applicable DFF values require serialization or artifact comparison | Validated Convention Info field map from resolve_prorate_dff_segments and the current parent CSV contract | Map only metadata-confirmed enabled segments and the resolved context to actual supported import headers; technical keys do not bypass validation | Proven header mappings and reviewed values | Stop on unsupported, missing, conflicting, or ambiguous mappings; never guess Attribute1 |
 | resolve_existing_prorate_parent | Before create or update defaulting, after SetCode and export metadata resolve | Requested operation, normalized Name, and BOSS `assetProrateConventionsView` through `core.fusion-api.rest-api-client` | Page `GET /api/boss/data/objects/ora/erpCore/fixedAssetsSetup/v1/assetProrateConventionsView` completely. Match BOSS prorateConventionName exactly to the requested Name; map it to FSM CSV ProrateConventionCode. Do not expect ProrateConventionCode in the BOSS response. Fetch setId as returned by BOSS, but do not map it or use it for parent matching or CSV values. Fetch depreciateWhenPlacedInServiceFlag as returned by BOSS, but do not map it, compare it, or use it for CSV values or defaults. Use the supplied business flag or Standard Defaults. Match by the exact convention name; for update, multiple matching parents remain ambiguous. For create, decide only whether the exact name exists; do not fetch or compare existing flags, dates, or other definition values. For update only, obtain and index parent-owned dates through resolve_existing_prorate_dates; do not assume the parent response embeds dates. | Parent name-match count and create candidate/name-conflict status; for update, exact parent row, Convention Info DFF values and indexed parent-owned detail inventory | For create, a complete BOSS no-data result is a create candidate. For update, no parent match is a target-not-found blocker. For create, any exact-name match returns name_exists and stops creation with Convention name already exists; ask only for a different Name. Never claim equivalence or silently convert create into update. One exact update match supplies that parent's current values except the business flag, which uses supplied input or Standard Defaults. Zero date-row matches for a proposed range identifies a new detail; one match supplies that detail state. Multiple parents, duplicate indexed ranges, or incomplete paging/ownership block preparation. |
 | resolve_existing_prorate_convention | After defaults and selected-basis generation, before package readiness | Requested operation, resolved name check, completed proposed values, and generated rows; update also supplies existing parent-owned date rows | For create, reuse only the completed exact-name check: zero matches permits create readiness; any match is a name conflict. Do not compare an existing definition or claim equivalence for create. For update only, compare the completed business fields except Depreciate when placed in service, and every generated selected-basis date tuple. Exclude the returned BOSS Boolean from comparisons. Audit-field text is preservation evidence only. | Create readiness or name conflict; for update, matching rows, missing rows and differing values | For create, an existing name stops preparation and asks only for a different Name regardless of existing flags or dates. For update, zero matches is a target-not-found blocker; multiple parents or unclear date-row ownership block preparation. |
 | resolve_existing_prorate_dates | Update only, before existing-date comparison and audit preservation | Exact requested Name, verified SetCode, confirmed target and current project | Acquire a fresh completed same-target populated FA_MANAGE_PRORATE_CONVENTION export through shared.setup-export.task-level-export with --data. Use the export directly; do not call BOSS for date rows because the parent endpoint does not return them. | Complete same-parent StartDate, EndDate, ProrateDate tuples, exact existing detail audit text, export freshness evidence and indexed ranges | Export matching and failure boundaries follow Existing-Date Retrieval below. No create request invokes this resolver. |
@@ -14,8 +14,65 @@
 
 | Resolver | Runs When | Source Values | Request Path or URL | Requested Fields | Match Rule | Values to Fill | If No Match or Many Matches |
 |---|---|---|---|---|---|---|---|
+| resolve_prorate_dff_segments | Create candidates, explicit updates, and existing-ZIP validation | Immutable batch identity, target, supplied/archive values, and exact existing-parent evidence for updates | One completed FA_MANAGE_FIXED_ASSETS_DESCRIPTIVE_FLEXFILEDS data export through core.fusion-api.apps-common.descriptive-flexfields; execute Convention DFF Resolution | Definition/process identity, application/DFF/context, enabled segments, requiredness, columns, and type/value-set contracts | Validate each convention independently against the shared batch definition | Per-convention required-field map, validated values, conversions, and evidence | Missing required input, invalid values, ambiguous mappings, or incomplete evidence blocks the applicable operation |
 | resolve_prorate_fiscal_year_range | Accepted create/update selector, inquiry selector, or existing-ZIP expected-date validation | Confirmed target, operation, exact Fiscal Year Name and/or normalized cycle; an archive supplies its exact FiscalYearName | GET /api/boss/data/objects/ora/erpCore/fixedAssetsSetup/v1/assetFiscalYearDatesView with $sortBy=startDate:asc, $limit=25 and paged $offset. Include $filter=fiscalYearName='{{escapedFiscalYearName}}' for exact-name requests; omit it for cycle discovery. | fiscalYearName, startDate, endDate, assetFiscalYear, midyearStartDate, timeUpdated, items, hasMore when present, raw item counts | Fiscal-Year Selection Rules and Fiscal-Year Lookup Freshness | Requested finding, resolved name/date context when applicable, and Evidence retention | Use the selection outcome. Request/paging failure or unavailable required date/timestamp evidence is a lookup gap, not a no-match result. |
 | validate_reference_data_set_name | Create/update Reference Data Set validation | Confirmed target and exact supplied dropdown name | GET /api/boss/data/objects/ora/commonAppsInfra/objects/v1/setIdSets with $filter=setName='{{escapedReferenceDataSetName}}', $limit=25 and paged $offset | items, setName, setCode, hasMore when present, raw item counts | After complete paging, retain exact case-sensitive setName matches. One or more proves validity; every matching row must have a nonblank string setCode, with one distinct code across them. This same result supplies validity and code; no separate code request. | Name validity, exact SetName/setName and SetCode/setCode, matched count. Never derive, uppercase, or rewrite the code. | Zero exact matches means invalid name; matching rows failing the code requirement mean a mapping gap while name validity remains true. Failed/incomplete retrieval is a lookup gap. |
+
+## Convention DFF Resolution
+
+Obtain one completed same-environment Manage Fixed Assets Descriptive
+Flexfields data export per immutable batch through
+core.fusion-api.apps-common.descriptive-flexfields.
+Use FA_MANAGE_FIXED_ASSETS_DESCRIPTIVE_FLEXFILEDS, Financials / Fixed Assets;
+resolve task sequence and eligibility through the authoritative catalog
+and shared export workflow.
+Retain ProcessId, ZIP reference, outcome, environment, and batch identity.
+
+Reuse that export for every convention in the unchanged batch. Do not export
+per convention, generated date row, or approval reply. Obtain a new export
+for a new batch or changed batch/environment.
+
+1. Confirm ApplicationId=140 and DescriptiveFlexfieldCode=FA_CONVENTION_TYPES
+   from current metadata. Scope every definition row to that exact identity.
+2. Read all enabled global definitions from
+   ORA_FND_APP_DESCRIPTIVE_FLEXFIELD_GLOBAL_SEGMENT.csv.
+3. Resolve each supplied context from
+   ORA_FND_APP_DESCRIPTIVE_FLEXFIELD_CONTEXT.csv in the same export:
+   one exact enabled ContextCode, otherwise one exact enabled Name.
+4. Read enabled context-sensitive definitions from
+   ORA_FND_APP_DESCRIPTIVE_FLEXFIELD_SEGMENT.csv for the exact application,
+   DFF, and resolved context. Blank context never waives global requirements.
+5. Require nonblank values for applicable RequiredFlag=Y segments, including
+   hidden segments. Validate optional supplied values too. Map by unique
+   current ColumnName, SegmentCode, or Prompt within the applicable scope.
+   Reject unknown, disabled, out-of-context, or conflicting assignments.
+6. Delegate only read-only value-set verification through Manage Fixed Assets
+   Flexfield Value Sets. Never create, enable, or modify sets or values.
+   With no ValueSetCode, validate the supported column contract.
+   Format Only requires applicable type/format/length/precision/scale/range
+   checks, not enumerated membership. Independent requires exact eligible
+   membership; Dependent also requires the exact eligible parent/value pair.
+   Table membership is unsupported by the current delegated workflow:
+   report unverified and stop. Unsupported types, incomplete coverage, or
+   unresolved visibility also blocks readiness.
+7. Retain supplied values and documented canonical conversions separately.
+   Show conversions in review, then use resolve_convention_info_mapping
+   for the actual parent import headers. Do not add DFF fields to date rows.
+
+For updates, preserve omitted values only from verified exact-parent evidence.
+Require the same resolved segment/context identity; matching physical columns
+across contexts is insufficient. Clearing or remapping requires an explicit
+change and supported import semantics. Missing preservation evidence blocks.
+
+For an existing ZIP, validate every serialized parent against the same
+definition and contract without altering archive bytes. Missing or invalid
+DFF values require correction through the existing immutable-artifact review
+flow; do not collect values and silently patch the archive.
+
+Keep this definition export separate from the prorate template/spec contract.
+A failed or incomplete definition export does not establish no requirements.
+Fiscal-year inquiries and export-only requests do not invoke this resolver.
+An existing create-name conflict still stops immediately without DFF lookup.
 
 ## Existing-Date Retrieval
 
@@ -73,8 +130,8 @@ Apply [Fiscal-Year Lookup Freshness](#fiscal-year-lookup-freshness) before using
 | Description result | FA_PRORATE_CONVENTION.csv Description |
 | Reference Data Set result | Verified setCode for the supplied or defaulted Reference Data Set fills parent SetCode and detail FA_PRORATE_CONVENTION.SetCode using the exact template headers. Never populate either CSV field from BOSS setId |
 | Resolved Fiscal Year Name | FA_PRORATE_CONVENTION.csv FiscalYearName |
-| Convention Info result | FA_PRORATE_CONVENTION.csv AttributeCategoryCode and Attribute1 through Attribute15 |
-| Depreciate when placed in service result | FA_PRORATE_CONVENTION.csv DeprWhenAcquiredFlag using the CSV format in Standard Defaults |
+| Convention Info result | Verified context and enabled-segment headers in FA_PRORATE_CONVENTION.csv, as established by current DFF metadata and the task contract |
+| Depreciate when placed in service result | FA_PRORATE_CONVENTION.csv DeprWhenAcquiredFlag: `YES` for affirmative input and `NO` for negative input; stored column FA_CONVENTION_TYPES.DEPR_WHEN_ACQUIRED_FLAG |
 | Required normalized Prorate basis variant | Not serialized; used by Generation Contract |
 | Validated supplied or generated dates | ORA_FA_PRORATE_CONVENTION_DATE.csv StartDate, EndDate, and ProrateDate |
 | Detail parent name | ORA_FA_PRORATE_CONVENTION_DATE.csv FA_PRORATE_CONVENTION.ProrateConventionCode |
@@ -94,4 +151,4 @@ Apply [Fiscal-Year Lookup Freshness](#fiscal-year-lookup-freshness) before using
 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|
-| PRC.LOOKUP_CONTEXT | decision | 10 | reference_lookup | resolved->PRC.GENERATE_DATES;name_exists->PRC.DONE_EXISTS;matches_listed->PRC.DONE_FISCAL_YEARS;not_found_or_failed->PRC.HANDLE_LOOKUP | PRC.VALIDATE_INPUT | stop | Apply Lookup Execution Rules and Fiscal-Year Lookup Freshness for the route selected by Required Dependency Order in ora_dependency_readiness.md. For create, any exact convention-name match returns name_exists immediately, without existing-definition or date-row comparison. Otherwise, under Fiscal-Year Selection Rules, return matches_listed for a complete nonempty inquiry finding, resolved for completed generation context and all applicable lookups, or not_found_or_failed for invalid, unresolved, or failed lookups. |
+| PRC.LOOKUP_CONTEXT | decision | 10 | reference_lookup | resolved->PRC.GENERATE_DATES;name_exists->PRC.DONE_EXISTS;matches_listed->PRC.DONE_FISCAL_YEARS;not_found_or_failed->PRC.HANDLE_LOOKUP;missing_required_dff->PRC.HANDLE_INPUT;invalid_dff_value->PRC.HANDLE_INPUT | PRC.VALIDATE_INPUT | stop | Apply Lookup Execution Rules and Fiscal-Year Lookup Freshness for the route selected by Required Dependency Order in ora_dependency_readiness.md. For create, any exact convention-name match returns name_exists immediately, without existing-definition or date-row comparison. Otherwise, under Fiscal-Year Selection Rules, return matches_listed for a complete nonempty inquiry finding, resolved for completed generation context and all applicable lookups, or not_found_or_failed for invalid, unresolved, or failed lookups. For a create candidate, explicit update, or existing ZIP, execute resolve_prorate_dff_segments before returning resolved. Route missing required DFF input and invalid values to their input outcomes; unverified definition, membership, or mapping evidence follows not_found_or_failed. Preserve immediate create-name-conflict and fiscal-year inquiry outcomes. |

@@ -1,0 +1,252 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "ORA_AP_MANAGE_PAYMENT_PROCESS_REQUEST_TEMPLATE",
+      "task_name": "Create Payment Process Request Templates",
+      "start_node": "PPR.VALIDATE_INPUT",
+      "nodes": [
+        {
+          "id": "PPR.VALIDATE_INPUT",
+          "node_type": "decision",
+          "sequence": 10,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "PPR.EVALUATE_REFERENCES",
+            "invalid": "PPR.HANDLE_ISSUES"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Validate supplied Run Book intent and exact package/field operation contract; report only applicable missing/invalid fields",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 130
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PPR.EVALUATE_REFERENCES",
+          "node_type": "decision",
+          "sequence": 20,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "evaluated": "PPR.CHECK_DEPENDENCIES",
+            "issues": "PPR.HANDLE_ISSUES"
+          },
+          "prerequisites": [
+            "PPR.VALIDATE_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Check listed labels locally; execute declared Core REST GET routes for supplied business-unit, currency, legal-entity, pay-group, source and rate-type references and unlisted SupplierType; retain field-bound evidence; preserve other field-specific FSM fallback boundaries",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 83
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PPR.CHECK_DEPENDENCIES",
+          "node_type": "decision",
+          "sequence": 30,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "satisfied": "PPR.APPLY_DEFAULT_POLICY",
+            "missing": "PPR.HANDLE_ISSUES"
+          },
+          "prerequisites": [
+            "PPR.EVALUATE_REFERENCES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Evaluate only dependencies applicable to the supplied candidate; keep pending environment evidence distinct from a missing technical transformation",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 92
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PPR.APPLY_DEFAULT_POLICY",
+          "node_type": "decision",
+          "sequence": 40,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "evaluated": "PPR.ENFORCE_DESIGN",
+            "blocked": "PPR.HANDLE_ISSUES"
+          },
+          "prerequisites": [
+            "PPR.CHECK_DEPENDENCIES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "For create omissions, apply the task UI create defaults with preview disclosure; preserve explicit values and blanks and all update values",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 51
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PPR.ENFORCE_DESIGN",
+          "node_type": "decision",
+          "sequence": 50,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "acceptable": "PPR.HANDOFF_GATE",
+            "issues": "PPR.HANDLE_ISSUES"
+          },
+          "prerequisites": [
+            "PPR.APPLY_DEFAULT_POLICY"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Pre-execution applicable business combinations and disclosed effects only; no live execution or post-import acceptance",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 69
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PPR.HANDOFF_GATE",
+          "node_type": "decision",
+          "sequence": 60,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "create_ready": "PPR.READY_CREATE",
+            "update_ready": "PPR.READY_UPDATE",
+            "not_ready": "PPR.HANDLE_ISSUES"
+          },
+          "prerequisites": [
+            "PPR.ENFORCE_DESIGN"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return only candidate-specific task-rule readiness to active Run Book/Data Loader; do not require a developer-test keyword or perform an import",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 104
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PPR.READY_CREATE",
+          "node_type": "terminal",
+          "sequence": 70,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "PPR.HANDOFF_GATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Bounded create checks complete; handoff only, no business completion claim",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 105
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PPR.READY_UPDATE",
+          "node_type": "terminal",
+          "sequence": 80,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "PPR.HANDOFF_GATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Exact-key bounded update checks complete; handoff only, no business completion claim",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 106
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "PPR.HANDLE_ISSUES",
+          "node_type": "step",
+          "sequence": 900,
+          "action_type": "error_handler",
+          "execution_route": "local",
+          "transitions": {
+            "returned": "RETURN_ISSUES"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Any input/reference/dependency/default/design/handoff issue; classify and disclose without writes or retries",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 107
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RETURN_ISSUES",
+          "node_type": "terminal",
+          "sequence": 910,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Return accumulated actionable issues and safe next action",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 108
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

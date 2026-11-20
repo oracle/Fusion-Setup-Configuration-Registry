@@ -1,37 +1,38 @@
 #!/usr/bin/env python3
 """Build implementation Time Slots create/update PUT candidates from XLSX."""
 from __future__ import annotations
-import argparse, json, re, sys, zipfile
-import xml.etree.ElementTree as ET
+import argparse, json, re, sys
 from pathlib import Path
 from typing import Any
 from urllib.parse import quote
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
+from guarded_xlsx import GuardedWorkbook, column_index, shared_string
 
 class PreviewInputError(ValueError): pass
 NS="{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"; REL="{http://schemas.openxmlformats.org/officeDocument/2006/relationships}"; PKG="{http://schemas.openxmlformats.org/package/2006/relationships}"
 ALIASES={"id":("id",),"label":("time slot label","label"),"name":("name","time slot name"),"status":("status",),"all_day":("all-day","all day","all_day"),"start":("start time","time start","timefrom"),"end":("end time","time end","timeto"),"business_purpose":("business purpose",),"booking_model":("booking model",),"eligible_activity_types":("eligible activity types",),"change_impact":("change impact",),"activity_types":("activity types",),"capacity_categories":("capacity categories",),"warehouse_visits":("warehouse visits",)}
 def norm(v:Any)->str:return " ".join(str(v or "").replace("\xa0"," ").strip().rstrip("*").strip().split()).casefold()
-def col(ref:str)->int:
- n=0
- for c in ''.join(x for x in ref if x.isalpha()).upper():n=n*26+ord(c)-64
- return n
+col = column_index
 def _strings(z):
- try:return [''.join(x.itertext()) for x in ET.fromstring(z.read('xl/sharedStrings.xml')).findall(f'{NS}si')]
+ try:return [''.join(x.itertext()) for x in z.xml('xl/sharedStrings.xml').findall(f'{NS}si')]
  except KeyError:return []
 def read_rows(path:Path)->list[list[Any]]:
  try:
-  with zipfile.ZipFile(path) as z:
-   wb=ET.fromstring(z.read('xl/workbook.xml'));rels=ET.fromstring(z.read('xl/_rels/workbook.xml.rels'));targets={x.attrib['Id']:x.attrib['Target'] for x in rels.findall(f'{PKG}Relationship')};ss=_strings(z)
+  with GuardedWorkbook(path) as z:
+   wb=z.xml('xl/workbook.xml');rels=z.xml('xl/_rels/workbook.xml.rels');targets={x.attrib['Id']:x.attrib['Target'] for x in rels.findall(f'{PKG}Relationship')};ss=_strings(z)
    sheet=next((s for s in wb.findall(f'{NS}sheets/{NS}sheet') if norm(s.attrib.get('name'))=='time slots'),None)
    if sheet is None:raise PreviewInputError('No Time Slots worksheet was found.')
    target=targets[sheet.attrib[f'{REL}id']].lstrip('/')
    sheet_path=target if target.startswith('xl/') else 'xl/'+target
-   root=ET.fromstring(z.read(sheet_path));out=[]
+   root=z.xml(sheet_path);out=[]
+   z.check_time()
    for r in root.findall(f'{NS}sheetData/{NS}row'):
+    z.check_time()
     values={}
     for c in r.findall(f'{NS}c'):
      v=c.find(f'{NS}v');typ=c.attrib.get('t');value=None if v is None else v.text
-     if typ=='s' and value is not None:value=ss[int(value)]
+     if typ=='s' and value is not None:value=shared_string(ss,value)
      elif typ=='inlineStr':value=''.join(c.itertext())
      values[col(c.attrib.get('r',''))]=value
     out.append([values.get(i) for i in range(1,max(values,default=0)+1)])

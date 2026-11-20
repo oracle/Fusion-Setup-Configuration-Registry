@@ -82,3 +82,39 @@ Treat `CalcDiscountOnLinesFlag` as the four-value Discount Basis enumeration eve
 ## Controlled create-required transaction and receipt choices
 
 Every create requires explicit nonblank values for ChangePrintedInvoiceFlag, PartialDiscountFlag, and SiteRequiredFlag. Ask for them in business language: whether printed transactions may be changed, whether partial payments can earn discounts, and whether receipts require a customer site. Do not expose package-field names unless needed for diagnostics, and do not invent a universal default. Reject an incomplete create before candidate ZIP generation and report all three missing choices together. Controlled FSM imports returned FND_CMN_REQ_ATTRIB_API_SERV for each omitted field; the corrected eight-row request succeeded. Source ID: SRC-E2E-RSO-CREATE-REQUIRED-ATTRIBUTES-20260904.
+
+## Salesperson requirement on create
+
+Require an explicit `SalesrepRequiredFlag` choice on create. A controlled nonproduction FSM import on release 27.01 rejected an omitted value with `FND_CMN_REQ_ATTRIB_API_SERV`; do not assume an import default. Ask whether a salesperson is required. If Yes, retain the existing sales-credit percent-limit decision gate. Source: SRC-E2E-RSO-CREATE-SALESREP-20261023.
+
+## Source-audited required create fields
+
+The supported complete billing/cash create profile must cover both lists in
+`SystemParameterEOImpl.validateSystemParameterEO`, plus the non-null input
+attributes in `SystemParameterEO.xml`. In addition to the fields above, require
+`CreateReciprocalFlag` and `PayUnrelatedInvoicesFlag`: ask whether reciprocal
+customer relationships should be created and whether payments may apply to
+unrelated customers' invoices. Do not invent a default for either choice.
+
+Also require nonblank `AccountingMethod`, `AccrueInterest`, `AutoSiteNumbering`,
+`GenerateCustomerNumber`, `PopulateGlSegmentsFlag`, and `UnearnedDiscount` after
+applying the existing source-backed create defaults. Omission uses the existing
+default; an explicitly blank value is unresolved and must be reported, not silently
+replaced. Collect all missing required choices in one clarification before preview.
+
+These checks complete the skill's existing combined create profile; the application
+itself makes Billing and Cash Processing requirements conditional on BU usage or
+previously configured sections. Do not infer that every BU must enable both functions.
+Do not copy another BU's flags merely to make a create pass. Existing optional flags
+such as invoice deletion, journal import and printing remain optional.
+
+Source: SRC-CODE-EO; SRC-CODE-EO-IMPL; SRC-CODE-CREATE-UI-VO.
+Audit baseline: FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261019.2306.
+The source label is not asserted to be identical to the deployed target release.
+
+For updates, preserve omitted values. Reject an explicit blank/null for an entity
+non-null field or for a required field in an already configured Billing or Cash
+Processing section. Determine the posted section from the fresh baseline's
+GroupingRuleName and SiteRequiredFlag respectively, mirroring the EO's
+DefaultGroupingRuleId/SiteRequiredFlag checks. This local check does not replace
+BU-function discovery or FSM's final validation for newly enabled sections.

@@ -1,0 +1,74 @@
+{
+  "source_id": "SHARED-FSM-AIRFARE-CREATE-SERIALIZATION",
+  "revision": {
+    "series": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64",
+    "label": "261028.0600.S"
+  },
+  "evidence_kind": "Pinned primary compiled implementation plus task-owned Java and XML declarations",
+  "libraries": [
+    {
+      "path": "fmwtools/BUILD_HOME/atgpf/fsext/modules/oracle.fs.fsext/AdfFunctionalSetupPublicModel.jar",
+      "sha256": "528e6b6cbc653f16a9ce892932f7c461992894c2c925075052ec89510b9cc9a7"
+    },
+    {
+      "path": "fmwtools/BUILD_HOME/oracle_common/modules/oracle.adf.model/adfm.jar",
+      "sha256": "e56e55d7b84721dce9b63a671b4dff789b1a61fe2f3d44a4648c049975df2321"
+    }
+  ],
+  "facts": [
+    {
+      "symbol": "oracle.adf.model.adapter.dataformat.csv.CSVParser.getNextValue(boolean,boolean)",
+      "offsets": "254-273",
+      "fact": "An empty value buffer returns Java null; empty quoted text is not an omission instruction."
+    },
+    {
+      "symbol": "oracle.apps.setupHub.xml.transform.CSVXmlTransform.populateXmlRequest",
+      "offsets": "1104-1126",
+      "fact": "Nonnull scalar input is stored in the row data map; SQL staging and header inclusion still govern the emitted XML."
+    },
+    {
+      "symbol": "oracle.apps.setupHub.xml.transform.CSVXmlTransform.createViewObject/getIncludedAttrMap",
+      "offsets": "createViewObject 250-287; getIncludedAttrMap 36-121",
+      "fact": "CSV attribute/header mappings determine included XML attributes independently of each scalar cell's null value."
+    },
+    {
+      "symbol": "oracle.apps.setupHub.xml.transform.CSVXmlTransform.markVOsToUseXMLExplicitNull; oracle.apps.setupHub.common.util.model.ModelUtil.markVOToUseXMLExplicitNull",
+      "fact": "The transform marks its dynamic VOs with XML_EXPLICIT_NULL=true before XML writing."
+    },
+    {
+      "symbol": "oracle.jbo.server.ViewRowImpl.renderAttributeValueInXMLElement",
+      "offsets": "60-100",
+      "fact": "An included null value under explicit-null mode renders an element with null=true."
+    },
+    {
+      "symbol": "oracle.jbo.server.AttributeDefImpl.getXMLValue",
+      "offsets": "170-184,374-376",
+      "fact": "An element marked null=true reads as Java null."
+    },
+    {
+      "symbol": "oracle.jbo.server.ViewRowImpl.readAttributeFromXMLElement/readAttrsFromXML",
+      "fact": "Absent XML scalars are skipped; present changed values, including explicit null, reach the attribute setter list. Non-updateable VO attributes are skipped."
+    },
+    {
+      "symbol": "oracle.apps.setupHub.remoteApp.publicModel.migrator.MigratorHelper.updatePrimaryKeysInXML",
+      "offsets": "138-286,598-674,735-944",
+      "fact": "Alternate-key matches reuse existing primary keys; supported single globally-unique primary-key definitions generate IDs on a miss and propagate matching association keys to nested children. No client ID is needed or admitted."
+    },
+    {
+      "symbol": "oracle.jbo.server.ViewObjectImpl.updateRowSetFromXML; oracle.jbo.server.ViewRowImpl.updateRowFromXML",
+      "fact": "Primary-key lookup supplies the existing row or null; a null row invokes createAndInitRow/createRow before XML attribute application. This generic create path does not establish every entity's defaults."
+    }
+  ],
+  "qualified_use": [
+    "Airfare parent and ordinary CATCH_ALL child only, disabled role/flight-type/duration determinants.",
+    "Explicit DRAFT and disabled flags; CATCH_ALL is the owning UI no-determinant identity, not an inferred business choice.",
+    "Require explicit enforcement, display-warning and flight-class choices and customer StartDate; never use EO defaults.",
+    "PolicyRoleCode/FlightDurationCode and inactive child determinant scalars are deliberate explicit null. In Service context blank RoleName stays raw null.",
+    "Owning service VOs mark audit attributes non-updateable; client IDs and audit inputs are excluded."
+  ],
+  "boundaries": [
+    "Source-qualified local preparation only; native target create and exact deployed-build parity remain unverified.",
+    "Existing-row Airfare update fields retain their earlier exact-field uncertainty route. No other category or determinant admission.",
+    "Complete operation-bound lookup evidence, native validation, later exact import approval and fresh-export reconciliation remain mandatory."
+  ]
+}

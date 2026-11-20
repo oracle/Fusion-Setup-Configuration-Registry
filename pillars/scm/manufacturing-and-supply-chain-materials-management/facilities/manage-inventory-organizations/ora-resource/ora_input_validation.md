@@ -9,9 +9,9 @@
 | Master organization | Accept MasterOrganizationId, MasterOrganizationCode, or MasterOrganizationName; block and ask for one master organization reference when none is supplied | Always |  |
 | Item-definition organization | Accept ItemDefinitionOrganizationId, ItemDefinitionOrganizationCode, or ItemDefinitionOrganizationName; block and ask for a reference when none is supplied | Inventory organization create|  |
 | Management business unit | Accept ManagementBusinessUnitId or ManagementBusinessUnitName; block when neither is supplied | Inventory organization create |  |
-| Profit center business unit | Accept ProfitCenterBusinessUnitId or ProfitCenterBusinessUnitName; block when neither is supplied | Inventory organization create |  |
+| Profit center business unit | Accept ProfitCenterBusinessUnitId or ProfitCenterBusinessUnitName; preserve null or blank values when optional. Block when neither is supplied only if the selected environment metadata or a verified organization-specific rule requires a profit center business unit | Inventory organization create |  |
 | Legal entity | Accept LegalEntityId or LegalEntityName; block when neither is supplied | Inventory organization create|  |
-| Location | Accept LocationId, LocationCode, or LocationName; block when none is supplied | Inventory organization create |  |
+| Location | Accept LocationId, LocationCode; block when none is supplied | Inventory organization create |  |
 | OrganizationCode length | Reject a value longer than 18 characters | OrganizationCode is supplied |  |
 | OrganizationName length | Reject a value longer than 240 characters | OrganizationName is supplied |  |
 | Item grouping code | Accept only ORA_RCS_IGB_DFTN (Definition Organization) or ORA_RCS_IGB_RFRC (Reference Organization). ORA_RCS_IGB_DFTN means the organization stores its own item attribute values; ORA_RCS_IGB_RFRC means it inherits item attribute values from an associated definition organization | ItemGroupingCode is supplied |  |

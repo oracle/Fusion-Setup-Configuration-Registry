@@ -21,10 +21,19 @@
 | A read-only API preflight returns HTTP 400 | Preserve the submitted value. Record `validation_skipped` and a structured `resolver_contract_issue` with endpoint, supplied value, query fingerprint, sanitized diagnostic, timestamp, owner, and required maintenance action. The governed FSM import remains authoritative. A create-time BU/ledger derivation may still need a readable result because it supplies required create context. |
 
 Account validation failures (invalid combination, missing existing CCID, SOAP
-fault, timeout or unavailable endpoint) block candidate generation. Never keep a
+fault, timeout or unavailable endpoint) block candidate generation; the approved
+missing-account FSM deferral and the explicit user account-validation waiver below are alternatives to an existing CCID. Never keep a
 previous successful receipt after a failed new lookup, retry an import, create a
 combination or treat this check as an advisory lookup. Bind each receipt to its
 operation, BU, ledger, ordered segments and baseline digest.
+
+Preserve the bounded account service error codes and message in
+`validationFailure` and the blocking resolver diagnostic. Disabled, date and
+posting restrictions are different from an absent account. `CcId=-1` is a failed
+validation result, not absence proof. Show combined service errors without
+guessing which configuration caused them. See the
+[account decision/test matrix](../references/interest-account-validation.md).
+Never let the general advisory HTTP-400 rule above override this account gate.
 
 ## Error Classifications
 
@@ -147,3 +156,40 @@ Use `--compare-only` for a local comparison without these observations. It retur
 claims that Fusion saved data. The offline command trusts evidence collected by
 the governed workflow; it does not authenticate arbitrary caller-written JSON,
 contact Fusion, authorize an import, or retry one.
+
+## Missing-account Decisions and Creation Failures
+
+The normal resolver returns `accountResolution` alongside the original safe
+`accountValidation` error. Show its message and choices; no satisfied receipt or
+resolved design is emitted for a missing account. Missing/invalid COA evidence,
+incomplete account pagination or mapping, and service failures keep existence or
+creation unconfirmed. Never present these as permission to create.
+
+Creation has its own exact request and task-context approval, durable execution
+receipt, and fresh read-only revalidation. Stop after a rejected or uncertain creation; do not retry automatically.
+If the outcome is uncertain, verify whether the account was created before
+approving another attempt. A creation response alone cannot satisfy Invoice Options preflight:
+rerun normal validation and keep its original context-bound receipt requirements.
+
+
+## Batch continuation and deferred creation
+
+Review every record before asking once to correct, explicitly exclude, or stop.
+Only the exact completed creation rejection `GL_ASM_ACCOUNT_DYN_INSERT` may be
+deferred after a fresh missing/enabled check. Faults, transport failures, mixed
+errors and uncertain creation outcomes require reconciliation, not fallback.
+Keep service details in diagnostic evidence and show actual created/remaining
+counts. The import preview must state that remaining accounts will be submitted
+for creation; do not promise success. Created GL accounts remain if import is
+cancelled or fails. Verify both account usability and saved settings afterward.
+
+## Explicit user account-validation waiver
+
+Account business errors block by default. After the error is explained, an
+explicit user decision to submit the exact account unchanged may retain the row
+through the bound `submit_interest_account_with_user_override` / `overridden`
+receipt. See [the override workflow](../references/account-validation-overrides.md).
+Preserve the error and reason; do not claim validation passed or invent a CCID.
+Mark affected Task Hook rule results `overridden`, keep all unrelated checks,
+and obtain the normal exact Data Loader import approval. FSM may accept or
+reject the account; post-import account usability must be checked separately.

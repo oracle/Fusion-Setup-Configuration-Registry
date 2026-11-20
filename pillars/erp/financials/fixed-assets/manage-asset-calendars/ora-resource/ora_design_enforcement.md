@@ -12,6 +12,7 @@
 
 | Applies When | Severity | Required Lookup | Blocking Condition | Recommendation | Fix Allowed? |
 |---|---|---|---|---|---|
+| Calendar create/update | Blocker | resolve_calendar_dff_segments | Required DFF input is absent, any supplied value is invalid/unverified, or context/update preservation is ambiguous | Resolve against the batch-current definition using read-only verification before preview | Yes |
 | Any provided calendar field | Recommendation | | A value is valid but differs from available product guidance or established setup conventions | Explain the recommendation, rationale, and impact; retain the user's explicit value | Yes |
 | Source GL calendar is monthly and has an adjustment period | Error | resolve_ledger_periods | The proposed FA depreciation or prorate calendar includes the GL adjustment-period row | Exclude only the GL adjustment-period row; preserve the source's regular monthly periods. Handle FA corrections in the applicable open FA period and post to GL's adjustment period if required. | Yes |
 | Calendar will support a ledger-posting asset book | Blocker | resolve_ledger_periods | A proposed FA period name does not exactly equal the matching regular GL `EnteredPeriodName`, or its dates differ | Build the FA calendar from the ledger's regular GL period names and dates; exclude adjustment periods. Do not rely on date equivalence alone (for example, `Jan-2020` versus `Jan-20`). | Yes |
@@ -20,6 +21,7 @@
 
 | Resolver | When Required | Values Needed | Source File |
 |---|---|---|---|
+| resolve_calendar_dff_segments | Calendar create/update or supplied reuse criteria | Current definition, per-calendar context, validated values, and comparison evidence | ora_reference_lookups.md |
 | resolve_ledger_periods | Ledger-derived calendar design | Regular and adjustment GL period rows | ora_reference_lookups.md |
 
 ## GL Adjustment-Period Handling
@@ -30,8 +32,19 @@ adjustment flag; copying the row can make it a depreciation period. For
 nonmonthly calendars, do not apply that monthly-calendar rule automatically;
 use the requested design and task-specific validation.
 
+## DFF Preview and Artifact Enforcement
+
+Include each applicable header DFF prompt and reviewed value in the
+Reference Validation, Design, and Final ZIP previews.
+
+Before execution approval, inspect each affected calendar-header row in the
+immutable ZIP against the current definition, approved context and values,
+canonical conversions, and update-preservation evidence. Validate actual
+contract headers and serialization. Do not add DFF fields to period members.
+Any missing required value, unsupported mapping, or mismatch blocks import.
+
 ## Task Nodes
 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|
-| CAL.ENFORCE_DESIGN | decision | 50 | design_enforcement | pass->CAL.IMPORT_GATE;blocked->CAL.HANDLE_DESIGN | CAL.APPLY_DEFAULTS | stop | Defaults and lookup results are available |
+| CAL.ENFORCE_DESIGN | decision | 50 | design_enforcement | pass->CAL.IMPORT_GATE;blocked->CAL.HANDLE_DESIGN | CAL.APPLY_DEFAULTS | stop | Defaults and lookup results are available. Require passed DFF outcomes, complete DFF preview disclosure, and final-artifact checks before import approval, retaining every existing preview and package-creation gate. |

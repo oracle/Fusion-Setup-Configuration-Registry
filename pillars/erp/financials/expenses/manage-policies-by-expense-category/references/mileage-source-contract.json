@@ -1,0 +1,128 @@
+{
+  "schema_version": "1.0",
+  "category": "Mileage",
+  "status": "prototype_create_pending_common_dom_identity_existing_updates_scoped",
+  "series": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64",
+  "label": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64_261028.0600.S",
+  "source_root": "fusionapps/fin/components/payables/exm",
+  "sources": [
+    {
+      "path": "policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseMileageService/applicationModule/ExpenseMileageServiceAMImpl.java",
+      "sha256": "bb19b3a1ac1d0535958099e86fd504bfd4a91220a2b3b1829cb24babe9ef623d"
+    },
+    {
+      "path": "policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseMileageService/applicationModule/ExpenseMileageServiceAM.xml",
+      "sha256": "e76e2668edd28792020d9a9c8ef545f2297c3710a39b9770da50c2fd8be32d69"
+    },
+    {
+      "path": "policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseMileageService/view/MileageVO.xml",
+      "sha256": "afd98aaf74fe5cc4b86cdf782b55fb2a4aa8457e80d88248c5c7e4876dc63688"
+    },
+    {
+      "path": "policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseMileageService/view/MileageLineVO.xml",
+      "sha256": "e8726b89f9184fa3f9122b213cc5b591ab0711db247419ab3d4d28810d5d812a"
+    },
+    {
+      "path": "policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/MileagePolicyEO.xml",
+      "sha256": "354af772a3e1dee4dd2542dcc19faa207c926d344ed7782371d545f7dbb2f4b3"
+    },
+    {
+      "path": "policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/MileagePolicyEOImpl.java",
+      "sha256": "fb904f5939f938cac26fc1da2328d9a8ecc1a1861e1ab5a6e9e04d61f9a7cb82"
+    },
+    {
+      "path": "policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/MileagePolLineEO.xml",
+      "sha256": "64a603811f7d31dc5b1012131b9a7ea4f6a3551c6fe86216339468c6424c4845"
+    },
+    {
+      "path": "policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/MileagePolLineEOImpl.java",
+      "sha256": "c8c1759fc91d317700dc379f086ac7adb49c5613e841ed1a21da357d231dfe75"
+    },
+    {
+      "path": "policy/mileage/model/src/oracle/apps/financials/expenses/policy/mileage/uiModel/view/MileagePolicyVO.xml",
+      "sha256": "4260a0c76667af8faf09de248b05df6fd6bd4d66f7396a1635a1fee0db92ac84"
+    },
+    {
+      "path": "policy/mileage/model/src/oracle/apps/financials/expenses/policy/mileage/uiModel/view/MileagePolLinesVO.xml",
+      "sha256": "bcbff16caf533451e825b74ebd9494aa67a11697784a3c4f65e11f800d221564"
+    },
+    {
+      "path": "policy/mileage/model/src/oracle/apps/financials/expenses/policy/mileage/uiModel/applicationModule/FinExmPolicyMileageAMImpl.java",
+      "sha256": "296cdf29e9476196abe7d17aa1dc6040233fecda97eced03bcdf50564061e37f"
+    },
+    {
+      "path": "policy/mileage/ui/src/oracle/apps/financials/expenses/policy/mileage/ui/bean/FinExmPolicyMileageMainBean.java",
+      "sha256": "6e83842571e743000950fae06387ada5336df3bb970dc6880f599a1b84c4f173"
+    },
+    {
+      "path": "policy/mileage/ui/public_html/oracle/apps/financials/expenses/policy/mileage/ui/page/FinExmPolicyMileageMain.jsff",
+      "sha256": "3006e66fe90304768fffaaf5d9b4f26c14b2099d159db1716271c6f60225e0f0"
+    },
+    {
+      "path": "lookups/pubicView/src/oracle/apps/financials/expenses/lookups/publicView/ExmLookupTypePVO.xml",
+      "sha256": "f6c86dc907683a6c4ef9879346c55073291bc596aab3cbdad5a31e27132d3e7f"
+    },
+    {
+      "path": "lookups/pubicEntity/src/oracle/apps/financials/expenses/lookups/publicEntity/ExmLookupTypePEO.xml",
+      "sha256": "0fb78b3f15d6ac1792d84a2dbc43790a37a57613953b59deb3471841eee9d4bb"
+    },
+    {
+      "path": "policy/mileage/model/src/oracle/apps/financials/expenses/policy/mileage/uiModel/view/MileagePolLinesVORowImpl.java",
+      "sha256": "c16bcb7ac7fc2ff082791b35f4a5571854f31d563ba83af9f1162701e31a60c5"
+    },
+    {
+      "path": "policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseMileageService/view/MileageLineVORowImpl.java",
+      "sha256": "d6882f460f362dfada1dac5d3e9a4f8fa2d8485d3b40d9aac087d40d106447db"
+    },
+    {
+      "path": "policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseMileageService/view/link/MileageVOToMileageLineVO.xml",
+      "sha256": "895721f8693eae0a3a0cbd9e28e452c2154ef84b9cf29fb35e99e1725feb7bd6"
+    },
+    {
+      "path": "policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/association/MileagePolicyEOToMileagePolLineEO.xml",
+      "sha256": "386801543151b7c445b2f50ffdcce654d90456e275d0ca6d1a58d0774bcfeaea"
+    }
+  ],
+  "reviewed_facts": [
+    "Own Mileage service/VO/EO ownership and complete sixteen-part AltKey, plus AltKey_NoStart. Preserve all coordinates and types.",
+    "MileagePolLineEO.xml:406-413 PassengerThreshold is optional java.lang.Integer precision3 scale0; no conversion to decimal or inferred sentinel.",
+    "MileagePolicyEOImpl:2056-2071 exports ORA_EXM_REQUIRED/OPTIONAL, setter maps codes internally to Y/N. Preserve package codes.",
+    "MileagePolicyEOImpl:261-267 create has SINGLE/Gender/commute defaults. The pinned CSV/XML/ADF join establishes explicit-null application after EO creation; reviewed consumer-owned constants/conditional inactive encoding are serialized rather than requesting EO business defaults.",
+    "FinExmPolicyMileageMain.jsff:220-228,248-256 eligibility/deduction required when enabled and whole nonnegative;580-587 max passengers requires whole>=1 plus EO precision3. These are UI profile rules, not independently demonstrated FSM validators.",
+    "FinExmPolicyMileageAMImpl:1445-1600 UI upload checks rate, additional-code/calculation, required determinants and dates; it also derives missing dates/thresholds/status. Such derivations are not performed by this implementation.",
+    "ExmLookupTypePVO uses EXM_LOOKUP_TYPES, customization criteria; MileagePolicyVO chooses U/E lookup types and MileagePolLinesVO binds enabled selected AdditionalRatesListCode. references/mileage-company-lookup-contract.json closes the declared read-only consuming parent/all-child receipt route; fresh target eligibility remains unverified until capture.",
+    "MileagePolLinesVORowImpl:941-960 exposes blank upper passenger threshold only for RANGE/SPECIFIC_AND_RANGE and maps null to MAX_PASSENGER_THRESHOLD there. SINGLE retains null; task never generates numeric sentinel."
+  ],
+  "boundaries": [
+    "Source-qualified SINGLE/no-determinant create preparation only; existing update field decisions and protected key/status/date/audit/currency boundaries remain unchanged.",
+    "Full resulting parent and every selected-policy rate validated, including full/no-Start identity, conditional row types, inclusive schedules and operation-bound references.",
+    "Company-specific eligibility requires exact consuming parent/all-code receipts covering retained and proposed children; local choices cannot establish eligibility.",
+    "Pinned shared helper implementation is joined to own create graph; broader target existing-field writes still require exact uncertainty acceptance and native approval.",
+    "No live Mileage create/update, exact target-build parity or persisted-state qualification is asserted by this source contract."
+  ],
+  "create_join": {
+    "source_id": "MILEAGE-CREATE-SERIALIZATION",
+    "source_file": "references/mileage-create-serialization.json",
+    "qualification": "PROVISIONAL_LOCAL_PROTOTYPE; common DOM reference-identity evidence pending; do not promote create admission",
+    "required_business_input": "PolicyName, CurrencyCode, UnitOfMeasureCode and every eligibility/add-on control explicitly; enabled commute requires explicit ORA_EXM_OPTIONAL/REQUIRED. Conditional amounts/methods/ranges/list/codes plus Rate Kind/Rate/StartDate.",
+    "managed_values": {
+      "parent": {
+        "Status": "DRAFT",
+        "CurrencyOptionCode": "SINGLE",
+        "determinants": "N"
+      },
+      "rate": {
+        "Status": "DRAFT"
+      }
+    },
+    "blank_behavior": "Included blank CSV scalars become explicit null after EO create. Only nullable, inactive direct/raw fields have remains_empty recipes; commute/EnabledDeductCommute are never annotated blank-preserving. Explicit No with blank inactive commute mode uses the source-owned ORA_EXM_OPTIONAL create encoding; active mode stays user-owned and updates preserve omission.",
+    "audit_and_ids": "Import VOs non-updateable audit attributes plus EO history metadata; single globally unique IDs and explicit own association.",
+    "optional_keys": "Full16-part identity retained, PassengerThreshold remains optional integer with exact empty string; explicit RANGE1..999/-1 follows own EO precision and positive-except-minus-one validator.",
+    "branch_scope": "No determinants; explicit base, passenger SINGLE/RANGE, company ADDITIONAL. Company lookup requires exact complete U/E Expenses type and every actual retained/proposed child code; no inferred eligible code."
+  },
+  "remaining_create_qualification": [
+    "Native target create acceptance and persisted-state reconciliation",
+    "Exact target/pinned build parity",
+    "Broader target combinations and source-independent business choices remain unqualified"
+  ]
+}

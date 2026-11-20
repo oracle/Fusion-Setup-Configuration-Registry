@@ -1,6 +1,6 @@
 {
   "catalogName": "offering-functional-area-task-catalog",
-  "generatedAt": "2026-10-15T05:06:18+00:00",
+  "generatedAt": "2026-11-06T03:13:25+00:00",
   "sourceEnvironment": "2610_ARU",
   "sourceRestBaseUrl": "https://cptcyaeqy.fusionapps.ocs.oc-test.com/",
   "sourceOfferingsCatalog": "knowledge/setup-task-catalog/release/.release-offerings-d22lcmnj.json",
@@ -25,7 +25,7 @@
   "counts": {
     "offerings": 31,
     "functionalAreas": 454,
-    "tasks": 7660,
+    "tasks": 7665,
     "errors": 0
   },
   "offeringOrder": [
@@ -4275,6 +4275,66 @@
               "MandatoryFlag": false
             },
             {
+              "taskShortName": "ORA_MANAGE_EMAIL_PROFILE_OPTIONS",
+              "taskListItemShortName": "ORA_SVC_DEFINE_EMAIL_CHANNEL_CONFIG_ORA_MANAGE_EMAIL_PROFILE_OPTIONS",
+              "displaySequence": "59",
+              "taskName": "Manage Email Profile Options",
+              "taskDescription": "Specify email profile option values for your implementation.",
+              "csvExportImportSupportedFlag": true,
+              "exportImportSupportedFlag": true,
+              "MandatoryFlag": true
+            },
+            {
+              "taskShortName": "ORA_SVC_MANAGE_INBOUND_EMAIL_PROFILE_OPTS",
+              "taskListItemShortName": "ORA_SVC_DEFINE_EMAIL_CHANNEL_CONFIGORA_SVC_MANAGE_INBOUND_EMAIL_PROFILE_OPTS",
+              "displaySequence": "60",
+              "taskName": "Manage Inbound E-Mail Profile Options",
+              "taskDescription": null,
+              "csvExportImportSupportedFlag": true,
+              "exportImportSupportedFlag": true,
+              "MandatoryFlag": true
+            },
+            {
+              "taskShortName": "ORA_SVC_MANAGE_OUTBOUND_EMAIL_PROFILE_OPTS",
+              "taskListItemShortName": "ORA_SVC_DEFINE_EMAIL_CHANNEL_CONFIGORA_SVC_MANAGE_OUTBOUND_EMAIL_PROFILE_OPTS",
+              "displaySequence": "61",
+              "taskName": "Manage Outbound E-Mail Profile Options",
+              "taskDescription": null,
+              "csvExportImportSupportedFlag": true,
+              "exportImportSupportedFlag": true,
+              "MandatoryFlag": true
+            },
+            {
+              "taskShortName": "ORA_SVC_MANAGE_EMAIL_FILTERS",
+              "taskListItemShortName": "ORA_SVC_DEFINE_EMAIL_CHANNEL_CONFIGORA_SVC_MANAGE_EMAIL_FILTERS",
+              "displaySequence": "63",
+              "taskName": "Manage E-Mail Filters",
+              "taskDescription": "Manage filters to accept or reject inbound e-mails from customers.",
+              "csvExportImportSupportedFlag": true,
+              "exportImportSupportedFlag": true,
+              "MandatoryFlag": false
+            },
+            {
+              "taskShortName": "ORA_SVC_EMAIL_CONFIGURATION_AND_VALIDATION",
+              "taskListItemShortName": "ORA_SVC_DEFINE_EMAIL_CHANNEL_CONFIG_ORA_SVC_EMAIL_CONFIGURATION_AND_VALIDATION",
+              "displaySequence": "64",
+              "taskName": "Manage Email Configuration, Registration, and Validation",
+              "taskDescription": "Manage email configuration by verifying the email profile options that are not predefined email channels. The task also allows user to register, unregister and validate email access points for inbound email. Additional validation can be performed by executing test emails for both Inbound and outbound email flows.",
+              "csvExportImportSupportedFlag": false,
+              "exportImportSupportedFlag": false,
+              "MandatoryFlag": true
+            },
+            {
+              "taskShortName": "ORA_MANAGE_EMAIL_CONFIGURATIONS",
+              "taskListItemShortName": "ORA_SVC_DEFINE_EMAIL_CHANNEL_CONFIG_ORA_MANAGE_EMAIL_CONFIGURATIONS",
+              "displaySequence": "65",
+              "taskName": "Manage Email Integration to Exchange",
+              "taskDescription": "Configure Microsoft Exchange as the email server",
+              "csvExportImportSupportedFlag": false,
+              "exportImportSupportedFlag": false,
+              "MandatoryFlag": false
+            },
+            {
               "taskShortName": "ORA_SVC_MANAGE_OMNI_CHANNEL_PROFILE_OPTS",
               "taskListItemShortName": "100000000221561",
               "displaySequence": "67",
@@ -4395,7 +4455,7 @@
               "MandatoryFlag": true
             }
           ],
-          "taskCount": 17
+          "taskCount": 23
         },
         "ORA_CSO_KNOWLEDGE_MANAGEMENT": {
           "functionalAreaShortName": "ORA_CSO_KNOWLEDGE_MANAGEMENT",
@@ -4409,7 +4469,7 @@
             {
               "taskShortName": "ORA_CSO_LOCALES_MGMT",
               "taskListItemShortName": "ORA_CSO_TL_KM_ORA_CSO_LOCALES_MGMT",
-              "displaySequence": "125",
+              "displaySequence": "124",
               "taskName": "Manage Knowledge Locales",
               "taskDescription": "Allows customer admins to activate and deactivate knowledge locales for authoring knowledge articles.",
               "csvExportImportSupportedFlag": true,
@@ -4417,11 +4477,11 @@
               "MandatoryFlag": false
             },
             {
-              "taskShortName": "ORA_MANAGE_KNOWLEDGE_WORKFLOWS",
-              "taskListItemShortName": "ORA_CSO_TL_KM_ORA_MANAGE_KNOWLEDGE_WORKFLOWS",
-              "displaySequence": "126",
-              "taskName": "Manage Knowledge Workflows",
-              "taskDescription": "Allows customer admins to configure the workflows in knowledge authoring.",
+              "taskShortName": "ORA_CSO_USER_GROUPS_MGMT",
+              "taskListItemShortName": "ORA_CSO_TL_KM_ORA_CSO_USER_GROUPS_MGMT",
+              "displaySequence": "125",
+              "taskName": "Manage Knowledge User Groups",
+              "taskDescription": "Allows customer admins to define User Groups. User Groups are used to secure Knowledge articles.",
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
               "MandatoryFlag": false
@@ -4429,7 +4489,7 @@
             {
               "taskShortName": "ORA_CSO_CONTENT_TYPES_MGMT",
               "taskListItemShortName": "ORA_CSO_TL_KM_ORA_CSO_CONTENT_TYPES_MGMT",
-              "displaySequence": "127",
+              "displaySequence": "126",
               "taskName": "Manage Knowledge Content Types Classic",
               "taskDescription": "Allows customer admins to define Content Types. Content Types define the structure and other properties of knowledge articles.",
               "csvExportImportSupportedFlag": true,
@@ -4437,9 +4497,29 @@
               "MandatoryFlag": false
             },
             {
+              "taskShortName": "ORA_CSO_CONTENT_TYPES_INDEXING_MGMT_REDWOOD",
+              "taskListItemShortName": "ORA_CSO_TL_KM_ORA_CSO_CONTENT_TYPES_INDEXING_MGMT_REDWOOD",
+              "displaySequence": "127",
+              "taskName": "Manage Knowledge Content Types Redwood",
+              "taskDescription": "Allows customer admins to define and edit content types for customers using Redwood Knowledge Management. Customer admins can also select to run a manual index on a content type.",
+              "csvExportImportSupportedFlag": true,
+              "exportImportSupportedFlag": true,
+              "MandatoryFlag": false
+            },
+            {
+              "taskShortName": "ORA_MANAGE_KNOWLEDGE_WORKFLOWS",
+              "taskListItemShortName": "ORA_CSO_TL_KM_ORA_MANAGE_KNOWLEDGE_WORKFLOWS",
+              "displaySequence": "128",
+              "taskName": "Manage Knowledge Workflows",
+              "taskDescription": "Allows customer admins to configure the workflows in knowledge authoring.",
+              "csvExportImportSupportedFlag": true,
+              "exportImportSupportedFlag": true,
+              "MandatoryFlag": false
+            },
+            {
               "taskShortName": "ORA_CSO_FILE_ATTACHMENTS_MGMT",
               "taskListItemShortName": "ORA_CSO_TL_KM_ORA_CSO_FILE_ATTACHMENTS_MGMT",
-              "displaySequence": "128",
+              "displaySequence": "129",
               "taskName": "Manage Knowledge Files and Images",
               "taskDescription": "Allows customer admins to configure properties of files and images referenced in knowledge articles.",
               "csvExportImportSupportedFlag": true,
@@ -4449,7 +4529,7 @@
             {
               "taskShortName": "ORA_CSO_SEARCH_DICT_MGMT",
               "taskListItemShortName": "ORA_CSO_TL_KM_ORA_CSO_SEARCH_DICT_MGMT",
-              "displaySequence": "129",
+              "displaySequence": "130",
               "taskName": "Manage Knowledge Search Dictionary",
               "taskDescription": "Allows customer admins to increase search accuracy by adding the customer's terminology to the search dictionary.",
               "csvExportImportSupportedFlag": true,
@@ -4459,7 +4539,7 @@
             {
               "taskShortName": "ORA_CSO_KNOWLEDGE_SEARCH_PROFILE_MGMT",
               "taskListItemShortName": "ORA_CSO_TL_KM_ORA_CSO_KNOWLEDGE_SEARCH_PROFILE_MGMT",
-              "displaySequence": "130",
+              "displaySequence": "131",
               "taskName": "Manage Knowledge Search Profile Options",
               "taskDescription": "Enable, disable, or configure knowledge search",
               "csvExportImportSupportedFlag": true,
@@ -4469,7 +4549,7 @@
             {
               "taskShortName": "ORA_CSO_KNOWLEDGE_PANEL_PROFILE_MGMT",
               "taskListItemShortName": "ORA_CSO_TL_KM_ORA_CSO_KNOWLEDGE_PANEL_PROFILE_MGMT",
-              "displaySequence": "131",
+              "displaySequence": "132",
               "taskName": "Manage Knowledge Panel Profile Options",
               "taskDescription": "Allows customer administrators to configure the available options that control how knowledge is searched and displayed while using the Service Request Knowledge Panel.",
               "csvExportImportSupportedFlag": true,
@@ -4479,7 +4559,7 @@
             {
               "taskShortName": "ORA_CSO_MY_KNOWLEDGE_PROFILE_MGMT",
               "taskListItemShortName": "ORA_CSO_TL_KM_ORA_CSO_MY_KNOWLEDGE_PROFILE_MGMT",
-              "displaySequence": "132",
+              "displaySequence": "133",
               "taskName": "Manage My Knowledge Profile Options",
               "taskDescription": "Allows customer administrators to enable/ disable the My Knowledge menu user Service and Help Desk menus.",
               "csvExportImportSupportedFlag": true,
@@ -4489,7 +4569,7 @@
             {
               "taskShortName": "ORA_MANAGE_KNOWLEDGE_COMMON_PROFILE_OPTION",
               "taskListItemShortName": "ORA_CSO_TL_KM_ORA_MANAGE_KNOWLEDGE_COMMON_PROFILE_OPTION",
-              "displaySequence": "133",
+              "displaySequence": "134",
               "taskName": "Manage Knowledge Common Profile Options",
               "taskDescription": "Configure available profile options that affect Knowledge Management.",
               "csvExportImportSupportedFlag": true,
@@ -4499,19 +4579,9 @@
             {
               "taskShortName": "ORA_CSO_ARTICLE_STATUS_MGMT",
               "taskListItemShortName": "ORA_CSO_TL_KM_ORA_CSO_ARTICLE_STATUS_MGMT",
-              "displaySequence": "134",
+              "displaySequence": "135",
               "taskName": "Manage Knowledge Article Statuses",
               "taskDescription": "Allows customer admins to define Article Statuses. Article Statuses describes the state of knowledge articles",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "ORA_CSO_USER_GROUPS_MGMT",
-              "taskListItemShortName": "ORA_CSO_TL_KM_ORA_CSO_USER_GROUPS_MGMT",
-              "displaySequence": "135",
-              "taskName": "Manage Knowledge User Groups",
-              "taskDescription": "Allows customer admins to define User Groups. User Groups are used to secure Knowledge articles.",
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
               "MandatoryFlag": false
@@ -4575,16 +4645,6 @@
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
               "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "ORA_CSO_CONTENT_TYPES_INDEXING_MGMT_REDWOOD",
-              "taskListItemShortName": "ORA_CSO_TL_KM_ORA_CSO_CONTENT_TYPES_INDEXING_MGMT_REDWOOD",
-              "displaySequence": "143",
-              "taskName": "Manage Knowledge Content Types Redwood",
-              "taskDescription": "Allows customer admins to define and edit content types for customers using Redwood Knowledge Management. Customer admins can also select to run a manual index on a content type.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
             }
           ],
           "taskCount": 18
@@ -4601,7 +4661,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_CSS_REG_PROFILE_OPTS",
               "taskListItemShortName": "100000000271946",
-              "displaySequence": "144",
+              "displaySequence": "143",
               "taskName": "Manage Digital Customer Service Profile Options",
               "taskDescription": "Configure Digital Customer Service profile options",
               "csvExportImportSupportedFlag": true,
@@ -4611,7 +4671,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_CSS_ACCOUNT_SETUP_OPTS",
               "taskListItemShortName": "100000000271947",
-              "displaySequence": "145",
+              "displaySequence": "144",
               "taskName": "Manage Digital Customer Service Account Setup Profile Options",
               "taskDescription": "Configure account connectivity profile options for Customer Self Service. Required when Customer Self-Service is enabled.",
               "csvExportImportSupportedFlag": true,
@@ -4621,7 +4681,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_USER_AND_JOB_ROLE_SETUP_FOR_SELF_SERVICE_AUTHENTICATION_ANONYMOUS_USERS",
               "taskListItemShortName": "100000000276501",
-              "displaySequence": "146",
+              "displaySequence": "145",
               "taskName": "Manage User and Job Role Setup for Self-Service Authentication for Anonymous Users",
               "taskDescription": "Create a user and job role to enable anonymous users to use the Digital Customer Service application.",
               "csvExportImportSupportedFlag": false,
@@ -4631,7 +4691,7 @@
             {
               "taskShortName": "ORA_MANAGE_PROXY_USER_CONFIGURATION_DATA",
               "taskListItemShortName": "ORA_SVC_DEFINE_DIGITAL_CUSTOMER_SERVICE_CONFIGURATION_ORA_MANAGE_PROXY_USER_CONFIGURATION_DATA",
-              "displaySequence": "147",
+              "displaySequence": "146",
               "taskName": "Manage Proxy User Configuration Data",
               "taskDescription": "Manage all the URL patterns that you need to reach in B2B Service through the proxy user data service.",
               "csvExportImportSupportedFlag": true,
@@ -4641,7 +4701,7 @@
             {
               "taskShortName": "ORA_MANAGE_CLIENT_CREDENTIALS_PROXY_USER_CONFIGURATION_DATA",
               "taskListItemShortName": "ORA_SVC_DEFINE_DIGITAL_CUSTOMER_SERVICE_CONFIGURATION_ORA_MANAGE_CLIENT_CREDENTIALS_PROXY_USER_CONFIGURATION_DATA",
-              "displaySequence": "148",
+              "displaySequence": "147",
               "taskName": "Manage Client Credentials Proxy User Configuration Data",
               "taskDescription": "Add the client ID and client secret that came from your confidential application on IDCS to your B2B Service configuration.",
               "csvExportImportSupportedFlag": false,
@@ -4651,7 +4711,7 @@
             {
               "taskShortName": "ORA_CREATE_DIGITAL_CUSTOMER_SERVICE_DEVELOPERS",
               "taskListItemShortName": "ORA_SVC_DEFINE_DIGITAL_CUSTOMER_SERVICE_CONFIGURATION_ORA_CREATE_DIGITAL_CUSTOMER_SERVICE_DEVELOPERS",
-              "displaySequence": "149",
+              "displaySequence": "148",
               "taskName": "Create Digital Customer Service Developers",
               "taskDescription": "Create developers to work with the Digital Customer Service Reference Implementation.",
               "csvExportImportSupportedFlag": false,
@@ -4661,7 +4721,7 @@
             {
               "taskShortName": "ORA_VIEW_DIGITAL_CUSTOMER_SERVICE_URLS",
               "taskListItemShortName": "ORA_SVC_DEFINE_DIGITAL_CUSTOMER_SERVICE_CONFIGURATION_ORA_VIEW_DIGITAL_CUSTOMER_SERVICE_URLS",
-              "displaySequence": "150",
+              "displaySequence": "149",
               "taskName": "View Digital Customer Service URLs",
               "taskDescription": "Display Oracle Visual Builder URLs for external usage.",
               "csvExportImportSupportedFlag": false,
@@ -4671,7 +4731,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_SELF_SERVICE_RELATIONSHIP_TYPE_STANDARD_LOOKUP",
               "taskListItemShortName": "ORA_SVC_DEFINE_DIGITAL_CUSTOMER_SERVICE_CONFIGURATION_ORA_SVC_MANAGE_SELF_SERVICE_RELATIONSHIP_TYPE_STANDARD_LOOKUP",
-              "displaySequence": "151",
+              "displaySequence": "150",
               "taskName": "Manage Self-Service Relationship Type Standard Lookup",
               "taskDescription": "Review and define lookup values that provide choices for self-service relationship types, such as User and Account Administrator.",
               "csvExportImportSupportedFlag": true,
@@ -4681,7 +4741,7 @@
             {
               "taskShortName": "ORA_CREATE_DIGITAL_CUSTOMER_SERVICE_CUSTOM_ROLE_MAPPING",
               "taskListItemShortName": "ORA_SVC_DEFINE_DIGITAL_CUSTOMER_SERVICE_CONFIGURATION_ORA_CREATE_DIGITAL_CUSTOMER_SERVICE_CUSTOM_ROLE_MAPPING",
-              "displaySequence": "152",
+              "displaySequence": "151",
               "taskName": "Manage Custom Role Mapping for Digital Customer Service",
               "taskDescription": "Create custom mapping between a Self-Service role and an identity provider job role.",
               "csvExportImportSupportedFlag": true,
@@ -4691,7 +4751,7 @@
             {
               "taskShortName": "ORA_VALIDATE_SELF_SERVICE_OPTIMIZATION_SETUP_FOR_DIGITAL_CUSTOMER_SERVICE",
               "taskListItemShortName": "ORA_SVC_DEFINE_DIGITAL_CUSTOMER_SERVICE_CONFIGURATION_ORA_VALIDATE_SELF_SERVICE_OPTIMIZATION_SETUP_FOR_DIGITAL_CUSTOMER_SERVICE",
-              "displaySequence": "153",
+              "displaySequence": "152",
               "taskName": "Validate Self-Service Optimization Setup for Digital Customer Service",
               "taskDescription": "Verify the setup of Self-Service Optimization Setup for Digital Customer Service",
               "csvExportImportSupportedFlag": false,
@@ -4701,7 +4761,7 @@
             {
               "taskShortName": "ORA_CREATE_GROUPS_IN_IDENTITY_CLOUD_SERVICE",
               "taskListItemShortName": "ORA_SVC_DEFINE_DIGITAL_CUSTOMER_SERVICE_CONFIGURATION_ORA_CREATE_GROUPS_IN_IDENTITY_CLOUD_SERVICE",
-              "displaySequence": "154",
+              "displaySequence": "153",
               "taskName": "Create Groups in Identity Cloud Service",
               "taskDescription": "Create groups in Identity Cloud Service from the job roles in Oracle Fusion Applications.",
               "csvExportImportSupportedFlag": false,
@@ -4753,19 +4813,9 @@
               "MandatoryFlag": false
             },
             {
-              "taskShortName": "ORA_SVC_MANAGE_INTEGRATION_MESSAGES",
-              "taskListItemShortName": "100000000219738",
-              "displaySequence": "81",
-              "taskName": "Manage Integration Messages",
-              "taskDescription": "Add and modify seeded messages for product integrations. These messages provide additional information to end users about the status of data synchronization between systems.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
               "taskShortName": "ORA_MANAGE_WORK_ORDER_LINK_TEMPLATES",
               "taskListItemShortName": "ORA_SVC_DEFINE_SERVICE_WORK_ORDER_CONFIGURATION_ORA_MANAGE_WORK_ORDER_LINK_TEMPLATES",
-              "displaySequence": "82",
+              "displaySequence": "81",
               "taskName": "Manage Work Order Link Templates",
               "taskDescription": "View templates linked from Oracle Field Service to Oracle Fusion Service and modify certain fields that only show up in Oracle Fusion Service.",
               "csvExportImportSupportedFlag": false,
@@ -4775,7 +4825,7 @@
             {
               "taskShortName": "ORA_MANAGE_TYPES_OF_WORK_ORDERS",
               "taskListItemShortName": "ORA_SVC_DEFINE_SERVICE_WORK_ORDER_CONFIGURATION_ORA_MANAGE_TYPES_OF_WORK_ORDERS",
-              "displaySequence": "83",
+              "displaySequence": "82",
               "taskName": "Manage Types of Work Orders",
               "taskDescription": "Manage Types of Work Orders",
               "csvExportImportSupportedFlag": true,
@@ -4783,7 +4833,7 @@
               "MandatoryFlag": true
             }
           ],
-          "taskCount": 4
+          "taskCount": 3
         },
         "ORA_SVC_ACTION_PLANS": {
           "functionalAreaShortName": "ORA_SVC_ACTION_PLANS",
@@ -4797,7 +4847,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_ACTION_PLAN_PROFILE_OPTIONS",
               "taskListItemShortName": "ORA_SVC_DEFINE_ACTION_PLAN_CONFIGURATION_ORA_SVC_MANAGE_ACTION_PLAN_PROFILE_OPTIONS",
-              "displaySequence": "84",
+              "displaySequence": "83",
               "taskName": "Manage Action Plan Profile Options",
               "taskDescription": "Set profile options to configure action plans.",
               "csvExportImportSupportedFlag": true,
@@ -4807,7 +4857,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_ACTION_CATEGORIES_FOR_ACTION_PLANS",
               "taskListItemShortName": "ORA_SVC_DEFINE_ACTION_PLAN_CONFIGURATION_ORA_SVC_MANAGE_ACTION_CATEGORIES_FOR_ACTION_PLANS",
-              "displaySequence": "85",
+              "displaySequence": "84",
               "taskName": "Manage Action Categories for Action Plans",
               "taskDescription": "Manage categories for an action to be used in service action plans.",
               "csvExportImportSupportedFlag": true,
@@ -4817,7 +4867,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_TEMPLATE_CATEGORIES_FOR_ACTION_PLANS",
               "taskListItemShortName": "ORA_SVC_DEFINE_ACTION_PLAN_CONFIGURATION_ORA_SVC_MANAGE_TEMPLATE_CATEGORIES_FOR_ACTION_PLANS",
-              "displaySequence": "86",
+              "displaySequence": "85",
               "taskName": "Manage Template Categories for Action Plans",
               "taskDescription": "Manage categories for a template to be used in service action plans.",
               "csvExportImportSupportedFlag": true,
@@ -4827,7 +4877,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_ACTION_PLAN_ACTION_STATUS_MAPPING",
               "taskListItemShortName": "ORA_SVC_DEFINE_ACTION_PLAN_CONFIGURATION_ORA_SVC_MANAGE_ACTION_PLAN_ACTION_STATUS_MAPPING",
-              "displaySequence": "87",
+              "displaySequence": "86",
               "taskName": "Manage Mapping of Action Plan Status Values",
               "taskDescription": "Map status values of related objects such as service requests, tasks, activities to action plan status values.",
               "csvExportImportSupportedFlag": true,
@@ -4837,7 +4887,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_ACTION_PLAN_ACTIONS",
               "taskListItemShortName": "ORA_SVC_DEFINE_ACTION_PLAN_CONFIGURATION_ORA_SVC_MANAGE_ACTION_PLAN_ACTIONS",
-              "displaySequence": "88",
+              "displaySequence": "87",
               "taskName": "Manage Action Plan Actions",
               "taskDescription": "Create actions that will be used in templates and action plans.",
               "csvExportImportSupportedFlag": true,
@@ -4847,7 +4897,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_ACTION_PLAN_TEMPLATES",
               "taskListItemShortName": "ORA_SVC_DEFINE_ACTION_PLAN_CONFIGURATION_ORA_SVC_MANAGE_ACTION_PLAN_TEMPLATES",
-              "displaySequence": "89",
+              "displaySequence": "88",
               "taskName": "Manage Action Plan Templates",
               "taskDescription": "Create templates that will be associated to action plans.",
               "csvExportImportSupportedFlag": true,
@@ -4857,7 +4907,7 @@
             {
               "taskShortName": "ORA_SVC_CONFIGURE_PROCESS_INTEGRATION_FOR_ACTION_PLAN",
               "taskListItemShortName": "ORA_SVC_DEFINE_ACTION_PLAN_CONFIGURATION_ORA_SVC_CONFIGURE_PROCESS_INTEGRATION_FOR_ACTION_PLAN",
-              "displaySequence": "90",
+              "displaySequence": "89",
               "taskName": "Manage Process Integration for Action Plans",
               "taskDescription": "Manage Process Integration for Action Plans.",
               "csvExportImportSupportedFlag": false,
@@ -4867,7 +4917,7 @@
             {
               "taskShortName": "ORA_MANAGE_ACTION_PLAN_PROCESS_METADATA",
               "taskListItemShortName": "ORA_SVC_DEFINE_ACTION_PLAN_CONFIGURATION_ORA_MANAGE_ACTION_PLAN_PROCESS_METADATA",
-              "displaySequence": "91",
+              "displaySequence": "90",
               "taskName": "Manage Action Plan Process Metadata",
               "taskDescription": "Manage Action Plan Process Metadata.",
               "csvExportImportSupportedFlag": true,
@@ -4889,7 +4939,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_CASE_PROFILE_OPTIONS",
               "taskListItemShortName": "ORA_SVC_DEFINE_CASE_CONFIGURATION_ORA_SVC_MANAGE_CASE_PROFILE_OPTIONS",
-              "displaySequence": "92",
+              "displaySequence": "91",
               "taskName": "Manage Case Profile Options",
               "taskDescription": "Manage case profile options.",
               "csvExportImportSupportedFlag": true,
@@ -4899,7 +4949,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_CASE_CONTACT_RELATIONSHIPS",
               "taskListItemShortName": "ORA_SVC_DEFINE_CASE_CONFIGURATION_ORA_SVC_MANAGE_CASE_CONTACT_RELATIONSHIPS",
-              "displaySequence": "93",
+              "displaySequence": "92",
               "taskName": "Manage Case Contact Relationships",
               "taskDescription": "Review and maintain the relationship types for a case.",
               "csvExportImportSupportedFlag": true,
@@ -4909,7 +4959,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_CASE_PRIORITIES",
               "taskListItemShortName": "ORA_SVC_DEFINE_CASE_CONFIGURATION_ORA_SVC_MANAGE_CASE_PRIORITIES",
-              "displaySequence": "94",
+              "displaySequence": "93",
               "taskName": "Manage Case Priorities",
               "taskDescription": "Review and define lookup values that provide choices for a case's priority.",
               "csvExportImportSupportedFlag": true,
@@ -4919,7 +4969,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_CASE_SENSITIVITIES",
               "taskListItemShortName": "ORA_SVC_DEFINE_CASE_CONFIGURATION_ORA_SVC_MANAGE_CASE_SENSITIVITIES",
-              "displaySequence": "95",
+              "displaySequence": "94",
               "taskName": "Manage Case Sensitivities",
               "taskDescription": "Review and maintain the business access level for a case.",
               "csvExportImportSupportedFlag": true,
@@ -4929,7 +4979,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_CASE_SOURCES",
               "taskListItemShortName": "ORA_SVC_DEFINE_CASE_CONFIGURATION_ORA_SVC_MANAGE_CASE_SOURCES",
-              "displaySequence": "96",
+              "displaySequence": "95",
               "taskName": "Manage Case Sources",
               "taskDescription": "Create and maintain sources which describe the source of the case.",
               "csvExportImportSupportedFlag": true,
@@ -4939,7 +4989,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_CASE_STATUSES",
               "taskListItemShortName": "ORA_SVC_DEFINE_CASE_CONFIGURATION_ORA_SVC_MANAGE_CASE_STATUSES",
-              "displaySequence": "97",
+              "displaySequence": "96",
               "taskName": "Manage Case Statuses",
               "taskDescription": "Review and maintain status values for cases and map them to the required status type.",
               "csvExportImportSupportedFlag": true,
@@ -4949,7 +4999,7 @@
             {
               "taskShortName": "ORA_SVC_CASE_MANAGE_CASE_OUTCOMES_AND_RESOLUTIONS_FOR_CRM",
               "taskListItemShortName": "ORA_SVC_DEFINE_CASE_CONFIGURATION_ORA_SVC_CASE_MANAGE_CASE_OUTCOMES_AND_RESOLUTIONS_FOR_CRM",
-              "displaySequence": "98",
+              "displaySequence": "97",
               "taskName": "Manage Case Outcomes and Resolutions for CRM",
               "taskDescription": "Manage Case Outcomes and Resolutions for CRM.",
               "csvExportImportSupportedFlag": true,
@@ -4959,7 +5009,7 @@
             {
               "taskShortName": "ORA_MANAGE_CATEGORIES_FOR_CASES",
               "taskListItemShortName": "ORA_SVC_DEFINE_CASE_CONFIGURATION_ORA_MANAGE_CATEGORIES_FOR_CASES",
-              "displaySequence": "99",
+              "displaySequence": "98",
               "taskName": "Manage Categories for Cases",
               "taskDescription": "Manage Categories for Cases",
               "csvExportImportSupportedFlag": true,
@@ -4969,7 +5019,7 @@
             {
               "taskShortName": "ORA_MANAGE_QUEUES_FOR_CASES",
               "taskListItemShortName": "ORA_SVC_DEFINE_CASE_CONFIGURATION_ORA_MANAGE_QUEUES_FOR_CASES",
-              "displaySequence": "100",
+              "displaySequence": "99",
               "taskName": "Manage Queues for Cases",
               "taskDescription": "Manage Queues for Cases",
               "csvExportImportSupportedFlag": true,
@@ -4979,7 +5029,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_CASE_TYPES",
               "taskListItemShortName": "ORA_SVC_DEFINE_CASE_CONFIGURATION_ORA_SVC_MANAGE_CASE_TYPES",
-              "displaySequence": "101",
+              "displaySequence": "100",
               "taskName": "Manage Case Types",
               "taskDescription": "Manage Case Types.",
               "csvExportImportSupportedFlag": true,
@@ -5001,7 +5051,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_SEARCH_OPTIONS",
               "taskListItemShortName": "ORA_SVC_CONFIGURE_PROD_TOOLSORA_SVC_MANAGE_SEARCH_OPTIONS",
-              "displaySequence": "107",
+              "displaySequence": "106",
               "taskName": "Manage Global Search Profile Options",
               "taskDescription": "Set the parameters required to enable search at the site level.",
               "csvExportImportSupportedFlag": true,
@@ -5011,7 +5061,7 @@
             {
               "taskShortName": "ORA_CONFIGURE_ELASTIC_SEARCHES",
               "taskListItemShortName": "ORA_SVC_CONFIGURE_PROD_TOOLS_ORA_CONFIGURE_ELASTIC_SEARCHES",
-              "displaySequence": "108",
+              "displaySequence": "107",
               "taskName": "Configure Adaptive Search",
               "taskDescription": "Configure the Adaptive Search settings, that control how objects and properties can be managed. You can choose whether an object's fields will have full text search capabilities, or will be searchable at the header level, or will be searchable in parent related objects.",
               "csvExportImportSupportedFlag": false,
@@ -5021,7 +5071,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_STANDARD_TEXT_PROFILE_OPTS",
               "taskListItemShortName": "100000000222049",
-              "displaySequence": "109",
+              "displaySequence": "108",
               "taskName": "Manage Standard Text Profile Options",
               "taskDescription": "Configure settings to enable agents to use standard text in Service Request Messages.",
               "csvExportImportSupportedFlag": true,
@@ -5031,7 +5081,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_KEYBOARD_SHORTCUT_PROFILE_OPTIONS",
               "taskListItemShortName": "100000000222050",
-              "displaySequence": "110",
+              "displaySequence": "109",
               "taskName": "Manage Keyboard Shortcut Profile Options",
               "taskDescription": "Configure settings to enable agents to use keyboard shortcuts.",
               "csvExportImportSupportedFlag": true,
@@ -5041,7 +5091,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_SERVICE_REQUEST_KEYBOARD_SHORTCUTS",
               "taskListItemShortName": "100000000132759",
-              "displaySequence": "111",
+              "displaySequence": "110",
               "taskName": "Manage Service Request Keyboard Shortcuts",
               "taskDescription": "Specify keyboard shortcuts for Service Request actions and buttons.",
               "csvExportImportSupportedFlag": true,
@@ -5051,7 +5101,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_SERVICE_REQUEST_DYNAMIC_LINKS",
               "taskListItemShortName": "100000000250349",
-              "displaySequence": "112",
+              "displaySequence": "111",
               "taskName": "Manage Service Request Dynamic Links",
               "taskDescription": "Define text patterns that are converted to URL links when users enter text matching those patterns. For example, when a user enters text matching the pattern for a service request reference, the text will be automatically converted to a link to that service request.",
               "csvExportImportSupportedFlag": true,
@@ -5061,7 +5111,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_SERVICE_NOTIFICATION_PROFILE_OPTIONS",
               "taskListItemShortName": "ORA_SVC_CONFIGURE_PROD_TOOLS_ORA_SVC_MANAGE_SERVICE_NOTIFICATION_PROFILE_OPTIONS",
-              "displaySequence": "113",
+              "displaySequence": "112",
               "taskName": "Manage Service Notification Profile Options",
               "taskDescription": "This task enables customers to temporarily disable service notifications.",
               "csvExportImportSupportedFlag": true,
@@ -5071,7 +5121,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_PASSIVE_BEACON_CONFIGURATION",
               "taskListItemShortName": "ORA_SVC_CONFIGURE_PROD_TOOLS_ORA_SVC_MANAGE_PASSIVE_BEACON_CONFIGURATION",
-              "displaySequence": "114",
+              "displaySequence": "113",
               "taskName": "Manage Passive Beacon Configuration",
               "taskDescription": "Configure the endpoint URL and credentials for the passive beacon service that checks the availability of shared services.",
               "csvExportImportSupportedFlag": false,
@@ -5081,7 +5131,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_TAGS",
               "taskListItemShortName": "ORA_SVC_CONFIGURE_PROD_TOOLS_ORA_SVC_MANAGE_TAGS",
-              "displaySequence": "115",
+              "displaySequence": "114",
               "taskName": "Manage Tags",
               "taskDescription": "Allows CRM administrators to create/update/delete tags. Tags created through this task can be associated with objects like service request.",
               "csvExportImportSupportedFlag": true,
@@ -5091,7 +5141,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_COLLABORATION_NETWORK_CREDENTIALS",
               "taskListItemShortName": "ORA_SVC_CONFIGURE_PROD_TOOLS_ORA_SVC_MANAGE_COLLABORATION_NETWORK_CREDENTIALS",
-              "displaySequence": "116",
+              "displaySequence": "115",
               "taskName": "Manage Collaboration Network Credentials",
               "taskDescription": "Allows administrators to save the collaboration network credentials. These credentials are used when calling the collaboration network APIs.",
               "csvExportImportSupportedFlag": false,
@@ -5101,7 +5151,7 @@
             {
               "taskShortName": "ORA_MANAGE_MICROSOFT_TEAM_CREDENTIALS",
               "taskListItemShortName": "ORA_SVC_CONFIGURE_PROD_TOOLS_ORA_MANAGE_MICROSOFT_TEAM_CREDENTIALS",
-              "displaySequence": "117",
+              "displaySequence": "116",
               "taskName": "Manage Microsoft Teams Credentials",
               "taskDescription": "Allows administrators to save Microsoft Teams credentials. These credentials are used when calling their APIs.",
               "csvExportImportSupportedFlag": false,
@@ -5111,7 +5161,7 @@
             {
               "taskShortName": "ORA_ZCA_MANAGE_PUID_SEQ",
               "taskListItemShortName": "ORA_SVC_CONFIGURE_PROD_TOOLS_ORA_ZCA_MANAGE_PUID_SEQ",
-              "displaySequence": "119",
+              "displaySequence": "118",
               "taskName": "Manage Public Unique Identifier Sequence Generation",
               "taskDescription": "Configure public unique ID sequence number generation, including setting a prefix, radix, and starting number for each supported business object.",
               "csvExportImportSupportedFlag": true,
@@ -5121,7 +5171,7 @@
             {
               "taskShortName": "ORA_MANAGE_SERVICE_REQUEST_SIMILARITIES",
               "taskListItemShortName": "ORA_SVC_CONFIGURE_PROD_TOOLS_ORA_MANAGE_SERVICE_REQUEST_SIMILARITIES",
-              "displaySequence": "120",
+              "displaySequence": "119",
               "taskName": "Configure AI for Service",
               "taskDescription": "Configure AI for Service",
               "csvExportImportSupportedFlag": false,
@@ -5131,7 +5181,7 @@
             {
               "taskShortName": "ORA_MANAGE_SERVICE_REQUEST_MESSAGE_TYPES_AND_SUBTYPES",
               "taskListItemShortName": "ORA_SVC_CONFIGURE_PROD_TOOLS_ORA_MANAGE_SERVICE_REQUEST_MESSAGE_TYPES_AND_SUBTYPES",
-              "displaySequence": "121",
+              "displaySequence": "120",
               "taskName": "Manage Service Request Message Types and Subtypes",
               "taskDescription": "Manage Service Request Message Types and Subtypes",
               "csvExportImportSupportedFlag": true,
@@ -5141,7 +5191,7 @@
             {
               "taskShortName": "ORA_CONFIGURE_ACTION_BAR_PARAMETERS",
               "taskListItemShortName": "ORA_SVC_CONFIGURE_PROD_TOOLS_ORA_CONFIGURE_ACTION_BAR_PARAMETERS",
-              "displaySequence": "122",
+              "displaySequence": "121",
               "taskName": "Configure Action Bar Parameters",
               "taskDescription": "Configure Action bar parameters including the number of displayed suggestions, hint behavior and hint rotation speed, and the 'display more' option. Settings apply to applications that include the Action Bar.",
               "csvExportImportSupportedFlag": true,
@@ -5151,7 +5201,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_NOTE_TYPES",
               "taskListItemShortName": "ORA_SVC_CONFIGURE_PROD_TOOLS_ORA_SVC_MANAGE_NOTE_TYPES",
-              "displaySequence": "123",
+              "displaySequence": "122",
               "taskName": "Manage Note Types",
               "taskDescription": "Review and define note types, such as approval and reference, to categorize notes entered for business objects. When mapped, note type values are limited to each business object.",
               "csvExportImportSupportedFlag": true,
@@ -5161,7 +5211,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_SERVICE_NOTE_TYPE_MAPPING",
               "taskListItemShortName": "ORA_SVC_CONFIGURE_PROD_TOOLS_ORA_SVC_MANAGE_SERVICE_NOTE_TYPE_MAPPING",
-              "displaySequence": "124",
+              "displaySequence": "123",
               "taskName": "Manage Service Note Type Mapping",
               "taskDescription": "Manage service note type mapping.",
               "csvExportImportSupportedFlag": true,
@@ -5183,7 +5233,7 @@
             {
               "taskShortName": "FUN_MANAGE_BUSINESS_UNIT",
               "taskListItemShortName": "ORA_SVC_DEFINE_BUSINESS_UNITS_FUN_MANAGE_BUSINESS_UNIT",
-              "displaySequence": "155",
+              "displaySequence": "157",
               "taskName": "Manage Business Unit",
               "taskDescription": "Create and maintain information on units of an enterprise to allow for flexible implementation, to provide a consistent entity for controlling and reporting on transactions, and to be an anchor for the sharing of reference data sets across applications.",
               "csvExportImportSupportedFlag": true,
@@ -5193,7 +5243,7 @@
             {
               "taskShortName": "ORA_SVC_PRODUCT_GROUP_USAGE_FOR_BU",
               "taskListItemShortName": "ORA_SVC_DEFINE_BUSINESS_UNITS_ORA_SVC_PRODUCT_GROUP_USAGE_FOR_BU",
-              "displaySequence": "156",
+              "displaySequence": "158",
               "taskName": "Manage Service Product Group Usage for Business Unit",
               "taskDescription": "Specify product group usage for a business unit.",
               "csvExportImportSupportedFlag": true,
@@ -5203,7 +5253,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_SERVICE_CATEGORIES_FOR_BU",
               "taskListItemShortName": "ORA_SVC_DEFINE_BUSINESS_UNITS_ORA_SVC_MANAGE_SERVICE_CATEGORIES_FOR_BU",
-              "displaySequence": "158",
+              "displaySequence": "160",
               "taskName": "Manage Service Categories for Business Unit",
               "taskDescription": "Manage categories for a service business unit.",
               "csvExportImportSupportedFlag": true,
@@ -5213,7 +5263,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_CHANNELS_FOR_BU",
               "taskListItemShortName": "ORA_SVC_DEFINE_BUSINESS_UNITS_ORA_SVC_MANAGE_CHANNELS_FOR_BU",
-              "displaySequence": "160",
+              "displaySequence": "162",
               "taskName": "Manage Communication Channels for Business Unit",
               "taskDescription": "Manage communication channels for a business unit.",
               "csvExportImportSupportedFlag": true,
@@ -5223,7 +5273,7 @@
             {
               "taskShortName": "ORA_SVC_EMAIL_TEMPLATES_FOR_BU",
               "taskListItemShortName": "ORA_SVC_DEFINE_BUSINESS_UNITS_ORA_SVC_EMAIL_TEMPLATES_FOR_BU",
-              "displaySequence": "161",
+              "displaySequence": "163",
               "taskName": "Manage Service Email Templates for Business Unit",
               "taskDescription": "Specify email templates for a service business unit.",
               "csvExportImportSupportedFlag": true,
@@ -5233,7 +5283,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_SVC_MILESTONE_CONFIG_FOR_BU",
               "taskListItemShortName": "ORA_SVC_DEFINE_BUSINESS_UNITS_ORA_SVC_MANAGE_SVC_MILESTONE_CONFIG_FOR_BU",
-              "displaySequence": "163",
+              "displaySequence": "165",
               "taskName": "Manage Service Milestone Configuration for Business Unit",
               "taskDescription": "Specify milestone configuration for a business unit.",
               "csvExportImportSupportedFlag": true,
@@ -5243,7 +5293,7 @@
             {
               "taskShortName": "ORA_MANAGE_OUTBOUND_EMAIL_PROFILE_VALUES_FOR_BUSINESS_UNIT",
               "taskListItemShortName": "ORA_SVC_DEFINE_BUSINESS_UNITS_ORA_MANAGE_OUTBOUND_EMAIL_PROFILE_VALUES_FOR_BUSINESS_UNIT",
-              "displaySequence": "164",
+              "displaySequence": "166",
               "taskName": "Manage Outbound Email Profile Values for Business Unit",
               "taskDescription": "Specify outbound email profile option values for a business unit",
               "csvExportImportSupportedFlag": true,
@@ -5255,7 +5305,7 @@
         }
       },
       "functionalAreaCount": 14,
-      "taskCount": 140
+      "taskCount": 145
     },
     "DOO_ORCHESTRATION": {
       "offeringShortName": "DOO_ORCHESTRATION",

@@ -615,6 +615,12 @@ def _validate_field_value(
     # Preserve BankChargeBearer as supplied. FSM Import owns value validation.
     if entity["name"] == "AP_SYSTEM_PARAMETER" and field == "BankChargeBearer":
         return
+    # An explicit clear is distinct from zero. This optional field was blank
+    # in the live baseline; FSM remains the validator of the requested clear.
+    if (entity["name"] == "AP_SYSTEM_PARAMETER"
+            and field == "EscheatmentEligibilityPeriod" and value == ""
+            and field not in entity.get("requiredFields", [])):
+        return
     expected = entity["types"].get(field, "string") or "string"
     lowered = expected.lower()
     if lowered in {"datetime", "timestamp"} or "timestamp" in lowered:
@@ -770,6 +776,8 @@ def _validate_ui_observed_payment_options_value(
                 "for its Manage Payment Options checkbox."
             )
     elif field in _UI_NONNEGATIVE_INTEGER_FIELDS:
+        if value == "" and field not in entity.get("requiredFields", []):
+            return
         try:
             number = int(str(value).strip())
         except (TypeError, ValueError):
@@ -1573,6 +1581,16 @@ def _requirement_contract(
     return expected
 
 
+def _customer_view(value):
+    """Return a display copy without internal provenance; never mutate execution data."""
+    if isinstance(value, dict):
+        return {key: _customer_view(item) for key, item in value.items()
+                if key not in {"sourceIds", "sourceEvidence"}}
+    if isinstance(value, list):
+        return [_customer_view(item) for item in value]
+    return value
+
+
 def normalize_design(
     contract: dict[str, Any],
     baseline_path: Path,
@@ -1612,7 +1630,7 @@ def normalize_design(
         ),
         "requirementCount": len(requirements),
     }
-    return blueprint, preview, requirements
+    return blueprint, _customer_view(preview), requirements
 
 
 def _candidate_rows(
@@ -2513,6 +2531,7 @@ def main(argv: list[str] | None = None) -> int:
             )
         else:
             raise AdapterError(f"Unknown command {args.command!r}.")
+        result = _customer_view(result)
         if args.report:
             _write_new_json(args.report, result)
         print(json.dumps(result, indent=2, sort_keys=True, ensure_ascii=False))

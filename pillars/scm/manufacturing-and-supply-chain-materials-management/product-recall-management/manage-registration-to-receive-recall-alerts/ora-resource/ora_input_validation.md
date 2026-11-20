@@ -1,6 +1,6 @@
 # Input Validation
 
-For an import, apply these checks to the selected task and the captured records/native sources returned by the same live Data Loader session at awaiting_task_rules. Do not reread source files, serialize DAT/ZIP before approval, or persist source snapshots or validation previews. Names below are user-facing setup values; map them to REST attributes only after target metadata confirms the mapping. Never persist a client secret or refresh token in a project artifact.
+For an import, validate the exact immutable archive and persisted preflight prepared by Data Loader before approval. Do not substitute the original source after preparation. Read [execution safety](../references/execution-safety.md) before invoking preparation: a populated source and derived archives stay in private staging outside the repository and project. Evaluate source presence and row shape without exposing values. Task Hook receives only sanitized rule results and an archive digest, never registration rows. Names below are user-facing setup values; use only metadata-confirmed attribute mappings. This file owns local input checks; Fusion remains the final authority for server-side field constraints.
 
 ## Required Groups
 
@@ -15,9 +15,9 @@ For an import, apply these checks to the selected task and the captured records/
 
 | Check | What Happens | Applies When | Resolver |
 |---|---|---|---|
-| Single source root | Count the populated registrationForRecallAlerts root records in the session's captured records/native sources; require exactly one and reject zero or two or more, including multiple captured spreadsheet or DAT root rows | Import preview | |
+| Single source root | Count populated registrationForRecallAlerts root records in the final prepared archive; require exactly one and reject zero or two or more. Do not count an edited source instead | Import preview | |
 | Client-specific inputs | Require the documented Microsoft or Google input group for a new registration; for an existing registration validate only the fields required by the verified target operation contract. Reject a missing selected client or an unsupported mixed Microsoft and Google credential set | Import or credential validation | |
-| Secret handling | Accept secrets only through an approved private source; reject secrets in tracked files or project artifacts; redact them from previews and diagnostics | Import or credential validation | |
+| Secret handling | Require the private staging and disclosure gates in execution safety before preparation; reject credentials in the repository, project artifacts, preview fields, filenames, rule evidence or diagnostics. No populated data goes into finalData | Import or credential validation | |
 | REST field mapping | Reject unknown or read-only fields after the current target metadata is inspected; do not infer exact REST attribute names from the setup guide's display labels | Import or credential validation | |
 
 ## Sources
@@ -25,7 +25,7 @@ For an import, apply these checks to the selected task and the captured records/
 - [Oracle: Enable Oracle Content Curation Service](https://docs.oracle.com/en/cloud/saas/supply-chain-and-manufacturing/26c/faims/enable-oracle-content-curation-service.html) documents the task, terms acceptance, client details, email address, and Validate and Save flow.
 - [Oracle: Receive Recall Alerts in a Google Email Account](https://docs.oracle.com/en/cloud/saas/readiness/scm/25c/inv25c/25C-inventory-wn-f38628.htm) documents the Google Client ID, Refresh Token, Client Secret, and email address.
 - The one-root-record constraint and use of the two named REST business objects are supplied by the task owner in the request; Oracle's public setup guide does not define their REST payload contract.
-- [Data Loader host workflow](../../../../../../core/data-loader/SKILL.md#host-workflow) defines captured-source validation and in-memory preview/approval; [Task Hook](../../../../../../core/data-loader/task-hook/SKILL.md) defines the same-session handoff.
+- [Data Loader host workflow](../../../../../../core/data-loader/SKILL.md#host-workflow) defines preapproval immutable-archive preparation and retained preflight submission; [Task Hook](../../../../../../core/data-loader/task-hook/SKILL.md) defines the digest-bound preview, approval and archive-verification handoff.
 
 ## Task Nodes
 

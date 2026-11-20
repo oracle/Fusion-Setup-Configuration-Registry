@@ -1,0 +1,132 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "PO_MANAGE_CHANGE_ORDER_TEMPLATES",
+      "task_name": "Manage Change Order Templates",
+      "start_node": "COT.VALIDATE_INPUT",
+      "nodes": [
+        {
+          "id": "COT.VALIDATE_INPUT",
+          "node_type": "decision",
+          "sequence": 10,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "COT.HANDOFF",
+            "missing": "COT.HANDLE_ISSUES",
+            "invalid": "COT.HANDLE_ISSUES"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Create rows require ChangeOrderTemplateName, ChangeOrderTemplateCode, and DocumentType; edit rows require ChangeOrderTemplateName and DocumentType, with optional Description and editable attributes preserved without REST calls or defaulting",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 56
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "COT.HANDOFF",
+          "node_type": "decision",
+          "sequence": 20,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "COT.READY",
+            "blocked": "COT.HANDLE_ISSUES"
+          },
+          "prerequisites": [
+            "COT.VALIDATE_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Action-specific local checks passed; allow Data Loader review only, with no authorization for a write",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 55
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "COT.READY",
+          "node_type": "terminal",
+          "sequence": 30,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "COT.HANDOFF"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return READY_FOR_DATALOADER_REVIEW with verified side effects none",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 56
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "COT.HANDLE_ISSUES",
+          "node_type": "step",
+          "sequence": 90,
+          "action_type": "error_handler",
+          "execution_route": "local",
+          "transitions": {
+            "reported": "COT.RETURN_ISSUES"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Any reached local input or handoff failure",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 57
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "COT.RETURN_ISSUES",
+          "node_type": "terminal",
+          "sequence": 100,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "COT.HANDLE_ISSUES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return MISSING for an absent required field and FAILED for invalid input or handoff failure",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 58
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

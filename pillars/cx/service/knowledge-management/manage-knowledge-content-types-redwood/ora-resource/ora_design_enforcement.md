@@ -26,3 +26,9 @@
 |---|---|---|---|
 | resolve_department_user_groups | Restricting attribute visibility | Available user groups for the selected department | ora_reference_lookups.md |
 | resolve_active_knowledge_locales | Creating localized content-type or schema-attribute rows | Exact active locale codes | ora_reference_lookups.md |
+
+## Task Nodes
+
+| Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
+|---|---|---|---|---|---|---|---|
+| CONTENT_TYPES_REDWOOD.DESIGN | step | 12 | design_enforcement | passed->CONTENT_TYPES_REDWOOD.BASELINE_CONTRACT;blocked->CONTENT_TYPES_REDWOOD.BLOCKED | CONTENT_TYPES_REDWOOD.DEFAULTS | stop | Evaluate every applicable Design Rule with prior evidence: required title, supplied stripe mapping/counter prefix, exact active-locale coverage, parent/xpath linkage and resolved restricted-visibility groups. Require business acceptance before allowing unsafe HTML/JavaScript; unresolved or conflicting evidence blocks. |

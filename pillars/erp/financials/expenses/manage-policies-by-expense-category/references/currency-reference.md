@@ -1,7 +1,7 @@
 # Currency reference contract
 
-This contract covers the supplied or retained parent CurrencyCode for the one
-Meals policy/rate pair, including rate-only updates. Omitted workbook cells
+This contract covers supplied or retained parent CurrencyCode references required
+by each selected policy/rate's current category runtime, including rate-only updates. Omitted workbook cells
 request no default or clearing; the retained parent's currency still needs checking.
 Do not derive currency from a parent: reviewed rate EO getters suppress their
 interactive parent-currency fallback during migration.
@@ -66,16 +66,27 @@ a developer observation as a current runtime result or import approval.
 
 ## Integration boundary
 
-The ordinary supported Meals route accepts an operation-bound currency receipt, while
+The current category runtimes accept operation-bound currency receipts where required, while
 retaining the independent native-plan, entity, field and package gates. Static
 reference_verified flags and a pure classifier result remain insufficient.
 
 scripts/capture_currency_reference.py plans the declared GET by default and
 executes only with --execute after the active authoring/reference_lookup step
 has selected it. It verifies the core profile's exact environment/origin, uses
-only the core REST client, captures complete response pages and records each
-request/response hash. Its consuming operation list must match the workbook's
-supplied currency references. It never builds a candidate or submits an import.
+the core bound-token request_bytes API with an existing authorized managed token
+cache. It captures complete response pages and records each request/response hash.
+It does not invoke the core CLI, start login, refresh a token or retry a failed
+request. Missing/expired cache and HTTP 401/403 stop with an authentication blocker;
+authentication belongs to its separate selected workflow. Its consuming operation
+list must match supplied or retained currency references for the selected workbook
+operations. It never builds a candidate, admits a new create operation or submits an import.
+
+The transport pins the selected profile and actual core authentication/common API
+sources before and after each exact currenciesLOV GET. Recorded capture, transport
+and core source hashes are local audit provenance; legacy core CLI hashes remain
+compatibility provenance and do not mean the CLI was invoked. The receipt consumer
+continues to enforce its existing adapter, input, operation, request and response
+bindings; it does not independently enforce those additional source audit hashes.
 
 scripts/currency_receipt.py rechecks eligibility from those pages, not a saved
 success flag. The builder binds the receipt to exact workbook, baseline and

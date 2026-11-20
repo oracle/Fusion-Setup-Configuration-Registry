@@ -48,7 +48,7 @@
           "applies_when": "Entities GET returned HTTP 200",
           "source": {
             "file": "ora_reference_lookups.md",
-            "line": 54,
+            "line": 56,
             "anchor": "task-nodes"
           },
           "readiness": {
@@ -74,7 +74,7 @@
           "applies_when": "Compare every non-CPQ-alias requested object display name with all nonempty localizedName values returned by the isDocument=true Entities HTTP 200 response, without applying isEnabled; direct CPQ entities are excluded from this comparison; for invalid values suggest up to three nearest matches without displaying the full catalog; require explicit disambiguation when a display name maps to multiple entityName values",
           "source": {
             "file": "ora_reference_lookups.md",
-            "line": 55,
+            "line": 57,
             "anchor": "task-nodes"
           },
           "readiness": {
@@ -99,7 +99,7 @@
           "applies_when": "Enabled document entities were resolved and requested names are valid; do not ask for confirmation here",
           "source": {
             "file": "ora_reference_lookups.md",
-            "line": 56,
+            "line": 58,
             "anchor": "task-nodes"
           },
           "readiness": {
@@ -194,7 +194,7 @@
           },
           "prerequisites": [],
           "on_failure": "stop",
-          "applies_when": "The requested list is valid, the user explicitly requested Full Publish, or a null or empty Entities result selected the new-environment full-publish path",
+          "applies_when": "The requested list is valid, the user explicitly requested Full Publish, or a null or empty Entities result selected the new-environment full-publish path. For the latest publishStatus preflight only, HTTP 404 with exactly either {\"Error\":\"No prior publish job was found.\"} or {\"Error\":\"Cannot parse null string\"} is a no-prior-publish pass; retain status and body. Unknown or malformed error responses stop; source validation and final approval remain required.",
           "source": {
             "file": "ora_rest_execution.md",
             "line": 190,

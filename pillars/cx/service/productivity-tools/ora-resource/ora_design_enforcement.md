@@ -4,21 +4,21 @@
 
 | Task Code | Task Name | Sequence | Step | What Must Happen |
 |---|---|---|---|---|
-| ORA_SVC_MANAGE_SEARCH_OPTIONS | Manage Global Search Profile Options | 1 | Confirm Site-level Global Search profile option | FUSION_APPS_SEARCH_ENABLED must be confirmed before Global Search visibility is validated |
+| ORA_SVC_MANAGE_SEARCH_OPTIONS | Manage Global Search Profile Options | 1 | Separate configured current and intended target values | Validate the configured Site identity, Site flags and requested stored Y or N before preview; verify the changed value only after the owning workflow reports success |
 | ORA_SVC_MANAGE_SEARCH_OPTIONS | Manage Global Search Profile Options | 2 | Refresh user session | Users must sign out and sign back in before checking Global Search visibility |
 
 ## Design Rules
 
 | Task Code | Task Name | Applies When | Severity | Required Lookup | Blocking Condition | Recommendation | Fix Allowed? |
 |---|---|---|---|---|---|---|---|
-| ORA_SVC_MANAGE_SEARCH_OPTIONS | Manage Global Search Profile Options | Global Search is being enabled | Error | resolve_global_search_profile_value | FUSION_APPS_SEARCH_ENABLED is not confirmed as Yes at the Site profile level | Set FUSION_APPS_SEARCH_ENABLED to Yes at the Site profile level | Yes |
+| ORA_SVC_MANAGE_SEARCH_OPTIONS | Manage Global Search Profile Options | A Global Search change is being prepared for preview | Error | resolve_global_search_profile_value | Requested target is not Y for enable or N for disable, the configured Site identity is unresolved, or the verified Site definition does not permit the selected change | Validate the intended stored value and Site flags before preview; current N with requested Y is a valid enable change, not a blocker | No |
 | ORA_SVC_MANAGE_SEARCH_OPTIONS | Manage Global Search Profile Options | Global Search visibility is being validated after a profile update | Error |  | The user session has not been refreshed | Sign out and sign back in before checking whether Global Search is visible | Yes |
 
 ## Design Lookup Requirements
 
 | Task Code | Task Name | Resolver | When Required | Values Needed | Source File |
 |---|---|---|---|---|---|
-| ORA_SVC_MANAGE_SEARCH_OPTIONS | Manage Global Search Profile Options | resolve_global_search_profile_value | Before enabling Global Search | Current FUSION_APPS_SEARCH_ENABLED value and profile level | ora_reference_lookups.md |
+| ORA_SVC_MANAGE_SEARCH_OPTIONS | Manage Global Search Profile Options | resolve_global_search_profile_value | Before preparing a Global Search change | Current configured Site value and identity; verified Site-enabled/updatable definition; requested target remains separate | ora_reference_lookups.md |
 
 ## Task Nodes
 

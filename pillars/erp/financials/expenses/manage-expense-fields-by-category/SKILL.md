@@ -19,16 +19,20 @@ source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 type: "planning"
 execution_mode: "assisted"
 owner_team: "ERP financials pillar team"
-version: "0.6.0"
+version: "0.7.1"
 inputs:
   - "implementation_objective"
   - "project_context"
   - "setup_task_scope"
   - "setup_data_artifacts"
+  - "ebs_category_csv (optional)"
+  - "approved_ebs_org_to_fusion_bu_mapping (for EBS input)"
 outputs:
   - "setup_task_plan"
   - "setup_data_routing"
   - "validation_checkpoints"
+  - "ebs_intake_review (for EBS input)"
+  - "cross_skill_route_review (advisory, for EBS input)"
   - "skill_run_record"
   - "token_usage_record"
 depends_on:
@@ -86,7 +90,8 @@ applicability:
     - "All"
   fusion_releases:
     - "Current Oracle Fusion Cloud release"
-side_effects: []
+side_effects:
+  - "Writes local EBS intake and validation artifacts; Fusion execution remains delegated to the active core workflow."
 required_privileges: []
 ---
 
@@ -183,7 +188,7 @@ This is an evidence-backed authoring prototype, not a complete executable Builde
 
 ## Task-Specific Workflow
 
-1. Capture the target environment, business unit, category, field decisions and intended changes in the active implementation project. Resolve the source gaps recorded in the resources.
+1. Capture the target environment, business unit, category, field decisions and intended changes in the active implementation project. For EBS CSV input, first follow [EBS category intake](ora-resource/ora_ebs_migration.md). Resolve the source gaps recorded in the resources; a source-only nonblank field blocks the whole batch until mapped or explicitly removed from scope.
 2. Use the declared shared export and validation workflows to obtain and validate an authorized target-compatible baseline. Do not substitute direct REST calls or browser execution.
 3. Compare proposed changes with the baseline. Review the business-unit-wide effect of required or hidden fields. Apply the user-approved blank-cell policy only to present, applicable workbook field columns.
 4. Route the immutable FSM import artifact through core.data-loader in FSM mode. EXM_CATEGORY_FIELD is an FSM object identifier, not a registered REST businessObject. The loader owns package construction, preview, approval, execution and diagnostics under its current return-immediately contract; do not request duplicate approval.
@@ -194,7 +199,7 @@ The populated export establishes observed ENABLED, DISABLED and REQUIRED values 
 ## Sources and limits
 
 - User-supplied FSM export: ASM_SETUP_CSV_METADATA.xml and EXM_CATEGORY_FIELD.csv in Manage Expense Fields by Category_20260928_074925_896. The populated CSV contains 85 rows across 17 business units and seven categories, with no duplicate business-unit/category pairs. It supersedes the earlier header-only sample for observed values; it does not prove import success. Environment and submission identifiers are intentionally not copied.
-- [Oracle Expense Category-Specific Fields, 26B](https://docs.oracle.com/en/cloud/saas/financials/26b/faiex/expense-category-specific-fields.html), accessed 2026-09-28. The requested [26C page](https://docs.oracle.com/en/cloud/saas/financials/26c/faiex/expense-category-specific-fields.html) was inaccessible. Use the applicable task schema; no user-supplied release is required.
+- [Oracle Expense Category-Specific Fields, 26D](https://docs.oracle.com/en/cloud/saas/financials/26d/faiex/expense-category-specific-fields.html), retrieved 2026-11-03. The Financials documentation landing page resolved to 26D at this review. This documents BU scope and Hidden/Required/Optional behavior, not every EBS equivalent or FSM field contract. Recheck the latest documentation when extending mappings; no user-supplied release is required.
 - The export metadata reports release 11.13.27.01.0 as provenance only; it is not a runtime release requirement.
 
 ## Lifecycle and field-operation boundaries
@@ -252,7 +257,7 @@ The package member/header contract and source display-code mappings are now veri
 
 User-supplied release is not required. Source release metadata is informational and must not pin applicability or trigger a release lookup. Still validate exact task identity, target environment and the actual package schema.
 
-For each exported source row used in an operation, copy CreationDate, CreatedBy, LastUpdateLogin, LastUpdateDate and LastUpdatedBy without modification, including blank values. Match the source row by its verified BU/category scope; never borrow another row's audit values. Preserve values at the cell level rather than rewriting date formats. Compare all five source/output values before packaging. This resolves the artifact-generation policy; source evidence about Fusion's internal audit processing remains separately documented. For new rows use the qualified blank-audit policy below; never invent audit data.
+For each **Fusion baseline** row used in an operation, copy CreationDate, CreatedBy, LastUpdateLogin, LastUpdateDate and LastUpdatedBy without modification, including blank values. Match the source row by its verified BU/category scope; never borrow another row's audit values. Preserve values at the cell level rather than rewriting date formats. Compare all five source/output values before packaging. This resolves the artifact-generation policy; source evidence about Fusion's internal audit processing remains separately documented. For new rows use the qualified blank-audit policy below; never invent audit data.
 
 ## Assisted configuration removal execution
 
@@ -272,7 +277,7 @@ The BU resolver is executable local evaluation of core-fetched evidence. The rem
 
 Use this same skill, the active Run Book and core.data-loader for subsequent workbook cases. Do not create another setup skill, duplicate the central transport or reuse an earlier approval when the BU, requested operation or immutable archive changes. Previous accepted initiation is transport evidence only; it does not prove completed import, create semantics or reconciliation.
 
-After workbook normalization and the declared BU lookup/baseline checks, run `scripts/plan_operations.py --input <protected-input.json>`. The helper is offline, consumes the contract in ora_input_validation.md, and never authorizes submission. It classifies every requested row as create, update, unchanged, already_absent or assisted_removal. Updates copy only the exact BU/category baseline row and preserve its audit cells; creates never borrow another BU's data. Store raw plans outside tracked files and project workspaces, and persist only sanitized counts, hashes and evidence references in the active project.
+After workbook normalization and the declared BU lookup/baseline checks, run `scripts/plan_operations.py --input <protected-input.json>`. The helper is offline, consumes the contract in ora_input_validation.md, and never authorizes submission. It classifies every requested row as create, update, unchanged, already_absent or assisted_removal. Updates copy only the exact BU/category baseline row and preserve its audit cells; creates never borrow another BU's data. Store plans and runtime source reviews in the active untracked project workspace; never put customer data in reusable tracked files. Persist sanitized counts, hashes and evidence references in the run record.
 
 ## Qualified create/update execution and audit choices
 
@@ -280,7 +285,7 @@ Live qualification completed on 2026-09-30 (2026-10-01 UTC): three creates succe
 
 1. For a new-row audit decision not already provided for this scope, prompt with two choices: **keep all five audit headers and leave cells blank** (recommended, qualified), or **pause creates**. Persist `createAuditPolicy=blank` or `pause`. Never request timestamps, audit users, internal IDs or release values. Column omission is unsupported. Retain the user's selection across continuation; do not ask again for the same decision.
 2. Obtain a fresh complete same-target/task baseline and resolve the active BU using the declared workflows. Normalize workbook input, then run `scripts/plan_operations.py --input <protected-input.json>`. Create rows start empty using the exact 19-column schema; never clone another BU. Require every applicable field header for creates, and normalize present blank display cells to Optional/ENABLED. Existing updates copy all source cells and change only reviewed field decisions. Preserve all five exported audit cells exactly in update payloads.
-3. Run `scripts/prepare_fsm_package.py --input <protected-input.json> --baseline-zip <fresh-export.zip> --dry-run`, then the same command with `--output <new-package.zip>` instead of `--dry-run`. It verifies baseline identity/schema and exact rows, preserves metadata bytes/header order, rejects partial/empty loads and creates an immutable ZIP without overwriting files. Raw inputs/packages stay in protected runtime storage outside tracked source and project workspaces.
+3. Run `scripts/prepare_fsm_package.py --input <protected-input.json> --baseline-zip <fresh-export.zip> --dry-run`, then the same command with `--output <new-package.zip>` instead of `--dry-run`. It verifies baseline identity/schema and exact rows, preserves metadata bytes/header order, rejects partial/empty loads and creates an immutable ZIP without overwriting files. Keep runtime inputs in the active untracked project workspace and FSM exports/packages under its `exports/` directory. Never put customer configuration in tracked source or `_template`.
 4. Complete central preflight, Task Hook and exact-artifact approval through core.data-loader. The qualified blank policy needs no audit-evidence waiver. A local candidate never authorizes upload. Unsupported operations and unresolved evidence still block; never submit a supported subset without an explicit revised scope. Already-absent N and unchanged Y rows need no write.
 5. Submit once. Follow core's initiation/status contract and retain the request identity. For an explicitly requested test, use the declared status/log and fresh-export workflows to verify completion. Do not resubmit to check status.
 6. Reconcile every intended business cell and all unrelated rows. New rows require CreationDate, CreatedBy, LastUpdateDate and LastUpdatedBy to be populated; timestamps must parse (observed export format YYYY/MM/DD HH:MM:SS.fff). LastUpdateLogin may be blank. Existing updates preserve creation history while Fusion may refresh modification history; payload preservation does not promise unchanged stored modification audits. An identical subsequent workbook plan should be no_change.

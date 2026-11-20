@@ -17,6 +17,7 @@
 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|
-| CONTENT_TYPES_REDWOOD.BASELINE_CONTRACT | decision | 1 | execution_gate | ready->CONTENT_TYPES_REDWOOD.COMPLETE;unavailable_or_unclear->CONTENT_TYPES_REDWOOD.BLOCKED | none | stop | A content type create or update is requested |
-| CONTENT_TYPES_REDWOOD.COMPLETE | terminal | 2 | terminal | none | CONTENT_TYPES_REDWOOD.BASELINE_CONTRACT | stop | The baseline package structure and required relationships are clear and all required validation passes |
-| CONTENT_TYPES_REDWOOD.BLOCKED | terminal | 3 | terminal | none | CONTENT_TYPES_REDWOOD.BASELINE_CONTRACT | stop | The baseline is unavailable or a required package relationship remains unclear |
+| CONTENT_TYPES_REDWOOD.BASELINE_CONTRACT | decision | 13 | execution_gate | ready->CONTENT_TYPES_REDWOOD.COMPLETE;unavailable_or_unclear->CONTENT_TYPES_REDWOOD.BLOCKED | CONTENT_TYPES_REDWOOD.DESIGN | stop | Require evidence for all reached validation, source, locale, dependency, default and design nodes plus the matching active Run Book/core.data-loader FSM preflight and immutable source. Return intent only; core owns exact-artifact preview, approval, import and verification. |
+| CONTENT_TYPES_REDWOOD.COMPLETE | terminal | 14 | terminal | none | CONTENT_TYPES_REDWOOD.BASELINE_CONTRACT | stop | Return the validated intent and accumulated node evidence to the owning Run Book/core.data-loader FSM workflow; no direct import, POST, PATCH, retry or duplicate approval is authorized. |
+| CONTENT_TYPES_REDWOOD.REVIEW_COMPLETE | terminal | 90 | terminal | none | CONTENT_TYPES_REDWOOD.REVIEW_EXPORT | stop | Return the requested task-export review result without mutation handoff. |
+| CONTENT_TYPES_REDWOOD.BLOCKED | terminal | 99 | terminal | none | none | stop | Stop on any missing/ambiguous source, invalid input, lookup failure, unresolved reference, declined policy acceptance or unavailable owner binding; persist sanitized diagnostics and the missing prerequisite. |

@@ -94,11 +94,19 @@ function createGuide(workbook) {
   sheet.freezePanes.freezeRows(4);
 }
 
-async function create(output) {
+async function create(output, ebsPlan = null) {
   const { SpreadsheetFile, Workbook } = await import("@oai/artifact-tool");
   const workbook = Workbook.create();
   catalog.sections.forEach((section, index) => createSection(workbook, section, index));
   createGuide(workbook);
+  if (ebsPlan) {
+    for (const section of catalog.sections) workbook.worksheets.getItem(section.sheet).getRange("A5").values = [[""]];
+    for (const cell of ebsPlan.workbook_cells) {
+      const sheet = workbook.worksheets.getItem(cell.sheet);
+      sheet.getRange(`A${cell.row}`).values = [[cell.business_unit]];
+      sheet.getRange(`${column(cell.column - 1)}${cell.row}`).values = [[cell.value]];
+    }
+  }
   workbook.recalculate();
   await fs.mkdir(path.dirname(output), {recursive:true});
   await (await SpreadsheetFile.exportXlsx(workbook)).save(output);
@@ -110,6 +118,32 @@ async function create(output) {
   const image = await workbook.render({sheetName:"Field Guide",range:"A1:H10",scale:1,format:"png"});
   await fs.writeFile(`${output}.Field-Guide.png`,new Uint8Array(await image.arrayBuffer()));
   console.log(JSON.stringify({output,sheets:catalog.workbook_sheets,rows_per_input_sheet:ROWS}));
+}
+
+async function fromEbs() {
+  const python = process.env.PYTHON || "python3";
+  const parameters = [path.join(skillDir,"scripts/ebs_system_options_intake.py"),
+    "--input",requiredArgument("--input"),"--decisions",requiredArgument("--decisions"),
+    "--environment",requiredArgument("--environment")];
+  const dryRun = args.includes("--dry-run");
+  const output = dryRun ? null : path.resolve(requiredArgument("--output"));
+  const reportPath = dryRun ? null : path.resolve(requiredArgument("--report"));
+  if (!dryRun) parameters.push("--project-root",requiredArgument("--project-root"),"--output",output,"--report",reportPath);
+  const report = JSON.parse(execFileSync(python,parameters,{encoding:"utf8",maxBuffer:32*1024*1024}));
+  const ready = report.status === "ready_for_task_intake";
+  if (!dryRun && ready) {
+    await create(output,report);
+    report.source_workbook = output;
+    report.source_workbook_sha256 = sha256(await fs.readFile(output));
+  }
+  if (!dryRun) {
+    await fs.mkdir(path.dirname(reportPath),{recursive:true});
+    await fs.writeFile(reportPath,JSON.stringify(report,null,2)+"\n",{flag:"wx"});
+  }
+  console.log(JSON.stringify({status:report.status,source_records:report.record_count,
+    distinct_assignments:report.distinct_identity_count,target_settings:report.workbook_cells.length,
+    ready_for_import:false,live_checks_performed:false,dry_run:dryRun,report:reportPath}));
+  if (!ready && report.status !== "no_requested_changes") process.exitCode=2;
 }
 
 function issue(list, section, cell, message) { list.push({sheet:section,cell,message}); }
@@ -487,33 +521,7 @@ function requiredArgument(flag) {
   return value;
 }
 
-function selectedRows(bytes, filename, records) {
-  const text = bytes.toString("utf8"), newline = text.includes("\r\n") ? "\r\n" : "\n";
-  const [header, ...rows] = csvRows(text.replace(/^\uFEFF/, ""));
-  const source = filename === "EXM_ORG_SETTING.csv" ? "EXM_ORG_SETTING" : "EXM_SETUP_OPTION";
-  const buIndex = header.indexOf("BuName"), codeIndex = header.indexOf(source === "EXM_ORG_SETTING" ? "SettingCode" : "OptionCode");
-  const requested = new Set();
-  for (const record of records) {
-    for (const change of record.changes.filter(change => change.source === source)) {
-      const key = JSON.stringify([normalizedBusinessUnit(record.businessUnit), change.code]);
-      if (requested.has(key)) throw new Error("Duplicate selected row identity; validate one requested change per BU and code");
-      requested.add(key);
-    }
-  }
-  if (Math.min(buIndex, codeIndex) < 0 || rows.some(row => row.length !== header.length)) {
-    throw new Error(`${filename} has no supported selected row identity`);
-  }
-  const selected = rows.filter(row => requested.has(JSON.stringify([normalizedBusinessUnit(row[buIndex]), row[codeIndex]])));
-  if (selected.length !== requested.size) throw new Error(`${filename} selected keys are missing or ambiguous`);
-  return {bytes: Buffer.from(csvText([header, ...selected], newline)), submitted_rows: selected.length,
-    omitted_unrequested_rows: rows.length - selected.length};
-}
-
-async function buildImport(validationPath, baselineDirectory, expectedEnvironment, processId, archivePath, output, manifestOutput, qualificationEnvironment = null) {
-  const qualification = qualificationEnvironment !== null;
-  if (qualification && (!sameEnvironment(qualificationEnvironment, expectedEnvironment) || !manifestOutput)) {
-    throw new Error("Qualification requires --nonproduction-environment matching --environment and --manifest-output");
-  }
+async function buildImport(validationPath, baselineDirectory, expectedEnvironment, processId, archivePath, output, manifestOutput) {
   if (manifestOutput && path.resolve(output) === path.resolve(manifestOutput)) throw new Error("Package and manifest need distinct output paths");
   for (const target of [output, manifestOutput].filter(Boolean)) {
     try { await fs.access(target); throw new Error(`Refusing to overwrite existing output: ${target}`); }
@@ -541,19 +549,24 @@ async function buildImport(validationPath, baselineDirectory, expectedEnvironmen
   const setupTable = optionTable(source["EXM_SETUP_OPTION.csv"], "EXM_SETUP_OPTION.csv");
   const cashTable = optionTable(source["EXM_CASH_ADV_SETUP_AND_POLICY.csv"], "EXM_CASH_ADV_SETUP_AND_POLICY.csv");
   assertPairedOptionRows(setupTable, cashTable, validation.records);
-  const setupOption = updateOptionRows(setupTable, validation.records);
-  const cashAdvance = updateOptionRows(cashTable, validation.records);
-  const settings = updateSettingRows(source["EXM_ORG_SETTING.csv"], validation.records);
-  const submission = {};
-  const members = names.map(name => {
-    let bytes = name === "EXM_SETUP_OPTION.csv" ? setupOption : name === "EXM_CASH_ADV_SETUP_AND_POLICY.csv" ? cashAdvance : name === "EXM_ORG_SETTING.csv" ? settings : source[name];
-    if (name.endsWith(".csv")) {
-      const selected = selectedRows(bytes, name, validation.records);
-      bytes = selected.bytes;
-      submission[name] = {submitted_rows: selected.submitted_rows, omitted_unrequested_rows: selected.omitted_unrequested_rows};
+  const comparison = compareRequestedSettings(setupTable, source["EXM_ORG_SETTING.csv"], validation.records);
+  const changedRecords = comparison.records;
+  if (!changedRecords.length) {
+    const result = {status:"no_change",task_code:catalog.source_export.task_code,environment:baseline.environment,
+      baseline_process_id:baseline.process_id,baseline_archive_sha256:baseline.archive_sha256,
+      source_workbook_sha256:validation.source_workbook_sha256,baseline_file_sha256:baseline.file_sha256,
+      comparison:comparison.outcomes,package_created:false,ready_for_core_data_loader:false};
+    if (manifestOutput) {
+      await fs.mkdir(path.dirname(manifestOutput),{recursive:true});
+      await fs.writeFile(manifestOutput,JSON.stringify(result,null,2)+"\n",{flag:"wx"});
     }
-    return {name, bytes};
-  });
+    console.log(JSON.stringify(result));
+    return;
+  }
+  const setupOption = updateOptionRows(setupTable, changedRecords);
+  const cashAdvance = updateOptionRows(cashTable, changedRecords);
+  const settings = updateSettingRows(source["EXM_ORG_SETTING.csv"], changedRecords);
+  const members = names.map(name => ({name, bytes: name === "EXM_SETUP_OPTION.csv" ? setupOption : name === "EXM_CASH_ADV_SETUP_AND_POLICY.csv" ? cashAdvance : name === "EXM_ORG_SETTING.csv" ? settings : source[name]}));
   const archive = storedZip(members);
   await fs.mkdir(path.dirname(output), {recursive:true});
   await fs.writeFile(output, archive, {flag:"wx"});
@@ -567,51 +580,74 @@ async function buildImport(validationPath, baselineDirectory, expectedEnvironmen
     baseline_file_sha256: baseline.file_sha256,
     package_sha256: sha256(archive),
     package_members: names,
-    records: validation.records,
-    submission_scope: qualification ? "selected_rows_qualification" : "selected_rows",
-    qualification_only: qualification,
-    live_qualified: false,
-    submission_counts: submission,
-    warnings: [qualification
-      ? "Selected-row omission and unrelated audit preservation require controlled nonproduction import/read-back. This candidate is not ordinary customer qualification."
-      : "The candidate submits only selected rows. Verify current-target values and unrelated-row/audit preservation through a fresh export after approval and import; local preparation is not import success."],
-    next_action: qualification
-      ? "Follow the task's nonproduction qualification workflow; retain the qualification warning in native Task Hook, then obtain exact-artifact approval through core.data-loader. Do not promote ordinary selected-row execution without successful live reconciliation."
-      : "Submit the unchanged selected-row package only through core.data-loader after its preflight, Task Hook validation and explicit approval; then reconcile current-target values and unrelated rows/audits."
+    records: changedRecords,
+    comparison: comparison.outcomes,
+    next_action: "Submit the unchanged package only through core.data-loader after its preflight, Task Hook validation, and explicit approval."
   };
   if (manifestOutput) {
     await fs.mkdir(path.dirname(manifestOutput), {recursive:true});
     await fs.writeFile(manifestOutput, JSON.stringify(manifest, null, 2) + "\n", {flag:"wx"});
   }
-  console.log(JSON.stringify({output,manifest_output:manifestOutput ?? null,records:validation.records.length,package_sha256:manifest.package_sha256,ready_for_core_data_loader:true,qualification_only:qualification,warnings:manifest.warnings}));
+  console.log(JSON.stringify({output,manifest_output:manifestOutput ?? null,records:validation.records.length,package_sha256:manifest.package_sha256,ready_for_core_data_loader:true}));
+}
+
+function compareRequestedSettings(options, settingBytes, records) {
+  const outcomes = [], changedRecords = [];
+  let settings;
+  for (const record of records) {
+    const changes = [];
+    for (const change of record.changes) {
+      let original, exists;
+      if (change.source === "EXM_SETUP_OPTION") {
+        const row = selectedOptionRow(options,record,change);
+        exists = row !== null;
+        original = exists ? row[options.valueIndex] : null;
+      } else {
+        settings ??= csvRows(settingBytes.toString("utf8").replace(/^\uFEFF/,""));
+        const [header,...data] = settings;
+        const bi = header.indexOf("BuName"), ci = header.indexOf("SettingCode"), vi = header.indexOf("SettingValue");
+        if (Math.min(bi,ci,vi)<0 || new Set(header).size!==header.length || data.some(row=>row.length!==header.length)) throw new Error("EXM_ORG_SETTING.csv has an unsupported or malformed schema");
+        const matches = data.filter(row=>normalizedBusinessUnit(row[bi])===normalizedBusinessUnit(record.businessUnit) && row[ci]===change.code);
+        if (matches.length>1) throw new Error("Ambiguous business-unit SettingCode rows");
+        exists=matches.length===1; original=exists ? matches[0][vi] : null;
+      }
+      const requested = change.source === "EXM_SETUP_OPTION" ? change.valueCode : String(change.value);
+      const operation = !exists ? "create" : original===requested ? "no_change" : "update";
+      outcomes.push({businessUnit:record.businessUnit,source:change.source,code:change.code,original,requested,operation});
+      if (operation!=="no_change") changes.push(change);
+    }
+    if (changes.length) changedRecords.push({...record,changes});
+  }
+  return {records:changedRecords,outcomes};
 }
 
 const [command,...args] = process.argv.slice(2);
 function valueOf(flag) {const i=args.indexOf(flag); return i<0 ? null : args[i+1];}
 const usage = `Usage: node expense_system_options_intake.mjs COMMAND
   create --output FILE.xlsx
+  from-ebs --input SOURCE.csv --decisions DECISIONS.json --environment NAME --dry-run
+  from-ebs --input SOURCE.csv --decisions DECISIONS.json --environment NAME --project-root PROJECT --output FILE.xlsx --report REPORT.json
   validate --input FILE.xlsx [--baseline-dir EXTRACTED_DATA_EXPORT --baseline-process-id ID --baseline-archive EXPORT.zip --environment NAME --reference-evidence BU_EVIDENCE.json] [--output REPORT.json]
   build-import --validation REPORT.json --baseline-dir EXTRACTED_DATA_EXPORT --baseline-process-id ID --baseline-archive EXPORT.zip --environment NAME --reference-evidence BU_EVIDENCE.json --output PACKAGE.zip [--manifest-output MANIFEST.json]
-  build-qualification (same inputs) --nonproduction-environment NAME --manifest-output MANIFEST.json
-build-qualification emits only selected rows for controlled nonproduction audit-preservation qualification; it does not qualify ordinary customer execution.
 --reference-evidence is required for specific Business Units in validate and build-import; All Business Units alone does not require it.
 Use --help to show this usage without creating or validating artifacts.`;
 try {
   if (["--help", "-h", "help"].includes(command)) console.log(usage);
+  else if (command === "from-ebs") await fromEbs();
   else if (command === "create" && valueOf("--output")) await create(path.resolve(valueOf("--output")));
   else if (command === "validate" && valueOf("--input")) {
     const baseline = valueOf("--baseline-dir") ? await loadBaseline(path.resolve(valueOf("--baseline-dir")),valueOf("--environment"),valueOf("--baseline-process-id"),valueOf("--baseline-archive") ? path.resolve(valueOf("--baseline-archive")) : null) : null;
     await validate(path.resolve(valueOf("--input")),valueOf("--output") ? path.resolve(valueOf("--output")) : null,baseline);
   }
-  else if (["build-import", "build-qualification"].includes(command)) {
-    await buildImport(path.resolve(requiredArgument("--validation")), path.resolve(requiredArgument("--baseline-dir")), requiredArgument("--environment"), requiredArgument("--baseline-process-id"), valueOf("--baseline-archive") ? path.resolve(valueOf("--baseline-archive")) : null, path.resolve(requiredArgument("--output")), valueOf("--manifest-output") ? path.resolve(valueOf("--manifest-output")) : null, command === "build-qualification" ? requiredArgument("--nonproduction-environment") : null);
+  else if (command === "build-import") {
+    await buildImport(path.resolve(requiredArgument("--validation")), path.resolve(requiredArgument("--baseline-dir")), requiredArgument("--environment"), requiredArgument("--baseline-process-id"), valueOf("--baseline-archive") ? path.resolve(valueOf("--baseline-archive")) : null, path.resolve(requiredArgument("--output")), valueOf("--manifest-output") ? path.resolve(valueOf("--manifest-output")) : null);
   }
   else {console.error(usage); process.exitCode=2;}
 } catch (error) {
   const message = error instanceof Error ? error.message : String(error);
   const failure_class = /ENOENT|EACCES|EPERM/.test(message) ? "artifact persistence"
     : /metadata|BuName|baseline CSV|template export|Baseline archive|Baseline .* changed/.test(message) ? "catalog mismatch" : "input validation";
-  const stage = command === "validate" ? "baseline-and-intake-validation" : ["build-import", "build-qualification"].includes(command) ? "confirmed-fsm-create-update-package-preparation" : "workbook-creation";
+  const stage = command === "validate" ? "baseline-and-intake-validation" : command === "build-import" ? "confirmed-fsm-create-update-package-preparation" : "workbook-creation";
   console.error(JSON.stringify({status:"failed",stage,failure_class,message}));
   process.exitCode = 2;
 }

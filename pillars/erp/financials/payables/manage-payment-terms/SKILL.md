@@ -282,3 +282,75 @@ When producing a source manifest or verifying post-import observations, follow
 A source manifest's environment must match its ZIP metadata; keep migration
 destination information separate. Use a credential-free HTTPS origin without
 an API path, query or fragment. A template-only label requires an empty package.
+
+## EBS Migration to Fusion
+
+Use this section for user-declared EBS / E-Business Suite / R12 payment-term
+migration. These names are synonymous for this workflow; XML view names and
+minimum API/patch metadata do not prove a particular EBS release. Treat the XML
+as source data, keep it unchanged, and build a separate target-format candidate.
+
+### Review and map EBS payment terms to Fusion
+
+An `APTermsTLVO` XML record can combine header settings, translated text and
+nested `APTermsLinesVO` installments. Its view-object name does not mean every
+field must load into Fusion `AP_TERMS_TL`. The 22 header settings absent from
+Fusion TL have exact-name locations in Fusion B; these are stored values, not
+derived replacements. Use the following business mapping through FSM entities,
+not direct table writes:
+
+| Source content | Fusion storage / FSM destination | Handling |
+| --- | --- | --- |
+| `EnabledFlag`, `DueCutoffDay`, `Type`, `StartDateActive`, `EndDateActive`, `Rank`, `AttributeCategory`, `Attribute1`…`Attribute15` on the EBS header/TL representation | `AP_TERMS_B` / `AP_TERM_HEADER.csv` | Map the 22 settings to their same-named FSM header fields; do not discard them as missing from TL. Validate their target meaning and values, including `Type=STD` and supported enabled flags, even if an EBS schema description labels a source field unused. |
+| `Name`, `Description`, `Language`, `SourceLang` | `AP_TERMS_TL` / `AP_TERM_HEADER_TRANSLATION.csv`, with `Name` also the logical header key and `Description` represented on `AP_TERM_HEADER.csv` | Preserve source-language text and translation identity. Keep header/translation names and descriptions consistent with the approved language mapping and existing US-alias behavior. Do not move language columns into B. |
+| Nested `APTermsLinesVO` installment fields | `AP_TERMS_LINES` / `AP_TERM_LINE.csv` | Preserve `SequenceNum`, due basis/method, discount tiers, attributes, `FixedDate` and `Calendar`; bind each line to `AP_TERM_HEADER.Name`. |
+| Selected Fusion reference-data set assignments | `AP_TERMS_ST` / `AP_TERM_SUBSCRIPTION.csv` | Obtain the user's intended sets and resolve their SetCodes under the existing reference rules. Do not invent a set assignment when the XML supplies none. |
+
+Where multiple language records represent one term, consolidate only the shared
+header identity, keeping each requested translation and installment relationship.
+Compare repeated header and line values before consolidation. Disclose identical
+duplicates and conflicts and obtain a user decision before merging, excluding or
+changing source records; never choose first/last silently. A destination name
+match is not permission to overwrite an existing term.
+
+### Fields outside this extract and supporting references
+
+Check each actual source for `DISCOUNT_AMOUNT`, `DISCOUNT_AMOUNT_2`,
+`DISCOUNT_AMOUNT_3`, `DISCOUNT_CRITERIA`, `DISCOUNT_CRITERIA_2` and
+`DISCOUNT_CRITERIA_3`, including normalized XML spellings. These EBS setup fields
+have no verified Fusion setup-level replacement. When absent, they require no
+payload exclusion or invented values for that file. Their absence does not prove
+they are unused across EBS. If present, disclose the fields and values and stop
+the affected mapping for a user decision; do not silently drop them, convert
+amounts to percentages or map them to `DueAmount`.
+
+### XML to CSV, validation, approval and reconciliation
+
+1. Inventory source headers, language rows, installments and populated fields.
+   Record every source-to-target mapping and any user decisions; preserve dates,
+   blanks, zeros and names without cleanup. All fields having a destination is
+   a mapping result, not an import-validity claim.
+2. Obtain the selected target's fresh exact-task current export and template.
+   Resolve creates, updates and already-matching records against that baseline;
+   show conflicts and obtain the intended outcome before changing target values.
+   Use the existing reference helper for set assignments and nonblank Calendars.
+   Validate populated flexfields against the intended target configuration.
+3. Prepare the separate FSM CSVs using the template's exact headers, hierarchy,
+   metadata and target date format. Include the required parent header for every
+   child operation and at least one explicitly mapped installment for every new
+   term. Preserve unrequested baseline values and rows. Show any applicable
+   create defaults; absence in XML does not authorize clearing existing values.
+   Do not relabel an EBS XML or cross-environment ZIP as a compatible Fusion
+   export; retain source provenance separately and apply the existing target and
+   package compatibility rules.
+4. Run existing header, global Rank, due-basis totals, due-date method, discount
+   completeness/order, translation, reference and final-batch rules. Disclose
+   unsupported fields, duplicate resolutions and every proposed transformation.
+   Use the active Run Book, core Data Loader and Task Hook workflow; submit only
+   after approval of the exact validated immutable candidate. Scope/mapping
+   approval alone is not upload approval.
+5. After import, check the actual job outcome and obtain a fresh same-target
+   export. Compare requested, submitted and saved header, installment,
+   translation and set-assignment values, including preservation checks. Use the
+   existing verification-evidence contract; a successful job or offline match
+   alone does not establish saved-state verification.

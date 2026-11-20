@@ -1,0 +1,229 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "AP_MANAGE_INVOICE_HOLDS_AND_RELEASES",
+      "task_name": "Manage Invoice Holds and Releases",
+      "start_node": "AP_HOLD.INPUT",
+      "nodes": [
+        {
+          "id": "AP_HOLD.INPUT",
+          "node_type": "step",
+          "sequence": 10,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "success": "AP_HOLD.LOOKUPS",
+            "failure": "AP_HOLD.ERRORS"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Review explicit create inputs or the supported existing-definition update fields and matching baseline; reject unsupported operation/field scope before candidate handoff.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 14
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "AP_HOLD.LOOKUPS",
+          "node_type": "step",
+          "sequence": 20,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "success": "AP_HOLD.DEPENDENCIES",
+            "failure": "AP_HOLD.ERRORS"
+          },
+          "prerequisites": [
+            "AP_HOLD.INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Establish exact task-key identity through a fresh task export and apply the embedded lookup contracts below.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 11
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "AP_HOLD.DEPENDENCIES",
+          "node_type": "step",
+          "sequence": 30,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "success": "AP_HOLD.DEFAULTS",
+            "failure": "AP_HOLD.ERRORS"
+          },
+          "prerequisites": [
+            "AP_HOLD.LOOKUPS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Setup-definition create/update/end-date request",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 11
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "AP_HOLD.DEFAULTS",
+          "node_type": "step",
+          "sequence": 40,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "success": "AP_HOLD.DESIGN",
+            "failure": "AP_HOLD.ERRORS"
+          },
+          "prerequisites": [
+            "AP_HOLD.DEPENDENCIES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Apply the two recorded create defaults only to omitted fields, then validate the complete candidate.",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 9
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "AP_HOLD.DESIGN",
+          "node_type": "step",
+          "sequence": 50,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "success": "AP_HOLD.GATE",
+            "failure": "AP_HOLD.ERRORS"
+          },
+          "prerequisites": [
+            "AP_HOLD.DEFAULTS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Setup-definition mutation intent",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 16
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "AP_HOLD.GATE",
+          "node_type": "decision",
+          "sequence": 60,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "success": "AP_HOLD.DONE",
+            "failure": "AP_HOLD.ERRORS"
+          },
+          "prerequisites": [
+            "AP_HOLD.DESIGN"
+          ],
+          "on_failure": "stop",
+          "applies_when": "All prior task rules completed; return validation result only",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 11
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "AP_HOLD.ERRORS",
+          "node_type": "step",
+          "sequence": 70,
+          "action_type": "error_handler",
+          "execution_route": "local",
+          "transitions": {
+            "reported": "RETURN_ISSUES"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "A previous node reports failure or missing evidence",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 12
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "AP_HOLD.DONE",
+          "node_type": "terminal",
+          "sequence": 80,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "AP_HOLD.GATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return successful validation only; never claim import or saved-state success",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 13
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "RETURN_ISSUES",
+          "node_type": "terminal",
+          "sequence": 90,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Return recorded issues and safe resume stage",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 14
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

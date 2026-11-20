@@ -1,0 +1,270 @@
+{
+  "schemaVersion": "fscr-income-tax-seed-reference-v1",
+  "source": {
+    "description": "Income tax type reference data for code and description matching"
+  },
+  "scope": {
+    "table": "AP_INCOME_TAX_TYPES",
+    "environmentValidated": false,
+    "releaseQualification": "Reference snapshot; no deployed Fusion release coverage asserted.",
+    "blankInactiveDateMeaning": "No inactive date in this source snapshot; not proof of current target availability."
+  },
+  "recordCount": 51,
+  "records": [
+    {
+      "incomeTaxType": "AVAN/A",
+      "description": "Fringe Benefits - other",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "AVAN/L",
+      "description": "Fringe Benefits - Housing",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "AVAN/N",
+      "description": "Fringe Benefits - Food",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "AVAN/V",
+      "description": "Fringe Benefits - Car",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "COTIS",
+      "description": "Contributions to Pension Funds (to be deducted)",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "DAU/AR",
+      "description": "Miscellaneous - Other",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "DCO/CO",
+      "description": "Brokerage Fees",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "DCOM/C",
+      "description": "Miscellaneous - Commissions",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "DDA/DA",
+      "description": "Miscellaneous - Royalties",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "DDI/DI",
+      "description": "Miscellaneous - Inventor's Fees",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "DHON/H",
+      "description": "Miscellaneous - Fees",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "DJE/JP",
+      "description": "Miscellaneous - Director's Fees",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "DRIS/R",
+      "description": "Miscellaneous - Rebates",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "GOV 1",
+      "description": "Unemployment compensation",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "GOV 4",
+      "description": "Federal income tax withheld on government payments",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "GOV 6",
+      "description": "Taxable grants",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "GOV 6A",
+      "description": "Energy grants",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "GOV 7",
+      "description": "Agriculture payments",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "GOV8",
+      "description": "Family Leave Benefits",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "INDE/F",
+      "description": "Indemnities and Reimbursements - Lump Sum",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "INDE/P",
+      "description": "Indemnities and Reimbursements - Payment by the Employer",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "INDE/R",
+      "description": "Indemnities and Reimbursements - On Supporting Documents(1)",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "INT 1",
+      "description": "Interest income not included in box 3",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "INT 1A",
+      "description": "Financial institution interest income not included in box 3",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "INT 3",
+      "description": "Interest on U.S. Savings Bonds and Treasury obligations",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "INT 4",
+      "description": "Federal income tax withheld on interest payments",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "INT 8",
+      "description": "Tax exempt interest",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "MISC1",
+      "description": "Rent",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "MISC10",
+      "description": "Crop Insurance Proceeds. Reported in 1099-MISC Box 9 from 2020.",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "MISC11",
+      "description": "Fish purchased for resale",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "MISC13",
+      "description": "Excess golden parachute payments. Reported in Box 3 on Form 1099-NEC from 2025.",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "MISC13 A",
+      "description": "Gross proceeds paid to an attorney",
+      "inactiveDate": "2001-04-10"
+    },
+    {
+      "incomeTaxType": "MISC13 EPP",
+      "description": "Excess golden parachute payment",
+      "inactiveDate": "2001-04-10"
+    },
+    {
+      "incomeTaxType": "MISC14",
+      "description": "Gross proceeds paid to an attorney. Reported in 1099-MISC Box 10 from 2020.",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "MISC15a NT",
+      "description": "Section 409A non-taxable deferrals. Reported in 1099-MISC Box 12 from 2020.",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "MISC15a T",
+      "description": "Section 409A taxable deferrals. Reported in 1099-MISC Box 12 from 2020.",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "MISC15b",
+      "description": "Nonqualified deferred compensation. Reported in 1099-MISC Box 15 from 2022.",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "MISC16",
+      "description": "Overtime Compensation",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "MISC2",
+      "description": "Royalties",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "MISC3",
+      "description": "Other Income",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "MISC4",
+      "description": "Federal income tax withheld",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "MISC5",
+      "description": "Fishing boat proceeds",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "MISC6",
+      "description": "Medical and health care payments",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "MISC7",
+      "description": "Non-employee compensation. Reported in Form 1099-NEC from 2020.",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "MISC8",
+      "description": "Payments in lieu of dividend or interest",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "MISC9",
+      "description": "Consumer Products for Resale. Reported in 1099-MISC Box 7 from 2020.",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "NEC1D",
+      "description": "Overtime Compensation",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "RETE/D",
+      "description": "Withholding Tax Exemption Based on International Conventions",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "RETE/R",
+      "description": "Withholding Tax - Reduced Rate",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "TVA/47",
+      "description": "VAT on Royalties (to be deducted)",
+      "inactiveDate": null
+    },
+    {
+      "incomeTaxType": "TVA/55",
+      "description": "VAT on Royalties (to be added)",
+      "inactiveDate": null
+    }
+  ]
+}

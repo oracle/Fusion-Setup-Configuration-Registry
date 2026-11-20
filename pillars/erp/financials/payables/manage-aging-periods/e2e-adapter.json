@@ -1,0 +1,1631 @@
+{
+  "capabilities": {
+    "determinism": {
+      "evidence": [
+        "policy-reference-0001",
+        "policy-reference-0002"
+      ],
+      "status": "ready"
+    },
+    "identity": {
+      "evidence": [
+        "policy-reference-0003",
+        "policy-reference-0004"
+      ],
+      "status": "ready"
+    },
+    "packageBuild": {
+      "evidence": [
+        "policy-reference-0005",
+        "policy-reference-0006",
+        "policy-reference-0007"
+      ],
+      "status": "ready"
+    },
+    "prerequisiteChecks": {
+      "evidence": [
+        "policy-reference-0008",
+        "policy-reference-0009",
+        "policy-reference-0010",
+        "policy-reference-0011"
+      ],
+      "status": "ready"
+    },
+    "promptNormalization": {
+      "evidence": [
+        "policy-reference-0012",
+        "policy-reference-0013"
+      ],
+      "status": "ready"
+    },
+    "reconciliation": {
+      "evidence": [
+        "policy-reference-0014",
+        "policy-reference-0015"
+      ],
+      "status": "ready"
+    },
+    "rollbackBuild": {
+      "evidence": [
+        "policy-reference-0016"
+      ],
+      "status": "ready"
+    },
+    "semanticValidation": {
+      "evidence": [
+        "policy-reference-0017"
+      ],
+      "status": "ready"
+    }
+  },
+  "deletionPolicy": {
+    "boundary": "Explicit developer scope: create and update only. Does not assert product-wide deletion impossibility.",
+    "childHandling": "No deletion or cascading action permitted",
+    "disposition": "unsupported",
+    "exactKeyRequired": true,
+    "executionOwner": "none",
+    "irreversible": true,
+    "mechanism": "Not allowed in this task",
+    "recovery": "No delete operation is offered",
+    "sourceIds": [
+      "policy-reference-0018"
+    ]
+  },
+  "entrypoints": {
+    "commands": {
+      "build": "build",
+      "determinism": "determinism",
+      "manifest": "manifest",
+      "normalize": "normalize",
+      "reconcile": "reconcile",
+      "rollback": "rollback",
+      "validate": "validate"
+    },
+    "descriptor": "e2e-adapter.json",
+    "runtime": "scripts/fsm_task_adapter.py"
+  },
+  "generation": {
+    "auditInferenceEvidence": [
+      "policy-reference-0019",
+      "policy-reference-0020",
+      "policy-reference-0021",
+      "policy-reference-0022",
+      "policy-reference-0023",
+      "policy-reference-0024",
+      "policy-reference-0025",
+      "policy-reference-0026",
+      "policy-reference-0027",
+      "policy-reference-0028",
+      "policy-reference-0029"
+    ],
+    "blockers": [],
+    "contractReference": "fscr-deliverable-builder/references/fsm-task-adapter-contract-v1.md",
+    "generator": "fscr-deliverable-builder/scripts/generate_fsm_task_adapter.py",
+    "keyInferenceEvidence": [],
+    "operationEvidence": {
+      "create": [
+        "policy-reference-0030",
+        "AgingPeriodServiceAM.xml"
+      ],
+      "update": [
+        "policy-reference-0030",
+        "AgingPeriodServiceAM.xml"
+      ]
+    },
+    "readiness": "ready",
+    "sourceEvidence": [
+      "policy-reference-0031",
+      "policy-reference-0032",
+      "policy-reference-0033",
+      "policy-reference-0034",
+      "policy-reference-0008"
+    ]
+  },
+  "normalization": {
+    "designInput": {
+      "defaults": {
+        "preserveOtherValues": true,
+        "preserveUnspecifiedRows": true
+      },
+      "operationRequired": [
+        "id",
+        "action",
+        "entity",
+        "targetKey",
+        "values"
+      ],
+      "optional": [
+        "evidenceUnresolvedUpdateOverrides"
+      ],
+      "required": [
+        "operations"
+      ]
+    },
+    "entityOperationOwnershipPolicy": {
+      "mode": "evidence-backed-complete-matrix",
+      "overrideCannotBypassEntityOwnership": true,
+      "packageMembershipDoesNotEstablishOwnership": true
+    },
+    "evidenceUnresolvedUpdateOverridePolicy": {
+      "authoritativeValidator": "FSM",
+      "automaticRetryAllowed": false,
+      "executionOwner": "runbook-and-core.data-loader",
+      "mode": "governed-application-validation",
+      "operation": "update",
+      "requiresCandidateSpecificApproval": true,
+      "requiresEnvironmentAuthorization": true,
+      "requiresExactFieldBinding": true,
+      "requiresExactOperationBinding": true,
+      "requiresExplicitImplementorApproval": true,
+      "requiresImmutablePreview": true,
+      "requiresPreserveOtherValues": true,
+      "requiresPreserveUnspecifiedRows": true,
+      "singleSubmissionOnly": true
+    },
+    "mode": "agent-assisted-schema-validated",
+    "procedure": [
+      "Preserve the unchanged customer request outside the business blueprint.",
+      "Use the selected task skill and compiled ora_rule_registry.json to resolve task semantics and blockers.",
+      "Write only explicit operations, target keys, requested values, resolved scope, defaults, prerequisites, preservation assertions, and warnings into the normalized design input.",
+      "Apply every known deterministic validation first; when an update field remains explicitly evidence-unresolved, disclose the gap and offer the implementor the exact governed application-validation override without relabeling the field as supported.",
+      "Run the normalize command to validate the design and emit the portable blueprint, complete preview, and stable requirements list."
+    ],
+    "supportedOperations": [
+      "create",
+      "update"
+    ]
+  },
+  "package": {
+    "entities": [
+      {
+        "auditFields": [
+          "LastUpdatedBy",
+          "LastUpdateDate",
+          "CreatedBy",
+          "CreationDate",
+          "LastUpdateLogin"
+        ],
+        "conditionallyBlockedFields": [],
+        "createDefaults": {
+          "Status": {
+            "sourceIds": [
+              "policy-reference-0035"
+            ],
+            "value": "A"
+          }
+        },
+        "createFields": {
+          "Attribute1": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute10": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute11": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute12": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute13": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute14": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute15": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute2": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute3": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute4": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute5": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute6": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute7": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute8": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute9": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "AttributeCategory": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Description": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036"
+            ]
+          },
+          "PeriodName": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036"
+            ]
+          },
+          "Status": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036"
+            ]
+          }
+        },
+        "fieldConstraints": {
+          "Attribute1": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0035"
+            ]
+          },
+          "Attribute10": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0035"
+            ]
+          },
+          "Attribute11": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0035"
+            ]
+          },
+          "Attribute12": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0035"
+            ]
+          },
+          "Attribute13": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0035"
+            ]
+          },
+          "Attribute14": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0035"
+            ]
+          },
+          "Attribute15": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0035"
+            ]
+          },
+          "Attribute2": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0035"
+            ]
+          },
+          "Attribute3": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0035"
+            ]
+          },
+          "Attribute4": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0035"
+            ]
+          },
+          "Attribute5": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0035"
+            ]
+          },
+          "Attribute6": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0035"
+            ]
+          },
+          "Attribute7": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0035"
+            ]
+          },
+          "Attribute8": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0035"
+            ]
+          },
+          "Attribute9": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0035"
+            ]
+          },
+          "AttributeCategory": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0035"
+            ]
+          },
+          "CreatedBy": {
+            "lengthUnit": "characters",
+            "maxLength": 64,
+            "sourceIds": [
+              "policy-reference-0035"
+            ]
+          },
+          "Description": {
+            "lengthUnit": "characters",
+            "maxLength": 240,
+            "sourceIds": [
+              "policy-reference-0035"
+            ]
+          },
+          "LastUpdateLogin": {
+            "lengthUnit": "characters",
+            "maxLength": 32,
+            "sourceIds": [
+              "policy-reference-0035"
+            ]
+          },
+          "LastUpdatedBy": {
+            "lengthUnit": "characters",
+            "maxLength": 64,
+            "sourceIds": [
+              "policy-reference-0035"
+            ]
+          },
+          "PeriodName": {
+            "lengthUnit": "characters",
+            "maxLength": 50,
+            "sourceIds": [
+              "policy-reference-0035"
+            ]
+          },
+          "Status": {
+            "lengthUnit": "characters",
+            "maxLength": 25,
+            "sourceIds": [
+              "policy-reference-0035"
+            ]
+          }
+        },
+        "headers": [
+          "PeriodName",
+          "LastUpdatedBy",
+          "LastUpdateDate",
+          "CreatedBy",
+          "CreationDate",
+          "Description",
+          "Status",
+          "AttributeCategory",
+          "Attribute1",
+          "Attribute2",
+          "Attribute3",
+          "Attribute4",
+          "Attribute5",
+          "Attribute6",
+          "Attribute7",
+          "Attribute8",
+          "Attribute9",
+          "Attribute10",
+          "Attribute11",
+          "Attribute12",
+          "Attribute13",
+          "Attribute14",
+          "Attribute15",
+          "LastUpdateLogin"
+        ],
+        "keyFields": [
+          "PeriodName"
+        ],
+        "member": "AP_AGING_PERIOD.csv",
+        "name": "AP_AGING_PERIOD",
+        "nodePath": "/AgingPeriodHeaderVO/AgingPeriodHeaderVORow",
+        "nodeSequence": "1",
+        "nonPersistedFields": {},
+        "operationOwnership": {
+          "create": {
+            "boundary": "Task-owned header/line import target; lines attach through the seeded internal parent reference.",
+            "implementorTarget": true,
+            "roles": [
+              "implementor-target",
+              "reconciliation-target"
+            ],
+            "sourceIds": [
+              "policy-reference-0030",
+              "policy-reference-0037",
+              "policy-reference-0038"
+            ]
+          },
+          "update": {
+            "boundary": "Task-owned header/line import target; lines attach through the seeded internal parent reference.",
+            "implementorTarget": true,
+            "roles": [
+              "implementor-target",
+              "reconciliation-target"
+            ],
+            "sourceIds": [
+              "policy-reference-0030",
+              "policy-reference-0037",
+              "policy-reference-0038"
+            ]
+          }
+        },
+        "requiredFields": [
+          "PeriodName"
+        ],
+        "types": {
+          "Attribute1": "string",
+          "Attribute10": "string",
+          "Attribute11": "string",
+          "Attribute12": "string",
+          "Attribute13": "string",
+          "Attribute14": "string",
+          "Attribute15": "string",
+          "Attribute2": "string",
+          "Attribute3": "string",
+          "Attribute4": "string",
+          "Attribute5": "string",
+          "Attribute6": "string",
+          "Attribute7": "string",
+          "Attribute8": "string",
+          "Attribute9": "string",
+          "AttributeCategory": "string",
+          "CreatedBy": "string",
+          "CreationDate": "dateTime",
+          "Description": "string",
+          "LastUpdateDate": "dateTime",
+          "LastUpdateLogin": "string",
+          "LastUpdatedBy": "string",
+          "PeriodName": "string",
+          "Status": "string"
+        },
+        "unresolvedUpdateFields": {},
+        "updateFields": {
+          "Attribute1": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute10": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute11": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute12": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute13": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute14": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute15": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute2": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute3": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute4": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute5": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute6": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute7": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute8": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute9": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "AttributeCategory": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036",
+              "policy-reference-0018"
+            ]
+          },
+          "Description": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036"
+            ]
+          },
+          "Status": {
+            "sourceIds": [
+              "policy-reference-0035",
+              "policy-reference-0036"
+            ]
+          }
+        },
+        "valueContracts": {
+          "Status": {
+            "allowedValues": [
+              {
+                "code": "A",
+                "label": "Active",
+                "synonyms": [
+                  "Yes"
+                ]
+              },
+              {
+                "code": "I",
+                "label": "Inactive",
+                "synonyms": [
+                  "No"
+                ]
+              }
+            ],
+            "authoritativeFallback": "none",
+            "constraintKind": "fixed-enumeration",
+            "environmentVerificationRequired": false,
+            "extensible": false,
+            "normalization": "trim-case-insensitive-label-or-exact-code",
+            "publicPreflightPolicy": "not_applicable",
+            "sourceIds": [
+              "policy-reference-0039",
+              "policy-reference-0035",
+              "policy-reference-0018"
+            ],
+            "sourceKind": "fixed_enumeration",
+            "valuePopulation": "fixed_enumeration"
+          }
+        }
+      },
+      {
+        "auditFields": [
+          "LastUpdatedBy",
+          "LastUpdateDate",
+          "CreatedBy",
+          "CreationDate",
+          "LastUpdateLogin"
+        ],
+        "conditionallyBlockedFields": [],
+        "createDefaults": {},
+        "createFields": {
+          "AP_AGING_PERIOD.PeriodName": {
+            "sourceIds": [
+              "policy-reference-0038",
+              "policy-reference-0040"
+            ]
+          },
+          "Attribute1": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute10": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute11": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute12": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute13": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute14": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute15": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute2": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute3": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute4": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute5": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute6": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute7": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute8": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute9": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "AttributeCategory": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "DaysStart": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042"
+            ]
+          },
+          "DaysTo": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042"
+            ]
+          },
+          "PeriodSequenceNum": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042"
+            ]
+          },
+          "ReportHeading1": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042"
+            ]
+          },
+          "ReportHeading2": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042"
+            ]
+          },
+          "ReportHeading3": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042"
+            ]
+          }
+        },
+        "fieldConstraints": {
+          "Attribute1": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0041"
+            ]
+          },
+          "Attribute10": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0041"
+            ]
+          },
+          "Attribute11": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0041"
+            ]
+          },
+          "Attribute12": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0041"
+            ]
+          },
+          "Attribute13": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0041"
+            ]
+          },
+          "Attribute14": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0041"
+            ]
+          },
+          "Attribute15": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0041"
+            ]
+          },
+          "Attribute2": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0041"
+            ]
+          },
+          "Attribute3": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0041"
+            ]
+          },
+          "Attribute4": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0041"
+            ]
+          },
+          "Attribute5": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0041"
+            ]
+          },
+          "Attribute6": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0041"
+            ]
+          },
+          "Attribute7": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0041"
+            ]
+          },
+          "Attribute8": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0041"
+            ]
+          },
+          "Attribute9": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0041"
+            ]
+          },
+          "AttributeCategory": {
+            "lengthUnit": "characters",
+            "maxLength": 150,
+            "sourceIds": [
+              "policy-reference-0041"
+            ]
+          },
+          "CreatedBy": {
+            "lengthUnit": "characters",
+            "maxLength": 64,
+            "sourceIds": [
+              "policy-reference-0041"
+            ]
+          },
+          "LastUpdateLogin": {
+            "lengthUnit": "characters",
+            "maxLength": 32,
+            "sourceIds": [
+              "policy-reference-0041"
+            ]
+          },
+          "LastUpdatedBy": {
+            "lengthUnit": "characters",
+            "maxLength": 64,
+            "sourceIds": [
+              "policy-reference-0041"
+            ]
+          },
+          "ReportHeading1": {
+            "lengthUnit": "characters",
+            "maxLength": 15,
+            "sourceIds": [
+              "policy-reference-0041"
+            ]
+          },
+          "ReportHeading2": {
+            "lengthUnit": "characters",
+            "maxLength": 15,
+            "sourceIds": [
+              "policy-reference-0041"
+            ]
+          },
+          "ReportHeading3": {
+            "lengthUnit": "characters",
+            "maxLength": 15,
+            "sourceIds": [
+              "policy-reference-0041"
+            ]
+          },
+          "Type": {
+            "lengthUnit": "characters",
+            "maxLength": 25,
+            "sourceIds": [
+              "policy-reference-0041"
+            ]
+          }
+        },
+        "headers": [
+          "AP_AGING_PERIOD.PeriodName",
+          "PeriodSequenceNum",
+          "LastUpdatedBy",
+          "LastUpdateDate",
+          "CreatedBy",
+          "CreationDate",
+          "DaysStart",
+          "DaysTo",
+          "Type",
+          "ReportHeading1",
+          "ReportHeading2",
+          "ReportHeading3",
+          "AttributeCategory",
+          "Attribute1",
+          "Attribute2",
+          "Attribute3",
+          "Attribute4",
+          "Attribute5",
+          "Attribute6",
+          "Attribute7",
+          "Attribute8",
+          "Attribute9",
+          "Attribute10",
+          "Attribute11",
+          "Attribute12",
+          "Attribute13",
+          "Attribute14",
+          "Attribute15",
+          "LastUpdateLogin"
+        ],
+        "keyFields": [
+          "AP_AGING_PERIOD.PeriodName",
+          "PeriodSequenceNum"
+        ],
+        "member": "AP_AGING_PERIOD_LINE.csv",
+        "name": "AP_AGING_PERIOD_LINE",
+        "nodePath": "/AgingPeriodHeaderVO/AgingPeriodHeaderVORow/AgingPeriodLine/AgingPeriodLineVORow",
+        "nodeSequence": "2",
+        "nonPersistedFields": {},
+        "operationOwnership": {
+          "create": {
+            "boundary": "Task-owned header/line import target; lines attach through the seeded internal parent reference.",
+            "implementorTarget": true,
+            "roles": [
+              "implementor-target",
+              "reconciliation-target"
+            ],
+            "sourceIds": [
+              "policy-reference-0030",
+              "policy-reference-0037",
+              "policy-reference-0038"
+            ]
+          },
+          "update": {
+            "boundary": "Task-owned header/line import target; lines attach through the seeded internal parent reference.",
+            "implementorTarget": true,
+            "roles": [
+              "implementor-target",
+              "reconciliation-target"
+            ],
+            "sourceIds": [
+              "policy-reference-0030",
+              "policy-reference-0037",
+              "policy-reference-0038"
+            ]
+          }
+        },
+        "requiredFields": [
+          "AP_AGING_PERIOD.PeriodName",
+          "PeriodSequenceNum",
+          "DaysStart",
+          "DaysTo",
+          "ReportHeading1"
+        ],
+        "types": {
+          "AP_AGING_PERIOD.PeriodName": "",
+          "Attribute1": "string",
+          "Attribute10": "string",
+          "Attribute11": "string",
+          "Attribute12": "string",
+          "Attribute13": "string",
+          "Attribute14": "string",
+          "Attribute15": "string",
+          "Attribute2": "string",
+          "Attribute3": "string",
+          "Attribute4": "string",
+          "Attribute5": "string",
+          "Attribute6": "string",
+          "Attribute7": "string",
+          "Attribute8": "string",
+          "Attribute9": "string",
+          "AttributeCategory": "string",
+          "CreatedBy": "string",
+          "CreationDate": "dateTime",
+          "DaysStart": "int",
+          "DaysTo": "int",
+          "LastUpdateDate": "dateTime",
+          "LastUpdateLogin": "string",
+          "LastUpdatedBy": "string",
+          "PeriodSequenceNum": "int",
+          "ReportHeading1": "string",
+          "ReportHeading2": "string",
+          "ReportHeading3": "string",
+          "Type": "string"
+        },
+        "unresolvedUpdateFields": {},
+        "updateFields": {
+          "Attribute1": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute10": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute11": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute12": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute13": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute14": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute15": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute2": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute3": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute4": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute5": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute6": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute7": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute8": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "Attribute9": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "AttributeCategory": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042",
+              "policy-reference-0018"
+            ]
+          },
+          "DaysStart": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042"
+            ]
+          },
+          "DaysTo": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042"
+            ]
+          },
+          "ReportHeading1": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042"
+            ]
+          },
+          "ReportHeading2": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042"
+            ]
+          },
+          "ReportHeading3": {
+            "sourceIds": [
+              "policy-reference-0041",
+              "policy-reference-0042"
+            ]
+          }
+        },
+        "valueContracts": {
+          "Type": {
+            "allowedValues": [
+              {
+                "code": "PAST",
+                "label": "PAST",
+                "synonyms": []
+              },
+              {
+                "code": "CURRENT",
+                "label": "CURRENT",
+                "synonyms": []
+              }
+            ],
+            "authoritativeFallback": "none",
+            "constraintKind": "fixed-enumeration",
+            "environmentVerificationRequired": false,
+            "extensible": false,
+            "normalization": "trim-case-insensitive-label-or-exact-code",
+            "publicPreflightPolicy": "not_applicable",
+            "sourceIds": [
+              "policy-reference-0043"
+            ],
+            "sourceKind": "fixed_enumeration",
+            "valuePopulation": "fixed_enumeration"
+          }
+        }
+      }
+    ],
+    "evidenceRelease": "11.13.26.10.0",
+    "metadataMember": "ASM_SETUP_CSV_METADATA.xml",
+    "objectShortName": "AP_MANAGE_AGING_PERIODS",
+    "schemaFingerprint": "dfe8a8d4f31c821b7820a20cba9096fa2f6182f8935a6828ced120261dadbbee",
+    "metadataIdentityPolicy": {
+      "mode": "business-object-and-path",
+      "sourceEvidence": [
+        "policy-reference-0044"
+      ]
+    }
+  },
+  "protocol": {
+    "artifacts": {
+      "blueprint": {
+        "format": "json-object",
+        "producer": "normalize",
+        "requiredFields": [
+          "task",
+          "operations",
+          "resolvedScope",
+          "explicitDefaults",
+          "preservedValues",
+          "prerequisites",
+          "warnings"
+        ]
+      },
+      "candidateHandoff": {
+        "format": "json-object",
+        "producer": "build",
+        "requiredFields": [
+          "status",
+          "task",
+          "candidateSha256",
+          "templateSha256",
+          "baselineSha256",
+          "designSha256",
+          "schemaFingerprint",
+          "memberInventory",
+          "rowCounts",
+          "errors",
+          "warnings",
+          "unresolvedWarnings",
+          "businessSummary"
+        ]
+      },
+      "preview": {
+        "format": "json-object",
+        "producer": "normalize",
+        "requiredFields": [
+          "task",
+          "operations",
+          "explicitDefaults",
+          "preservedValues",
+          "prerequisites",
+          "warnings",
+          "designSha256"
+        ]
+      },
+      "reconciliationReport": {
+        "format": "json-object",
+        "producer": "reconcile",
+        "requiredFields": [
+          "status",
+          "task",
+          "candidateSha256",
+          "exportSha256",
+          "requirementMatrix",
+          "mismatchCount"
+        ]
+      },
+      "requirements": {
+        "format": "json-array",
+        "producer": "normalize",
+        "requiredFields": [
+          "id",
+          "requirement"
+        ]
+      },
+      "sourceManifest": {
+        "format": "json-object",
+        "producer": "manifest",
+        "requiredFields": [
+          "environment",
+          "baseUrl",
+          "taskName",
+          "taskCode",
+          "status",
+          "templateOnly",
+          "release",
+          "schemaFingerprint",
+          "members",
+          "headers",
+          "populatedMembers",
+          "unrelatedPopulatedMembers"
+        ]
+      },
+      "validationReport": {
+        "format": "json-object",
+        "producer": "validate",
+        "requiredFields": [
+          "status",
+          "task",
+          "candidateSha256",
+          "designSha256",
+          "requirementIds",
+          "errors",
+          "warnings",
+          "unresolvedWarnings"
+        ]
+      }
+    },
+    "commands": {
+      "build": {
+        "command": "build",
+        "outputs": [
+          "candidateZip",
+          "candidateHandoff"
+        ],
+        "requiredArguments": [
+          "template",
+          "baseline",
+          "blueprint",
+          "requirements",
+          "output"
+        ]
+      },
+      "determinism": {
+        "command": "determinism",
+        "outputs": [
+          "determinismReport"
+        ],
+        "requiredArguments": [
+          "template",
+          "baseline",
+          "blueprint",
+          "requirements"
+        ]
+      },
+      "manifest": {
+        "command": "manifest",
+        "outputs": [
+          "sourceManifest"
+        ],
+        "requiredArguments": [
+          "package",
+          "environment",
+          "base-url",
+          "template-only"
+        ]
+      },
+      "normalize": {
+        "command": "normalize",
+        "outputs": [
+          "blueprint",
+          "preview",
+          "requirements"
+        ],
+        "requiredArguments": [
+          "baseline",
+          "request",
+          "design",
+          "blueprint-output",
+          "preview-output",
+          "requirements-output"
+        ]
+      },
+      "reconcile": {
+        "command": "reconcile",
+        "outputs": [
+          "reconciliationReport"
+        ],
+        "requiredArguments": [
+          "baseline",
+          "candidate",
+          "blueprint",
+          "requirements",
+          "export"
+        ]
+      },
+      "rollback": {
+        "command": "rollback",
+        "outputs": [
+          "rollbackBlueprint",
+          "rollbackRequirements",
+          "candidateZip",
+          "candidateHandoff"
+        ],
+        "requiredArguments": [
+          "template",
+          "before",
+          "current",
+          "forward-blueprint",
+          "blueprint-output",
+          "requirements-output",
+          "output"
+        ]
+      },
+      "validate": {
+        "command": "validate",
+        "outputs": [
+          "validationReport"
+        ],
+        "requiredArguments": [
+          "template",
+          "baseline",
+          "blueprint",
+          "requirements",
+          "package"
+        ]
+      }
+    },
+    "governance": {
+      "fusionMutationAllowed": false,
+      "importApprovalOwner": "core.data-loader",
+      "offlineOnly": true
+    },
+    "implementationKind": "task-specific",
+    "name": "fscr-fsm-task-runtime",
+    "version": "1.0"
+  },
+  "reconciliationPolicy": {
+    "baselineRows": "fail-on-change-or-removal",
+    "concurrentUnrelatedRows": "allow",
+    "duplicateRequestedRows": "fail",
+    "requestedRows": "exact"
+  },
+  "schemaVersion": "fscr-fsm-task-adapter-v2",
+  "semanticModel": {
+    "coverage": {
+      "conditionalBlockerCount": 0,
+      "entityCount": 2,
+      "fieldCount": 53,
+      "relationshipCount": 1,
+      "supportedOperations": [
+        "create",
+        "update"
+      ]
+    },
+    "extension": {
+      "status": "ready",
+      "runtime": "scripts/fsm_task_adapter.py",
+      "validatorCommand": "python scripts/fsm_task_adapter.py validate",
+      "evidence": [
+        "active header child requirement",
+        "From <= To",
+        "derived persisted Type",
+        "parent link",
+        "Reviewed task scope and validation policy and Aging Period Details UI limit (AP-810439): max four resulting details per header; not a claim of FSM enforcement",
+        "Reviewed task scope and validation policy: accept raw DFF values for FSM domain validation; A/I fixed choice without lookup",
+        "unique parent aging period and integer sequence; matching checks current export and package identities",
+        "Fusion calculates Type before insert/update; create input blank, update input preserved, fresh-export value verified",
+        "Per-line From <= To only; no cross-line continuity restriction",
+        "Type has only PAST/CURRENT values; reject any other supplied Type before operation-support checks",
+        "Task detail-order defaulting policy: assign listed order only for new same-request parents with all detail orders omitted; preview defaults; preserve explicit order; existing parents require explicit order."
+      ]
+    },
+    "fieldContract": "package.entities",
+    "mode": "task-specific-extension",
+    "relationships": [
+      {
+        "parentEntity": "AP_AGING_PERIOD",
+        "childEntity": "AP_AGING_PERIOD_LINE",
+        "parentFields": [
+          "PeriodName"
+        ],
+        "childFields": [
+          "AP_AGING_PERIOD.PeriodName"
+        ],
+        "status": "confirmed",
+        "evidence": [
+          "policy-reference-0038",
+          "policy-reference-0040"
+        ]
+      }
+    ],
+    "rulePlan": "ora-resource/ora_rule_registry.json"
+  },
+  "task": {
+    "code": "AP_MANAGE_AGING_PERIODS",
+    "csvSupported": true,
+    "functionalArea": "Payables",
+    "importMode": "FSM",
+    "name": "Manage Aging Periods",
+    "offering": "Financials"
+  }
+}

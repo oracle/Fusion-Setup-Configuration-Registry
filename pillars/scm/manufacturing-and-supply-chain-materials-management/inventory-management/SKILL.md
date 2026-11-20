@@ -103,7 +103,7 @@ required_setup_tasks:
   - "ORA_LOT_SELECTOR_VIEW_CONFIGURATION"
   - "ORA_INV_POLICY_PROFILES"
   - "ORA_INV_DEFAULT_CLASSIFICATION_GROUP"
-  - "ORA_MANAGE_MIN_MAX_PLANNING_POLICY_PROFILE_ASSIGNMENTS"
+  - "ORA_INV_POLICY_PROFILE_ASSIGNMENTS"
   - "ORA_INVENTORY_ATTRIBUTE_CONFIGURATION"
   - "ORA_ACCOUNT_ALIASES"
 applicability:
@@ -162,7 +162,7 @@ Use this functional-area skill after Manufacturing and Supply Chain Materials Ma
 25. [Lot Selector Views](lot-selector-views/SKILL.md) (`ORA_LOT_SELECTOR_VIEW_CONFIGURATION`)
 26. [Policy Profiles](policy-profiles/SKILL.md) (`ORA_INV_POLICY_PROFILES`)
 27. [Default Classification Group](default-classification-group/SKILL.md) (`ORA_INV_DEFAULT_CLASSIFICATION_GROUP`)
-28. [Manage Min-Max Planning Policy Profile Assignments](manage-min-max-planning-policy-profile-assignments/SKILL.md) (`ORA_MANAGE_MIN_MAX_PLANNING_POLICY_PROFILE_ASSIGNMENTS`)
+28. [Policy Profile Assignments](policy-profile-assignments/SKILL.md) (`ORA_INV_POLICY_PROFILE_ASSIGNMENTS`)
 29. [Inventory Attribute Configurations](inventory-attribute-configurations/SKILL.md) (`ORA_INVENTORY_ATTRIBUTE_CONFIGURATION`)
 30. [Account Aliases](account-aliases/SKILL.md) (`ORA_ACCOUNT_ALIASES`)
 

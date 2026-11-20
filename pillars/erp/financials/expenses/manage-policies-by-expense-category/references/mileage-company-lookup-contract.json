@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0",
+  "status": "source_matched_offline_resolver_target_capture_not_executed",
+  "category": "Mileage",
+  "scope": "Exact enabled Mileage parent list and all retained/proposed consumed ADDITIONAL codes for actual create/update consumers; read-only receipt through declared core-client route, no write/import authority",
+  "sources": [
+    {
+      "path": "fusionapps/fin/components/payables/exm/policy/mileage/model/src/oracle/apps/financials/expenses/policy/mileage/uiModel/view/MileagePolicyVO.xml",
+      "sha256": "4260a0c76667af8faf09de248b05df6fd6bd4d66f7396a1635a1fee0db92ac84",
+      "symbols": "74-87 ExmLookupTypePVO customization U/E;853-865 AdditionalRatesListCode->LookupType"
+    },
+    {
+      "path": "fusionapps/fin/components/payables/exm/policy/mileage/model/src/oracle/apps/financials/expenses/policy/mileage/uiModel/view/MileagePolLinesVO.xml",
+      "sha256": "bcbff16caf533451e825b74ebd9494aa67a11697784a3c4f65e11f800d221564",
+      "symbols": "154-170 ByEnabledFlag Y plus ByLookupType bound to resulting parent AdditionalRatesListCode;375-388 AdditionalRateCode->LookupCode; no ByActiveDate usage"
+    },
+    {
+      "path": "fusionapps/fin/components/payables/exm/lookups/pubicView/src/oracle/apps/financials/expenses/lookups/publicView/ExmLookupTypePVO.xml",
+      "sha256": "f6c86dc907683a6c4ef9879346c55073291bc596aab3cbdad5a31e27132d3e7f",
+      "symbols": "ByCustomizationLevel OR of two bound customization levels; own EXM_LOOKUP_TYPES view"
+    },
+    {
+      "path": "fusionapps/fin/components/payables/exm/shared/lookups/dbSchema/database/fusionDB/FUSION/EXM_LOOKUP_TYPES.view",
+      "sha256": "0c0827cf4296f78981b8f74496d5f7fdc21d44322169a7ed86ef16c500db88cd",
+      "symbols": "56-66 Expenses application module join and ViewApplicationId IN (0,10016)"
+    },
+    {
+      "path": "fusionapps/fin/components/payables/exm/shared/lookups/dbSchema/database/fusionDB/FUSION/EXM_LOOKUP_VALUES.view",
+      "sha256": "333090fa30a288e7effa0db8da73e030606445ac8ad3a0b736d294fd25112a88",
+      "symbols": "69-88 exact Expenses module and application join IN (0,10016); no fixed SetId filter"
+    }
+  ],
+  "rest_documentation": [
+    {
+      "url": "https://docs.oracle.com/en/cloud/saas/financials/index.html",
+      "observed_final_url": "https://docs.oracle.com/en/cloud/saas/financials/26d/index.html",
+      "checked": "2026-10-29",
+      "authority": "Latest public Financials release discovery, not target deployment parity"
+    },
+    {
+      "url": "https://docs.oracle.com/en/cloud/saas/applications-common/26d/farca/op-http-servername-fscmrestapi-resources-11.13.18.05-standardlookups-get.html",
+      "authority": "GET standardLookups, exact LookupTypeFinder, CustomizationLevel and ModuleId response attributes"
+    },
+    {
+      "url": "https://docs.oracle.com/en/cloud/saas/applications-common/26d/farca/op-http-servername-fscmrestapi-resources-11.13.18.05-standardlookups-lookuptype-child-lookupcodes-get.html",
+      "authority": "GET returned lookupCodes collection; enabled code, lookupsDFF nested schema including LookupType/LookupCode/ViewApplicationId/SetId; opaque path keys must come from returned links"
+    }
+  ],
+  "runtime_rules": [
+    "Only exact AdditionalRatesListCode capture: derive parent from exact baseline/proposed workbook and every consumed ADDITIONAL code from retained plus proposed rows. Selection operation must match an actual full-key workbook consumer. No arbitrary caller type, eligible code or default.",
+    "Parent must be an exact complete unique lookup type in Expenses module 47110F64AC0608E2E040449823C60DB6 with CustomizationLevel U or E. Never default missing metadata.",
+    "Each consumed child must uniquely exist in a complete returned child collection, EnabledFlag Y, matching exact type/code context and ViewApplicationId0 or10016. At least one actual consumed code is mandatory to establish application context.",
+    "SetId must be explicitly present as a canonical signed64-bit integer identity and unambiguous. Own source does not filter a fixed SetId or its sign; do not invent a SetId0-only or positive-only business rule. Multiple exact code contexts remain ambiguous and blocked.",
+    "Own selected accessor has no active-date criterion. Do not invent StartDateActive/EndDateActive eligibility checks from their mere presence.",
+    "Require exact complete collections, returned same-origin HTTPS child links, raw capture hashes, workbook/baseline/runtime/environment/origin/date/intake catalog binding, consuming-context parity and current task module/source hashes.",
+    "Company type tokens containing unsafe finder delimiters are outside this route; preserve an explicit route limitation rather than interpolate them. No standard lookup prefix assumption for custom types.",
+    "Static standard lookup behavior stays unchanged. Old research parent.json demonstrates response shape only, never eligible U/E type or current target verification. Target27A may differ from26D docs; fresh target-bound capture must satisfy the exact response/source predicates or stop."
+  ],
+  "remaining_boundaries": [
+    "Target dynamic lookup capture and live create/update combinations remain separately qualified.",
+    "Public26D docs lack target27A parity proof; create source join supplies no target eligibility or native execution approval."
+  ]
+}

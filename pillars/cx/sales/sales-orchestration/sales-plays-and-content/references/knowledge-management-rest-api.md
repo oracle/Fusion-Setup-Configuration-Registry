@@ -1,16 +1,16 @@
 # Sales Play Knowledge Management REST API Instructions
 
-Use this instruction file for the task's only Knowledge Management operation:
+Use this instruction file for Oracle Fusion Knowledge Management endpoints
+under:
 
 ```text
-POST /api/knowledge-management/v2/contentIntelligence
+/api/knowledge-management
 ```
 
 Invoke these endpoints with the single scope token containing
 `knowledge-management` from the regular OAuth `scope` property in
 `core/auth/fusionEnv.properties`. Use the task-local wrapper instead of the
-BOSS client so the exact method, relative path, and fixed search contract are
-validated before authentication.
+BOSS client so the `/api/knowledge-management` path boundary remains enforced.
 
 ## Script
 
@@ -55,23 +55,10 @@ back to a separate Knowledge Management scope property or a pasted bearer token.
 
 ## Endpoint Rules
 
-- The wrapper accepts only POST to the exact relative
-  `/api/knowledge-management/v2/contentIntelligence` path. Absolute URLs,
-  suffixes, query overrides, other methods and service overrides are rejected.
-- The validated path is joined to `restBaseUrl` through the shared host guard.
+- The wrapper accepts only endpoints under `/api/knowledge-management`; this
+  skill invokes only `/api/knowledge-management/v2/contentIntelligence`.
+- Relative endpoints are joined to `restBaseUrl`.
 - Use JSON request bodies through `--body` or `--body-file`.
-- Follow `sales-plays-content-intelligence-read.md`: only the question and
-  exact Sales Play ID may vary. The connector, published-content filters,
-  equality operators and nested userInput settings are validated before OAuth.
-- Use `--token-cache auto`; explicit access tokens and custom cache paths are
-  rejected. Only application/json Accept and Content-Type headers are allowed.
+- Never pass a bearer token or Authorization header from user input.
 - The Content Intelligence POST has semantic-read behavior. The wrapper does
   not grant approval for another POST or any mutation.
-
-## Error Output
-
-Fixed validation messages identify the rejected contract. HTTP failures report
-only the status and fixed relative endpoint; raw response bodies and URLs are
-suppressed. Other failures report their exception type without details. The
-CLI exits with code 1 on failure. Only the validated semantic read may receive
-the single cache-managed authentication refresh and retry.

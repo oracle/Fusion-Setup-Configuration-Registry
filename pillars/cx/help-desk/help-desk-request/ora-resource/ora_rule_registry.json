@@ -1,0 +1,182 @@
+{
+  "schema_version": "3.0",
+  "representation": "flat",
+  "tasks": [
+    {
+      "task_code": "ORA_SVC_MANAGE_CATEGORIES_FOR_HR_SERVICE_REQUESTS",
+      "task_name": "Manage Categories for HR Help Desk Requests",
+      "start_node": "HRHDCAT.INPUT",
+      "nodes": [
+        {
+          "id": "HRHDCAT.INPUT",
+          "node_type": "step",
+          "sequence": 10,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "passed": "HRHDCAT.DEFAULTS",
+            "issues": "HRHDCAT.ERROR"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Validate the requested category operation and its applicable inputs.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 24
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "HRHDCAT.DEFAULTS",
+          "node_type": "step",
+          "sequence": 20,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "passed": "HRHDCAT.LOOKUPS",
+            "issues": "HRHDCAT.ERROR"
+          },
+          "prerequisites": [
+            "HRHDCAT.INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Apply only operation-appropriate defaults; a list-only filter never scopes a mutation or verification.",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 15
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "HRHDCAT.LOOKUPS",
+          "node_type": "step",
+          "sequence": 30,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "passed": "HRHDCAT.DEPENDENCIES",
+            "issues": "HRHDCAT.ERROR"
+          },
+          "prerequisites": [
+            "HRHDCAT.DEFAULTS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Perform only the read lookup required by the selected operation.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 23
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "HRHDCAT.DEPENDENCIES",
+          "node_type": "step",
+          "sequence": 40,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "passed": "HRHDCAT.POLICY",
+            "issues": "HRHDCAT.ERROR"
+          },
+          "prerequisites": [
+            "HRHDCAT.LOOKUPS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Confirm dependencies applicable to the selected operation.",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 29
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "HRHDCAT.POLICY",
+          "node_type": "step",
+          "sequence": 50,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "passed": "HRHDCAT.VALIDATED",
+            "issues": "HRHDCAT.ERROR"
+          },
+          "prerequisites": [
+            "HRHDCAT.DEPENDENCIES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Enforce category hierarchy and FSM package-integrity rules before handing off to the routed workflow.",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 31
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "HRHDCAT.VALIDATED",
+          "node_type": "terminal",
+          "sequence": 80,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "HRHDCAT.POLICY"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return validated facts to the routed workflow; no Fusion mutation has been performed by this rule graph.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 23
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "HRHDCAT.ERROR",
+          "node_type": "terminal",
+          "sequence": 90,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Return a safe error or unsupported outcome without retrying or performing an external action.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 24
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

@@ -47,7 +47,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 50
+            "line": 77
           },
           "readiness": {
             "status": "ready",
@@ -163,14 +163,14 @@
           "action_type": "execution_gate",
           "execution_route": "local",
           "transitions": {
-            "approved": "KFF.HANDED_OFF_TO_PARENT",
-            "approval_missing": "KFF.HANDLE_APPROVAL"
+            "ready": "KFF.VALIDATED",
+            "incomplete": "KFF.HANDLE_READINESS"
           },
           "prerequisites": [
             "KFF.ENFORCE_DESIGN"
           ],
           "on_failure": "stop",
-          "applies_when": "A validated package is proposed for live import.",
+          "applies_when": "Require applicable read-only task validation and immutable-artifact checks for the exact target and requested scope. Return ready without requiring upload approval or a submission receipt: core.data-loader obtains submission approval after task validation. This node does not submit, poll, or report acceptance. Missing, stale, or mismatched validation/artifact evidence returns incomplete.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
@@ -278,7 +278,7 @@
           }
         },
         {
-          "id": "KFF.HANDLE_APPROVAL",
+          "id": "KFF.HANDLE_READINESS",
           "node_type": "step",
           "sequence": 110,
           "action_type": "error_handler",
@@ -290,7 +290,7 @@
             "KFF.IMPORT_GATE"
           ],
           "on_failure": "stop",
-          "applies_when": "Approval is absent or stale.",
+          "applies_when": "Required task validation or immutable-artifact evidence is missing, stale, or mismatched. Return the issue for correction; do not request submission approval, submit, or claim acceptance during task validation.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
@@ -302,7 +302,7 @@
           }
         },
         {
-          "id": "KFF.HANDED_OFF_TO_PARENT",
+          "id": "KFF.VALIDATED",
           "node_type": "terminal",
           "sequence": 120,
           "action_type": "terminal",
@@ -311,8 +311,8 @@
           "prerequisites": [
             "KFF.IMPORT_GATE"
           ],
-          "on_failure": "continue",
-          "applies_when": "Accepted \u2014 pending parent verification. The Fixed Assets parent owns status, process-log review, and fresh target read-back.",
+          "on_failure": "stop",
+          "applies_when": "Return validated_for_import for the current validation scope; no upload approval, submission, acceptance, or Fusion completion is implied. The parent/Core workflow may report accepted only after its accepted-initiation response supplies a request ID correlated to the exact target and reviewed immutable archive/hash. Parent verification remains required.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",

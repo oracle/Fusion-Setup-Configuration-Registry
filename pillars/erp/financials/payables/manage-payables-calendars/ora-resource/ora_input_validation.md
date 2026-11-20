@@ -31,7 +31,7 @@
 | Audit fields | Do not accept CreatedBy, CreationDate, LastUpdatedBy, LastUpdateDate, or LastUpdateLogin as requester-authored create values | When those package columns are present | |
 | Supported create fields | Permit the documented task field contract, including AttributeCategory and Attribute1 through Attribute15 on both calendar and period rows | Before candidate preparation | |
 | Period DueDate | Require DueDate for PAYMENT TERMS calendar periods; permit a blank DueDate for GENERAL calendar periods. Validate every supplied DueDate as on or after EndDate | Before candidate preparation | |
-| Bounded parent update fields | Permit AP_OTHER_PERIOD_TYPE.Description, EffectiveTo, AttributeCategory, and Attribute1 through Attribute15 for an exact existing CalendarName and CalendarType target when all other target values and unspecified rows are preserved; EffectiveTo must be on or after the retained EffectiveFrom | Before candidate preparation | |
+| Bounded parent update fields | Permit AP_OTHER_PERIOD_TYPE.Description, EffectiveTo, AttributeCategory, and Attribute1 through Attribute15 for an exact existing CalendarName and CalendarType target when all other target values and unspecified rows are preserved; when both are populated, EffectiveTo must be on or after the retained EffectiveFrom | Before candidate preparation | |
 | Bounded period update fields | Permit AP_OTHER_PERIOD_PERIOD.Description, StartDate, EndDate, PeriodNum, DueDate, AttributeCategory, and Attribute1 through Attribute15 for an exact existing CalendarName, CalendarType, and PeriodName target when all other target values and unspecified rows are preserved. AP_OTHER_PERIOD_TYPE.CalendarName and AP_OTHER_PERIOD_TYPE.CalendarType are required immutable parent-reference context, not mutable child business fields; enforce EndDate >= StartDate, DueDate >= EndDate when DueDate is supplied, require DueDate for PAYMENT TERMS calendars, prevent overlap with retained ranges, and keep (PeriodYear, PeriodNum) unique | Before candidate preparation | |
 | Unproven field behavior | Do not infer defaults, value constraints, direct-write endpoints, or update support for any other package attribute | Before candidate preparation | |
 
@@ -80,3 +80,31 @@ overlap involving a requested period, even when periods have different years.
 A shared start/end date counts as an overlap. Use the final dates when another
 period moves in the same batch. Existing overlaps between two unchanged periods
 do not block an unrelated change.
+
+## Calendar Header Effective Dates
+
+Header StartDate is required for generation frequencies, not for OTHER. For
+OTHER creates, leave header StartDate and PeriodNameFormat blank and require
+manual child dates and PeriodsPerYear. EffectiveFrom and EffectiveTo are optional
+create values: preserve omitted or blank values as explicit blank CSV cells,
+without defaulting them from StartDate. Validate nonblank date formats and
+compare EffectiveFrom with StartDate, and EffectiveTo with EffectiveFrom, only
+when the respective pair is populated. Preserve retained effective dates on
+unrelated updates. From Date (EffectiveFrom) can be supplied when creating a
+calendar. FSM import does not support changing or clearing it on an existing
+calendar. Stop such requests before package generation or import, explain that
+From Date is create-only through FSM, and preserve its existing value when
+updating other fields. This restriction does not establish UI editability.
+
+## EBS Period-name Decision Gate
+
+For a user-confirmed EBS migration, identify all source-to-predicted PeriodName
+changes before candidate generation or import approval. Show calendar/type,
+source PeriodName, EnteredPeriodName, PeriodYear, PeriodNum and predicted Fusion
+name. Missing explicit acceptance blocks the affected scope. Offer acceptance
+with unchanged business years/dates or explicit deferral; never infer consent
+from generic import approval. Validate accepted derived identities against
+source and target keys. Follow the decision-bearing normalized design for both
+built candidates and immutable uploaded ZIPs; standalone ZIP validation is not
+proof of source review or rename consent. See
+[EBS name review](../references/ebs-period-name-review.md).

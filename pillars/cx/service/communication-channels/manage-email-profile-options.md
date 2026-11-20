@@ -12,6 +12,9 @@ csv_export_import_supported_flag: "Y"
 dataloader_import_mode: "FSM"
 businessObject: ""
 source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
+depends_on:
+  - core.fusion-api.apps-common
+
 ---
 
 # Manage Email Profile Options
@@ -50,7 +53,7 @@ source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 
 - `FND_APP_PROFILE_OPTION.ProfileOptionName`: Set to the approved existing Communication Channels profile option name.
 - `FND_APP_PROFILE_OPTION.ApplicationId`: Retain the exported application ID for the selected existing profile option.
-- `LevelName`: Retain the exported supported profile level for the selected profile option. When no supported level is supplied for a task-owned profile-value row, default to SITE.
+- `LevelName`: Retain the exported supported profile level for the selected profile option. When no supported level is supplied, default to SITE only when the task-owned same-task export and profile definition confirm that SITE is enabled, updateable and appropriate for the approved change; otherwise stop for the target level.
 - `UpdateableFlag`: Retain the exported value; do not enable an unsupported profile level.
 - `EnabledFlag`: Retain the exported value; do not enable an unsupported profile level.
 - `CreationDate`: Retain the exported value.
@@ -63,7 +66,7 @@ source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 
 - `FND_APP_PROFILE_OPTION.ProfileOptionName`: Set to the approved existing Communication Channels profile option name.
 - `FND_APP_PROFILE_OPTION.ApplicationId`: Retain the exported application ID for the selected existing profile option.
-- `LevelName`: Retain the exported supported profile level for the selected profile option. When no supported level is supplied for a task-owned profile-value row, default to SITE.
+- `LevelName`: Retain the exported supported profile level for the selected profile option. When no supported level is supplied, default to SITE only when the task-owned same-task export and profile definition confirm that SITE is enabled, updateable and appropriate for the approved change; otherwise stop for the target level.
 - `LevelValue`: Retain the exported level value for the selected profile level. When LevelName defaults to SITE and no level value is supplied, default to SITE.
 - `ProfileOptionValue`: Derive the value from the customer's stated business intent and the selected profile option's documented semantics. Present the derived value for approval before import; do not infer a value when the intent or documented semantics are insufficient.
 - `CreationDate`: Retain the exported value.
@@ -81,29 +84,29 @@ Manage supported inbound and outbound email profile-option values.
 
 ### View Email Profile Option Value
 
-View the effective value for a selected inbound or outbound email profile option.
+View the configured or explicitly requested session-effective value for a selected inbound or outbound email profile option.
 
-1. Read the selected profile option with core.fusion-api.apps-common through the Profile Values REST resource using ProfileOptionNameFinder.
-2. Return ProfileOptionName and the effective ProfileOptionValue for the requested profile level and context.
+1. Follow the parent Profile Task Handoff and the selected core.fusion-api.apps-common.profile-options workflow. For a configured-level request, resolve exactly one profile definition by ProfileOptionName and read the exact supported Site or User child/key specified by the task lookup rules.
+2. Return ProfileOptionName, the resolved level/key, and its configured ProfileOptionValue. Use profileValues only when the request explicitly asks for the current authenticated session effective value; label it effective and do not claim it verifies a configured target.
 
 ### View Email Profile Option Values
 
-View effective values for supported inbound and outbound email profile options.
+View configured or explicitly requested session-effective values for supported inbound and outbound email profile options.
 
-1. Read profile values with core.fusion-api.apps-common through the Profile Values REST resource.
-2. Filter to the requested documented profile option codes and return ProfileOptionName and ProfileOptionValue.
+1. Resolve each requested documented profile code through the selected core profile-options configured-level read workflow, preserving its exact supported level and target key.
+2. Return the configured values with their resolved scopes. If explicitly requested, report current-session effective values separately; they do not establish configured-level state.
 
 ### Update Email Profile Option Value
 
 Update a supported inbound or outbound email profile-option value through FSM.
 
-1. Read the current effective value through the Profile Values REST resource when it is exposed to the caller.
+1. Resolve the profile definition and current configured value for the exact requested supported level/key through the core profile-options read workflow and matching task lookup rules. Confirm the level is enabled and updateable; stop on unresolved identity or unsupported scope.
 2. Validate the selected profile option code, requested value, and target profile level against the documented guidance.
 3. Export the setup task with shared.setup-export.task-level-export.
 4. Use the completed export as the package baseline and change only the approved task-owned profile-value row.
 5. Validate the FSM package with shared.validation.setup-data-validator.
 6. Import the approved ZIP with core.data-loader.
-7. Verify the change with a fresh Profile Values REST read when available, otherwise with a fresh export.
+7. Verify the exact configured profile, level/key and approved value with a fresh scoped configured-value read or same-task export. A current-session effective read is supplementary and cannot replace configured-level verification.
 
 ### Create Email Profile Option
 

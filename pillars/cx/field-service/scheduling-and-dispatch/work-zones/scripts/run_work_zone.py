@@ -11,7 +11,7 @@ import sys
 
 SHARED = Path(__file__).resolve().parents[3] / "scripts"
 sys.path.insert(0, str(SHARED))
-from task_orchestration import PartialExecutionBlocked, WorkflowBlocked, run
+from task_orchestration import REST_SERVICE, add_service_argument, PartialExecutionBlocked, WorkflowBlocked, run
 from task_adapter import WorkZonesAdapter
 
 
@@ -84,18 +84,23 @@ def _failure_class(error: Exception) -> str:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
+    add_service_argument(parser)
     parser.add_argument("--workbook", type=Path, required=True)
     parser.add_argument("--execution-direction", choices=("ora_rest_execution",))
     parser.add_argument("--mode", choices=("preview", "execute"), default="preview")
     parser.add_argument("--approve-checksum")
+    parser.add_argument("--include-exact-preview", action="store_true", help="Return the exact preview to the caller in preview mode; durable evidence remains redacted.")
     parser.add_argument("--properties", type=Path, default=ROOT / "core/auth/fusionEnv.properties")
     parser.add_argument("--project-id", required=True)
     parser.add_argument("--output", type=Path, required=True)
     arguments = parser.parse_args()
     started_at = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     try:
+        if arguments.include_exact_preview and arguments.mode != "preview":
+            raise WorkflowBlocked("--include-exact-preview is available only in preview mode.")
         output = _project_evidence(arguments.project_id, arguments.output)
-        result = run(WorkZonesAdapter(), arguments.workbook, arguments.execution_direction, arguments.mode, arguments.approve_checksum, arguments.properties, output)
+        result = run(WorkZonesAdapter(), arguments.workbook, arguments.execution_direction, arguments.mode, arguments.approve_checksum, arguments.properties, output, include_exact_preview=arguments.include_exact_preview)
+        result["service"] = REST_SERVICE
         _persist_redacted_run(arguments.project_id, result, arguments.properties)
         _append_token_usage(arguments.project_id, started_at, result)
         print(json.dumps(result, ensure_ascii=False, sort_keys=True))

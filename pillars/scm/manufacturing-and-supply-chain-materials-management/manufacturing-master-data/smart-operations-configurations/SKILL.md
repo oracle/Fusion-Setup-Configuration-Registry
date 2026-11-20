@@ -117,12 +117,10 @@ Use this skill when planning, sequencing, exporting, importing, or validating se
 
 ## Release Applicability
 
-This task skill is the 26.10 drop2 backport of the reviewed Smart Operations
-Configurations skill delivered in 27A merge request 1953. Use the operator's
+This task skill applies to the 26.10 drop2 release. Use the operator's
 approved 26.10 target, source revision and delivery instructions for a new run.
-Use the [Smart Operations Configurations FSCR guide](https://confluence.oraclecorp.com/confluence/pages/viewpage.action?pageId=21846452541)
-for supporting procedures. Keep environment-specific results in the selected
-project's run records and review reports.
+Keep environment-specific results in the selected project's run records and
+review reports.
 
 Confirm the selected target's installed release/build, patch, permissions, task
 definitions, template and prerequisite data before execution. A source-branch
@@ -152,14 +150,6 @@ change and does not itself enforce a release check in the shared planner.
 - CSV export/import routing: `supported`
 - Data Loader import mode: `FSM`
 - Business Object: ``
-
-## Source References
-
-This skill supports [FMFG-121484](https://jira.oraclecorp.com/jira/browse/FMFG-121484).
-Use the [Smart Operations Configurations parent guidance](https://confluence.oraclecorp.com/confluence/pages/viewpage.action?pageId=21846452541)
-and [Smart Operations Configurations demo](https://confluence.oraclecorp.com/confluence/pages/viewpage.action?pageId=21846452542)
-as source references. Retain environment identities, dated export and import
-results, and saved-value comparisons in project records and review reports.
 
 ## Scoped Preparation and Reviewer Handoffs
 
@@ -191,12 +181,12 @@ results, and saved-value comparisons in project records and review reports.
 
 Do not persist customer configuration or credentials in reusable skill source.
 This skill defines domain rules and delegates execution to the selected
-shared and core workflows. FMFG-121484 calls for local verification, a retained
-skill-run record and reviewed source evidence. Apply task-local rules through
-the selected shared and core workflows for an approved current run. The story
-does not explicitly require a separate skill self-audit. The generated manifest
-and records from earlier runs alone do not establish readiness or completion for a new
-skill run.
+shared and core workflows. Apply task-local rules through those workflows for
+an approved current run. Retain local verification findings, the skill-run
+record, environment identities, dated export and import results, and saved-value
+comparisons in project records and review reports. The generated manifest and
+records from earlier runs alone do not establish readiness or completion for a
+new skill run.
 
 ## CSV Package and Task Validation Scope
 

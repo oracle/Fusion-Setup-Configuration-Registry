@@ -12,6 +12,24 @@
 
 ## Field Validation
 
+### Flag Value Normalization
+
+Accept affirmative user input (Yes or Y) and negative user input (No or N)
+case-insensitively. Before field validation, storage, or serialization,
+translate that input to the exact uppercase affirmative or negative value
+listed for its database column below. Never choose a representation at runtime
+or serialize user-facing wording directly. Reject unrecognized input.
+
+The table specifies populated boolean values only. It does not add defaults,
+make optional fields mandatory, authorize changes to read-only or system-managed
+fields, or change existing blank and update-preservation rules. Retain returned
+target values as evidence; do not normalize them to conceal a target mismatch.
+
+| Database table | Database column | Affirmative stored value | Negative stored value |
+|---|---|---|---|
+| FA_ASSET_KEYWORDS | SUMMARY_FLAG | `Y` | `N` |
+| FA_ASSET_KEYWORDS | ENABLED_FLAG | `Y` | `N` |
+
 | Check | What Happens | Applies When | Resolver |
 |---|---|---|---|
 | Start date is later than end date | Reject the supplied date range; equal dates are valid. | Both dates are supplied. | |

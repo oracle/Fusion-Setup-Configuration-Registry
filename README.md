@@ -1,4 +1,4 @@
-# FSCR — Oracle Fusion Setup and Configuration Skills Registry
+# FSCR — Oracle Fusion Setup and Configuration Registry
 
 **FSCR helps customers, system integrators, and AI assistants turn Oracle Fusion
 implementation questions into guided, reviewable work.**
@@ -68,9 +68,7 @@ workflow and its checks.
 
 ## Software Requirements
 
-FSCR skills require Oracle Fusion Applications Release 26D with the
-06 November 2026 Weekly Maintenance Pack for Fusion Applications Update 26D,
-or a higher release or maintenance pack.
+FSCR skills require Oracle Fusion Applications Release 26D or a higher release or maintenance pack.
 
 ## Prerequisites
 
@@ -92,6 +90,37 @@ Python 3.11 or 3.12
 Several scripts use modern Python type syntax such as `str | None` and
 `list[dict[str, Any]]`, so Python 3.9 or older is not supported.
 
+
+
+
+### Environment Configuration
+
+After applying the required Fusion release or maintenance pack, set the
+`ORA_HRC_DL_ENABLE_FSCR` profile option to `Y`.
+
+### Security Requirements
+
+Ensure the user running FSCR has the access required for Run Book and
+Data Loader operations.
+
+#### Run Book
+
+Provide the following duty roles:
+
+- `ORA_PER_RUN_BOOK_TEMPLATE_BUILDER_DUTY`
+- `ORA_PER_RUN_BOOKS_EXPLORATION_DUTY`
+- `ORA_PER_MY_RUN_BOOKS_ACCESS_DUTY`
+
+#### Data Loader
+
+Provide the Human Capital Management Integration Specialist role.
+
+For CX and FSM imports, also provide the corresponding access:
+
+| Import Type | Required Access |
+| --- | --- |
+| CX import | `CRM_SIMPLIFIEDACCOUNT_IMPORT_RWD` |
+| FSM import | `SETUP_FUNCTIONALSETUPMANAGER_IMPORT_RWD` |
 ## AI Model Considerations
 
 FSCR has been tested with the GPT 5.6 Terra Medium model. Performance varies

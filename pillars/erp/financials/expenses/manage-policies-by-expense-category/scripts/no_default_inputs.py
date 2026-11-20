@@ -2,6 +2,10 @@
 
 FIELDS = {
     'ORA_EXM_MEALS_POLICY': ('PolicyEnforcementCode',),
+    'ORA_EXM_ACCOM_POLICY': ('PolicyEnforcementCode',),
+    'ORA_EXM_CARRENTAL_POLICY': ('PolicyEnforcementCode',),
+    'ORA_EXM_AIRFARE_POLICY': ('PolicyEnforcementCode',),
+    'ORA_EXM_MISCELLANEOUS_POLICY': ('RateTypeCode', 'PolicyEnforcementCode'),
 }
 
 

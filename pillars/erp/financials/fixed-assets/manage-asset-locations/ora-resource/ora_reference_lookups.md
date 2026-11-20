@@ -14,7 +14,7 @@ prerequisite preparation.
 | discover_location_kff_structure | Current LOC# instance/segment metadata is needed | Target environment; selected System Controls instance; application 140; LOC# | Delegate to `erp.financials.fixed-assets.manage-fixed-assets-key-flexfields` with task `FA_MANAGE_FIXED_ASSETS_KEY_FLEXFIELDS`, application `140`, and flexfield `LOC#`. That skill obtains the current KFF task export through `shared.setup-export.task-level-export`. | Instance/structure identifiers, enabled state, delimiter, ColumnName, displayed order, prompts, requiredness, ValueSetCode and defaults | Reuse complete evidence from this procedure; require unique instance-to-structure and segment joins. | Current validated mapping and evidence | Match `LocStructureInstanceCode` to exactly one enabled LOC# instance in the returned current KFF export. Auth failures, incomplete baseline, or ambiguous mapping block. A blank string StructureInstanceIdentifier alone does not block. |
 | resolve_location_kff_combination | A location code or labelled segments need mapping, including an undelimited value | Current System Controls-selected LOC# instance and supplied values | Map the current exported KFF structure using discover_location_kff_structure evidence | Delimiter, displayed sequence, ColumnName, requiredness, instance value sets and defaults | Map to the selected instance and physical Segment1 through Segment7; never select an alternative caller-supplied instance for creation. | Structure identity, mapped segments and validation findings | Stop on incomplete mapping or unresolved required inputs after discovery. Do not infer a delimiter or call FND_FLEX_KEYVAL directly; the supported import validates persistence. |
 | resolve_location_segment_values | Once per batch after the batch-current DFF required-input check passes | Distinct values grouped by exact set and dependent parent | Delegate only to `erp.financials.fixed-assets.manage-fixed-assets-flexfield-value-sets` for its grouped REST workflow. This task must not call `core.fusion-api.apps-common.value-sets` directly or accept its direct result as evidence. The delegated workflow uses `REST-Framework-Version: 2` and follows only the `values` and `validationTable` links returned by its matched root response; it must not construct a child path from a value-set code, identifier, or other ID. | REST definitions, values, eligibility, parents and query coverage | Compare every requested key locally against complete covered data | Grouped findings with affected records | Classify absent only after effective exact filters, complete pagination and verified visibility. Missing coverage or required fields remains unverified. |
-| resolve_location_dff_segments | For each immutable Asset Location batch, after LOC# structure and required segment input validation, before value-set lookup or prerequisite preparation | Immutable batch identity, target environment, one new same-environment Manage Fixed Assets Descriptive Flexfields export, and supplied DFF values | Obtain one completed `FA_MANAGE_FIXED_ASSETS_DESCRIPTIVE_FLEXFILEDS` metadata export through `core.fusion-api.apps-common.descriptive-flexfields`, following the DFF handoff in [Batch Import Preparation](ora_dependency_readiness.md#batch-import-preparation), after batch membership is final. Read global rows from `ORA_FND_APP_DESCRIPTIVE_FLEXFIELD_GLOBAL_SEGMENT.csv` where DescriptiveFlexfieldCode=`FA_LOCATIONS`, ApplicationId=`140`, EnabledFlag=`Y`, and RequiredFlag=`Y`; if a context is selected, also read matching rows from `ORA_FND_APP_DESCRIPTIVE_FLEXFIELD_SEGMENT.csv` where ContextCode is exact, EnabledFlag=`Y`, and RequiredFlag=`Y`. Record the process identity, target environment, and immutable batch identity. | Export process identity, target environment, batch identity, ColumnName, SegmentCode, Prompt, RequiredFlag, EnabledFlag, ValueSetCode, DisplayType, and context | One completed export matches the target environment and immutable batch. Every required global row and every required selected-context row has one nonblank supplied value mapped by unique current ColumnName, SegmentCode, or Prompt; value-set contract checks follow this required-input gate. | Batch-current required DFF field map and supplied FA_LOCATION.csv attribute values | Stop when the export is absent, belongs to another target/batch, a required row has no value, or input maps ambiguously. Never use an export from a prior batch, cached segment list, example prompt, or hardcoded DFF segment. A blank `ATTRIBUTE_CATEGORY_CODE` omits only context-sensitive rows, never global rows. |
+| resolve_location_dff_segments | Asset Location creation, after LOC# required-input validation and before prerequisite preparation | Immutable batch identity, target environment, and supplied DFF context/values | Obtain one completed same-environment `FA_MANAGE_FIXED_ASSETS_DESCRIPTIVE_FLEXFILEDS` data export through `core.fusion-api.apps-common.descriptive-flexfields`. Execute [Required DFF Input and Value Validation](#required-dff-input-and-value-validation), reusing this export for all locations in the unchanged batch. | Export/process identity; environment; batch identity; all applicable enabled segment definitions, requiredness, context, column/type and value-set contracts | Scope every definition row to ApplicationId=`140` and DescriptiveFlexfieldCode=`FA_LOCATIONS`; resolve context before segment selection, require mandatory values, and validate every supplied value | Per-location required-field map, validated values, conversions, and evidence references | Stop on missing required input, invalid supplied values, ambiguous mappings, incomplete definition evidence, or unverified validation. A blank context never waives required global segments. |
 | resolve_location_dff_context | A DFF context is supplied | Current-request DFF export plus ATTRIBUTE_CATEGORY_CODE or DFF context name | Read `ORA_FND_APP_DESCRIPTIVE_FLEXFIELD_CONTEXT.csv` from the same fresh `FA_MANAGE_FIXED_ASSETS_DESCRIPTIVE_FLEXFILEDS` export used by resolve_location_dff_segments; match DescriptiveFlexfieldCode=`FA_LOCATIONS`, ApplicationId=`140` | ContextCode, Name, EnabledFlag | Trim outer whitespace. First require one exact ContextCode match to ATTRIBUTE_CATEGORY_CODE; if none exists, require one exact Name match. Only EnabledFlag Y contexts are valid. | ATTRIBUTE_CATEGORY_CODE as the resolved ContextCode | Stop on no match, disabled context, many matches, or DFF export evidence that is not current for this request. Do not guess or choose the first context. |
 | resolve_existing_asset_location | Location creation, search, or mapping import is requested | Resolved LOC# structure and Segment1 through Segment7 values | Use complete paged BOSS `assetLocations` evidence through `core.fusion-api.rest-api-client` as the primary existing-location lookup. A complete exact BOSS no-match permits create readiness. Use a current same-target populated Asset Locations export through `shared.setup-export.task-level-export --data` only when BOSS is unavailable, incomplete, ambiguous, or lacks required fields. | BOSS rows, or exported Asset Location CSV rows with StructureInstanceCode, Location, Segment1 through Segment7, EnabledFlag, StartDateActive, and EndDateActive | Use one complete evidence source only. Page BOSS completely when it succeeds; otherwise require a completed current FSM export and inspect every Asset Location row. Match one row on StructureInstanceCode and every supplied Segment1 through Segment7 value, treating unused segments as blank. | Existing location identity, enabled state, create/update readiness, and source type | A complete BOSS or FSM no-data result permits create readiness. More than one exact match, conflicting rows, incomplete export, or missing serialized fields blocks the work. |
 | resolve_enabled_asset_location | Mapping import is requested | Exact resolved Asset Location row from resolve_existing_asset_location | The complete BOSS or FSM fallback result returned by `resolve_existing_asset_location` | EnabledFlag from the exact resolved Asset Location result | Require one exact parent Asset Location whose EnabledFlag is Y. | Parent Asset Location identity and enabled state | Stop and report Enable Location to assign location mapping when no exact enabled parent exists. |
@@ -82,6 +82,57 @@ global and selected-context rows, mapping only by a unique current `ColumnName`,
 `SegmentCode`, or Prompt. The export is evidence only for its unchanged batch;
 when batch membership or target environment changes, obtain a new export.
 
+### Required DFF Input and Value Validation
+
+Reuse the batch's single completed DFF definition export for all locations.
+Apply the following checks separately to every Asset Location create row;
+do not obtain a separate definition export for each location.
+
+1. Scope global, context, and context-sensitive metadata to
+   ApplicationId=`140` and DescriptiveFlexfieldCode=`FA_LOCATIONS`.
+   Resolve any supplied context through `resolve_location_dff_context`
+   before selecting context-sensitive segments. Require its exact
+   ContextCode on every selected context-sensitive segment row.
+2. Retain all enabled global segments and all enabled segments in that
+   location's resolved context. Use RequiredFlag=`Y` to identify mandatory
+   values, including hidden required segments. A blank context excludes
+   only context-sensitive segments.
+3. Require one nonblank supplied value for every mandatory segment.
+   Validate optional supplied segments against the same enabled definition.
+   Resolve input labels uniquely within the applicable global/context
+   scope. Reject conflicting assignments to the same physical column.
+   Reject unknown, disabled, or out-of-context supplied segments; do not
+   discard them or silently select a context.
+   Report missing fields with their Prompt, SegmentCode, ColumnName,
+   context, and affected Asset Location identity.
+4. After the required-input gate passes, validate supplied DFF values
+   against their current column types and value-set contracts. Delegate
+   read-only value-set verification through the declared Manage Fixed
+   Assets Flexfield Value Sets workflow. Retain the location, DFF column,
+   context, supplied value, and any documented canonical conversion.
+   Do not create, enable, or change value sets or values during this check.
+   - With no ValueSetCode, validate against the supported column contract.
+   - For Format Only, validate applicable datatype, format, length,
+     precision, scale, and range restrictions; do not require membership
+     in an enumerated values collection.
+   - For Independent, require exact eligible membership using complete
+     evidence and the definition's documented canonicalization rules.
+   - For Dependent, also resolve and verify the exact eligible parent/value
+     pair. Do not infer a parent from another location or segment.
+   - For Table, validation-table metadata alone does not prove membership.
+     The current delegated workflow does not support that membership check;
+     report it as unverified and stop.
+   Unsupported validation types, unresolved security/visibility, incomplete
+   evidence, and incompatible values block readiness. Do not treat LOC#
+   membership checks as DFF value validation.
+5. Use the Asset Location template/specification contract to map the
+   resolved physical columns and context to actual import headers.
+   Stop on missing or ambiguous mappings; do not invent CSV headers.
+   Recheck every create row in the final immutable artifact against its
+   resolved required-field map and validated supplied values.
+   Include any canonical conversion in the preview and require the final
+   artifact to match the reviewed values.
+
 ### Controlled Configuration Lookup
 
 For task-supplied `FA_...` codes, use the shared lookup client against the
@@ -126,6 +177,6 @@ Do not reuse pre-import verification evidence.
 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---:|---:|---|---|---|---|---|
-| MAL.RESOLVE_REFERENCES | decision | 20 | reference_lookup | resolved->MAL.RESOLVE_SEGMENT_VALUES;required_input_missing->MAL.HANDLE_INPUT;unresolved_or_ambiguous->MAL.HANDLE_LOOKUP | MAL.VALIDATE_INPUT | stop | Resolve System Controls and LOC# structure; map all physical segments and stop on missing required segment input. Then export the batch-current DFF definition, identify required FA_LOCATIONS columns, and stop on missing DFF input before value-set lookup or prerequisite preparation. |
+| MAL.RESOLVE_REFERENCES | decision | 20 | reference_lookup | resolved->MAL.RESOLVE_SEGMENT_VALUES;required_input_missing->MAL.HANDLE_INPUT;invalid_dff_value->MAL.HANDLE_INPUT;unresolved_or_ambiguous->MAL.HANDLE_LOOKUP | MAL.VALIDATE_INPUT | stop | Resolve System Controls and LOC# structure; stop on missing required segment input. For location creation, execute resolve_location_dff_segments using one definition export per immutable batch. Check required DFF input before value-set verification, then validate every supplied DFF value read-only. Missing input, invalid values, and unverified evidence stop before prerequisite preparation. |
 | MAL.RESOLVE_SEGMENT_VALUES | decision | 25 | reference_lookup | resolved->MAL.CHECK_DEPENDENCIES;missing_confirmed->MAL.CHECK_DEPENDENCIES;unresolved_or_ambiguous->MAL.HANDLE_LOOKUP | MAL.RESOLVE_REFERENCES | stop | After both KFF and DFF input gates pass, validate mapped segment values. Send confirmed missing value-set members to dependency evaluation; stop on unverified evidence. |
 | MAL.RESOLVE_OPERATION | decision | 35 | evaluate_result | create_new->MAL.APPLY_DEFAULTS;update_existing->MAL.APPLY_DEFAULTS;decision_required->MAL.HANDLE_OPERATION_DECISION | MAL.CHECK_DEPENDENCIES | stop | Compare requested operation with exact existing-location evidence. |

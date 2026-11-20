@@ -10,9 +10,9 @@
 | Update target missing or ambiguous | Stop; do not create a status or select a matching row |
 | Existing Status-only selector matches multiple rows | Show all matched Internal Names, Statuses, and Status Types, then stop for explicit approval of the full bulk scope. Do not prepare or import the update before that approval. |
 | Update asks to change Internal Name, Active, or Status Code | Stop and report that the field is not supported for update. Existing Internal Name is allowed only as the selector. |
-| End Date update has no target-template carrier | Stop and report that the current FSM template has no End Date carrier; do not invent a CSV column. |
+| End Date is requested | Show: Warning: Change Status End Date is not supported by the import/export process and will be skipped. Omit End Date and continue with other supported requested changes; if no supported change remains, do not prepare an import artifact. |
 | Update row omits StatusName or StatusType | Stop and rebuild from the current export with StatusName, StatusType, and ObjectName retained unchanged; FSM rejects a partial row without those mandatory carriers. |
-| Fusion rejects one or more Change Status rows | Show one `Change Status import results` table containing every submitted status after Fusion returns its result. Use columns Status, Requested Change, Result, Reason / Backend Error, and a final marker. Mark a Fusion-rejected row `❌`; mark a row with no Fusion row error `✅`, even when the overall batch rolled back, and state `Not applied — batch rolled back` in Result. Use the imported row identifier for Status; state only the reason supplied by Fusion, and do not invent a more specific rule. After the table, say: `The import was unsuccessful because of the errors shown above. Please correct the rows with errors and upload all the data again.` |
+| Fusion rejects one or more Change Status rows | After Fusion returns its result, show one Change Status import results table containing every submitted status, using the canonical Backend row failures disclosure below. State only the backend reason supplied by Fusion; do not invent a more specific rule. After the table, say: The import was unsuccessful because of the errors shown above. Please correct the rows with errors and upload all the data again. |
 | FSM import failure or uncertain result | Preserve safe process evidence; reconcile before another write |
 | Changed artifact after preview | Restart validation and approval for the changed bytes |
 
@@ -22,7 +22,7 @@
 |---|---|
 | Validation | Exact task, passed path, missing fields, evidence, blockers, and safe resume step |
 | Approval | Exact environment, status name, internal code, type, purpose, and validated artifact |
-| Backend row failures | Show every submitted status in one consolidated table. Start with `Status Name`, `Internal Name`, `Status Type`, and `Description`; then add `Result`, `Reason / Backend Error`, and the final marker. Use `❌` for a Fusion-rejected row and `✅` for a row with no Fusion row error; make rollback versus applied outcome explicit in the Result column. |
+| Backend row failures | The canonical Change Status import results table contains every submitted status and uses these columns in order: Status Name, Internal Name, Status Type, Description, Requested Change, Result, Reason / Backend Error, Marker. Show the Status Type name, not its numeric import value. Use ❌ for a Fusion-rejected row and ✅ for a row with no Fusion row error; Marker describes row-error presence, not application success. If the batch rolled back, set Result to Not applied — batch rolled back even for a row marked ✅; otherwise state the evidenced applied outcome. |
 | Secrets | Never disclose OAuth tokens, secrets, or protected runtime material |
 
 ## Refusal Rules

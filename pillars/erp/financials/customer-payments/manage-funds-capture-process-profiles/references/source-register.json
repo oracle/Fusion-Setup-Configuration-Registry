@@ -1,0 +1,1759 @@
+[
+  {
+    "source_id": "SRC-CATALOG-HIERARCHY",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CATALOG-TASKS",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-FSM-PACKAGE",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-HELP",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-EDM",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-REST",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-INTERNAL",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-TEST",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-001",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-002",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-003",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-004",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-005",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-006",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-007",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-008",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-009",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-010",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-011",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-012",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-013",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-014",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-015",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-016",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-017",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-018",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-019",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-020",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-021",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-022",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-023",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-024",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-025",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-026",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-027",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-028",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-029",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-030",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-031",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-032",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-033",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-034",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-035",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-036",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-037",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-038",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-039",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-040",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-041",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-042",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-043",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-044",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-045",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-046",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-047",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-048",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-049",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-050",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-051",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-052",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-053",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-054",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-055",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-056",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-057",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-058",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-059",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-060",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-061",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-062",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-063",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-064",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-065",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-066",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-067",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-068",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-069",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-070",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-071",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-072",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-073",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-074",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-075",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-076",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-077",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-078",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-079",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-080",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-081",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-082",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-083",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-084",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-085",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-086",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-087",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-088",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-089",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-090",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-CODE-091",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-FRAMEWORK-LOOKUP",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-PUB-INDEX",
+    "reference_kind": "recorded-public-documentation",
+    "title": "Oracle Financials 26D documentation index",
+    "reference": "https://docs.oracle.com/en/cloud/saas/financials/26d/index.html",
+    "boundary": "Recorded reference, not proof of target deployment, live import, or a newly verified release."
+  },
+  {
+    "source_id": "SRC-PUB-PROFILES",
+    "reference_kind": "recorded-public-documentation",
+    "title": "Funds Capture Process Profiles",
+    "reference": "https://docs.oracle.com/en/cloud/saas/financials/26d/fairp/funds-capture-process-profiles.html",
+    "boundary": "Recorded reference, not proof of target deployment, live import, or a newly verified release."
+  },
+  {
+    "source_id": "SRC-PUB-ACCOUNTS",
+    "reference_kind": "recorded-public-documentation",
+    "title": "Payment System Accounts",
+    "reference": "https://docs.oracle.com/en/cloud/saas/financials/26d/fairp/payment-system-accounts.html",
+    "boundary": "Recorded reference, not proof of target deployment, live import, or a newly verified release."
+  },
+  {
+    "source_id": "SRC-PUB-TRANSMIT",
+    "reference_kind": "recorded-public-documentation",
+    "title": "Transmission Configurations",
+    "reference": "https://docs.oracle.com/en/cloud/saas/financials/26d/fairp/transmission-configurations.html",
+    "boundary": "Recorded reference, not proof of target deployment, live import, or a newly verified release."
+  },
+  {
+    "source_id": "SRC-PUB-RATES",
+    "reference_kind": "recorded-public-documentation",
+    "title": "Guidelines for Creating Conversion Rate Types",
+    "reference": "https://docs.oracle.com/en/cloud/saas/financials/26d/faiac/guidelines-for-creating-conversion-rate-types.html",
+    "boundary": "Recorded reference, not proof of target deployment, live import, or a newly verified release."
+  },
+  {
+    "source_id": "SRC-PUB-RATE-API",
+    "reference_kind": "recorded-public-documentation",
+    "title": "Currency Conversion Types LOV endpoints",
+    "reference": "https://docs.oracle.com/en/cloud/saas/financials/26d/farfa/api-list-values-currency-conversion-types-list-values.html",
+    "boundary": "Recorded reference, not proof of target deployment, live import, or a newly verified release."
+  },
+  {
+    "source_id": "SRC-PUB-ADF",
+    "reference_kind": "recorded-public-documentation",
+    "title": "ADF entity attribute properties",
+    "reference": "https://docs.oracle.com/middleware/12213/adf/develop/creating-business-domain-layer-using-entity-objects.htm",
+    "boundary": "Recorded reference, not proof of target deployment, live import, or a newly verified release."
+  },
+  {
+    "source_id": "SRC-UI-01",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-UI-02",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-UI-03",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-UI-04",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-UI-05",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-UI-06",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-UI-07",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-BINDING-01",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-BINDING-02",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-BINDING-03",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-BINDING-04",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-BINDING-05",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-BINDING-06",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-BINDING-07",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-BINDING-08",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-BINDING-09",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-BINDING-10",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-BINDING-11",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-BINDING-12",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-BINDING-13",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-BINDING-14",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-BINDING-15",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-BINDING-16",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-BINDING-17",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-PUB-LOOKUP-API",
+    "reference_kind": "recorded-public-documentation",
+    "title": "Get all standard lookups",
+    "reference": "https://docs.oracle.com/en/cloud/saas/financials/26d/farfa/op-fndstaticlookups-get.html",
+    "boundary": "Recorded reference, not proof of target deployment, live import, or a newly verified release."
+  },
+  {
+    "source_id": "SRC-PUB-PAYMENT-CODES-API",
+    "reference_kind": "recorded-public-documentation",
+    "title": "Get all payment codes",
+    "reference": "https://docs.oracle.com/en/cloud/saas/financials/26d/farfa/op-paymentcodeslov-get.html",
+    "boundary": "Recorded reference, not proof of target deployment, live import, or a newly verified release."
+  },
+  {
+    "source_id": "SRC-STRUCT-9D4C3A86269F",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-2E383F714B9E",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-C9FE7871F38D",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-94CD3D8A21F6",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-3636371BAD6F",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-B74D62949E52",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-CEBEC1618551",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-A7CBF0DC93C3",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-7C118DD5CB1F",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-7EA76153EB82",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-8742C53E4595",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-417FA9836708",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-7E2530E600AE",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-8C38F2C3F711",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-C147BBB11E50",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-0014C52FDAC5",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-07DA0D3E0AAA",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-59230D5A658D",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-01CCFA62D5D2",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-41F989318F6E",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-BBECD412DF1F",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-4171833B09F3",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-51311222A6A0",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-F5557D33C2FF",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-E8C076DC97FD",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-D61BAFF3B956",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-837074774C30",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-4394CBD4E05C",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-0D5F55B60985",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-ED6B493C2E26",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-7EF33C198F33",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-20E58A28B18D",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-1EA64D85A342",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-9E2720E98ACD",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-F7A8B8EFFAC0",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-495FC29963D6",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-ABDB13D85B01",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-6393BFEA92CD",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-36BDD7B5D49E",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-2C5B4735C981",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-D6A8D336E7A2",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-9342F7A9504B",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-EF07B8956306",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-61EBB47EFE29",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-EE095CA9E481",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-CAB08A72EED2",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-C766DC2E44B3",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-A109041F67F4",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-463305F02D11",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-77328975F902",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-03D5A6EB84C9",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-940BDFA58A04",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-D96E381CE6E3",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-6DB98C2FD9E5",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-C40198051335",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-BD1CAF9EC05A",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-E205491F74AC",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-7176033D5BB6",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-94CDF91A99BB",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-F41038DFEA71",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-5319959ACCC2",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-F7FD5F0615CD",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-9FD6742CA764",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-758BAE0AFCF4",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-6A39AF0924DE",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-4625FDFDD3ED",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-8E27B66D1909",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-01A6AB2B4DC9",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-8507E8481282",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-8FCC7B9C705C",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-37AE88F78EAA",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-8C361BB4EA08",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-B8287A3AAFA0",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-E8E4581AD3E2",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-4521470B1F9C",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-397AB1DD6965",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-9EF6F4561B33",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-389071F3200C",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-87CAD3121C45",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-28CBBA59AF56",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-C31AB224EA06",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-833CB1268FD8",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-15B79CCA8E33",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-E8EB0719F834",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-56A90D6113D9",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-5EDF83A98FC8",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-F828A7C53FB3",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-DF72C675F4BB",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-34D204E135DD",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-5B9C29D1A2F1",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-4ED2DD028D28",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-73DA3A5A544F",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-A8A21947065B",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-3AF193F6F977",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-D21B2F148F1F",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-695F1FAD3B22",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-5BEC338856A1",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-43C4F128762C",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-893A2CB6671F",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-B50771280CD5",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-D8C7FF7F7056",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-68CE038DC396",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-672531333522",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-CDE045EA6524",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-10E518D7CC09",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-73B8E5C6F0F1",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-STRUCT-54D8B26FA0CB",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-FRAMEWORK-MIGRATORHELPER",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-FRAMEWORK-CSVREADER",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-FRAMEWORK-XMLCSVHANDLER",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-FRAMEWORK-VIEWOBJECTIMPL",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-FRAMEWORK-VIEWROWIMPL",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-FRAMEWORK-ATTRIBUTEDEFIMPL",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-FRAMEWORK-NLS-CURRENCY",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-FRAMEWORK-ABSTRACTLISTBINDING",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-FRAMEWORK-CONFIGURATIONPACKAGEAMHELPER",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  },
+  {
+    "source_id": "SRC-FRAMEWORK-XMLCSVAMIMPL",
+    "reference_kind": "functional-operating-contract",
+    "title": "Funds capture profile operating requirement",
+    "reference": "ora-resource/ora_input_validation.md; ora-resource/ora_reference_lookups.md; references/field-contracts.json",
+    "boundary": "Stable requirement citation for this functional derivative. The underlying authoring provenance is retained separately and is not distributed with this operating guide."
+  }
+]

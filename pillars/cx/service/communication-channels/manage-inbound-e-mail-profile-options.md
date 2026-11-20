@@ -12,6 +12,9 @@ csv_export_import_supported_flag: "Y"
 dataloader_import_mode: "FSM"
 businessObject: ""
 source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
+depends_on:
+  - core.fusion-api.apps-common
+
 ---
 
 # Manage Inbound E-Mail Profile Options
@@ -60,7 +63,7 @@ source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 - `LastUpdatedBy`: Retain the exported value when present; otherwise leave blank for an approved value update.
 ## Route To
 
-Route to Manage Email Profile Options (ORA_MANAGE_EMAIL_PROFILE_OPTIONS).
+Route to core.fusion-api.apps-common.
 ## Purpose
 
 Manage supported inbound email profile-option values through the parent email profile-options task.
@@ -68,17 +71,17 @@ Manage supported inbound email profile-option values through the parent email pr
 
 ### View Inbound Email Profile Option Values
 
-View effective values for supported inbound email profile options.
+View configured or explicitly requested session-effective values for supported inbound email profile options.
 
-1. Route to Manage Email Profile Options (ORA_MANAGE_EMAIL_PROFILE_OPTIONS).
-2. Use that task's Profile Values REST read flow for the requested inbound email profile option.
+1. Follow the parent Profile Task Handoff and load the exact Manage Email Profile Options (ORA_MANAGE_EMAIL_PROFILE_OPTIONS) guidance and resources without changing the original task identity.
+2. Use that task's configured-level read flow for the exact supported level/key of the requested inbound email profile option.
 
 ### Update Inbound Email Profile Option Value
 
 Update a supported inbound email profile-option value through FSM.
 
-1. Route to Manage Email Profile Options (ORA_MANAGE_EMAIL_PROFILE_OPTIONS).
-2. Use that task's export, validation, core.data-loader import, and verification flow.
+1. Follow the parent Profile Task Handoff and load the exact Manage Email Profile Options (ORA_MANAGE_EMAIL_PROFILE_OPTIONS) guidance and resources without changing the original task identity.
+2. Use that task's same-task export, validation, owning core.data-loader preview/approval/import, and configured-level verification flow. Retain the original task context and approved scope; effective-value reads do not verify a configured target.
 ## Guard Rails
 
 1. Require an authenticated Fusion user context before any Fusion operation; use `core.auth.fusion-oauth-authentication`.

@@ -18,6 +18,15 @@
 | `FA_FISCAL_YEAR_EXISTENCE` | Yes | Before create or update | `resolve_existing_fiscal_year` | Prevent duplicates and make updates safe. | Stop if existing-state evidence is unavailable, incomplete, or unclear. |
 | `ACTIVE_TRANSLATION_LANGUAGES` | Yes | Before building a package for a create-new fiscal year | `resolve_active_translation_languages` | Generate complete translation coverage. | Page the active-language result completely and create one row per active language. Stop only if the result is missing, incomplete, or empty; do not ask the user to choose languages. |
 
+## DFF Readiness
+
+Create-new DFF validation occurs after the decision and annual-row generation
+at FY.RESOLVE_DFF, before Design Preview or package preparation.
+Missing required input and unverified metadata/value evidence blocks readiness.
+
+Reuse without supplied DFF criteria remains read-only and does not start a
+DFF export. Supplied criteria require the separate exact-target comparison.
+
 ## Result Types
 
 | Result | Meaning | What you may do |

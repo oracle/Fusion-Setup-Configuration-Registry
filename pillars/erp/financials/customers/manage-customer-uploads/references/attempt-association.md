@@ -1,10 +1,11 @@
 # Associate a Customers attempt with core status evidence
 
 
+
 ## Selected task-owned REST collection
 
-After an approved attempt has a retained candidate, environment, preflight,
-registration/argument hashes and actual initiation receipt, select
+After an approved attempt has a retained candidate, environment, customer review,
+registration/argument hashes and actual core decision/initiation evidence, select
 `scripts/customer_attempt_collect.py` for read-only post-import evidence.
 Read core REST client instructions first. Use `--repo`, `--properties`,
 `--token-cache`, `--environment`, `--candidate`, `--operation`, `--binding`
@@ -45,7 +46,17 @@ Fusion, mark a Journey complete or authorize retry.
 
 ## Retained binding
 
-Version `ar-customer-runtime-binding-v1` contains candidate_sha256,
+New runs use `ar-customer-runtime-binding-v2`. It has the same fields described
+below except that `preflight_sha256` is replaced by `customer_review_sha256` and
+`core_evidence_sha256`. The former fingerprints the retained complete customer
+prerequisite review; the latter fingerprints the retained public core
+preview/decision/initiation evidence record from this attempt. Preserve its
+actual messages, identifiers and selected source revision, not a reconstruction
+of core's private plan. These are evidence references, never authorization.
+No core approval representation is parsed or synthesized by this reviewer.
+All exact dataset, Run Book, task, request and process checks remain unchanged.
+
+Historical version `ar-customer-runtime-binding-v1` contains candidate_sha256,
 environment_url, operation_intent, registration_sha256, arguments_sha256,
 preflight_sha256, initiation_request_id, content_id, run_id, task_code,
 initiated_at and initiation_evidence_reference. Obtain these from the actual

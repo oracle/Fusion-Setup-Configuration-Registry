@@ -1,0 +1,165 @@
+{
+  "schema_version": "1.0",
+  "category": "Per Diem",
+  "status": "local_new_policy_contract_shared_xml_evidence_pending_existing_updates_scoped",
+  "series": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64",
+  "sources": [
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/expensePerDiemService/applicationModule/ExpensePerDiemServiceAMImpl.java",
+      "sha256": "daf0466aeb1e9f455e3333da80e0b30403df26c1109c1c00b4c69df8078439fc"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/expensePerDiemService/applicationModule/ExpensePerDiemServiceAM.xml",
+      "sha256": "cd6e55e4ac6d7721b2425e6c73da33048c15a7a925234dbabb3bd4d186c3384f"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/expensePerDiemService/view/PerDiemVO.xml",
+      "sha256": "d32e97af37b7eb3b0654cef321a8716b6634252b73a507744f300c0e59e5258a"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/expensePerDiemService/view/PerDiemLineVO.xml",
+      "sha256": "d1013dc10b60086563978fd14026959ca2f2d5bc3311d00f533cb95153f37d8f"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/expensePerDiemService/view/PerDiemValueVO.xml",
+      "sha256": "a7cedafa53fe09b5f52a132bce7540cfe827bc9aa78e87a6fbf5ea880d9b2e88"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/PerDiemPolicyEO.xml",
+      "sha256": "b6493a595cfc569b27b846ccc664890833b2119aafec88958ed2c9869eb80064"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/PerDiemPolicyEOImpl.java",
+      "sha256": "e88e984a0766e22e5c76325dd07fd548c6a08c49cda24aed04ff6e1e502a1737"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/PerDiemPolLineEO.xml",
+      "sha256": "7fe714071ee01ede75723942c7b8cad01dd2e87abe70f9a9888574e724bed963"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/PerDiemPolLineEOImpl.java",
+      "sha256": "e341150c15f4f519e9badcb8fd4366d0476a250b6ffde03a84f3daa6238155e5"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/PerDiemPolValueEO.xml",
+      "sha256": "8e8908fa483c6a13ad1c12c9abbe1e59a41d57b17ec069a8a024cc92491cfed7"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/PerDiemPolValueEOImpl.java",
+      "sha256": "98885e65d68311d3bf2c126decd6ccf06481e4859b3cca98c6a05e72048db397"
+    },
+    {
+      "path": "perdiem/model/src/oracle/apps/financials/expenses/policy/perdiem/uiModel/applicationModule/FinExmPolicyPerDiemAMImpl.java",
+      "sha256": "2b17e330b8decc20c52961126621e6b330faa8cbade873f9e000123e23fc127f"
+    },
+    {
+      "path": "perdiem/model/src/oracle/apps/financials/expenses/policy/perdiem/uiModel/view/PerDiemPolLinesVO.xml",
+      "sha256": "63ec7c6ce64173ef5e6d3f02948ac9d09faf85a7d87f6e0153e15ef4bab5d8b8"
+    },
+    {
+      "path": "perdiem/model/src/oracle/apps/financials/expenses/policy/perdiem/uiModel/view/PerDiemPolValuesVO.xml",
+      "sha256": "fec8a7531562681fbbca11a8de1ba559fef29f125178382e50008f1a2a19f35e"
+    },
+    {
+      "path": "perdiem/ui/src/oracle/apps/financials/expenses/policy/perdiem/ui/bean/FinExmPolicyPerDiemMainBean.java",
+      "sha256": "8c7fb3ebb7f16f2e359c47cdd9ea4df51e322c2b48dd2bf35cec61199fa1f42c"
+    },
+    {
+      "path": "perdiem/ui/public_html/oracle/apps/financials/expenses/policy/perdiem/ui/page/FinExmPolicyPerDiemSingle.jsff",
+      "sha256": "4bb289507f5cec2806c28b693ec62710990dd51c294b47d5e87e4b040bfb7a7a"
+    },
+    {
+      "path": "perdiem/ui/public_html/oracle/apps/financials/expenses/policy/perdiem/ui/page/FinExmPolicyPerDiemSumUp.jsff",
+      "sha256": "026a52b9c79f2c348ba0a9d4af164e27b1df012eca088758855c7b55aa8946d6"
+    },
+    {
+      "path": "perdiem/ui/public_html/oracle/apps/financials/expenses/policy/perdiem/ui/page/FinExmPolicyPerDiemTime.jsff",
+      "sha256": "0d5d359c332ee1811d7b094bd82a8dd04abcd38afd0f25107141a57dc2ff43bf"
+    },
+    {
+      "path": "perdiem/model/src/oracle/apps/financials/expenses/policy/perdiem/uiModel/view/PerDiemPolicyVO.xml",
+      "sha256": "a9a7d36dbd5e5fc5da42178baf7e22410f1cf49f501e3bdd3b68544835e429ce"
+    },
+    {
+      "path": "perdiem/model/src/oracle/apps/financials/expenses/policy/perdiem/uiModel/view/PerDiemPolicyVORowImpl.java",
+      "sha256": "b52321821c887a1e63546a7c89eb72b84042b6a74e1b64c9e963d583a3a472e4"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/expensePerDiemService/view/link/PerDiemVOToPerDiemLineVO.xml",
+      "sha256": "b3a9e90ef70d39295185fc799dc3079be0568befedefc21b8f64efea61423953"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/expensePerDiemService/view/link/PerDiemVOToPerDiemValueVO.xml",
+      "sha256": "10fd69ddbf50f6574d8b1214b7701c2276b613c235469dab8bbfa8b88241c2f6"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/association/PerDiemPolicyEOToPerDiemPolLineEO.xml",
+      "sha256": "2988bd6bf7fe0d71ea3df1c437b64dc2c38e37ca3312a805e50b72ae62bcfa60"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/association/PerDiemPolicyEOToPerDiemPolValueEO.xml",
+      "sha256": "be4fd1c957b3042b6630543ffdacc0cb5a73da47c965156f93ed630e6b76a433"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/expensePerDiemService/view/PerDiemLineVORowImpl.java",
+      "sha256": "68ca3878633219d3123dde4d206d53cecb4497527ea2fc6d19b1201ced1da4a0"
+    }
+  ],
+  "reviewed_anchors": {
+    "ExpensePerDiemServiceAMImpl.java": "150-152,236-250: independent parent/line/value AltKey resolution and readXML; no UI synchronization",
+    "FinExmPolicyPerDiemAMImpl.java": "419-438 ANCHOR creation;815-1010 non-ADFDi formula/deduction completeness;1297-1433 component/deduction values;1578-1660 lower time-range synchronization",
+    "PerDiemPolicyEOImpl.java": "88-116 active defaults vs commented defaults;159-168 isAdfDi;277-310 percentage deductions read value rows;2921-2923 formula-derived TimeBasedRateModelFlag",
+    "FinExmPolicyPerDiemMainBean.java": "2188-2210 helperCond mapping PERCENTAGE/RATE/SPREADSHEET;2279-2316 no-first-last/non-ADFDi meals filters;2360-2431 deduction/Other/time filters;2122-2152 same-day changes rules, not hidden TimeSameDayCalcMethod"
+  },
+  "ownership": {
+    "policy": "ORA_EXM_PERDIEM_POLICY",
+    "line": "ORA_EXM_PERDIEM_POLICY_LINE",
+    "value": "ORA_EXM_PER_DIEM_POLICY_VALUE"
+  },
+  "boundaries": [
+    "Existing updates preserve identities; new policy groups have local managed/empty/derived contract prototypes contingent on the outstanding shared XML producer/parser evidence join",
+    "Existing-row P/L/V business writes require exact field uncertainty acceptance and native immutable approval",
+    "Existing percentage value effects are serialized explicitly, not presumed import side effects",
+    "Formula/currency/key/status/range-coordinate transitions remain separate qualification",
+    "Source-qualified local create and exact existing updates remain unqualified for untested target behavior; no live create or deployed-build parity claim"
+  ],
+  "active_branch_filters": {
+    "TIME_SINGLE/TIME_SUMUP": "TimeCalcMethodCode RATE only under non-ADFDi; percentage/spreadsheet require isAdfDi",
+    "TIME_SUMUP Other": "OthersCalcMethodCode RATE under non-ADFDi",
+    "SUMUP TYPE/NUMBER meals": "MealsCalcMethodCode RATE under non-ADFDi",
+    "deductions": "PERCENTAGE allowed; RATE requires RoleCalcMethod not RATE; SPREADSHEET requires isAdfDi",
+    "inactive_fields": "Omitted update fields preserve baseline without default or reset; inactive legacy methods do not become active calculation authority",
+    "SINGLE meals calculation": "Always active in the Single fragment, including Meals not included: RATE under no-ADFDi/no-first-last-day. Dormant methods in other fragments are not normalized."
+  },
+  "validation_evidence": {
+    "duration_ui": "Parsed SumUp and Time XML with comments discarded: SumUp has zero active duration inputs; Time has four. SumUp meals225-266 and accommodation509-659 blocks are commented Bug22894530.",
+    "active_durations": {
+      "meals": "TIME_SINGLE or TIME_SUMUP with Meals included; enabled MinTripDuratFlag: Hours0..24,Minutes0..60.",
+      "accommodation": "TIME_SUMUP with Accommodations included; enabled AccomMinTripDuratFlag: Hours0..24,Minutes0..60."
+    },
+    "duration_pair_requiredness": {
+      "time_meals": {
+        "classification": "declared_task_input_policy_from_UI_showRequired_with_save_binding_gap",
+        "rule": "Enabled pair needs at least one explicit value; zero counts. commonCode888 references SumUp getItMealsMinDurationHours/Minutes, not active Time bindings. No backend-requiredness proof."
+      },
+      "time_sumup_accommodation": {
+        "classification": "source_UI_save_predicate",
+        "rule": "commonCode895 tests both active *T-bound components absent; at least one explicit value required. This does not prove FSM enforcement."
+      },
+      "sumup": "No new requiredness or bound imposed on commented/dormant duration inputs."
+    },
+    "changed_field_applicability": "Changed parent deduction controls and changed line amounts are checked against final merged parent, subtype, include flags and selected deduction/component mode. Untouched dormant values are preserved; UI enterability is not shared-field-write acceptance."
+  },
+  "create_qualification": {
+    "source": "references/per-diem-create-serialization.json",
+    "profile": "Wholly new no-determinant policy groups, all four active formula choices; exact ANCHOR/time rows and explicit code-based deduction companions",
+    "value_ownership": "Internal consumer effect only, implementorTarget remains false for create",
+    "live_qualified": false,
+    "import_approved": false,
+    "shared_source_evidence_pending": {
+      "branch": "ExpensePerDiemServiceAMImpl GeoLocName.getTextContent() != empty-string reference comparison",
+      "missing": "Exact producer/transit XMLNode subtype and its empty-text identity behavior must be joined; root handles this common source dependency.",
+      "meaning": "Source/local serialization prototype only; no hard blocker is waived, no product prohibition or native failure is inferred."
+    }
+  }
+}

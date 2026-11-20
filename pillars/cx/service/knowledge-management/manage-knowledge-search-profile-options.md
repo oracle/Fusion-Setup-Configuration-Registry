@@ -83,13 +83,13 @@ Manage Knowledge search profile-option values.
 
 ### View Search Profile Options
 
-View Knowledge search profile options.
+View Knowledge search profile options (CSO_AUTO_PDF_TITLE_DISCOVERY, CSO_ENABLE_AUTO_PRODUCT_CONCEPT_GENERATION, CSO_ENABLE_INDEX_ARTICLE_ATTACHMENTS, CSO_EXTENSIONS_NOT_TO_INDEX, CSO_FILE_SIZE_LIMIT).
 
 1. Read the selected profile option with core.fusion-api.apps-common using the Profile Values REST.
 
 ### Update Search Profile Options
 
-Update Knowledge search profile options.
+Update Knowledge search profile options (CSO_AUTO_PDF_TITLE_DISCOVERY, CSO_ENABLE_AUTO_PRODUCT_CONCEPT_GENERATION, CSO_ENABLE_INDEX_ARTICLE_ATTACHMENTS, CSO_EXTENSIONS_NOT_TO_INDEX, CSO_FILE_SIZE_LIMIT).
 
 1. Export search profile options with shared.setup-export.task-level-export.
 2. Update the selected search profile option(s).

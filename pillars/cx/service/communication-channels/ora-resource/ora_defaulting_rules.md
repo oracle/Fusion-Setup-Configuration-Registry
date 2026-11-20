@@ -24,7 +24,7 @@
 | ORA_SVC_MANAGE_OUTBOUND_EMAIL_PROFILE_OPTS | Manage Outbound E-Mail Profile Options | FND_APP_PROFILE_VALUE.LevelValue | SITE | LevelName defaults to SITE and no level value is supplied | Yes |  |
 | ORA_SVC_MANAGE_OMNI_CHANNEL_PROFILE_OPTS | Manage Omnichannel Profile Options | SVC_ENABLE_OMNI | Yes | User asks for documented suggested Omnichannel enablement value | Yes | get_profile_option_definition |
 | ORA_SVC_MANAGE_OMNI_CHANNEL_PROFILE_OPTS | Manage Omnichannel Profile Options | ORA_SVC_ENABLE_DEC_WITH_LIVEWINDOW | No | Redwood user experience agents are in scope | Yes | get_profile_option_definition |
-| ORA_MANAGE_MCA_PROFILE_OPTIONS | Manage MCA Profile Options | SVC_MCA_RT_CHECK_EVENT_DISPATCH_INTERNAL_MS | TBD | User asks to change reverse-lookup timing without Oracle Support instruction | No | get_profile_option_definition |
+| ORA_MANAGE_MCA_PROFILE_OPTIONS | Manage MCA Profile Options | SVC_MCA_RT_CHECK_EVENT_DISPATCH_INTERVAL_MS | TBD | User asks to change reverse-lookup timing without Oracle Support instruction | No | get_profile_option_definition |
 | ORA_SVC_INTERACTION_PROFILE_OPTIONS | Manage Interaction Profile Options | SVC_INTERACTION_RETENTION_DAYS | TBD | User asks to configure purge retention but does not provide a retention policy | No | get_profile_option_definition |
 
 ## Task Nodes

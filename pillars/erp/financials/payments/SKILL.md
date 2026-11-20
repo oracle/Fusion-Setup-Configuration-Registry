@@ -78,7 +78,9 @@ workspace_outputs:
 required_setup_tasks:
   - "IBY_MANAGE_FORMATS"
   - "IBY_MANAGE_PAYMENT_SYSTEMS"
+  - "IBY_MANAGE_PAYMENT_METHODS"
   - "IBY_MANAGE_PAYMENT_CODES"
+  - "IBY_MANAGE_TRANSMISSION_CONFIGURATIONS"
   - "IBY_MANAGE_DISBURSEMENT_SYSTEM_OPTIONS"
 applicability:
   industries:
@@ -116,8 +118,10 @@ Use this functional-area skill after Financials scope is confirmed and the proje
 
 1. [Manage Formats](manage-formats/SKILL.md) (`IBY_MANAGE_FORMATS`)
 2. [Manage Payment Systems](manage-payment-systems/SKILL.md) (`IBY_MANAGE_PAYMENT_SYSTEMS`)
-3. [Manage Payment Codes](manage-payment-codes/SKILL.md) (`IBY_MANAGE_PAYMENT_CODES`)
-4. [Manage Disbursement System Options](manage-disbursement-system-options/SKILL.md) (`IBY_MANAGE_DISBURSEMENT_SYSTEM_OPTIONS`)
+3. [Manage Transmission Configurations](manage-transmission-configurations/SKILL.md) (`IBY_MANAGE_TRANSMISSION_CONFIGURATIONS`)
+4. [Manage Payment Methods](manage-payment-methods/SKILL.md) (`IBY_MANAGE_PAYMENT_METHODS`)
+5. [Manage Payment Codes](manage-payment-codes/SKILL.md) (`IBY_MANAGE_PAYMENT_CODES`)
+6. [Manage Disbursement System Options](manage-disbursement-system-options/SKILL.md) (`IBY_MANAGE_DISBURSEMENT_SYSTEM_OPTIONS`)
 
 ## Inputs
 

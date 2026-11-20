@@ -12,6 +12,9 @@ csv_export_import_supported_flag: "Y"
 dataloader_import_mode: "FSM"
 businessObject: ""
 source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
+depends_on:
+  - core.fusion-api.apps-common
+
 ---
 
 # Manage MCA Profile Options
@@ -68,29 +71,29 @@ Manage supported multichannel architecture (MCA) profile-option values.
 
 ### View Mca Profile Option Value
 
-View the effective value for a selected MCA profile option.
+View the configured or explicitly requested session-effective value for a selected MCA profile option.
 
-1. Read the selected profile option with core.fusion-api.apps-common through the Profile Values REST resource using ProfileOptionNameFinder.
-2. Return ProfileOptionName and the effective ProfileOptionValue for the requested profile level and context.
+1. Follow the parent Profile Task Handoff and selected core.fusion-api.apps-common.profile-options configured-level read workflow. Resolve the exact profile definition and supported Site or User child/key from the matching task rules.
+2. Return the configured ProfileOptionValue with its resolved level/key. Use profileValues only for an explicitly requested current-session effective value; label it separately and never treat it as configured-target verification.
 
 ### View Mca Profile Option Values
 
-View effective values for supported MCA profile options.
+View configured or explicitly requested session-effective values for supported MCA profile options.
 
-1. Read profile values with core.fusion-api.apps-common through the Profile Values REST resource.
-2. Filter to the documented MCA profile option codes and return ProfileOptionName and ProfileOptionValue.
+1. Resolve each documented requested profile code through the selected core configured-level read workflow with its exact supported level and target key.
+2. Return configured values with their scopes; report explicitly requested current-session effective values separately.
 
 ### Update Mca Profile Option Value
 
 Update a supported MCA profile-option value through FSM.
 
-1. Read the current effective value through the Profile Values REST resource when it is exposed to the caller.
+1. Resolve the profile definition and configured value for the exact supported level/key through the core profile-options read workflow and matching task lookup rules. Confirm the level is enabled and updateable; stop on missing identity or unsupported scope.
 2. Validate the selected profile option code, requested value, and target profile level against the documented guidance; change Oracle Support-directed settings only with that direction.
 3. Export the setup task with shared.setup-export.task-level-export.
 4. Use the completed export as the package-structure baseline and change only the approved existing profile-value row. When a seeded existing profile option is omitted from the export, assemble its unchanged definition, supported-level, and current-value fields exclusively from authenticated read-only Profile Options snapshots; retain the export's members, headers, encoding, metadata, and node order.
 5. Validate the FSM package with shared.validation.setup-data-validator.
 6. Import the approved ZIP with core.data-loader.
-7. Verify the change with a fresh Profile Values REST read when available, otherwise with a fresh export.
+7. Verify the exact configured profile, level/key and approved value with a fresh scoped configured-value read or same-task export. Effective-value reads are supplementary and cannot replace configured-level verification.
 
 ### Create Mca Profile Option
 

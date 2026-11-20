@@ -10,7 +10,7 @@
 
 | Task Code | Task Name | Applies When | Severity | Required Lookup | Blocking Condition | Recommendation | Fix Allowed? |
 |---|---|---|---|---|---|---|---|
-| QSC_MANAGE_PRODUCT_GROUPS | Manage Product Groups | FSM import is requested | Error |  | The effective setup-task catalog marks export/import unsupported and the supplied API documentation does not define an FSM artifact or import contract | Use the documented REST route only after its task-specific preview and approval gates. Update this rule only when an authoritative FSM contract and catalog support are available. | No |
+| QSC_MANAGE_PRODUCT_GROUPS | Manage Product Groups | FSM import is requested | Error |  | The effective setup-task catalog marks export/import unsupported and the supplied API documentation does not define an FSM artifact or import contract | Stop with the import-support blocker. The named REST create has a separate Product Groups-specific command lifecycle and is not an import fallback. Update this rule only when an authoritative FSM contract and catalog support are available. | No |
 
 ## Task Nodes
 
