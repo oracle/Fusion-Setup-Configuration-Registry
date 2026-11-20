@@ -7,6 +7,18 @@
 | 1 | Fiscal Year | Reuse a valid user-selected fiscal year unchanged. When no fiscal year is supplied, show every qualifying equivalent, including a sole candidate, and require the customer's exact selection or another exact Fiscal Year Name. If no equivalent exists, complete `FA_MANAGE_FISCAL_YEAR` creation or extension and confirm availability before calendar work. Its complete date rows establish the available Calendar coverage. |
 | 2 | Technical import metadata | A current same-task FSM export must establish package members, fields, codes, and defaults. |
 | 3 | Existing calendar state | The target calendar and its periods must be compared before creating setup data, using complete BOSS paging or the validated full FSM snapshot path in [Reference Lookups](ora_reference_lookups.md#complete-lookup-source-selection). |
+| 4 | Calendar-header DFF | After fiscal-year and complete existing-calendar resolution, run resolve_calendar_dff_segments before Reference Validation Preview, defaults, design approval, or package preparation. |
+
+## Calendar DFF Gate
+
+CAL.RESOLVE_DEPENDENCIES retains the existing fiscal-year and import-contract
+checks. CAL.LOOKUP_EXISTING owns the subsequent DFF gate after resolving
+current calendar state; it cannot return match or advance to defaults
+without the applicable DFF checks passing.
+
+A failed or incomplete definition export does not establish that no segments
+are required. A complete definition with no applicable required segments
+passes required-input validation without demanding additional values.
 
 ## Calendar Export Contract
 

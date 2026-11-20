@@ -11,7 +11,7 @@
 | StartDateActive / EndDateActive | No | Blank on create when omitted; preserve existing dates for an explicitly selected update unless a change or clearing is requested | Create or update Asset Location | No | |
 | OBJECT_VERSION_NUMBER | Yes | 1 | Insert | No | |
 | Audit columns | Yes | Fusion audit framework values | Insert or update | No | |
-| ENABLED_FLAG for mapping | No | N only for No or N; otherwise Y | Rapid Start mapping import | No | |
+| ENABLED_FLAG for mapping | No | Accept `Y`/`N` or `YES`/`NO` case-insensitively. Translate affirmative input to uppercase `Y` and negative input to uppercase `N`; reject unrecognized values. Default to `Y` when omitted. | Rapid Start mapping import | No | |
 | LOCATION_MAPPING_TYPE_CODE | Yes | ORA_FA_HR_LOCATION | Mapping import with a blank Customer Site Number | No | |
 | FA_LOCATION_ID | Yes | Resolved from Asset Location segments | Rapid Start mapping import | No | resolve_existing_asset_location |
 | SOURCE_LOCATION_ID | Yes | Resolved from HR Location Code plus HR Set Code | HR mapping import with a blank Customer Site Number | No | resolve_hr_location_reference |

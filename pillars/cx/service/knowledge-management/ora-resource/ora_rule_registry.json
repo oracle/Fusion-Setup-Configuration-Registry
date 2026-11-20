@@ -23,7 +23,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 64
+            "line": 77
           },
           "readiness": {
             "status": "ready",
@@ -49,7 +49,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 43
+            "line": 47
           },
           "readiness": {
             "status": "ready",
@@ -75,7 +75,7 @@
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 34
+            "line": 42
           },
           "readiness": {
             "status": "ready",
@@ -100,7 +100,7 @@
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 64
+            "line": 72
           },
           "readiness": {
             "status": "ready",
@@ -122,7 +122,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 89
+            "line": 90
           },
           "readiness": {
             "status": "ready",
@@ -142,7 +142,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 90
+            "line": 91
           },
           "readiness": {
             "status": "ready",
@@ -172,11 +172,11 @@
           },
           "prerequisites": [],
           "on_failure": "stop",
-          "applies_when": "Every Classic content-type request",
+          "applies_when": "Assisted Classic handoff planning only; verify the exact Redwood dependency and return router next-action guidance. No structured core redirect is expected. Stop source export/preparation/preview/import; retain original identity and approval.",
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 70
+            "line": 86
           },
           "readiness": {
             "status": "ready",
@@ -194,11 +194,11 @@
             "CONTENTTYPESCLASSIC.VALIDATE"
           ],
           "on_failure": "stop",
-          "applies_when": "Classic content-type request is routed to the Redwood task skill",
+          "applies_when": "Return only assisted router/Run Book handoff instructions for the exact Redwood task. The local ready plan retains Classic identity with no redirectTarget; it authorizes no Classic export, package preparation, preview or import. The destination requires its own selected context and approval.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 101
+            "line": 108
           },
           "readiness": {
             "status": "ready",
@@ -218,7 +218,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 102
+            "line": 109
           },
           "readiness": {
             "status": "ready",
@@ -252,7 +252,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 63
+            "line": 78
           },
           "readiness": {
             "status": "ready",
@@ -274,7 +274,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 87
+            "line": 92
           },
           "readiness": {
             "status": "ready",
@@ -294,7 +294,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 88
+            "line": 93
           },
           "readiness": {
             "status": "ready",
@@ -328,7 +328,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 68
+            "line": 81
           },
           "readiness": {
             "status": "ready",
@@ -342,7 +342,7 @@
           "action_type": "reference_lookup",
           "execution_route": "fusion-rest",
           "transitions": {
-            "found": "KNOWLEDGEPANELPROFILE.DESIGN",
+            "found": "KNOWLEDGEPANELPROFILE.DEFAULTS",
             "not_found": "KNOWLEDGEPANELPROFILE.FAILED",
             "failure": "KNOWLEDGEPANELPROFILE.FAILED"
           },
@@ -354,7 +354,32 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 47
+            "line": 51
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "KNOWLEDGEPANELPROFILE.DEFAULTS",
+          "node_type": "step",
+          "sequence": 3,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "ok": "KNOWLEDGEPANELPROFILE.DESIGN",
+            "failure": "KNOWLEDGEPANELPROFILE.FAILED"
+          },
+          "prerequisites": [
+            "KNOWLEDGEPANELPROFILE.LOOKUP"
+          ],
+          "on_failure": "stop",
+          "applies_when": "After resolving the existing profile, report its listed supplied seed baseline when applicable and retain the explicit approved ProfileOptionValue. Never fill a missing update value, overwrite an existing configured value, or infer a seed default for an unlisted profile.",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 32
           },
           "readiness": {
             "status": "ready",
@@ -364,7 +389,7 @@
         {
           "id": "KNOWLEDGEPANELPROFILE.DESIGN",
           "node_type": "step",
-          "sequence": 3,
+          "sequence": 4,
           "action_type": "design_enforcement",
           "execution_route": "local",
           "transitions": {
@@ -372,14 +397,14 @@
             "failure": "KNOWLEDGEPANELPROFILE.FAILED"
           },
           "prerequisites": [
-            "KNOWLEDGEPANELPROFILE.LOOKUP"
+            "KNOWLEDGEPANELPROFILE.DEFAULTS"
           ],
           "on_failure": "stop",
           "applies_when": "Before a Knowledge Panel FSM profile-option update is treated as ready for approval",
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 67
+            "line": 75
           },
           "readiness": {
             "status": "ready",
@@ -389,7 +414,7 @@
         {
           "id": "KNOWLEDGEPANELPROFILE.READY",
           "node_type": "terminal",
-          "sequence": 4,
+          "sequence": 5,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
@@ -401,7 +426,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 97
+            "line": 98
           },
           "readiness": {
             "status": "ready",
@@ -411,7 +436,7 @@
         {
           "id": "KNOWLEDGEPANELPROFILE.FAILED",
           "node_type": "terminal",
-          "sequence": 5,
+          "sequence": 6,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
@@ -421,7 +446,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 98
+            "line": 99
           },
           "readiness": {
             "status": "ready",
@@ -455,7 +480,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 69
+            "line": 82
           },
           "readiness": {
             "status": "ready",
@@ -469,7 +494,7 @@
           "action_type": "reference_lookup",
           "execution_route": "fusion-rest",
           "transitions": {
-            "found": "KNOWLEDGESEARCHPROFILE.DESIGN",
+            "found": "KNOWLEDGESEARCHPROFILE.DEFAULTS",
             "not_found": "KNOWLEDGESEARCHPROFILE.FAILED",
             "failure": "KNOWLEDGESEARCHPROFILE.FAILED"
           },
@@ -481,7 +506,32 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 48
+            "line": 52
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "KNOWLEDGESEARCHPROFILE.DEFAULTS",
+          "node_type": "step",
+          "sequence": 3,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "ok": "KNOWLEDGESEARCHPROFILE.DESIGN",
+            "failure": "KNOWLEDGESEARCHPROFILE.FAILED"
+          },
+          "prerequisites": [
+            "KNOWLEDGESEARCHPROFILE.LOOKUP"
+          ],
+          "on_failure": "stop",
+          "applies_when": "After resolving the existing profile, report its listed seed baseline when applicable and retain the explicit approved ProfileOptionValue. Never fill a missing update value, overwrite an existing configured value, or infer a seed default for an unlisted profile.",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 31
           },
           "readiness": {
             "status": "ready",
@@ -491,7 +541,7 @@
         {
           "id": "KNOWLEDGESEARCHPROFILE.DESIGN",
           "node_type": "step",
-          "sequence": 3,
+          "sequence": 4,
           "action_type": "design_enforcement",
           "execution_route": "local",
           "transitions": {
@@ -499,14 +549,14 @@
             "failure": "KNOWLEDGESEARCHPROFILE.FAILED"
           },
           "prerequisites": [
-            "KNOWLEDGESEARCHPROFILE.LOOKUP"
+            "KNOWLEDGESEARCHPROFILE.DEFAULTS"
           ],
           "on_failure": "stop",
           "applies_when": "Before a Knowledge Search FSM profile-option update is treated as ready for approval",
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 68
+            "line": 76
           },
           "readiness": {
             "status": "ready",
@@ -516,7 +566,7 @@
         {
           "id": "KNOWLEDGESEARCHPROFILE.READY",
           "node_type": "terminal",
-          "sequence": 4,
+          "sequence": 5,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
@@ -528,7 +578,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 99
+            "line": 100
           },
           "readiness": {
             "status": "ready",
@@ -538,7 +588,7 @@
         {
           "id": "KNOWLEDGESEARCHPROFILE.FAILED",
           "node_type": "terminal",
-          "sequence": 5,
+          "sequence": 6,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
@@ -548,7 +598,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 100
+            "line": 101
           },
           "readiness": {
             "status": "ready",
@@ -582,7 +632,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 63
+            "line": 79
           },
           "readiness": {
             "status": "ready",
@@ -608,7 +658,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 43
+            "line": 48
           },
           "readiness": {
             "status": "ready",
@@ -634,7 +684,7 @@
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 35
+            "line": 43
           },
           "readiness": {
             "status": "ready",
@@ -659,7 +709,7 @@
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 65
+            "line": 73
           },
           "readiness": {
             "status": "ready",
@@ -681,7 +731,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 87
+            "line": 94
           },
           "readiness": {
             "status": "ready",
@@ -701,7 +751,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 88
+            "line": 95
           },
           "readiness": {
             "status": "ready",
@@ -735,7 +785,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 70
+            "line": 83
           },
           "readiness": {
             "status": "ready",
@@ -749,7 +799,7 @@
           "action_type": "reference_lookup",
           "execution_route": "fusion-rest",
           "transitions": {
-            "found": "MYKNOWLEDGEPROFILE.DESIGN",
+            "found": "MYKNOWLEDGEPROFILE.DEFAULTS",
             "not_found": "MYKNOWLEDGEPROFILE.FAILED",
             "failure": "MYKNOWLEDGEPROFILE.FAILED"
           },
@@ -761,7 +811,32 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 49
+            "line": 53
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MYKNOWLEDGEPROFILE.DEFAULTS",
+          "node_type": "step",
+          "sequence": 3,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "ok": "MYKNOWLEDGEPROFILE.DESIGN",
+            "failure": "MYKNOWLEDGEPROFILE.FAILED"
+          },
+          "prerequisites": [
+            "MYKNOWLEDGEPROFILE.LOOKUP"
+          ],
+          "on_failure": "stop",
+          "applies_when": "After resolving the existing profile, report its listed supplied seed baseline when applicable and retain the explicit approved ProfileOptionValue. Never fill a missing update value, overwrite an existing configured value, or infer a seed default for an unlisted profile.",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 33
           },
           "readiness": {
             "status": "ready",
@@ -771,7 +846,7 @@
         {
           "id": "MYKNOWLEDGEPROFILE.DESIGN",
           "node_type": "step",
-          "sequence": 3,
+          "sequence": 4,
           "action_type": "design_enforcement",
           "execution_route": "local",
           "transitions": {
@@ -779,14 +854,14 @@
             "failure": "MYKNOWLEDGEPROFILE.FAILED"
           },
           "prerequisites": [
-            "MYKNOWLEDGEPROFILE.LOOKUP"
+            "MYKNOWLEDGEPROFILE.DEFAULTS"
           ],
           "on_failure": "stop",
           "applies_when": "Before a My Knowledge profile option update is treated as ready for approval",
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 69
+            "line": 77
           },
           "readiness": {
             "status": "ready",
@@ -796,7 +871,7 @@
         {
           "id": "MYKNOWLEDGEPROFILE.READY",
           "node_type": "terminal",
-          "sequence": 4,
+          "sequence": 5,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
@@ -808,7 +883,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 101
+            "line": 102
           },
           "readiness": {
             "status": "ready",
@@ -818,7 +893,7 @@
         {
           "id": "MYKNOWLEDGEPROFILE.FAILED",
           "node_type": "terminal",
-          "sequence": 5,
+          "sequence": 6,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
@@ -828,7 +903,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 103
+            "line": 104
           },
           "readiness": {
             "status": "ready",
@@ -862,7 +937,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 71
+            "line": 87
           },
           "readiness": {
             "status": "ready",
@@ -884,7 +959,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 103
+            "line": 110
           },
           "readiness": {
             "status": "ready",
@@ -904,7 +979,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 104
+            "line": 111
           },
           "readiness": {
             "status": "ready",
@@ -929,7 +1004,7 @@
           "action_type": "validate_input",
           "execution_route": "local",
           "transitions": {
-            "ok": "USERGROUPS.LOOKUP",
+            "ok": "USERGROUPS.BU_DECISION",
             "failure": "USERGROUPS.FAILED"
           },
           "prerequisites": [],
@@ -938,7 +1013,33 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 66
+            "line": 80
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "USERGROUPS.BU_DECISION",
+          "node_type": "decision",
+          "sequence": 2,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "lookup_required": "USERGROUPS.LOOKUP",
+            "not_required": "USERGROUPS.BU_NOT_REQUIRED",
+            "invalid": "USERGROUPS.FAILED"
+          },
+          "prerequisites": [
+            "USERGROUPS.VALIDATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Classify the supplied feature state and operation. A create/edit with Business Unit Support enabled requires exact active BU validation; disabled support, or a read that needs no BU validation, takes not_required. Unknown feature state or missing enabled-state reference returns invalid.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 89
           },
           "readiness": {
             "status": "ready",
@@ -948,7 +1049,7 @@
         {
           "id": "USERGROUPS.LOOKUP",
           "node_type": "step",
-          "sequence": 2,
+          "sequence": 3,
           "action_type": "reference_lookup",
           "execution_route": "fusion-rest",
           "transitions": {
@@ -957,14 +1058,39 @@
             "failure": "USERGROUPS.FAILED"
           },
           "prerequisites": [
-            "USERGROUPS.VALIDATE"
+            "USERGROUPS.BU_DECISION"
           ],
           "on_failure": "stop",
           "applies_when": "Business Unit Support is enabled and a Business Unit name or businessUnitIds value must be validated",
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 45
+            "line": 50
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "USERGROUPS.BU_NOT_REQUIRED",
+          "node_type": "step",
+          "sequence": 4,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "USERGROUPS.DESIGN",
+            "invalid": "USERGROUPS.FAILED"
+          },
+          "prerequisites": [
+            "USERGROUPS.BU_DECISION"
+          ],
+          "on_failure": "stop",
+          "applies_when": "For disabled Business Unit Support retain the approved same-task empty representation and exported values unless an approved supported change targets them. A read needs no fabricated lookup pass. Reject an unsupported new BU assignment while support is disabled.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 90
           },
           "readiness": {
             "status": "ready",
@@ -974,7 +1100,7 @@
         {
           "id": "USERGROUPS.DESIGN",
           "node_type": "step",
-          "sequence": 3,
+          "sequence": 5,
           "action_type": "design_enforcement",
           "execution_route": "local",
           "transitions": {
@@ -982,14 +1108,14 @@
             "failure": "USERGROUPS.FAILED"
           },
           "prerequisites": [
-            "USERGROUPS.LOOKUP"
+            "USERGROUPS.BU_DECISION"
           ],
           "on_failure": "stop",
-          "applies_when": "Before a user-group request is ready for preview",
+          "applies_when": "Apply common custom-group, reference-key, locale, package and predefined-group checks after the selected BU branch passes. Enforce BU identity only when support is enabled; do not require a lookup pass on the explicit disabled/read branch.",
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 66
+            "line": 74
           },
           "readiness": {
             "status": "ready",
@@ -999,7 +1125,7 @@
         {
           "id": "USERGROUPS.READY",
           "node_type": "terminal",
-          "sequence": 4,
+          "sequence": 6,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
@@ -1011,7 +1137,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 93
+            "line": 96
           },
           "readiness": {
             "status": "ready",
@@ -1021,7 +1147,7 @@
         {
           "id": "USERGROUPS.FAILED",
           "node_type": "terminal",
-          "sequence": 5,
+          "sequence": 7,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
@@ -1031,7 +1157,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 94
+            "line": 97
           },
           "readiness": {
             "status": "ready",
@@ -1065,7 +1191,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 71
+            "line": 84
           },
           "readiness": {
             "status": "ready",
@@ -1091,7 +1217,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 50
+            "line": 54
           },
           "readiness": {
             "status": "ready",
@@ -1116,7 +1242,7 @@
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 70
+            "line": 78
           },
           "readiness": {
             "status": "ready",
@@ -1138,7 +1264,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 102
+            "line": 103
           },
           "readiness": {
             "status": "ready",
@@ -1158,7 +1284,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 104
+            "line": 105
           },
           "readiness": {
             "status": "ready",
@@ -1192,7 +1318,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 72
+            "line": 85
           },
           "readiness": {
             "status": "ready",
@@ -1217,7 +1343,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 45
+            "line": 49
           },
           "readiness": {
             "status": "ready",
@@ -1243,7 +1369,7 @@
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 36
+            "line": 44
           },
           "readiness": {
             "status": "ready",
@@ -1268,7 +1394,7 @@
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 71
+            "line": 79
           },
           "readiness": {
             "status": "ready",
@@ -1290,7 +1416,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 105
+            "line": 106
           },
           "readiness": {
             "status": "ready",
@@ -1310,7 +1436,160 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 106
+            "line": 107
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    },
+    {
+      "task_code": "ORA_MANAGE_KNOWLEDGE_WORKFLOWS",
+      "task_name": "Manage Knowledge Workflows",
+      "start_node": "KNOWLEDGEWORKFLOWS.VALIDATE",
+      "nodes": [
+        {
+          "id": "KNOWLEDGEWORKFLOWS.VALIDATE",
+          "node_type": "step",
+          "sequence": 1,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "ok": "KNOWLEDGEWORKFLOWS.LOOKUP",
+            "failure": "KNOWLEDGEWORKFLOWS.FAILED"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Every Manage Knowledge Workflows request",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 88
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "KNOWLEDGEWORKFLOWS.LOOKUP",
+          "node_type": "step",
+          "sequence": 2,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "satisfied": "KNOWLEDGEWORKFLOWS.DEPENDENCIES",
+            "missing": "KNOWLEDGEWORKFLOWS.FAILED",
+            "failure": "KNOWLEDGEWORKFLOWS.FAILED"
+          },
+          "prerequisites": [
+            "KNOWLEDGEWORKFLOWS.VALIDATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "A Knowledge workflow review or change has passed input validation",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 55
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "KNOWLEDGEWORKFLOWS.DEPENDENCIES",
+          "node_type": "step",
+          "sequence": 3,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "ok": "KNOWLEDGEWORKFLOWS.DESIGN",
+            "blocked": "KNOWLEDGEWORKFLOWS.FAILED",
+            "failure": "KNOWLEDGEWORKFLOWS.FAILED"
+          },
+          "prerequisites": [
+            "KNOWLEDGEWORKFLOWS.LOOKUP"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Before a Knowledge workflow change is ready for preview",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 45
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "KNOWLEDGEWORKFLOWS.DESIGN",
+          "node_type": "step",
+          "sequence": 4,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "ok": "KNOWLEDGEWORKFLOWS.READY",
+            "failure": "KNOWLEDGEWORKFLOWS.FAILED"
+          },
+          "prerequisites": [
+            "KNOWLEDGEWORKFLOWS.DEPENDENCIES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Before a Knowledge workflow change is treated as ready for preview",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 80
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "KNOWLEDGEWORKFLOWS.READY",
+          "node_type": "terminal",
+          "sequence": 5,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "KNOWLEDGEWORKFLOWS.DESIGN"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Knowledge workflow guidance is ready for preview handoff",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 112
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "KNOWLEDGEWORKFLOWS.FAILED",
+          "node_type": "terminal",
+          "sequence": 6,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "A Knowledge workflow validation, lookup, dependency, or design gate fails",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 113
           },
           "readiness": {
             "status": "ready",

@@ -1,7 +1,410 @@
 {
   "count": 25,
   "totalResults": 25,
-  "removals": [],
+  "removals": [
+    {
+      "TaskCode": "CST_MANAGE_COST_ANALYSIS_GROUPS",
+      "TaskName": "Manage Cost Analysis Groups",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "CST_MANAGE_COST_BOOKS",
+      "TaskName": "Manage Cost Books",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "CST_MANAGE_COST_COMPONENT_MAPPINGS",
+      "TaskName": "Manage Cost Component Mappings",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "CST_MANAGE_COST_ELEMENTS",
+      "TaskName": "Manage Cost Elements",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "CST_MANAGE_COST_ORGANIZATION_RELATIONSHIPS",
+      "TaskName": "Manage Cost Organization Relationships",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "CST_MANAGE_COST_ORGANIZATIONS",
+      "TaskName": "Manage Cost Organizations",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "CST_MANAGE_COST_PROFILES",
+      "TaskName": "Manage Cost Profiles",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "CST_MANAGE_DEFAULT_COST_PROFILES",
+      "TaskName": "Manage Default Cost Profiles",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "CST_MANAGE_ITEM_COST_PROFILE",
+      "TaskName": "Manage Item Cost Profiles",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "CST_MANAGE_OVERHEAD_COST_ELEMENT_GROUPS",
+      "TaskName": "Manage Overhead Cost Element Groups",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "CST_MANAGE_OVERHEAD_EXPENSE_POOLS",
+      "TaskName": "Manage Overhead Expense Pools",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "CST_MANAGE_VALUATION_STRUCTURES",
+      "TaskName": "Manage Valuation Structures",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "CST_MANAGE_VALUATION_UNITS",
+      "TaskName": "Manage Valuation Units",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "JMF_MANAGE_INTRASTAT_COUNTRY_CHARACTERISTICS",
+      "TaskName": "Manage Intrastat Country Characteristics",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "JMF_MANAGE_INTRASTAT_PARAMETERS",
+      "TaskName": "Manage Intrastat Parameters",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "JMF_MANAGE_INTRASTAT_RULES",
+      "TaskName": "Manage Intrastat Rules",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "ORA_INV_MANAGE_INVENTORY_CONSUMPTION_RULES",
+      "TaskName": "Manage Consumption Rules",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "ORA_INV_MANAGE_INTERSUBINVENTORY_PARAMETERS",
+      "TaskName": "Manage Intersubinventory Parameters",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "ORA_MANAGE_INVENTORY_BUSINESS_EVENT_CONFIGURATIONS",
+      "TaskName": "Manage Inventory Business Event Configurations",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "INV_MANAGE_ACCOUNT_ALIASES",
+      "TaskName": "Manage Account Aliases",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "INV_MANAGE_INTERORGANIZATION_PARAMETERS",
+      "TaskName": "Manage Interorganization Parameters",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "INV_MANAGE_INVENTORY_TRANSACTION_REASONS",
+      "TaskName": "Manage Inventory Transaction Reasons",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "INV_MANAGE_INVENTORY_TRANSACTION_SOURCES_AND_TYPES",
+      "TaskName": "Manage Inventory Transaction Sources and Types",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "INV_MANAGE_ITEM_TRANSACTION_DEFAULTS",
+      "TaskName": "Manage Item Transaction Defaults",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "INV_MANAGE_LOT_EXPIRATION_ACTIONS",
+      "TaskName": "Manage Lot Expiration Actions",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "INV_MANAGE_LOT_GRADES",
+      "TaskName": "Manage Lot Grades",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "INV_MANAGE_MATERIAL_STATUSES",
+      "TaskName": "Manage Material Statuses",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "INV_MANAGE_PICK_SLIP_GROUPING_RULES",
+      "TaskName": "Manage Pick Slip Grouping Rules",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "INV_MANAGE_PICKING_RULE_ASSIGNMENTS",
+      "TaskName": "Manage Picking Rule Assignments",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "INV_MANAGE_PICKING_RULES",
+      "TaskName": "Manage Picking Rules",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "ORA_INV_MANAGE_UNITS_OF_MEASURE_USAGES",
+      "TaskName": "Manage Units of Measure Usages",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "INV_MANAGE_SUBINVENTORIES_AND_LOCATORS",
+      "TaskName": "Manage Subinventories and Locators",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "INV_MANAGE_ABC_CLASSES",
+      "TaskName": "Manage ABC Classes",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "INV_MANAGE_ABC_CLASSIFICATION_SETS",
+      "TaskName": "Manage ABC Classification Sets",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "INV_MANAGE_ABC_ASSIGNMENT_GROUPS",
+      "TaskName": "Manage ABC Assignment Groups",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "INV_MANAGE_LOT_AND_SERIAL_ATTRIBUTES_MAPPING",
+      "TaskName": "Manage Lot and Serial Attributes Mapping",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "ORA_MANAGE_INVENTORY_DOCUMENT_OUTPUT_PREFERENCES",
+      "TaskName": "Manage Inventory Document Output Preferences",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "ORA_MANAGE_MIN_MAX_CLASSIFICATION_GROUPS",
+      "TaskName": "Manage Min-Max Planning Classification Groups",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "ORA_MANAGE_MIN_MAX_PLANNING_POLICY_PROFILES",
+      "TaskName": "Manage Min-Max Planning Policy Profiles",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "ORA_MANAGE_MIN_MAX_PLANNING_POLICY_PROFILE_ASSIGNMENTS",
+      "TaskName": "Manage Min-Max Planning Policy Profile Assignments",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "RCV_MANAGE_RECEIVING_PARAMETERS",
+      "TaskName": "Manage Receiving Parameters",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "ORA_RCL_MANAGE_BILLING_TYPES",
+      "TaskName": "Manage Billing Types",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "ORA_RCL_MANAGE_TECH_SETUP",
+      "TaskName": "Manage Field Service Technicians",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "ORA_RCL_AUTO_PROCESSING_RULE",
+      "TaskName": "Manage Auto Processing Rules for Charges",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "ORA_RCL_RESOURCE_ITEM_MAPPING",
+      "TaskName": "Manage Resource to Item Mapping",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "ORA_RCL_MANAGE_RETURN_ROUTING_RULES",
+      "TaskName": "Manage Return Routing Rules",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "ORA_RCL_MANAGE_SERVICE_ACTIVITIES",
+      "TaskName": "Manage Service Activities",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "ORA_RCL_MANAGE_STOCK_LOCATIONS",
+      "TaskName": "Manage Stocking Locations",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "WSH_MANAGE_PICK_WAVE_RELEASE_RULES",
+      "TaskName": "Manage Pick Wave Release Rules",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "WSH_MANAGE_RELEASE_SEQUENCE_RULES",
+      "TaskName": "Manage Release Sequence Rules",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "WSH_MANAGE_SHIP_CONFIRM_RULES",
+      "TaskName": "Manage Ship Confirm Rules",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "WSH_MANAGE_SHIPPING_COST_TYPES",
+      "TaskName": "Manage Shipping Cost Types",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "ORA_MANAGE_SHIPPING_DOCUMENT_OUTPUT_PREFERENCES",
+      "TaskName": "Manage Shipping Document Output Preferences",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "WSH_MANAGE_SHIPPING_EXCEPTIONS",
+      "TaskName": "Manage Shipping Exceptions",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "WSH_MANAGE_SHIPPING_PARAMETERS",
+      "TaskName": "Manage Shipping Parameters",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "WSH_MANAGE_TRANSPORTATION_SCHEDULES",
+      "TaskName": "Manage Transportation Schedules",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "WSH_MANAGE_DEFAULT_PACKING_CONFIGURATIONS",
+      "TaskName": "Manage Default Packing Configurations",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "ORA_CML_SET_UP_CHARGE_NAMES",
+      "TaskName": "Manage Charge Names",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "ORA_CML_SET_UP_REFERENCE_TYPES",
+      "TaskName": "Manage Landed Cost Reference Types",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "ORA_CML_SET_UP_ROUTES",
+      "TaskName": "Manage Routes",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "ORA_FOS_DEFINE_PROFIT_CENTER_BUSINESS_UNIT_PARTY_RELATIONSHIP",
+      "TaskName": "Manage Profit Center Business Unit Party Relationship",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "ORA_FOS_DEFINE_TRADE_AND_ACCOUNTING_RULES",
+      "TaskName": "Manage Supply Chain Financial Orchestration Documentation and Accounting Rules",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "ORA_FOS_MANAGE_SUPPLY_CHAIN_FINANCIAL_TRADE_AGREEMENTS",
+      "TaskName": "Manage Supply Chain Financial Orchestration Flows",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "ORA_FOS_MANAGE_TRADE_QUALIFIER",
+      "TaskName": "Manage Supply Chain Financial Orchestration Qualifiers",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "ORA_FOS_MANAGE_SYSTEM_OPTIONS",
+      "TaskName": "Manage Supply Chain Financial Orchestration System Options",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "ORA_FOS_DEFINE_TRANSFER_PRICING_RULES",
+      "TaskName": "Manage Supply Chain Financial Orchestration Transfer Pricing Rules",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    },
+    {
+      "TaskCode": "ORA_FOS_MANAGE_DROP_SHIP_AGREEMENTS_NEW",
+      "TaskName": "Drop Ship Financial Flows",
+      "effectiveRelease": "next-release",
+      "reason": "Removal requested in SCM_delete_ADF_tasks.xlsx column E"
+    }
+  ],
   "items": [
     {
       "TaskCode": "ORA_FMK_CONFIGURE_EMAIL_DOMAINS",

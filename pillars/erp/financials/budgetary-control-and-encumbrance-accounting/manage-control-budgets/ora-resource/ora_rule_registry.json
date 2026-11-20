@@ -1,0 +1,609 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "ORA_XCC_MANAGE_CONTROL_BUDGETS",
+      "task_name": "Manage Control Budgets",
+      "start_node": "CB.VALIDATE",
+      "nodes": [
+        {
+          "id": "CB.VALIDATE",
+          "node_type": "step",
+          "sequence": 1,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "pass": "CB.RESOLVE",
+            "blocked": "CB.RESOLVE"
+          },
+          "prerequisites": [],
+          "on_failure": "continue",
+          "applies_when": "Control Budget phase only: inspect every requested budget's complete header, budget segments, and assigned tree and version inputs. Collect every independent issue across budgets, including the requirement for 1 to 30 segments for each budget; zero segments remain an error even without trees or Supplemental Rules. On count failure, collect other direct-input findings and mark dependent checks not_evaluated. Do not inspect Supplemental Rules, begin unsafe lookups, or generate a ZIP yet.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 294
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CB.RESOLVE",
+          "node_type": "step",
+          "sequence": 2,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "CB.LOOKUP",
+            "blocked": "CB.LOOKUP"
+          },
+          "prerequisites": [
+            "CB.VALIDATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Resolve Control Budget header, budget-segment, and assigned-tree dependencies only; collect independent gaps and mark checks with missing prerequisites not_evaluated. Supplemental Rule dependencies wait for CB.BUDGET_GATE.",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 93
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CB.LOOKUP",
+          "node_type": "step",
+          "sequence": 3,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "CB.DEFAULT",
+            "blocked": "CB.DEFAULT"
+          },
+          "prerequisites": [
+            "CB.RESOLVE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Control Budget phase only: for every requested budget, resolve applicable header lookups, including ledger and chart of accounts, source budget type, control level, budget manager, currency, and calendar evidence. Resolve each SourceSegmentName against that budget's effective ledger ChartOfAccountsId; for a Summary, resolve its Master baseline and subset. Resolve each selected budget-segment TreeCode from the same current-target COA row, skipping an unselected tree or absent segment and marking dependent checks not_evaluated. Resolve applicable Summary Funds Release Timeframe, rate, and STAT UOM contracts. Collect independent failures and lookup evidence across budgets; do not begin Supplemental Rule lookups or generate a ZIP while any budget issue remains.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 283
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CB.DEFAULT",
+          "node_type": "step",
+          "sequence": 4,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "CB.DESIGN",
+            "blocked": "CB.DESIGN"
+          },
+          "prerequisites": [
+            "CB.LOOKUP"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Apply Control Budget header, budget-segment, and assigned-tree defaults after their applicable lookups. Collect independent failures for the budget gate; do not apply Supplemental Rule defaults yet.",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 137
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CB.DESIGN",
+          "node_type": "decision",
+          "sequence": 5,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "pass": "CB.BUDGET_GATE",
+            "blocked": "CB.BUDGET_GATE"
+          },
+          "prerequisites": [
+            "CB.DEFAULT"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Validate Control Budget header, budget-segment, and assigned-tree design. Add independent design failures to the first-unit result; the budget gate decides whether to continue.",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 98
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CB.BUDGET_GATE",
+          "node_type": "decision",
+          "sequence": 6,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "CB.SUPP.VALIDATE",
+            "revenue_only": "CB.REV.VALIDATE",
+            "override_rules": "CB.OVR.VALIDATE",
+            "blocked": "CB.STOP_INVALID",
+            "unresolved": "CB.STOP_DEFAULTS"
+          },
+          "prerequisites": [
+            "CB.DESIGN"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Decide from complete Control Budget findings across all requested budgets. Any failure blocks all child groups and candidate ZIP. On pass, use revenue_only when Revenue is requested without Supplemental Rules, override_rules when only Override Rules are requested, otherwise retain the existing ready path. No child group starts before all budgets pass.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 148
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CB.SUPP.VALIDATE",
+          "node_type": "step",
+          "sequence": 7,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "pass": "CB.SUPP.RESOLVE",
+            "blocked": "CB.SUPP.RESOLVE"
+          },
+          "prerequisites": [
+            "CB.BUDGET_GATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Only after every requested Control Budget passes the request-wide gate, collect each supplied rule's header, Budget Segment Filter, Additional Segment Filter, and Transaction Attribute Filter input findings, including each supplied Specific value. Continue independent checks across all budgets and rules before deciding blocked. If no Supplemental Rules were requested, record that group not_applicable; evaluate any requested independent Revenue group before final package readiness.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 295
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CB.SUPP.RESOLVE",
+          "node_type": "step",
+          "sequence": 8,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "CB.SUPP.LOOKUP",
+            "blocked": "CB.SUPP.LOOKUP"
+          },
+          "prerequisites": [
+            "CB.SUPP.VALIDATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "After CB.BUDGET_GATE passes, resolve dependencies for every supplied Supplemental Rule header and filter section; collect independent gaps across rules while marking prerequisite-dependent checks not_evaluated.",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 94
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CB.SUPP.LOOKUP",
+          "node_type": "step",
+          "sequence": 9,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "CB.SUPP.DEFAULT",
+            "blocked": "CB.SUPP.DEFAULT"
+          },
+          "prerequisites": [
+            "CB.SUPP.RESOLVE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "After the budget gate passes, resolve all rules' control levels, Additional Segment Filters and selected trees, current-target Transaction Attribute types, and every supplied Specific value from its declared source. Collect every independent failure across rules; preserve exact type/value Check labels and lookup evidence. Fusion import still validates segment-value membership and supplied tree-version applicability.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 284
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CB.SUPP.DEFAULT",
+          "node_type": "step",
+          "sequence": 10,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "CB.SUPP.DESIGN",
+            "blocked": "CB.SUPP.DESIGN"
+          },
+          "prerequisites": [
+            "CB.SUPP.LOOKUP"
+          ],
+          "on_failure": "continue",
+          "applies_when": "After the budget gate passes, apply rule header and filter defaults to every supplied rule: omitted enabled choice Y, inherited segment condition codes from parent order, and omitted values in budget, additional, and discovered Transaction Attribute filters as All with no Detail rows. Collect independent failures across rules; never infer a rule control level or another condition type's code.",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 138
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CB.SUPP.DESIGN",
+          "node_type": "decision",
+          "sequence": 11,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "pass": "CB.READINESS",
+            "blocked": "CB.READINESS",
+            "revenue_rules": "CB.REV.VALIDATE",
+            "override_rules": "CB.OVR.VALIDATE"
+          },
+          "prerequisites": [
+            "CB.SUPP.DEFAULT"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Validate all requested Supplemental rules using the unchanged checks and collect all independent findings. When Revenue rules are supplied, emit revenue_rules even if Supplemental findings exist. Otherwise, if Override rules are supplied, emit override_rules regardless of Supplemental findings. Only after all requested independent groups have outcomes may final readiness run.",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 99
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CB.REV.VALIDATE",
+          "node_type": "step",
+          "sequence": 12,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "pass": "CB.REV.RESOLVE",
+            "blocked": "CB.REV.RESOLVE"
+          },
+          "prerequisites": [
+            "CB.BUDGET_GATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Only after every Control Budget passes, collect all requested Revenue rule input findings in rule_header, funding_targets, and revenue_source_segments. This independent group does not require Supplemental success. Require explicit limit choices, positive fixed amounts, scenario presence, positive percentages totaling 100, and mandatory Specific values. Continue independent rules and fields; no ZIP yet.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 296
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CB.REV.RESOLVE",
+          "node_type": "step",
+          "sequence": 13,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "CB.REV.LOOKUP",
+            "blocked": "CB.REV.LOOKUP"
+          },
+          "prerequisites": [
+            "CB.REV.VALIDATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Resolve requested Revenue dependencies independently after the budget gate: limit lookup, Revenue source COA/role evidence, selected template headers and parent keys. Record pending outputs until the lookup step; missing prerequisites skip only dependent checks. No Specific value membership lookup or additional eligibility gate.",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 95
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CB.REV.LOOKUP",
+          "node_type": "step",
+          "sequence": 14,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "CB.REV.DEFAULT",
+            "blocked": "CB.REV.DEFAULT"
+          },
+          "prerequisites": [
+            "CB.REV.RESOLVE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Resolve both explicit choices through resolve_revenue_limit_type_code, Revenue source identity through resolve_revenue_source_coa, qualified source roles through resolve_revenue_source_segment_roles, and current CSV mapping through resolve_revenue_rule_package_contract. Collect all independent metadata/type failures; preserve entered Specific values and scenario names for import validation.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 285
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CB.REV.DEFAULT",
+          "node_type": "step",
+          "sequence": 15,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "CB.REV.DESIGN",
+            "blocked": "CB.REV.DESIGN"
+          },
+          "prerequisites": [
+            "CB.REV.LOOKUP"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Apply only Revenue defaults: empty omitted description, new-rule EnabledFlag Y unless explicit choice, All for nonqualified source segments. Both qualified roles stay Specific without generated values; both limit choices remain required. Never change parent funding flag or Supplemental defaults.",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 139
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CB.REV.DESIGN",
+          "node_type": "decision",
+          "sequence": 16,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "pass": "CB.READINESS",
+            "blocked": "CB.READINESS",
+            "override_rules": "CB.OVR.VALIDATE"
+          },
+          "prerequisites": [
+            "CB.REV.DEFAULT"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Run prepare_revenue_rules.py local semantic checks and mapping, verify all requested rule outcomes and exact parent/condition/detail links, and retain Revenue outcomes for the single request-wide validate_units.py gate. If Override rules are requested, emit override_rules even when Supplemental or Revenue findings exist; otherwise proceed to final readiness.",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 100
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CB.OVR.VALIDATE",
+          "node_type": "step",
+          "sequence": 17,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "pass": "CB.OVR.LOOKUP",
+            "blocked": "CB.OVR.LOOKUP"
+          },
+          "prerequisites": [
+            "CB.BUDGET_GATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "After every Control Budget passes, collect all requested Override inputs in rule_header, transaction_types, journal_conditions, and user_assignments independently of Supplemental/Revenue findings. Require supported parent/name/type, conditional amounts, transaction shape, journal state, and at least one raw username; continue independent fields/rules and defer only declared membership checks. Record an absent Override group not_applicable; no ZIP yet.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 297
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CB.OVR.LOOKUP",
+          "node_type": "step",
+          "sequence": 18,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "CB.OVR.DEFAULT",
+            "blocked": "CB.OVR.DEFAULT"
+          },
+          "prerequisites": [
+            "CB.OVR.VALIDATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Resolve current Override type and supported transaction type codes, and verify the four-member same-task contract. Continue independent rules and preserve Supplemental/Revenue findings. No journal source/category or username identity, excluded-membership, or duplicate business lookup is selected; retain raw values for Fusion import.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 286
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CB.OVR.DEFAULT",
+          "node_type": "step",
+          "sequence": 19,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "CB.OVR.DESIGN",
+            "blocked": "CB.OVR.DESIGN"
+          },
+          "prerequisites": [
+            "CB.OVR.LOOKUP"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Apply only requested Override defaults: new-rule EnabledFlag Y, omitted Description empty, transaction flags and source/category state matrix. Never generate names/types/amounts/users, auto-enable the parent, alter supplied raw strings, or mask explicit selection conflicts. Preserve independent rule-group findings.",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 140
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CB.OVR.DESIGN",
+          "node_type": "decision",
+          "sequence": 20,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "pass": "CB.READINESS",
+            "blocked": "CB.READINESS"
+          },
+          "prerequisites": [
+            "CB.OVR.DEFAULT"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Run prepare_override_rules.py, verify all requested Override rule outcomes and exact four-member parent links/flags/row shapes, and feed the four local sections and only the declared deferrals to validate_units.py. Preserve Supplemental and Revenue outcomes; final readiness runs once all requested independent groups are complete and blocks ZIP on any required failure.",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 101
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CB.READINESS",
+          "node_type": "decision",
+          "sequence": 21,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "CB.DONE_READY",
+            "blocked": "CB.STOP_INVALID",
+            "unresolved": "CB.STOP_DEFAULTS"
+          },
+          "prerequisites": [
+            "CB.BUDGET_GATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Require completed outcomes for every requested independent Supplemental, Revenue, and Override group, no required failures or unresolved evidence, both local rule check producers when applicable, one request-wide validate_units.py report with packageReady true, and complete template/link checks. Missing group/section coverage or any required error blocks ZIP. With no requested groups, retain normal readiness; requested groups are evaluated independently before this final decision.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 149
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CB.DONE_READY",
+          "node_type": "terminal",
+          "sequence": 92,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CB.READINESS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Control Budget, every requested independent rule group, and package-readiness checks passed; live import still requires approval through the existing Core Data Loader workflow.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 150
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CB.STOP_DEFAULTS",
+          "node_type": "terminal",
+          "sequence": 98,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Required default, lookup, or package metadata is unresolved; preserve specific failed Check as terminal reason when available.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 151
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CB.STOP_INVALID",
+          "node_type": "terminal",
+          "sequence": 99,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Definition violates validation or design rules; preserve specific failed Check as terminal reason when available.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 152
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

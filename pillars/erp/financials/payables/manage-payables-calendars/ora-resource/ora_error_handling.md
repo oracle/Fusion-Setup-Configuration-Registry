@@ -5,6 +5,7 @@
 | Situation | What Should Happen |
 |---|---|
 | Package, parent-child, or semantic gate fails | Stop before candidate preparation and state the exact missing package fact or documented contract |
+| An update requests a changed or blank From Date (EffectiveFrom) | Stop before package generation or import. Explain that From Date is create-only through FSM and preserve the existing value. |
 | Preview or import reports an error | Preserve sanitized diagnostics and the immutable candidate identity; do not retry automatically |
 | Outcome is uncertain | Do not resubmit; reconcile the original attempt through the central workflow |
 

@@ -26,6 +26,12 @@
 |---|---|---|---|---|---|---|---|
 | CALENDAR.ENFORCE_DESIGN | decision | 20 | design_enforcement | ready->CALENDAR.EXECUTION_GATE;blocked->CALENDAR.DESIGN_BLOCKED | CALENDAR.CHECK_DEPENDENCIES | stop | Always |
 
+From Date (`EffectiveFrom`) is create-only through FSM. Reject any request to
+change or clear it on an existing calendar before package generation or import.
+Preserve the baseline value during other updates. Do not present an import
+success as evidence that this field changed. This is an FSM import restriction;
+it does not establish whether another interface permits editing the date.
+
 The task-node flow is **Input → Local value checks → Dependencies → Design → Execution gate**.
 `CALENDAR.CHECK_LOCAL_VALUES` precedes `CALENDAR.CHECK_DEPENDENCIES`, followed by
 `CALENDAR.ENFORCE_DESIGN`. This task has no defaulting node; the flow does not add
@@ -55,3 +61,14 @@ Validate all uploaded rows together. Apply period creates and updates to the
 fresh baseline, then reject overlapping final dates involving a requested
 period. Include periods left unchanged in this check. The check applies when
 the header is unchanged, updated, or newly created.
+
+## EBS Period-name Approval Before Import
+
+The input node must pass the EBS period-name decision gate before the design
+node permits candidate approval. Show every predicted change; do not silently
+accept Fusion-derived names. An explicitly accepted rename mapping authorizes
+candidate preparation only. The exact immutable package still requires Data
+Loader approval. Preserve the user's source years, prefixes, dates and original
+names in traceability data. Detect derived-key collisions after applying an
+accepted mapping. Unresolved source review cannot be replaced by a successful
+file/schema validation or by generic submission approval.

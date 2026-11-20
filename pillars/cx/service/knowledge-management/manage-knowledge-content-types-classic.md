@@ -11,8 +11,11 @@ export_import_supported_flag: "Y"
 csv_export_import_supported_flag: "Y"
 dataloader_import_mode: "FSM"
 businessObject: ""
-route_to: "Manage Knowledge Content Types Redwood (ORA_CSO_CONTENT_TYPES_INDEXING_MGMT_REDWOOD)"
+route_to: "cx.service.knowledge-management.manage-knowledge-content-types-redwood"
 source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
+depends_on:
+  - cx.service.knowledge-management.manage-knowledge-content-types-redwood
+
 ---
 
 # Manage Knowledge Content Types Classic
@@ -28,32 +31,34 @@ source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 - Data Loader import mode: `FSM`
 - Business Object: ``
 
+
+
+## Use Cases
+
+### Route Classic Content Types To Redwood
+
+Resolve the nested Redwood task and delegate the request without preparing Classic setup data.
+
+1. Resolve cx.service.knowledge-management.manage-knowledge-content-types-redwood at pillars/cx/service/knowledge-management/manage-knowledge-content-types-redwood/SKILL.md.
+2. Return an assisted router handoff instruction before any setup-data operation; keep the original Classic task context unchanged. The local Classic ready plan is guidance only, not a structured core redirect or permission to prepare source data.
+3. Use the active router/Run Book workflow to select or plan/merge the destination as its own catalog task, preserving project and environment identity.
+4. Validate using the destination persisted task identity, sequence and Run Book binding; do not reuse Classic approval.
+5. Use the Redwood task's prerequisites, package contract and approval gates; stop if the dependency cannot be resolved.
+## Purpose
+
+Delegate Classic content-type requests to the nested Redwood task before any setup-data operation.
 ## Guard Rails
 
-1. Require an authenticated Fusion user context before any Fusion operation; use `core.auth.fusion-oauth-authentication`.
-2. Do not use `core.fusion-api.rest-api-client` to create, update, or delete records.
-3. Do not use `shared.setup-import.task-level-import` to create, update, or delete records.
+1. Route every request to cx.service.knowledge-management.manage-knowledge-content-types-redwood before export, package preparation, validation or import.
+2. Do not execute a Classic setup-data workflow. If the nested Redwood skill is unavailable, stop and report the missing dependency.
+3. Use an assisted router/Run Book handoff. Task Hook returns the local Classic plan, not redirect_required or redirectTarget; ready grants no source export, package preparation, preview or import. Require a separately selected and bound Redwood task before resuming setup work.
+4. The FSM Data Loader Package Requirements are reusable package-integrity guidance for the destination task after handoff; they do not authorize a Classic export or import. The Redwood task identity, contract and approval gates govern every package operation.
 ## Route To
 
-Route to Manage Knowledge Content Types Redwood (ORA_CSO_CONTENT_TYPES_INDEXING_MGMT_REDWOOD).
+Route to cx.service.knowledge-management.manage-knowledge-content-types-redwood.
 ## CSV Export, Import, and Validation Workflow
 
-`CSVExportImportSupportedFlag` is `Y` for this task, so route task setup data work through the relevant skills:
-
-1. Export task setup data with `shared.setup-export.task-level-export`.
-2. Validate exported or prepared task setup data with `shared.validation.setup-data-validator`.
-3. Import setup task data with `core.data-loader`.
-
-Use this task metadata when invoking those skills:
-
-- Offering: `Service`
-- Functional area / Setup Object: `Knowledge Management`
-- Setup task name: `Manage Knowledge Content Types Classic`
-- Setup task code: `ORA_CSO_CONTENT_TYPES_MGMT`
-
-
-
-
+Delegate to `cx.service.knowledge-management.manage-knowledge-content-types-redwood` before any setup-data operation. Do not export, prepare, validate or import a package for this task. Stop if the dependency is unavailable.
 ## FSM Data Loader Package Requirements
 
 1. Read the task's fsm_contract first when it is present. Treat its objects and field guidance as the task-specific starting point for classifying each requested change as an existing-root update, new root, existing-child update, new child of an existing parent, new relationship, or mixed package change.
@@ -76,3 +81,20 @@ Use this task metadata when invoking those skills:
 ## Usage
 
 Use this metadata file when planning, sequencing, exporting, importing, or validating setup data for `Manage Knowledge Content Types Classic` under `Knowledge Management`.
+
+
+## Assisted Router Handoff
+
+Task Hook returns the local Classic rule plan with its original identity. It
+does not emit `redirect_required` or a `redirectTarget`. A ready Classic plan
+provides routing guidance only; stop all Classic export, setup-data preparation,
+preview and import. The assistant returns the exact Redwood task path/code as
+its next-action instruction to the active router/Run Book workflow.
+
+That workflow must select the destination as its own catalog task, or plan/merge
+it if absent, and establish its persisted identity, sequence and environment-bound
+Run Book context before invoking Redwood validation. If the destination, binding
+or supported planning workflow is unavailable, stop with the missing prerequisite.
+Do not rewrite Classic context, reuse Classic approval, or substitute REST or a
+browser. The existing generic source Task Hook readiness is never destination
+readiness or permission to bypass this handoff.

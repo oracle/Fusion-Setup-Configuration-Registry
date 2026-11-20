@@ -1,0 +1,211 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "PO_MANAGE_UN_NUMBERS",
+      "task_name": "Manage UN Numbers",
+      "start_node": "UN.VALIDATE_INPUT",
+      "nodes": [
+        {
+          "id": "UN.VALIDATE_INPUT",
+          "node_type": "decision",
+          "sequence": 10,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "UN.RESOLVE_HAZARD_CLASS",
+            "missing": "UN.HANDLE_ISSUES",
+            "invalid": "UN.HANDLE_ISSUES",
+            "unsupported": "UN.HANDLE_ISSUES"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Every row; evaluate scoped intent and conditional create Description requiredness before lookup, retain delete rules, collect all issues, and reject conflicting operation instructions",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 92
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "UN.RESOLVE_HAZARD_CLASS",
+          "node_type": "decision",
+          "sequence": 15,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "UN.PRESERVE_VALUES",
+            "not_applicable": "UN.PRESERVE_VALUES",
+            "blocked": "UN.HANDLE_ISSUES",
+            "ambiguous": "UN.HANDLE_ISSUES",
+            "failed": "UN.HANDLE_ISSUES"
+          },
+          "prerequisites": [
+            "UN.VALIDATE_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Use resolve_hazard_class for applicable create/update associations; otherwise return not_applicable without a read; never mutate captured records",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 41
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "UN.PRESERVE_VALUES",
+          "node_type": "step",
+          "sequence": 20,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "preserved": "UN.CHECK_DESIGN",
+            "failed": "UN.HANDLE_ISSUES"
+          },
+          "prerequisites": [
+            "UN.RESOLVE_HAZARD_CLASS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Lookup resolved or was not applicable; apply the no-substitution and omission rules to the supplied input",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 32
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "UN.CHECK_DESIGN",
+          "node_type": "decision",
+          "sequence": 30,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "UN.HANDOFF",
+            "blocked": "UN.HANDLE_ISSUES"
+          },
+          "prerequisites": [
+            "UN.PRESERVE_VALUES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Check conditional association evidence, approved preparation transformations and captured-record immutability before Data Loader review",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 38
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "UN.HANDOFF",
+          "node_type": "decision",
+          "sequence": 40,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "UN.READY",
+            "blocked": "UN.HANDLE_ISSUES"
+          },
+          "prerequisites": [
+            "UN.CHECK_DESIGN"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Local design checks and the Prepared Artifact Gate and Source Representation Gate passed; preserve submitted business data for Data Loader review after applicable Hazard Class verification, preserving explicit DELETE or existing create/update controls; this gate authorizes no write",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 108
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "UN.READY",
+          "node_type": "terminal",
+          "sequence": 50,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "UN.HANDOFF"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return READY_FOR_DATALOADER_REVIEW; report whether the read-only Hazard Class lookup was performed or skipped. No Fusion writes were performed; loader checks and execution remain downstream",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 109
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "UN.HANDLE_ISSUES",
+          "node_type": "step",
+          "sequence": 90,
+          "action_type": "error_handler",
+          "execution_route": "local",
+          "transitions": {
+            "reported": "UN.RETURN_ISSUES"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Any reached input, defaulting, design, or handoff failure; disclose and classify locally",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 110
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "UN.RETURN_ISSUES",
+          "node_type": "terminal",
+          "sequence": 100,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "UN.HANDLE_ISSUES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return MISSING for missing facts, UNSUPPORTED for unsupported scope, otherwise FAILED; preserve a safe resume stage",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 111
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 """Shared Field Service task workflow: preview, approval, write, verify."""
 from __future__ import annotations
 
+import argparse
 import json
 import hashlib
 import hmac
@@ -16,10 +17,20 @@ from typing import Any, Protocol
 
 ROOT = Path(__file__).resolve().parents[4]
 REST_CLIENT = ROOT / "core/fusion-api/rest-api-client/scripts/fusion_rest_client.py"
+READ_CLIENT = Path(__file__).with_name("rest_client_status.py")
 REST_SERVICE = "field-service"
 CONTRACT_BLOCK = re.compile(r"```json\s*(\{.*?\})\s*```", re.DOTALL)
 VERIFICATION_ATTEMPTS = 8
 VERIFICATION_INTERVAL_SECONDS = 3
+
+
+def add_service_argument(parser: argparse.ArgumentParser) -> None:
+    """Expose the fixed task transport without allowing scope substitution."""
+    parser.add_argument(
+        "--service", choices=(REST_SERVICE,), default=REST_SERVICE,
+        help="Task API service (default and only option: field-service); uses "
+        "fs_restBaseUrl and fs_scope. Project prevalidation is a separate workflow.",
+    )
 
 
 class WorkflowBlocked(RuntimeError):
@@ -94,6 +105,7 @@ def resolve_execution_route(
         "requestedDirection": direction,
         "executorSkill": selected["executorSkill"],
         "orchestration": selected["orchestration"],
+        "service": REST_SERVICE,
     }
 
 
@@ -230,7 +242,7 @@ def _get(path: str, output: Path, properties: Path) -> dict[str, Any] | None:
     result = _call(
         [
             sys.executable,
-            str(REST_CLIENT),
+            str(READ_CLIENT),
             path,
             "--method",
             "GET",
@@ -244,10 +256,17 @@ def _get(path: str, output: Path, properties: Path) -> dict[str, Any] | None:
     )
     if result.returncode == 0:
         return json.loads(output.read_text(encoding="utf-8"))
-    if re.search(r"\bHTTP\s+404\b", result.stdout + result.stderr):
+    try:
+        failure = json.loads(result.stderr.strip().splitlines()[-1])
+    except (ValueError, IndexError):
+        failure = None
+    status = failure.get("status") if isinstance(failure, dict) and failure.get("type") == "field_service_http_error" else None
+    if type(status) is not int or not 100 <= status <= 599:
+        status = None
+    if status == 404:
         return None
-    message = (result.stderr or result.stdout).strip()
-    failure_class = "fusion_api_error" if re.search(r"\bHTTP\s+\d{3}\b", message) else "transport_or_environment"
+    message = f"HTTP {status}" if status else "Core REST client failed without an authoritative HTTP status."
+    failure_class = "fusion_api_error" if status else "transport_or_environment"
     raise WorkflowBlocked(f"GET {path} failed: {message}", failure_class=failure_class)
 
 
@@ -300,7 +319,7 @@ def _write(
         # allow-listed summary so callers can retain the actionable cause
         # without persisting a response body or customer payload.
         error = WorkflowBlocked(
-            f"{method} {path} failed: {message} (diagnostic: {diagnostic})",
+            f"{method} request failed: {_safe_failure_summary_from_text(message)} (diagnostic: {diagnostic})",
             failure_class=failure_class,
         )
         error.safe_summary = _safe_failure_summary_from_text(message)
@@ -322,6 +341,9 @@ def _put(
 def _redacted_path_template(path: object, *, verify_path: object = None) -> str:
     if not isinstance(path, str) or not path.startswith("/"):
         return "redacted"
+    schedule_item = re.fullmatch(r"(/api/field-service/configuration/v1/workSchedules/)[^/]+(/items)(/[^/]+)?", path)
+    if schedule_item:
+        return schedule_item[1] + "{identity}" + schedule_item[2] + ("/{itemId}" if schedule_item[3] else "")
     # A create request uses a collection path and a distinct singular read-back
     # path.  The collection path contains no customer identity, so retain it
     # verbatim in redacted evidence.  Singular read/write paths redact only the
@@ -371,7 +393,7 @@ def _request_identity(request: dict[str, Any]) -> str:
     raise WorkflowBlocked("Each task request requires a non-empty identity.")
 
 
-def _safe_failure_summary_from_text(text: str, *, allow_test_detail: bool = False) -> str:
+def _safe_failure_summary_from_text(text: str) -> str:
     """Return only allow-listed REST diagnostics from a client response."""
     match = re.search(r"\bHTTP\s+(\d{3})\b", text)
     status = f"HTTP {match.group(1)}" if match else "Fusion REST client error"
@@ -396,26 +418,15 @@ def _safe_failure_summary_from_text(text: str, *, allow_test_detail: bool = Fals
                 details.append(f"ecid={ecid}")
             if details:
                 return f"{status} ({', '.join(details)})"
-            if allow_test_detail:
-                detail = response.get("detail") or response.get("title")
-                if isinstance(detail, str):
-                    detail = " ".join(detail.split())
-                    if len(detail) <= 160 and re.fullmatch(r"[A-Za-z0-9 .,:;()/_-]+", detail):
-                        return f"{status} (reason={detail})"
-    plain = re.search(r"\bcalling\s+\S+:\s*(.+)$", text, re.DOTALL)
-    if plain:
-        reason = " ".join(plain.group(1).split())
-        if len(reason) <= 160 and not any(mark in reason for mark in ("{", "}", "[", "]", '"')) and re.fullmatch(r"[A-Za-z0-9 .,:;()/_-]+", reason):
-            return f"{status} (reason={reason})"
     return status
 
 
-def _safe_failure_summary(error: Exception, *, allow_test_detail: bool = False) -> str:
+def _safe_failure_summary(error: Exception) -> str:
     """Retain actionable API status without leaking endpoint output or payloads."""
     saved = getattr(error, "safe_summary", None)
     if isinstance(saved, str) and saved:
         return saved
-    return _safe_failure_summary_from_text(str(error), allow_test_detail=allow_test_detail)
+    return _safe_failure_summary_from_text(str(error))
 
 
 def _verify_readback(adapter: TaskAdapter, request: dict[str, Any], output: Path, properties: Path) -> list[str]:
@@ -475,6 +486,8 @@ def run(
                     f"Design enforcement failed before REST lookup: {rule_ids}"
                 )
         def selected_profile_get(path: str, response_output: Path) -> dict[str, Any] | None:
+            if not response_output.resolve().is_relative_to(Path(folder).resolve()):
+                raise WorkflowBlocked("Field Service baseline output must remain inside the run temporary directory.")
             return _get(path, response_output, selected_properties)
 
         payload, baselines = adapter.preflight(workbook, selected_profile_get, Path(folder))
@@ -531,15 +544,18 @@ def run(
                 else:
                     _write(method, request["path"], request["body"], write_output, selected_properties, request.get("headers"))
                 _assert_approved_target(selected_properties, preview)
-                differences = _verify_readback(adapter, request, Path(folder) / f"verify-{sequence}.json", selected_properties)
+                verification_request = getattr(adapter, "verification_request", None)
+                readback_request = verification_request(request, write_output) if callable(verification_request) else request
+                differences = _verify_readback(adapter, readback_request, Path(folder) / f"verify-{sequence}.json", selected_properties)
             except WorkflowBlocked as error:
                 if getattr(adapter, "continue_independent_write_failures", False):
-                    failures.append({"sequence": sequence, "label": identity, "safeSummary": _safe_failure_summary(error)})
+                    safe_summary = _safe_failure_summary(error)
+                    failures.append({"sequence": sequence, "safeSummary": safe_summary})
                     diagnostics = output.parent / f"{output.stem}-diagnostics"
                     diagnostics.mkdir(parents=True, exist_ok=True)
                     (diagnostics / f"write-{sequence}.workflow.failure.json").write_text(
                         json.dumps(
-                            {"status": "failed", "sequence": sequence, "label": identity, "error": str(error)},
+                            {"status": "failed", "sequence": sequence, "safeSummary": safe_summary},
                             ensure_ascii=False,
                             indent=2,
                             sort_keys=True,
@@ -548,7 +564,7 @@ def run(
                         encoding="utf-8",
                     )
                     continue
-                safe_summary = _safe_failure_summary(error, allow_test_detail=identity.startswith("fdos_test_"))
+                safe_summary = _safe_failure_summary(error)
                 raise PartialExecutionBlocked(
                     f"Request {sequence} did not complete ({safe_summary}); remaining requests were not attempted.",
                     sha256=preview["sha256"],

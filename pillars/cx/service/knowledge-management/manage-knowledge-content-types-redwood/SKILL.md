@@ -36,7 +36,10 @@ depends_on:
   - "shared.validation.setup-data-validator"
   - "shared.validation.reference-data-validator"
   - "core.data-loader"
+  - "pillars/cx/service/knowledge-management/manage-knowledge-locales.md"
 uses_core:
+  - "core.auth.fusion-oauth-authentication"
+  - "core.fusion-api.rest-api-client"
   - "core.project-mgmt.artifact-version-manager"
   - "core.project-mgmt.artifact-registry-manager"
   - "core.project-mgmt.project-state-manager"
@@ -128,19 +131,20 @@ Create a Knowledge content type with its name, reference key, document ID prefix
 
 1. Export content-type setup data with shared.setup-export.task-level-export.
 2. Use the completed export of the same setup task as the package baseline; preserve its package structure and modify only task-owned rows required for the approved change.
-3. Use the Manage Knowledge Locales skill to identify every active Knowledge locale.
-4. Define the name, reference key, article ID prefix, description, and department. A nonblank Content Type Name is required for every Knowledge locale that is active; add localized content type name and description rows for every active locale and do not limit localization to the default locale. When locale-specific names are not supplied, ask the customer to provide them or confirm that the provided Content Type Name may be used for every active locale.
-5. Optionally configure AI Assist and its content type description.
-6. Optionally allow unrestricted JavaScript and HTML and enable a default article review date.
-7. Define the required title field.
-8. Add and order additional content schema attributes with their names, descriptions, reference keys, field types, and required settings.
-9. Select an attribute field type using one of the allowed values - TEXT_AREA, WYSIWYG_EDIT, TEXT_FIELD, FILE, BOOLEAN, LIST, COUNTER, DATE, DATETIME, TIME, INTEGER, or FLOAT.
-10. Configure attribute visibility after selecting the content type department, and add localized names and descriptions for the title and every additional schema attribute for every active Knowledge locale.
-11. Configure searchable or available-for-filtering attribute options when the selected field type supports them.
-12. Optionally enable file attachments.
-13. Validate the FSM package with shared.validation.setup-data-validator.
-14. Import the approved ZIP with core.data-loader.
-15. Verify the content type with a fresh export.
+3. Preserve every approved explicit value, including referenceKey and schema required settings. Apply documented defaults only to omitted values after reconciling same-task evidence. Do not generate or replace a supplied referenceKey; require an approved unique key before linking child rows. Reject a value that violates a mandatory constraint rather than silently replacing it.
+4. Use the Manage Knowledge Locales skill to identify every active Knowledge locale.
+5. Define the name, reference key, article ID prefix, description, and department. A nonblank Content Type Name is required for every Knowledge locale that is active; add localized content type name and description rows for every active locale and do not limit localization to the default locale. When locale-specific names are not supplied, ask the customer to provide them or confirm that the provided Content Type Name may be used for every active locale.
+6. Optionally configure AI Assist and its content type description.
+7. Optionally allow unrestricted JavaScript and HTML and enable a default article review date.
+8. Define the required title field.
+9. Add and order additional content schema attributes with their names, descriptions, reference keys, field types, and required settings.
+10. Select an attribute field type using one of the allowed values - TEXT_AREA, WYSIWYG_EDIT, TEXT_FIELD, FILE, BOOLEAN, LIST, COUNTER, DATE, DATETIME, TIME, INTEGER, or FLOAT.
+11. Configure attribute visibility after selecting the content type department, and add localized names and descriptions for the title and every additional schema attribute for every active Knowledge locale.
+12. Configure searchable or available-for-filtering attribute options when the selected field type supports them.
+13. Optionally enable file attachments.
+14. Validate the FSM package with shared.validation.setup-data-validator.
+15. Import the approved ZIP with core.data-loader.
+16. Verify the content type with a fresh export.
 
 ### Update Knowledge Content Type
 
@@ -148,14 +152,15 @@ Update a Knowledge content type's properties, content schema, field visibility, 
 
 1. Export content-type setup data with shared.setup-export.task-level-export.
 2. Use the completed export of the same setup task as the package baseline; preserve its package structure and modify only task-owned rows required for the approved change.
-3. Use the Manage Knowledge Locales skill to identify every active Knowledge locale.
-4. Update the selected content type's name, reference key, article ID prefix, description, or department. Maintain a nonblank Content Type Name and localized description row for every Knowledge locale that is active. When locale-specific names are not supplied, ask the customer to provide them or confirm that the provided Content Type Name may be used for every active locale.
-5. Update AI Assist, unrestricted JavaScript and HTML, default article review date, or file attachment settings as required.
-6. Add, edit, reorder, or configure visibility for content schema attributes.
-7. Update attribute names, descriptions, reference keys, required settings, localized values, or supported searchable and filtering options; maintain localized names and descriptions for every schema attribute in every active Knowledge locale, and use only these allowed field type values when changing a field type - TEXT_AREA, WYSIWYG_EDIT, TEXT_FIELD, FILE, BOOLEAN, LIST, COUNTER, DATE, DATETIME, TIME, INTEGER, or FLOAT.
-8. Validate the FSM package with shared.validation.setup-data-validator.
-9. Import the approved ZIP with core.data-loader.
-10. Verify the content type with a fresh export.
+3. Preserve every approved explicit value, including referenceKey and schema required settings. Apply documented defaults only to omitted values after reconciling same-task evidence. Do not generate or replace a supplied referenceKey; require an approved unique key before linking child rows. Reject a value that violates a mandatory constraint rather than silently replacing it.
+4. Use the Manage Knowledge Locales skill to identify every active Knowledge locale.
+5. Update the selected content type's name, reference key, article ID prefix, description, or department. Maintain a nonblank Content Type Name and localized description row for every Knowledge locale that is active. When locale-specific names are not supplied, ask the customer to provide them or confirm that the provided Content Type Name may be used for every active locale.
+6. Update AI Assist, unrestricted JavaScript and HTML, default article review date, or file attachment settings as required.
+7. Add, edit, reorder, or configure visibility for content schema attributes.
+8. Update attribute names, descriptions, reference keys, required settings, localized values, or supported searchable and filtering options; maintain localized names and descriptions for every schema attribute in every active Knowledge locale, and use only these allowed field type values when changing a field type - TEXT_AREA, WYSIWYG_EDIT, TEXT_FIELD, FILE, BOOLEAN, LIST, COUNTER, DATE, DATETIME, TIME, INTEGER, or FLOAT.
+9. Validate the FSM package with shared.validation.setup-data-validator.
+10. Import the approved ZIP with core.data-loader.
+11. Verify the content type with a fresh export.
 
 ### Delete Knowledge Content Type
 
@@ -214,8 +219,8 @@ Use this skill when planning, sequencing, exporting, importing, or validating se
 - `reviewDays`: Retain the exported value unless an approved content-type change targets it.
 - `extendReviewDate`: Retain the exported value unless an approved content-type change targets it.
 - `validateHtml`: Retain the exported value. For a new content type, default to FALSE from the completed export.
-- `enableIndexing`: Retain the exported value unless an approved content-type change targets it.
-- `indexStatus`: Retain the exported value unless an approved content-type change targets it.
+- `enableIndexing`: Retain the exported value unless an approved content-type change targets it. If the export does not provide a value, default to TRUE.
+- `indexStatus`: Retain the exported value unless an approved content-type change targets it. If the export does not provide a value, leave it blank.
 - `allowUnsafeHTMLAndJS`: Retain the exported value. For a new content type, default to FALSE from the completed export.
 - `hasProducts`: Retain the exported value for an existing content type. For a new content type, default to TRUE.
 - `hasCategories`: Retain the exported value for an existing content type. For a new content type, default to TRUE.
@@ -314,3 +319,14 @@ Use this task metadata when invoking those skills:
 ## Implementation Notes
 
 Use the parent functional-area skill `cx.service.knowledge-management` for functional-area sequencing and scope decisions. Track token usage for any generated project artifact or skill-run record using the manifest policy.
+
+
+## Executable Task Validation
+
+The registry classifies export reviews separately from FSM changes. For a
+change, execute input, baseline, active/default locale, department, conditional
+visibility, defaulting and design nodes before the final owning-workflow gate.
+Read every returned rule resource and retain reached-node outcomes in order.
+Missing or conflicting evidence blocks; a generic baseline-ready assertion is
+insufficient. Preserve approved explicit values and exported identities. The
+active Run Book and core.data-loader own exact preview, approval and import.

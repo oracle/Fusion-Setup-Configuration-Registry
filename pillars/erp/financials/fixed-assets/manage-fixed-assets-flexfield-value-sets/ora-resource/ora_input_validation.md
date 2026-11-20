@@ -79,11 +79,32 @@ blank unless the approved design or target package contract requires it.
 
 ## Field and Cross-Field Checks
 
+### Flag Value Normalization
+
+Accept affirmative user input (Yes or Y) and negative user input (No or N)
+case-insensitively. Before field validation, storage, or serialization,
+translate that input to the exact uppercase affirmative or negative value
+listed for its database column below. Never choose a representation at runtime
+or serialize user-facing wording directly. Reject unrecognized input.
+
+The table specifies populated boolean values only. It does not add defaults,
+make optional fields mandatory, authorize changes to read-only or system-managed
+fields, or change existing blank and update-preservation rules. Retain returned
+target values as evidence; do not normalize them to conceal a target mismatch.
+
+| Database table | Database column | Affirmative stored value | Negative stored value |
+|---|---|---|---|
+| FND_VS_VALUE_SETS | PROTECTED_FLAG | `Y` | `N` |
+| FND_VS_VALUE_SETS | UPPERCASE_ONLY_FLAG | `Y` | `N` |
+| FND_VS_VALUE_SETS | ZERO_FILL_FLAG | `Y` | `N` |
+| FND_VS_VALUE_SETS | SECURITY_ENABLED_FLAG | `Y` | `N` |
+| FND_VS_VALUES_B | ENABLED_FLAG | `Y` | `N` |
+
 | Check | Applies When | Validation |
 |---|---|---|
 | Character fields | Character | Require a supported subtype and Maximum Length. When Value Subtype is Text and the current same-task export contains case and fill columns, resolve both flags before packaging. |
-| Uppercase Only | Value Subtype is Text and the current same-task export contains `UppercaseOnlyFlag` | Default to Yes when blank. Serialize the resolved Yes or No value; never serialize a blank. Before package approval, recommend the default and ask whether the customer wants to keep or change it. |
-| Zero Fill | Value Subtype is Text and the current same-task export contains `ZeroFillFlag` | Default to No when blank. Serialize the resolved Yes or No value; never serialize a blank. |
+| Uppercase Only | Value Subtype is Text and the current same-task export contains `UppercaseOnlyFlag` | Default to Yes when blank. Accept flag input case-insensitively and serialize uppercase `Y` for affirmative input or `N` for negative input; never serialize a blank. Before package approval, recommend the default and ask whether the customer wants to keep or change it. |
+| Zero Fill | Value Subtype is Text and the current same-task export contains `ZeroFillFlag` | Default to No when blank. Accept flag input case-insensitively and serialize uppercase `Y` for affirmative input or `N` for negative input; never serialize a blank. |
 | Value-length capacity | Independent or Dependent + Character with value rows | For a new definition, use the customer-supplied Maximum Length when present; otherwise use default 20. For an existing Value Set, use the verified target Maximum Length and add only the requested values; do not create or update its definition. Require every value to fit the resolved length. Do not derive, increase, truncate, or rename values. |
 | Number fields | Number | Reject Precision or Scale for another data type; reject Scale greater than Precision when both are supplied. |
 | Format Only | Format Only | Reject parent and security fields. For a Character / Text definition, accept and resolve Maximum Length and the case/fill flags whenever the current same-task export supports those columns; do not label supported flags Not applicable. |

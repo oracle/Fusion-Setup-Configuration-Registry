@@ -1,0 +1,329 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "PO_MANAGE_APPROVED_SUPPLIER_LIST_STATUSES",
+      "task_name": "Manage Approved Supplier List Statuses",
+      "start_node": "ASL.CLASSIFY_OPERATION",
+      "nodes": [
+        {
+          "id": "ASL.CLASSIFY_OPERATION",
+          "node_type": "decision",
+          "sequence": 1,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "data_load": "ASL.NORMALIZE_INPUT",
+            "read_fetch": "ASL.VALIDATE_FETCH_CRITERIA",
+            "unsupported": "ASL.HANDLE_ISSUES"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Classify the explicit request under Operation Routing; import/create/update/delete never select fetching implicitly",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 152
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ASL.VALIDATE_FETCH_CRITERIA",
+          "node_type": "decision",
+          "sequence": 2,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "ASL.FETCH_STATUSES",
+            "invalid": "ASL.RETURN_FETCH_INPUT_ISSUES",
+            "unsupported": "ASL.RETURN_FETCH_INPUT_ISSUES"
+          },
+          "prerequisites": [
+            "ASL.CLASSIFY_OPERATION"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Explicit read_fetch only; evaluate Fetch Criteria Validation locally before authentication or GET and do not apply import-required fields",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 153
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ASL.NORMALIZE_INPUT",
+          "node_type": "step",
+          "sequence": 5,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "normalized": "ASL.VALIDATE_INPUT"
+          },
+          "prerequisites": [
+            "ASL.CLASSIFY_OPERATION"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Check IDs/null encoding and normalize declared boolean text in a separate validation copy, retain raw records and changes, carry issues into full validation; use captured verification for frozen loader input and the ID-only delete helper for explicitly selected delete rows",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 154
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ASL.VALIDATE_INPUT",
+          "node_type": "decision",
+          "sequence": 10,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "ASL.PRESERVE_VALUES",
+            "missing": "ASL.HANDLE_ISSUES",
+            "invalid": "ASL.HANDLE_ISSUES",
+            "unsupported": "ASL.HANDLE_ISSUES"
+          },
+          "prerequisites": [
+            "ASL.NORMALIZE_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Evaluate every submitted row against Required Groups, Record and Captured Source Validation, Request Context Validation, and Field Validation using only local input and separate intent/source-format context",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 155
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ASL.FETCH_STATUSES",
+          "node_type": "decision",
+          "sequence": 15,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "complete": "ASL.RETURN_FETCH_RESULT",
+            "incomplete": "ASL.RETURN_FETCH_RESULT",
+            "failed": "ASL.RETURN_FETCH_RESULT"
+          },
+          "prerequisites": [
+            "ASL.VALIDATE_FETCH_CRITERIA"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only explicit read_fetch after valid criteria; execute fetch_asl_statuses under Request and Pagination and Local Matching; never execute for create/update/delete or import validation",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 93
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ASL.PRESERVE_VALUES",
+          "node_type": "step",
+          "sequence": 20,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "preserved": "ASL.CHECK_DESIGN",
+            "failed": "ASL.HANDLE_ISSUES"
+          },
+          "prerequisites": [
+            "ASL.VALIDATE_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Verify captured field presence and values without rewriting rows; retain preparation evidence",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 78
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ASL.CHECK_DESIGN",
+          "node_type": "decision",
+          "sequence": 30,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "ASL.HANDOFF",
+            "blocked": "ASL.HANDLE_ISSUES"
+          },
+          "prerequisites": [
+            "ASL.PRESERVE_VALUES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Enforce local policies and return applicable recommendations without live lookups or new approval gates",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 35
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ASL.HANDOFF",
+          "node_type": "decision",
+          "sequence": 40,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "ASL.READY",
+            "blocked": "ASL.HANDLE_ISSUES"
+          },
+          "prerequisites": [
+            "ASL.CHECK_DESIGN"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Evaluate every Representation and Handoff Gate and Prepared Artifact Gate; all rows must pass business rules and representation checks before Data Loader review; no execution authorization",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 154
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ASL.READY",
+          "node_type": "terminal",
+          "sequence": 50,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "ASL.HANDOFF"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return READY_FOR_DATALOADER_REVIEW with verified Fusion side effects none",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 155
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ASL.RETURN_FETCH_RESULT",
+          "node_type": "terminal",
+          "sequence": 60,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "ASL.FETCH_STATUSES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Explicit read_fetch only; return Fetch Results and Failures with existing fetch_result statuses and completeness, including partial observations; never enter Data Loader handoff",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 156
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ASL.RETURN_FETCH_INPUT_ISSUES",
+          "node_type": "terminal",
+          "sequence": 65,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "ASL.VALIDATE_FETCH_CRITERIA"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Explicit read_fetch with invalid or unsupported criteria; return failed with complete=false, empty items, zero matches/pages and sanitized diagnostics without authentication or GET",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 157
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ASL.HANDLE_ISSUES",
+          "node_type": "step",
+          "sequence": 90,
+          "action_type": "error_handler",
+          "execution_route": "local",
+          "transitions": {
+            "reported": "ASL.RETURN_ISSUES"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Classify all reached local issues with row and field context",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 158
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "ASL.RETURN_ISSUES",
+          "node_type": "terminal",
+          "sequence": 100,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "ASL.HANDLE_ISSUES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return MISSING for missing inputs, UNSUPPORTED for unsupported intent, otherwise FAILED; mixed failures use FAILED and retain individual issue types",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 159
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

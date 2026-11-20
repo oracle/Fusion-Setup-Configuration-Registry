@@ -31,6 +31,12 @@ Complete these checks before treating a target environment as ready for the
 first Sales Orchestration rollout. They are validation requirements, not an
 authorization to create, enable, or change any environment resource.
 
+Live validation must use the owning skill's **Controlled Live Validation Route**
+and **Read Preflight** sections. These URL templates do
+not select a client or grant execution authority. In particular, require verified
+paging and safe field-projection support before a `zpsApps` or Dispatcher read;
+otherwise return the manual checklist and the specific `SOURCE_GAP`.
+
 ### Signals
 
 Confirm that every required signal definition exists and has `ActiveFlag` set

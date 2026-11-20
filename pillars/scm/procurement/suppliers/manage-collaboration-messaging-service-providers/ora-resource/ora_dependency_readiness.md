@@ -1,8 +1,8 @@
 # Service Providers FSM Export and Import Prerequisites
 
-These prerequisites extend the existing task-CSV export and import checks. They do not
-introduce provider creation, alter the ZIP, or require another CMK task to have
-completed first. Package shape, provenance, and target binding remain owned
+These prerequisites extend the existing task-CSV export and import checks. Create/update orchestration and package preparation are owned by SKILL.md;
+these read-only prerequisite rules do not alter a ZIP or require another CMK
+task to have completed first. Package shape, provenance, and target binding remain owned
 by ora_input_validation.md; upload approval remains with core.data-loader.
 
 ## Required Dependency Order
@@ -51,7 +51,7 @@ Providers workflow.
 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|
-| CMKSP.CHECK_DEPENDENCIES | decision | 18 | resolve_dependency | ready->CMKSP.IMPORT_GATE;blocked->RETURN_ISSUES | CMKSP.RESOLVE_PREREQUISITES | stop | Before task-CSV import approval |
+| CMKSP.CHECK_DEPENDENCIES | decision | 18 | resolve_dependency | ready->CMKSP.ENFORCE_CHANGES;blocked->RETURN_ISSUES | CMKSP.VERIFY_DELIVERY_IMPORT_TYPE | stop | Before task-CSV import approval |
 
 ## Sources
 

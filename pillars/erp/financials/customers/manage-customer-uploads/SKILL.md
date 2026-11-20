@@ -92,6 +92,14 @@ required_privileges: []
 
 # Manage Customer Uploads Setup Task Guidance
 
+## Local delegation candidate
+
+Read [core delegation and its compatibility gate](references/core-delegation.md).
+Delegate loading to the selected checkout's core.data-loader contract. Customer
+business checks and post-import association remain mandatory. The task does not
+select a loader protocol, emulate a retired envelope or inspect private core state.
+Qualification of this local candidate is recorded separately from historical tests.
+
 ## Current runtime availability
 
 For an explicitly selected partial identity observation, the existing collector
@@ -178,6 +186,7 @@ Use the parent functional-area skill `erp.financials.customers` for functional-a
 ## Customers FBDI Authoring Status
 
 
+
 SQL, JDBC, SQL Developer and Publisher are developer-test validation tools only.
 Do not ask implementors for database access or query execution as part of this
 functional journey. A successful SQL-backed test does not qualify the supported
@@ -207,8 +216,8 @@ sanitized evidence and declared outcomes, and follow only their exact transition
 An unlisted outcome stops execution. A ready assisted plan permits entry into the
 task graph; it does not approve an import or select another execution route.
 
-After the final immutable archive and normal Data Loader preflight are available,
-follow [the shipped Task Hook contract](../../../../../core/data-loader/task-hook/SKILL.md)
+After preparing the final archive, follow
+[the selected core Data Loader contract](../../../../../core/data-loader/SKILL.md)
 and its returned [rule-execution guide](../../../../../core/data-loader/references/task-rule-registry-execution.md)
 through [the task phase contract](references/task-hook-handoff.md). Require ready
 task validation and evaluated ordered rule results before preview; missing or
@@ -269,8 +278,8 @@ process definitions. It can prepare the staging-review input after a complete
 match; it does not prove staging lineage or authorize a new attempt.
 
 Use [registration and argument binding](references/registration-evidence.md) to
-compare fresh supplied adapter evidence with the reviewed recipe and central
-preflight, then carry its hashes into the actual Task Hook preview. Future
+compare the qualified recipe with fresh public registration metadata and loader
+capability evidence. Retain those hashes with the actual core candidate decision. Future
 interface IDs and resolved job arguments remain unavailable before submission.
 
 Use [request-scope observations](references/request-evidence.md) to compare
@@ -285,8 +294,8 @@ Translate the user's business request into a reviewed JSON document with schema_
 When the user requests design or test-data generation, use provenance
 proposed-business-input for the generated proposal. Preserve that origin; do not
 claim the user supplied or accepted its values. Run the same checks, disclose all
-proposed values/effects, and carry the input hash and provenance into the central
-preview's finalData. The normal exact-candidate approval must explicitly cover
+proposed values/effects, and retain the input hash and provenance with the customer review and actual
+core candidate decision. Supply them through core's supported rule-evidence input. The normal exact-candidate approval must explicitly cover
 the proposed data and load; no separate pre-preview acceptance is required.
 Neither provenance value grants execution authority or permits template examples
 to become operational defaults.

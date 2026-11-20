@@ -21,6 +21,17 @@ A read-only fiscal-year inquiry runs only resolve_prorate_fiscal_year_range unde
 Lookup Execution Rules and Fiscal-Year Lookup Freshness; it returns the requested
 finding without convention checks, export, generation, or approvals.
 
+## Convention DFF Gate
+
+Create/update and existing-ZIP readiness require passed
+resolve_prorate_dff_segments outcomes before generation/design readiness.
+The batch-level definition export is distinct from the existing task
+template/spec or update-data export. It adds no approval gate.
+
+The parent review must show applicable required, supplied, or preserved
+Convention Info values with business prompts. Final ZIP validation must
+compare actual serialized values with the reviewed definition and field map.
+
 ## Parent Workflow Continuation
 
 After create/update or existing-ZIP task validation succeeds, immediately read and follow the parent's
@@ -55,8 +66,8 @@ for execution ownership. Task validation alone is not import completion.
 
 | Terminal | Parent Workflow Continuation |
 |---|---|
-| PRC.IMPORT_GATE | Submit only the exact immutable ZIP approved by the parent/Core gate, then hand off the accepted request. |
-| PRC.HANDED_OFF_TO_PARENT | Report `accepted — pending parent verification`; parent/Core owns status, ProcessLog, and fresh target read-back. |
+| PRC.IMPORT_GATE | Check read-only task validation and immutable-artifact readiness; no upload approval or submission is required to complete this gate. |
+| PRC.VALIDATED | Return validated_for_import to the parent/Core workflow for its existing submission approval and execution. Only a correlated accepted-initiation response permits the parent/Core workflow to report accepted; parent verification follows separately. |
 | PRC.DONE_EXISTS | Report Convention name already exists and ask only for a different Name. Creation stops; no equivalence claim, package, or approval. |
 | PRC.DONE_FISCAL_YEARS | Complete the read-only inquiry route from Required Dependency Order, using Disclosure Rules for the requested finding. |
 | PRC.ISSUES | Use Error Situations and Conversation State and Resume. |

@@ -11,7 +11,7 @@ from time import time
 
 SHARED = Path(__file__).resolve().parents[3] / "scripts"
 sys.path.insert(0, str(SHARED))
-from task_orchestration import WorkflowBlocked, run
+from task_orchestration import REST_SERVICE, add_service_argument, WorkflowBlocked, run
 from task_adapter import WorkSkillsAdapter, WorkSkillsInputError
 
 
@@ -154,20 +154,25 @@ def _implementation_result(
             "Confirm routing eligibility with the complete required-skill set.",
             "Confirm group capacity and resource-assignment behavior in the target environment.",
         ]
+    summary["service"] = REST_SERVICE
     return summary
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
+    add_service_argument(parser)
     parser.add_argument("--workbook", type=Path, required=True)
     parser.add_argument("--project-id", required=True)
     parser.add_argument("--execution-direction", choices=("ora_rest_execution", "core.data-loader.task-rest"))
     parser.add_argument("--mode", choices=("preview", "execute"), default="preview")
     parser.add_argument("--approve-checksum")
+    parser.add_argument("--include-exact-preview", action="store_true", help="Return the exact preview to the caller in preview mode; durable evidence remains redacted.")
     parser.add_argument("--properties", type=Path, default=ROOT / "core/auth/fusionEnv.properties")
     parser.add_argument("--output", type=Path, required=True, help="Ephemeral immutable preview output; do not place it under project/.")
     args = parser.parse_args()
     try:
+        if args.include_exact_preview and args.mode != "preview":
+            raise WorkflowBlocked("--include-exact-preview is available only in preview mode.")
         _project_workspace(args.project_id)
         if _is_under_project(args.output):
             raise WorkflowBlocked("Immutable preview output must not be stored under project/ because it contains request bodies.")
@@ -181,12 +186,19 @@ def main() -> int:
             args.output,
             include_exact_preview=True,
         )
+        result["service"] = REST_SERVICE
         preview = result.pop("exactPreview", None)
-        if not isinstance(preview, dict):
+        if result.get("status") == "approval_required" and not isinstance(preview, dict):
             raise WorkflowBlocked("The task runner did not retain the transient immutable preview for its summary.")
         evidence = _project_evidence(args.project_id, result)
         _record_run(args.project_id, evidence, "completed")
-        print(json.dumps(_implementation_result(result, preview, evidence), sort_keys=True))
+        if isinstance(preview, dict):
+            summary = _implementation_result(result, preview, evidence)
+            if args.include_exact_preview:
+                summary["exactPreview"] = preview
+        else:
+            summary = {**result, "service": REST_SERVICE, "redactedEvidence": str(evidence)}
+        print(json.dumps(summary, sort_keys=True))
         return 0
     except Exception as error:
         failure_class = (

@@ -23,7 +23,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 34
+            "line": 35
           },
           "readiness": {
             "status": "ready",
@@ -36,12 +36,25 @@
           "sequence": 2,
           "action_type": "reference_lookup",
           "execution_route": "fusion-rest",
-          "transitions": {"resolved": "WA.DEPENDENCIES", "blocked": "WA.FAILED", "failure": "WA.FAILED"},
-          "prerequisites": ["WA.VALIDATE"],
+          "transitions": {
+            "resolved": "WA.DEPENDENCIES",
+            "blocked": "WA.FAILED",
+            "failure": "WA.FAILED"
+          },
+          "prerequisites": [
+            "WA.VALIDATE"
+          ],
           "on_failure": "stop",
-          "applies_when": "Resolve organization and work-area identity before source preparation.",
-          "source": {"file": "ora_reference_lookups.md", "anchor": "task-nodes", "line": 13},
-          "readiness": {"status": "ready", "blocking_reasons": []}
+          "applies_when": "Resolve organization and create/update work-area identity before source preparation.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 19
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
         },
         {
           "id": "WA.DEPENDENCIES",
@@ -82,7 +95,7 @@
             "WA.DEPENDENCIES"
           ],
           "on_failure": "stop",
-          "applies_when": "Work-area design and FSM import review",
+          "applies_when": "Work-area design and selected-mode import review",
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",

@@ -82,6 +82,30 @@ class LookupPreflightError(Exception):
     """A readable lookup result cannot support the requested design."""
 
 
+class AccountValidationError(LookupPreflightError):
+    """Blocking account result with bounded, task-owned service diagnostics."""
+
+    failure_class = "Fusion API"
+
+    def __init__(self, operation_id: str, response: dict[str, Any], resolution: dict[str, Any] | None = None):
+        self.account_validation_result = response
+        self.account_resolution = resolution
+        details = response.get("validationFailure")
+        self.account_validation = details if isinstance(details, dict) else {
+            "classification": "incomplete_response"}
+        self.classification = self.account_validation["classification"]
+        codes = ", ".join(self.account_validation.get("errorCodes", []))
+        reason = self.account_validation.get("message") or {
+            "soap_fault": "Fusion returned a SOAP fault; this does not establish account absence.",
+            "http_failure": "The account service request failed; this does not establish account absence.",
+            "invalid_account": "Fusion rejected the account; this does not establish account absence.",
+        }.get(self.classification, "No valid existing CCID was confirmed by the account service.")
+        super().__init__(f"Operation {operation_id} InterestSegments validation failed"
+                         f"{(' [' + codes + ']') if codes else ''}: {reason} Import is blocked.")
+        if resolution:
+            self.args = (f"{self.args[0]} {resolution['message']}",)
+
+
 class LookupPaginationError(LookupPreflightError):
     """Incomplete resolver results must never produce a lookup receipt."""
 
@@ -330,6 +354,40 @@ def _resolve_interest_account(
     if baseline is None:
         raise LookupPreflightError(f"Operation {operation['id']} account preflight requires --baseline from a fresh task export.")
     account, ledger = context
+    from interest_account_override import validate_override, warning as override_warning
+    for item in design.get('prerequisites', []):
+        if validate_override(item, operation=operation, account=account, ledger=ledger,
+                             baseline_sha256=baseline.archive_sha256):
+            from fsm_task_adapter import _validate_reference_provenance
+            _validate_reference_provenance(item.get('provenance'), design.get('referenceContext'), baseline)
+            _append_warning(design, override_warning(item))
+            summary['overridden'] = summary.get('overridden', 0) + 1
+            return
+    lookup = None
+    if config.get("coaConfiguration"):
+        from interest_account_resolution import lookup_account, classify_account
+        lookup = lookup_account(config, baseline, ledger, account)
+        proof, instance, chart = lookup
+        if not proof['exactMatches']:
+            decision = classify_account(proof, instance, chart, {})
+            from interest_account_fsm_fallback import validate_deferral, make_deferral
+            for deferred in [*config.get('fsmDeferrals', []), *design.get('prerequisites', [])]:
+                if validate_deferral(deferred, operation=operation, account=account, ledger=ledger,
+                                     baseline_sha256=baseline.archive_sha256):
+                    from fsm_task_adapter import _validate_reference_provenance
+                    _validate_reference_provenance(deferred.get('provenance'), design.get('referenceContext'), baseline)
+                    evidence = deferred['evidence']
+                    current = make_deferral(evidence['creationReceipt'], decision, evidence['taskContext'],
+                        operation=operation, account=account, ledger=ledger,
+                        provenance=_new_reference_provenance(design.get('referenceContext'), baseline))
+                    prior = design.setdefault('prerequisites', [])
+                    design['prerequisites'] = [r for r in prior if not (isinstance(r, dict)
+                        and r.get('operationId') == operation['id'] and r.get('field') == 'InterestSegments')] + [current]
+                    _append_warning(design, f"Operation {operation['id']}: the import will attempt to create the missing account combination while saving Invoice Options. Include this effect in the exact import preview and approval.")
+                    summary['deferredToFsm'] = summary.get('deferredToFsm', 0) + 1
+                    return
+            raise AccountValidationError(operation['id'],
+                {'validationFailure': {'classification': 'confirmed_missing'}}, decision)
     response = _run_account_validation(config, ledger, account)
     if not isinstance(response, dict):
         raise LookupPreflightError(f"Operation {operation['id']} GL response is malformed; import is blocked.")
@@ -340,7 +398,23 @@ def _resolve_interest_account(
             or type(response.get("httpStatus")) is not int or not 200 <= response["httpStatus"] < 300
             or not isinstance(fields, dict) or fields.get("Status") != ["Valid"] or not isinstance(ccids, list) or len(ccids) != 1
             or not isinstance(ccids[0], str) or re.fullmatch(r"[1-9][0-9]{0,37}", ccids[0]) is None):
-        raise LookupPreflightError(f"Operation {operation['id']} InterestSegments is invalid or no existing CCID was confirmed; import is blocked.")
+        resolution = None
+        if config.get("coaConfiguration"):
+            from interest_account_resolution import diagnose_account, ResolutionError
+            try:
+                if lookup is not None:
+                    if (response.get('validationFailure') or {}).get('classification') == 'invalid_account':
+                        from interest_account_resolution import classify_account
+                        resolution = classify_account(*lookup, response['validationFailure'])
+                    else:
+                        resolution = {'classification': 'validation_unavailable', 'creationAllowed': False,
+                            'message': 'This combination exists, but its usability check could not be completed. Resolve the service issue before continuing.'}
+                else:
+                    resolution = diagnose_account(config, baseline, ledger, account, response)
+            except (ResolutionError, metadata.DataLoadError, OSError, ValueError) as exc:
+                resolution = {"classification": "account_check_incomplete", "creationAllowed": False,
+                    "message": "I could not finish checking whether this account exists or whether creation is allowed. No account will be created. Obtain a fresh matching COA export and retry the read-only check."}
+        raise AccountValidationError(operation['id'], response, resolution)
     receipt = {"operationId": operation["id"], "entity": operation["entity"], "field": "InterestSegments",
         "resolver": "validate_account_segments_read_only", "status": "satisfied",
         "targetKey": operation["targetKey"], "requestedValue": account, "ledgerName": ledger,
@@ -607,6 +681,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--design", type=Path, required=True, help="Input request/design JSON.")
     parser.add_argument("--output", type=Path, required=True, help="Resolved design JSON output.")
     parser.add_argument("--baseline", type=Path, help="Fresh Invoice Options export; required for account preflight.")
+    parser.add_argument("--coa-configuration", type=Path, help="Fresh GL_MANAGE_CHARTS_OF_ACCOUNTS_STRUCTURE_INSTANCES data export, used to classify rejected accounts and offer approved creation.")
+    parser.add_argument("--fsm-deferral", type=Path, action="append", default=[], help="Exact creation-deferral receipt; fresh absence/configuration checks remain required.")
     parser.add_argument("--reference-context", type=Path, help="Independently selected Fusion environment and baseUrl JSON; distinct from the OAuth profile name.")
     metadata.add_oauth_arguments(parser)
     return parser.parse_args(argv)
@@ -618,6 +694,9 @@ def main(argv: list[str] | None = None) -> int:
         _validate_new_outputs([args.output], [value for key, value in vars(args).items()
                                              if key != "output" and isinstance(value, Path)])
         config = metadata.read_config(args.properties, **metadata.oauth_kwargs(args))
+        if getattr(args, "coa_configuration", None):
+            config["coaConfiguration"] = args.coa_configuration
+        config["fsmDeferrals"] = [_read_json(path) for path in getattr(args, "fsm_deferral", [])]
         if args.reference_context:
             config["referenceContext"] = _read_json(args.reference_context)
         baseline = (_read_package(args.baseline, _load_contract(TASK_ROOT / "e2e-adapter.json"))
@@ -626,10 +705,14 @@ def main(argv: list[str] | None = None) -> int:
         _write_json(args.output, resolved)
         print(json.dumps({"status": "PASS", **summary, "output": str(args.output)}, sort_keys=True))
         return 0
-    except (LookupPreflightError, AdapterError, metadata.DataLoadError, OSError) as exc:
+    except (LookupPreflightError, AdapterError, metadata.DataLoadError, OSError, RuntimeError) as exc:
         failure = {"status": "FAIL", "error": str(exc)}
         if hasattr(exc, "classification"):
             failure.update(classification=exc.classification, failureClass=exc.failure_class)
+        if isinstance(exc, AccountValidationError):
+            failure["accountValidation"] = exc.account_validation
+            if exc.account_resolution:
+                failure["accountResolution"] = exc.account_resolution
         print(json.dumps(failure, sort_keys=True), file=sys.stderr)
         return 1
 

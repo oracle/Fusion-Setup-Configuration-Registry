@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 import sys
 from typing import Any
@@ -83,6 +84,20 @@ def build_execution_preview(
     return {**draft, "sha256": digest, "approvalRequired": True, "retryPolicy": "never"}
 
 
+def _write_private_preview(output: Path, result: dict[str, Any]) -> None:
+    """Create a private approval artifact without replacing files or symlinks."""
+    content = json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
+    try:
+        output.parent.mkdir(parents=True, exist_ok=True)
+        flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0)
+        with os.fdopen(os.open(output, flags, 0o600), "w", encoding="utf-8") as stream:
+            stream.write(content)
+    except FileExistsError as error:
+        raise ImmutablePreviewError("output already exists; choose a fresh destination.") from error
+    except OSError as error:
+        raise ImmutablePreviewError("private preview output could not be created.") from error
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--payload-preview", type=Path, required=True)
@@ -97,8 +112,7 @@ def main() -> int:
             raise ImmutablePreviewError("payload preview must be an object.")
         baselines = {label: _load_json(path, f"{label} baseline") for label, path in map(_parse_baseline, args.baseline)}
         result = build_execution_preview(payload_preview, args.execution_direction, args.environment, baselines)
-        args.output.parent.mkdir(parents=True, exist_ok=True)
-        args.output.write_text(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        _write_private_preview(args.output, result)
     except ImmutablePreviewError as error:
         print(f"Immutable preview blocked: {error}", file=sys.stderr)
         return 2

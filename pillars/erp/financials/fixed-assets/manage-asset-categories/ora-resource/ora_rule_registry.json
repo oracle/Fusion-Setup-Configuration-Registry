@@ -14,7 +14,7 @@
           "action_type": "validate_input",
           "execution_route": "local",
           "transitions": {
-            "valid": "MAC.CHECK_DEPENDENCIES",
+            "valid": "MAC.RESOLVE_DFF_INPUT",
             "invalid": "MAC.HANDLE_INPUT"
           },
           "prerequisites": [],
@@ -23,7 +23,33 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 98
+            "line": 162
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MAC.RESOLVE_DFF_INPUT",
+          "node_type": "decision",
+          "sequence": 15,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "ready": "MAC.CHECK_DEPENDENCIES",
+            "missing_or_invalid_input": "MAC.HANDLE_INPUT",
+            "unverified": "MAC.HANDLE_DFF_LOOKUP"
+          },
+          "prerequisites": [
+            "MAC.VALIDATE_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Resolve the read-only System Controls/CAT# foundation and required component mapping. Execute resolve_category_dff_segments in input_gate mode for new in-scope rows before dependency assessment or prerequisite preparation. Pure existence checks without DFF criteria do not request create input or export DFF definitions.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 380
           },
           "readiness": {
             "status": "ready",
@@ -41,14 +67,14 @@
             "blocked": "MAC.HANDLE_DEPENDENCY"
           },
           "prerequisites": [
-            "MAC.VALIDATE_INPUT"
+            "MAC.RESOLVE_DFF_INPUT"
           ],
           "on_failure": "stop",
-          "applies_when": "Valid input before package authoring.",
+          "applies_when": "Read-only foundation and the applicable new-row DFF input gate have passed; assess remaining dependencies using that evidence before package authoring.",
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 55
+            "line": 66
           },
           "readiness": {
             "status": "ready",
@@ -67,17 +93,19 @@
             "update_selected": "MAC.APPLY_DEFAULTS",
             "existing_different": "MAC.HANDLE_EXISTING_DIFFERENT",
             "ambiguous": "MAC.HANDLE_LOOKUP",
-            "failure": "MAC.HANDLE_LOOKUP"
+            "failure": "MAC.HANDLE_LOOKUP",
+            "missing_dff_input": "MAC.HANDLE_INPUT",
+            "invalid_dff_value": "MAC.HANDLE_INPUT"
           },
           "prerequisites": [
             "MAC.CHECK_DEPENDENCIES"
           ],
           "on_failure": "stop",
-          "applies_when": "Resolve System Controls and CAT# structure; map all category components and stop on missing required component input before component-value validation. Category creates require complete across-structure collision clearance; classify a cross-structure hold as ambiguous and reconcile target state before any reduced retry scope.",
+          "applies_when": "Reuse the current System Controls/CAT# mapping and batch DFF definition from MAC.RESOLVE_DFF_INPUT. Execute resolve_category_dff_segments in full_validation mode for the resolved row scopes, including regional applicability, exact-row preservation, datatype/value-set checks, and comparison. Recheck newly identified create-row input before any prerequisite preparation without re-exporting the unchanged batch definition. Require full validation before match, absent/create readiness, or update_selected; unverified DFF evidence follows failure. Preserve across-structure collision clearance and fresh reconciliation before any reduced retry scope.",
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 269
+            "line": 381
           },
           "readiness": {
             "status": "ready",
@@ -101,7 +129,7 @@
           "source": {
             "file": "ora_defaulting_rules.md",
             "anchor": "task-nodes",
-            "line": 132
+            "line": 134
           },
           "readiness": {
             "status": "ready",
@@ -126,7 +154,7 @@
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 45
+            "line": 48
           },
           "readiness": {
             "status": "ready",
@@ -151,7 +179,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 95
+            "line": 104
           },
           "readiness": {
             "status": "ready",
@@ -175,7 +203,31 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 96
+            "line": 105
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MAC.HANDLE_DFF_LOOKUP",
+          "node_type": "step",
+          "sequence": 75,
+          "action_type": "error_handler",
+          "execution_route": "local",
+          "transitions": {
+            "handled": "MAC.ISSUES"
+          },
+          "prerequisites": [
+            "MAC.RESOLVE_DFF_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Read-only foundation or DFF definition, applicability, or context evidence is unavailable or ambiguous during input preflight. Report the safe lookup blocker; do not begin prerequisite or package preparation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 106
           },
           "readiness": {
             "status": "ready",
@@ -199,7 +251,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 97
+            "line": 107
           },
           "readiness": {
             "status": "ready",
@@ -223,7 +275,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 98
+            "line": 108
           },
           "readiness": {
             "status": "ready",
@@ -247,7 +299,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 99
+            "line": 109
           },
           "readiness": {
             "status": "ready",
@@ -271,7 +323,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 100
+            "line": 110
           },
           "readiness": {
             "status": "ready",
@@ -295,7 +347,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 101
+            "line": 111
           },
           "readiness": {
             "status": "ready",
@@ -317,7 +369,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 102
+            "line": 112
           },
           "readiness": {
             "status": "ready",
@@ -339,7 +391,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 103
+            "line": 113
           },
           "readiness": {
             "status": "ready",
@@ -359,7 +411,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 104
+            "line": 114
           },
           "readiness": {
             "status": "ready",

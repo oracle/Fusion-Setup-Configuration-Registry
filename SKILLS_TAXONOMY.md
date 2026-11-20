@@ -1,6 +1,6 @@
 # FSCR Skills Taxonomy
 
-Updated: 2026-10-23
+Updated: 2026-11-20
 
 Source: Oracle Fusion Setup and Configuration Skills Registry (FSCR)
 
@@ -19,7 +19,7 @@ The domain links below help you explore available guidance. Each selected workfl
 | [router](router/) | 3 | Implementation orchestration | Objective classification, workflow coordination, and next-action planning. |
 | [core](core/) | 34 | Reusable technical services | Onboarding, authentication, API services, data loading, Run Books, environment checks, project state, and report generation. |
 | [shared](shared/) | 86 | Cross-pillar implementation methods | Intake, planning, baseline assessment, setup movement, validation, conversion, integration, extensibility, reporting, and instance strategy. |
-| [pillars](pillars/) | 1,039 | Business-domain guidance | Common, CX, ERP, HCM, and SCM offering, functional-area, setup-task, and specialized guidance. |
+| [pillars](pillars/) | 1,082 | Business-domain guidance | Common, CX, ERP, HCM, and SCM offering, functional-area, setup-task, and specialized guidance. |
 
 Supporting areas supply reference material and preserve implementation work:
 
@@ -34,7 +34,7 @@ Implementation outputs belong to the selected `project/{project_id}` workspace. 
 
 ## Current Catalog Summary
 
-Total included skill manifests: **1,162**.
+Total included skill manifests: **1,205**.
 
 This snapshot counts each included `SKILL.md` under the four skill layers once, including nested skills and compatibility redirects. Release distribution exclusions apply before counting or selecting navigation links: excluded directories and their descendants contribute no entries. Supporting documents and project artifacts are outside the count. These are manifest counts, not counts of distinct executable operations or completed implementation tasks.
 
@@ -43,10 +43,10 @@ This snapshot counts each included `SKILL.md` under the four skill layers once, 
 | Layer | Count |
 | --- | ---: |
 | Core | 34 |
-| Pillar | 1,039 |
+| Pillar | 1,082 |
 | Router | 3 |
 | Shared | 86 |
-| **Total** | **1,162** |
+| **Total** | **1,205** |
 
 The manifest layer value `pillar` corresponds to the repository folder `pillars/`.
 
@@ -58,12 +58,12 @@ The manifest layer value `pillar` corresponds to the repository folder `pillars/
 | `assessment` | 16 | Scope, requirements, current-state, or readiness assessment. |
 | `export` | 5 | Preparation or retrieval of setup packages and related export artifacts. |
 | `import` | 66 | Import preparation, coordination, or execution within the owning workflow. |
-| `orchestration` | 146 | Coordination of skills, business domains, or implementation activities. |
-| `planning` | 875 | Roadmaps, dependencies, functional-area guidance, and setup-task preparation. |
+| `orchestration` | 148 | Coordination of skills, business domains, or implementation activities. |
+| `planning` | 916 | Roadmaps, dependencies, functional-area guidance, and setup-task preparation. |
 | `support` | 1 | Supporting task execution, as declared by the current manifest. |
 | `validation` | 7 | Checks of configuration, evidence, or readiness. |
 | `verification` | 14 | Verification of specific outcomes within the skill's declared scope. |
-| **Total** | **1,162** | |
+| **Total** | **1,205** |  |
 
 Types report the values declared in the current manifests, including `support`; they do not assert schema conformance or replace the workflow descriptions.
 
@@ -72,26 +72,26 @@ Types report the values declared in the current manifests, including `support`; 
 | Declared execution mode | Count | What to expect |
 | --- | ---: | --- |
 | `advisory` | 28 | Guidance for the implementer to apply. |
-| `assisted` | 922 | Guided work, artifacts, or recommendations requiring human involvement. |
+| `assisted` | 962 | Guided work, artifacts, or recommendations requiring human involvement. |
 | `automated` | 7 | Supported actions executed by automation under the workflow's checks and approvals. |
-| `hybrid` | 205 | A combination of automation and human decisions or approvals. |
-| **Total** | **1,162** | |
+| `hybrid` | 208 | A combination of automation and human decisions or approvals. |
+| **Total** | **1,205** |  |
 
 ### By Pillar Value
 
 | Declared pillar | Count |
 | --- | ---: |
-| CX | 203 |
 | Common | 92 |
 | Core | 31 |
-| ERP | 104 |
+| CX | 210 |
+| ERP | 132 |
 | HCM | 457 |
 | Router | 3 |
-| SCM | 266 |
+| SCM | 274 |
 | Not declared | 6 |
-| **Total** | **1,162** |
+| **Total** | **1,205** |
 
-Pillar values describe manifest applicability, so they differ from folder counts. For example, `Common` includes cross-pillar shared skills as well as Common-pillar skills. Six manifests omit a pillar value and remain included in the other summaries.
+Pillar values describe manifest applicability, so they differ from folder counts. For example, `Common` includes cross-pillar shared skills as well as Common-pillar skills. 6 manifests omit a pillar value and remain included in the other summaries.
 
 ## Domain Inventory
 
@@ -148,10 +148,10 @@ Pillar folders organize business guidance by offering or specialist domain, then
 | Domain | Count | Coverage and example entry points |
 | --- | ---: | --- |
 | [pillars/common](pillars/common/) | 9 | [Security Console](pillars/common/security-console/SKILL.md): roles, duties, data-security policies, user provisioning, HCM role-provisioning rules, and related security setup across pillars. |
-| [pillars/cx](pillars/cx/) | 203 | [Sales](pillars/cx/sales/SKILL.md), [Service](pillars/cx/service/SKILL.md), [Field Service](pillars/cx/field-service/SKILL.md), [Customer Data Management](pillars/cx/customer-data-management/SKILL.md), [Subscriptions](pillars/cx/subscriptions/SKILL.md), [Configure Price Quote](pillars/cx/configure-price-quote/SKILL.md), [Customer Loyalty](pillars/cx/customer-loyalty/SKILL.md), [Marketing](pillars/cx/marketing/SKILL.md), [Sales Marketing](pillars/cx/sales-marketing/SKILL.md), and [PRM](pillars/cx/prm-offering/SKILL.md). |
-| [pillars/erp](pillars/erp/) | 104 | [Financials](pillars/erp/financials/SKILL.md), [Project Financial Management](pillars/erp/project-financial-management/SKILL.md), [Risk and Security](pillars/erp/risk-and-security/SKILL.md), [Fusion Accounting Hub](pillars/erp/fusion-accounting-hub/SKILL.md), [Grants Management](pillars/erp/grants-management/SKILL.md), [Project Execution Management](pillars/erp/project-execution-management/SKILL.md), [Public Sector Permits](pillars/erp/public-sector-permits/SKILL.md), [Public Sector Business Licenses](pillars/erp/public-sector-business-licenses/SKILL.md), [Public Sector Code Enforcement](pillars/erp/public-sector-code-enforcement/SKILL.md), and [Public Sector Planning and Zoning](pillars/erp/public-sector-planning-and-zoning/SKILL.md). |
+| [pillars/cx](pillars/cx/) | 210 | [Sales](pillars/cx/sales/SKILL.md), [Service](pillars/cx/service/SKILL.md), [Field Service](pillars/cx/field-service/SKILL.md), [Customer Data Management](pillars/cx/customer-data-management/SKILL.md), [Subscriptions](pillars/cx/subscriptions/SKILL.md), [Configure Price Quote](pillars/cx/configure-price-quote/SKILL.md), [Customer Loyalty](pillars/cx/customer-loyalty/SKILL.md), [Marketing](pillars/cx/marketing/SKILL.md), [Sales Marketing](pillars/cx/sales-marketing/SKILL.md), and [PRM](pillars/cx/prm-offering/SKILL.md). |
+| [pillars/erp](pillars/erp/) | 132 | [Financials](pillars/erp/financials/SKILL.md), [Project Financial Management](pillars/erp/project-financial-management/SKILL.md), [Risk and Security](pillars/erp/risk-and-security/SKILL.md), [Fusion Accounting Hub](pillars/erp/fusion-accounting-hub/SKILL.md), [Grants Management](pillars/erp/grants-management/SKILL.md), [Project Execution Management](pillars/erp/project-execution-management/SKILL.md), [Public Sector Permits](pillars/erp/public-sector-permits/SKILL.md), [Public Sector Business Licenses](pillars/erp/public-sector-business-licenses/SKILL.md), [Public Sector Code Enforcement](pillars/erp/public-sector-code-enforcement/SKILL.md), and [Public Sector Planning and Zoning](pillars/erp/public-sector-planning-and-zoning/SKILL.md). |
 | [pillars/hcm](pillars/hcm/) | 457 | [Global Human Resources](pillars/hcm/global-human-resources/SKILL.md), [Global Payroll](pillars/hcm/global-payroll/SKILL.md), [Recruiting](pillars/hcm/recruiting/SKILL.md), [HCM Security](pillars/hcm/hcm-security/SKILL.md), [Benefits Configuration](pillars/hcm/benefits-configuration/SKILL.md), [Compensation](pillars/hcm/compensation/SKILL.md), [Goal Management](pillars/hcm/goal-management/SKILL.md), [Learning Management](pillars/hcm/learning-management/SKILL.md), [Performance Management](pillars/hcm/performance-management/SKILL.md), [Succession Management and Talent Pool](pillars/hcm/succession-management-and-talent-pool/SKILL.md), [Talent Review Setup](pillars/hcm/talent-review-setup/SKILL.md), [Workforce Absence Management](pillars/hcm/workforce-absence-management/SKILL.md), [Workforce Scheduling Management](pillars/hcm/workforce-scheduling-management/SKILL.md), [Workforce Time Management](pillars/hcm/workforce-time-management/SKILL.md), [HCM Communicate](pillars/hcm/hcm-communicate/SKILL.md), and [HCM Tool](pillars/hcm/hcm-tool/SKILL.md). |
-| [pillars/scm](pillars/scm/) | 266 | [Manufacturing and Supply Chain Materials Management](pillars/scm/manufacturing-and-supply-chain-materials-management/SKILL.md), [Order Management](pillars/scm/order-management/SKILL.md), [Procurement](pillars/scm/procurement/SKILL.md), [Product Management](pillars/scm/product-management/SKILL.md), and [Supply Chain Planning](pillars/scm/supply-chain-planning/SKILL.md). |
+| [pillars/scm](pillars/scm/) | 274 | [Manufacturing and Supply Chain Materials Management](pillars/scm/manufacturing-and-supply-chain-materials-management/SKILL.md), [Order Management](pillars/scm/order-management/SKILL.md), [Procurement](pillars/scm/procurement/SKILL.md), [Product Management](pillars/scm/product-management/SKILL.md), and [Supply Chain Planning](pillars/scm/supply-chain-planning/SKILL.md). |
 
 For example, [Product Management](pillars/scm/product-management/SKILL.md) contains [Items](pillars/scm/product-management/items/SKILL.md), which contains focused setup guidance such as [Manage Units of Measure](pillars/scm/product-management/items/manage-units-of-measure/SKILL.md). This hierarchy lets an implementation team move from business scope to the relevant task detail.
 

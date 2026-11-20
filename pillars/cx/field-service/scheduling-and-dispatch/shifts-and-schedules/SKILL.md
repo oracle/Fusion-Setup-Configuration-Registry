@@ -132,7 +132,7 @@ Before any current-state lookup, preview, or write, the runner validates the fil
 
 ## REST Parent and Item Contract
 
-Source: [API Structure - Configuration](https://confluence.oraclecorp.com/confluence/display/OFSCdev/API+Structure+-+Configuration), Work Schedules and Shifts v1 sections. The REST client uses the documented Configuration API paths below.
+Source: Configuration API contract (public source verification pending), Work Schedules and Shifts v1 sections. The REST client uses the documented Configuration API paths below.
 
 Use the documented metadata API in this mandatory dependency order:
 

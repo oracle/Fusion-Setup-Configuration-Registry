@@ -4,6 +4,7 @@
 
 | Field | Internal | Resolved value | Applies When | User Override | Resolver |
 |---|---|---|---|---|---|
+| Annual-row DFF values | No | Preserve supplied per-year values; leave unresolved values pending for FY.RESOLVE_DFF. Never invent required values. Permit omitted values to remain blank only after current-definition validation. | Proposed create-new annual rows | Yes, subject to validation | resolve_fiscal_year_dff_segments |
 | Start fiscal year | No | When the selected start basis is Oldest DPIS, including a user-defined request without a supplied start year, identify the fiscal-year cycle row whose inclusive range contains Oldest DPIS (`Start Date <= Oldest DPIS <= End Date`) and use it as the first fiscal year. For a ledger-derived request, retain the earliest complete ledger fiscal year unless the user explicitly requests Oldest-DPIS-based creation. | Oldest-DPIS-based setup, including user-defined creation without a supplied start year | Yes | resolve_oldest_in_service_date_from_system_controls |
 | End fiscal year | No | Fiscal year that starts in the next calendar year | Initial setup without supplied end coverage | Yes |  |
 | Description | No | Human-readable sentence-case form of Fiscal Year Name | User leaves it blank for a new definition | Yes | |
@@ -43,6 +44,6 @@ For every create-new request, render a Design Preview after the equivalent-year 
 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|
-| FY.APPLY_DEFAULTS | step | 60 | apply_default | applied->FY.ENFORCE_DESIGN;blocked->FY.HANDLE_DEPENDENCY | FY.VALIDATE_DPIS_CONTAINMENT | stop | User selected create-new and the exact selected name is confirmed absent. Reuse a current pre-decision name check only for the same unchanged name and target; otherwise complete the selected-name check after the decision before applying defaults. |
+| FY.APPLY_DEFAULTS | step | 60 | apply_default | applied->FY.RESOLVE_DFF;blocked->FY.HANDLE_DEPENDENCY | FY.VALIDATE_DPIS_CONTAINMENT | stop | User selected create-new and the exact selected name is confirmed absent. Reuse a current pre-decision name check only for the same unchanged name and target; otherwise complete the selected-name check after the decision before applying defaults. |
 
 

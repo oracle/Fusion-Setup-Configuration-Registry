@@ -19,11 +19,11 @@
           },
           "prerequisites": [],
           "on_failure": "stop",
-          "applies_when": "A create or update package is requested",
+          "applies_when": "A create or update package is requested; validate supplied or constructed new Internal Name and require constructed-candidate confirmation for Create; validate Sequence Generated details; resolve source/existing role-assignee values and explicit overrides before prompts; require nonblank member only when effective Assignee Role is present for Create/cloning or Update; block invalid pairs before further export/import",
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 40
+            "line": 48
           },
           "readiness": {
             "status": "ready",
@@ -34,8 +34,8 @@
           "id": "COT.RESOLVE_EXPORT",
           "node_type": "step",
           "sequence": 20,
-          "action_type": "reference_lookup",
-          "execution_route": "fusion-rest",
+          "action_type": "evaluate_result",
+          "execution_route": "local",
           "transitions": {
             "resolved": "COT.RESOLVE_ATTACHMENT_CATEGORY",
             "invalid": "COT.REPORT_ISSUES"
@@ -48,7 +48,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 50
+            "line": 51
           },
           "readiness": {
             "status": "ready",
@@ -124,7 +124,7 @@
           "source": {
             "file": "ora_defaulting_rules.md",
             "anchor": "task-nodes",
-            "line": 28
+            "line": 31
           },
           "readiness": {
             "status": "ready",
@@ -149,7 +149,7 @@
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 64
+            "line": 68
           },
           "readiness": {
             "status": "ready",
@@ -174,7 +174,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 70
+            "line": 77
           },
           "readiness": {
             "status": "ready",
@@ -196,7 +196,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 71
+            "line": 78
           },
           "readiness": {
             "status": "ready",
@@ -218,7 +218,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 72
+            "line": 79
           },
           "readiness": {
             "status": "ready",
@@ -240,7 +240,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 73
+            "line": 80
           },
           "readiness": {
             "status": "ready",

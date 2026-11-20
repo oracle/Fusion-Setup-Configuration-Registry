@@ -1,6 +1,6 @@
 # Manage Tax Fields defaults
 
-Evidence: SRC-CS-UI-VO and SRC-CS-FSM-VO. UI defaults do not prove import defaults. Preserve explicit user values. These are authoring controls, not claims that Oracle defaults or clears omitted values. The input and execution gates enforce explicit business values and the single setup-option member contract.
+Evidence: SRC-CS-UI-VO and SRC-CS-FSM-VO. UI defaults do not prove import defaults. Preserve explicit user values. These are authoring controls, not claims that Oracle defaults or clears omitted values. The input and execution gates enforce explicit business values and the Tax-specific alias qualification contract. Never infer ENABLE_TAX from a tax rule's EnabledFlag.
 
 ## Standard Defaults
 

@@ -1,7 +1,7 @@
 """Offline category-field operation planner; no Fusion calls or import approval.
 
 Consumes normalized workbook requests and a complete workflow-verified baseline.
-Raw inputs and output contain customer configuration: keep them outside project/.
+Keep customer inputs and outputs in the untracked active project workspace.
 """
 import argparse
 from collections import Counter
@@ -23,6 +23,17 @@ LABELS = {'required': 'REQUIRED', 'optional': 'ENABLED', 'hidden': 'DISABLED'}
 def plan(data):
     if not isinstance(data, dict):
         raise ValueError('Expected an object')
+    # Regenerate EBS intent before workbook defaults or package construction.
+    if 'ebsSource' in data or any(isinstance(r, dict) and isinstance(r.get('source'), dict)
+                                 and r['source'].get('type') == 'ebs-category-csv'
+                                 for r in (data.get('requests') or [])):
+        from ebs_intake import validate_binding
+        issues = validate_binding(data)
+        if issues:
+            return {'input_status': 'passed', 'contract_status': 'blocked',
+                    'execution_status': 'blocked', 'failure_class': 'catalog_mismatch',
+                    'issues': issues, 'operations': [], 'counts': {}, 'submission_allowed': False,
+                    'next_action': 'Resolve all EBS mappings before planning; do not import a partial source batch.'}
     # These assertions must come from the routed workflow, not workbook cells.
     evidence = data.get('baselineEvidence', {})
     environment = data.get('environment')

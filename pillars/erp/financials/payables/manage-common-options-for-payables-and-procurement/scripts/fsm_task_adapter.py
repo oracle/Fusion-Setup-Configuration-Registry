@@ -132,7 +132,7 @@ def _decode_csv(raw: bytes, member: str) -> tuple[list[str], list[dict[str, str]
     except UnicodeDecodeError as exc:
         raise AdapterError(f"{member} is not UTF-8 CSV: {exc}") from exc
     try:
-        reader = csv.reader(io.StringIO(text, newline=""))
+        reader = csv.reader(io.StringIO(text, newline=""), strict=True)
         headers = next(reader, [])
         if (
             not headers
@@ -484,6 +484,8 @@ def _validate_field_value(
             f"Operation {operation_id} field {entity['name']}.{field} expects "
             f"a source-compatible {expected} value; received {type(value).__name__}."
         )
+    if _is_account_segment_field(entity, field):
+        _account_segment_parts(value)
     if (
         value_contract
         and value_contract.get("constraintKind")
@@ -1768,6 +1770,56 @@ def normalize_design(
     return blueprint, preview, requirements
 
 
+def _is_account_segment_field(entity: dict[str, Any], field: str) -> bool:
+    return any(
+        item.get("field") == field
+        and item.get("resolver") == "validate_account_segments_read_only"
+        for item in entity.get("conditionallyBlockedFields", [])
+    )
+
+
+def _account_segment_parts(value: str) -> list[str]:
+    """Decode business input or this task's newline-delimited account array."""
+    if value == "":
+        return []
+    text = value.replace("\r\n", "\n")
+    if "\r" in text:
+        raise AdapterError("Unsupported account segment line ending.")
+    if "\n" in text:
+        parts = text.split("\n")
+        if parts[-1] == "":
+            parts.pop()  # The final delimiter is not an additional segment.
+        if len(parts) > 30:
+            raise AdapterError("Account segment array exceeds 30 slots.")
+        while parts and parts[-1] == "":
+            parts.pop()
+    else:
+        parts = text.split("-")
+    if not 1 <= len(parts) <= 30 or any(not part for part in parts):
+        raise AdapterError("One through 30 non-empty account segments are required.")
+    return parts
+
+
+def _csv_field_value(entity: dict[str, Any], field: str, value: Any) -> str:
+    """Separate business/receipt values from the same-task FSM CSV encoding."""
+    text = str(value)
+    if not _is_account_segment_field(entity, field) or text == "":
+        return text
+    parts = _account_segment_parts(text)
+    return "\n".join(parts + [""] * (30 - len(parts))) + "\n"
+
+
+def _field_values_match(
+    entity: dict[str, Any], field: str, left: str, right: str
+) -> bool:
+    if not _is_account_segment_field(entity, field):
+        return left == right
+    try:
+        return _account_segment_parts(left) == _account_segment_parts(right)
+    except AdapterError:
+        return False  # Malformed persisted values cannot prove a match.
+
+
 def _candidate_rows(
     contract: dict[str, Any],
     baseline: PackageData,
@@ -1785,7 +1837,10 @@ def _candidate_rows(
             row.update({field: str(value) for field, value in operation["targetKey"].items()})
         else:
             raise AdapterError(f"Unsupported action {operation['action']!r}.")
-        row.update({field: str(value) for field, value in operation["values"].items()})
+        row.update({
+            field: _csv_field_value(entity, field, value)
+            for field, value in operation["values"].items()
+        })
         for field in entity["auditFields"]:
             row[field] = ""
         output[entity["name"]].append(row)
@@ -1846,9 +1901,10 @@ def _semantic_issues(
             continue
         before = baseline_rows.get(key, {header: "" for header in entity["headers"]})
         for field, value in operation["values"].items():
-            if row[field] != str(value):
+            expected_value = _csv_field_value(entity, field, value)
+            if row[field] != expected_value:
                 issues.append(
-                    {"code": "VALUE_MISMATCH", "message": f"{entity['name']} {key!r} {field} is {row[field]!r}, expected {str(value)!r}."}
+                    {"code": "VALUE_MISMATCH", "message": f"{entity['name']} {key!r} {field} is {row[field]!r}, expected CSV value {expected_value!r}."}
                 )
         if operation["action"] == "update":
             allowed = set(operation["values"]) | set(entity["auditFields"])
@@ -2100,7 +2156,10 @@ def reconcile(
             requested = str(requirement["requestedValue"])
             candidate_value = "" if candidate_row is None else candidate_row[field]
             persisted_value = "" if persisted_row is None else persisted_row[field]
-            passed = candidate_value == requested and persisted_value == requested
+            passed = (
+                candidate_value == _csv_field_value(entity, field, requested)
+                and _field_values_match(entity, field, persisted_value, requested)
+            )
         elif kind == "preserve_target":
             operation = operation_map[requirement["operationId"]]
             allowed = set(operation["values"]) | set(entity["auditFields"])
@@ -2233,12 +2292,26 @@ def make_rollback(
         if original_row is None or current_row is None:
             raise AdapterError(f"Rollback target {entity['name']} {key!r} is missing.")
         for field, forward_value in operation["values"].items():
-            if current_row[field] != str(forward_value):
+            if not _field_values_match(entity, field, current_row[field], str(forward_value)):
                 raise AdapterError(
                     f"Rollback target {entity['name']}.{field} no longer matches "
                     "the forward requested value; review concurrent changes first."
                 )
-        values = {field: original_row[field] for field in operation["values"]}
+        # Restored account receipts bind business values just like forward
+        # receipts; package generation encodes them only at the CSV boundary.
+        values = {}
+        for field in operation["values"]:
+            value = original_row[field]
+            if _is_account_segment_field(entity, field):
+                segments = _account_segment_parts(value)
+                if any("-" in segment for segment in segments):
+                    raise AdapterError(
+                        f"Rollback account {entity['name']}.{field} contains a "
+                        "segment with a hyphen; its business representation is "
+                        "ambiguous. Review the restored account before preparation."
+                    )
+                value = "-".join(segments)
+            values[field] = value
         operations.append(
             {
                 "id": f"RB-OP-{index:03d}",

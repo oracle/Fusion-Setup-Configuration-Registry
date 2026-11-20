@@ -34,9 +34,9 @@ contract, candidate package, or fresh baseline; it requires no reference lookup.
 | Allow override of supplier site bank account | `AllowSupplierBankOverride` | Validate `Y` or `N`. |
 | Allow document category override | `PayDocCategoryOverride` | Validate `Y` or `N`. |
 | Allow payee override for third-party payments | `AllowPymtThirdPartyOvrd` | Validate `Y` or `N`. |
-| Account for Payment | `WhenToAccountPmt` | Use the observed package code: `PAYMENT ONLY` (At payment issue), `CLEARING ONLY` (At payment clearing), or `BOTH` (At payment issue and clearing). Oracle's [SystemOptionEO declaration](https://codesearch.oraclecorp.com/source/xref/FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64/fusionapps/fin/components/payables/ap/sharedSetup/payablesSystemOptions/model/src/oracle/apps/financials/payables/sharedSetup/payablesSystemOptions/model/entity/SystemOptionEO.xml#2207) sets `Precision="30"` for this field, so reject values longer than 30 characters before preview. |
+| Account for Payment | `WhenToAccountPmt` | Use the observed package code: `PAYMENT ONLY` (At payment issue), `CLEARING ONLY` (At payment clearing), or `BOTH` (At payment issue and clearing). Reject values longer than 30 characters before preview. |
 | Bank Charge Deduction Type | `BankChargeDeductionTypeDes` | Write `Standard`, `Negotiated`, or `None`. Do not write the database codes `S`, `N`, or `X`. |
-| Minimum days to initiate escheatment | `EscheatmentEligibilityPeriod` | Require a nonnegative integer. |
+| Minimum days to initiate escheatment | `EscheatmentEligibilityPeriod` | Require a nonnegative integer when nonblank. An explicitly requested blank clear remains blank and is validated by FSM; never replace it with zero. |
 
 | Check | What Happens | Applies When | Resolver |
 |---|---|---|---|

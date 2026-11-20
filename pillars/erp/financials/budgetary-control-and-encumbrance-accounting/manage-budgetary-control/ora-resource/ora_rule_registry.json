@@ -1,0 +1,207 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "ORA_XCC_ENABLE_BUDGETARY_CONTROL",
+      "task_name": "Manage Budgetary Control",
+      "start_node": "MBC.VALIDATE",
+      "nodes": [
+        {
+          "id": "MBC.VALIDATE",
+          "node_type": "step",
+          "sequence": 1,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "MBC.DEPEND",
+            "invalid": "MBC.RETURN_ISSUES"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Before preview generation",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 86
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MBC.DEPEND",
+          "node_type": "step",
+          "sequence": 2,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "MBC.LOOKUP",
+            "blocked": "MBC.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MBC.VALIDATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "After input validation",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 61
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MBC.LOOKUP",
+          "node_type": "step",
+          "sequence": 3,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "MBC.DEFAULT",
+            "blocked": "MBC.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MBC.DEPEND"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Before defaults and preview",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 81
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MBC.DEFAULT",
+          "node_type": "step",
+          "sequence": 4,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "MBC.DESIGN",
+            "blocked": "MBC.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MBC.LOOKUP"
+          ],
+          "on_failure": "stop",
+          "applies_when": "After required technical values resolve",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 34
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MBC.DESIGN",
+          "node_type": "decision",
+          "sequence": 5,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "pass": "MBC.READINESS",
+            "blocked": "MBC.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MBC.DEFAULT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Before immutable preview",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 102
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MBC.READINESS",
+          "node_type": "decision",
+          "sequence": 6,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "MBC.DONE_READY",
+            "blocked": "MBC.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "MBC.DESIGN"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Before preview or live import",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 87
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MBC.DONE_READY",
+          "node_type": "terminal",
+          "sequence": 7,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "MBC.READINESS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Readiness record is complete; import still needs explicit approval",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 88
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MBC.RETURN_ISSUES",
+          "node_type": "terminal",
+          "sequence": 8,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Any validation, lookup, dependency, default, design, or readiness blocker",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 89
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

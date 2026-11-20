@@ -13,7 +13,6 @@
 
 | Applies When | Severity | Required Lookup | Blocking Condition | Recommendation | Fix Allowed? |
 |---|---|---|---|---|---|
-| Resource is scheduled in a work definition or work order | Error |  | Usage UOM is not in the profile-defined service-duration UOM class | Use a UOM class suitable for Time for scheduled resources | Yes |
 | HcmSchedulingGroupCode is supplied for a LABOR resource | Error |  | The plant HCM scheduler is disabled or the group is invalid | Enable the plant prerequisite and select a valid scheduling group | Yes |
 | AutomationEquipmentFlag is Y | Error |  | ResourceType is not EQUIPMENT or plant robotics is disabled | Use EQUIPMENT and enable the plant robotics prerequisite | Yes |
 | Labor instance is associated to a party | Error |  | The party is not an eligible employee, contingent worker, or partner contact, or violates uniqueness | Use an eligible, unique party association | Yes |
@@ -27,9 +26,10 @@
 | resolve_parent_resource | A child request needs its parent identity, type, organization, or automation flag | ResourceId, OrganizationId, ResourceType, AutomationEquipmentFlag | ora_reference_lookups.md |
 | resolve_work_center_by_id | A primary work center is supplied by ID | WorkCenterId and returned work-center identity | ora_reference_lookups.md |
 | resolve_equipment_asset_by_id | An equipment asset is supplied by ID | AssetId and returned asset identity | ora_reference_lookups.md |
+| resolve_resource_uom | Parent create or explicit UOM change | Exact UOMCode and active-date evidence | ora_reference_lookups.md |
 
 ## Task Nodes
 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|
-| MFGRES.DESIGN | decision | 3 | design_enforcement | compliant->MFGRES.ROUTE_REST;blocked->MFGRES.BLOCKED | MFGRES.DEPENDENCIES | stop | A Manufacturing Resources request passes input and dependency validation. |
+| MFGRES.DESIGN | decision | 6 | design_enforcement | compliant->MFGRES.ROUTE_REST;blocked->MFGRES.BLOCKED | MFGRES.DEPENDENCIES | stop | A Manufacturing Resources request passes input and dependency validation, including the supplied/defaulted UOM. |

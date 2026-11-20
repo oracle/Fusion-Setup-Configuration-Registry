@@ -1,6 +1,34 @@
 # Registration and argument binding
 
 
+
+## Current delegated workflow
+
+Use `review_delegated_registration(candidate, operation, environment, publication,
+live, capability_evidence, runbook_control)`. It retains the full recipe checks
+below, checks complete targeted live BO/FBDI metadata and the BO change marker,
+and requires runBookTaskCode capability through `customer_loader_capability.review`.
+The result is task prerequisite evidence, not approval or an exported core plan.
+Follow [core delegation](core-delegation.md) for the actual decision and import.
+
+At ARCU.EXECUTION_GATE, the declared read-only capability request is GET
+`/hcmRestApi/resources/latest/dataLoaderDataSets/describe`, through the existing
+core REST client and selected environment profile. Retain the complete response
+with schema_version `ar-customer-loader-capability-v1`, environment_url, path,
+captured_at, evidence_reference and response. Require the exact collection
+initiateDataLoad action's runBookTaskCode parameter, not another resource/action.
+
+Live registration evidence retains complete pages from the existing core targeted
+Customers BO/FBDI metadata lookup. Preserve the request, pagination and complete
+child metadata. Do not substitute an unfiltered absence inference, a finder with
+duplicate interface rows, or a fabricated record. Shared environment prevalidation
+is a separate check, not replaced by this task review.
+
+## Historical envelope workflow
+
+The APIs below remain for retained evidence from core versions that produced
+these envelopes. Do not synthesize these inputs on a different core workflow.
+
 `scripts/customer_registration_review.py` compares supplied registration evidence
 with the reviewed [registration recipe](../assets/customer-registration-contract.json)
 and the actual central preflight envelope. It has no Fusion client, query,

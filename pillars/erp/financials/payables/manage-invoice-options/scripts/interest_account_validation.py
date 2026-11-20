@@ -36,6 +36,17 @@ VALIDATE_SOAP_ACTION = (
 )
 MAX_RESPONSE_BYTES = 1024 * 1024
 SOAP_FAULT_MESSAGE = "Fusion returned a SOAP fault; raw fault details omitted."
+MAX_ERROR_MESSAGE_CHARS = 2048
+
+
+def _service_message(value: str) -> str:
+    """Bound service text for display as data, excluding credential-like content."""
+    value = " ".join(value.split())
+    if re.search(r"(?i)bearer\s|(?:password|client[_ -]?secret|access[_ -]?token|"
+                 r"refresh[_ -]?token|authorization|code[_ -]?verifier)\s*[:=]|"
+                 r"https?://[^\s/]+:[^\s/]+@", value):
+        return "Fusion error text omitted because it contains credential-like content."
+    return value[:MAX_ERROR_MESSAGE_CHARS]
 
 
 class PreflightError(RuntimeError):
@@ -123,7 +134,8 @@ def response_summary(
                 not in {"true", "1"}):
             result = response[0]
 
-    # Keep only bounded result fields. Free text never reaches the receipt.
+    # Only the single expected result can supply business diagnostics. Faults,
+    # headers and unrelated elements must not masquerade as account errors.
     statuses: list[str] = []
     combination_ids: list[str] = []
     if result is not None:
@@ -133,6 +145,21 @@ def response_summary(
                 values.append((element.text or "").strip()
                               if not len(element) and not element.attrib else "")
     fields: dict[str, list[str]] = {}
+    diagnostics: dict[str, object] = {}
+    if result is not None:
+        for tag in ("Error", "ErrorCode"):
+            leaves = result.findall(f"{{{SERVICE_NAMESPACE}}}{tag}")
+            if len(leaves) != 1 or len(leaves[0]) or leaves[0].attrib:
+                continue
+            value = (leaves[0].text or "").strip()
+            if tag == "Error" and value:
+                diagnostics["message"] = _service_message(value)
+            elif tag == "ErrorCode" and value:
+                codes = [code.strip() for code in value.split(",")]
+                if len(codes) <= 16 and all(re.fullmatch(r"[A-Z][A-Z0-9_]{0,99}", code) for code in codes):
+                    diagnostics["errorCodes"] = codes
+        if len(combination_ids) == 1 and re.fullmatch(r"-1|[1-9][0-9]{0,37}", combination_ids[0]):
+            diagnostics["returnedCcId"] = combination_ids[0]
     if not fault_present:
         if len(statuses) == 1 and statuses[0].casefold() in {"valid", "invalid"}:
             fields["Status"] = [statuses[0].capitalize()]
@@ -140,7 +167,17 @@ def response_summary(
                 and re.fullmatch(r"[1-9][0-9]{0,37}", combination_ids[0])):
             fields["CcId"] = combination_ids
     valid = (not fault_present and 200 <= http_status < 300
-             and fields.get("Status") == ["Valid"])
+             and fields.get("Status") == ["Valid"] and bool(fields.get("CcId"))
+             and not any((leaf.text or "").strip() or len(leaf)
+                         for tag in ("Error", "ErrorCode")
+                         for leaf in (result.findall(f"{{{SERVICE_NAMESPACE}}}{tag}")
+                                      if result is not None else [])))
+    failure = None
+    if not valid:
+        category = ("soap_fault" if fault_present else "http_failure" if not 200 <= http_status < 300
+                    else "invalid_account" if fields.get("Status") == ["Invalid"]
+                    else "incomplete_response")
+        failure = {"classification": category, **diagnostics}
     return {
         "httpStatus": http_status,
         "readOnly": True,
@@ -148,6 +185,7 @@ def response_summary(
         "valid": valid,
         "soapFault": SOAP_FAULT_MESSAGE if fault_present else None,
         "responseFields": fields,
+        "validationFailure": failure,
     }
 
 

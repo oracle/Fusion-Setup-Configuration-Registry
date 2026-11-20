@@ -83,6 +83,14 @@ required_setup_tasks:
   - "AP_MANAGE_INVOICE_OPTIONS"
   - "AP_MANAGE_PAYMENT_OPTIONS"
   - "AP_MANAGE_PAYABLES_CALENDARS"
+  - "AP_MANAGE_INVOICE_TOLERANCES"
+  - "AP_MANAGE_INTEREST_RATES"
+  - "ORA_MANAGE_INTELLIGENT_DOCUMENT_RECOGNITION_OPTIONS"
+  - "AP_MANAGE_AGING_PERIODS"
+  - "AP_MANAGE_DISTRIBUTION_SETS"
+  - "AP_MANAGE_REPORTING_ENTITIES"
+  - "AP_MANAGE_INVOICE_HOLDS_AND_RELEASES"
+  - "ORA_AP_MANAGE_PAYMENT_PROCESS_REQUEST_TEMPLATE"
 applicability:
   industries:
     - "All"
@@ -119,6 +127,14 @@ setup planning, baseline exports, import order, and validation checks.
 4. [Manage Invoice Options](manage-invoice-options/SKILL.md) (`AP_MANAGE_INVOICE_OPTIONS`)
 5. [Manage Payment Options](manage-payment-options/SKILL.md) (`AP_MANAGE_PAYMENT_OPTIONS`)
 6. [Manage Payables Calendars](manage-payables-calendars/SKILL.md) (`AP_MANAGE_PAYABLES_CALENDARS`)
+7. [Manage Invoice Tolerances](manage-invoice-tolerances/SKILL.md) (`AP_MANAGE_INVOICE_TOLERANCES`)
+8. [Manage Interest Rates](manage-interest-rates/SKILL.md) (`AP_MANAGE_INTEREST_RATES`)
+9. [Manage Intelligent Document Recognition Options](manage-intelligent-document-recognition-options/SKILL.md) (`ORA_MANAGE_INTELLIGENT_DOCUMENT_RECOGNITION_OPTIONS`)
+10. [Manage Aging Periods](manage-aging-periods/SKILL.md) (`AP_MANAGE_AGING_PERIODS`)
+11. [Manage Distribution Sets](manage-distribution-sets/SKILL.md) (`AP_MANAGE_DISTRIBUTION_SETS`)
+12. [Manage Reporting Entities](manage-reporting-entities/SKILL.md) (`AP_MANAGE_REPORTING_ENTITIES`)
+13. [Manage Invoice Holds and Releases](manage-invoice-holds-and-releases/SKILL.md) (`AP_MANAGE_INVOICE_HOLDS_AND_RELEASES`)
+14. [Create Payment Process Request Templates](create-payment-process-request-templates/SKILL.md) (`ORA_AP_MANAGE_PAYMENT_PROCESS_REQUEST_TEMPLATE`)
 
 ## Inputs
 

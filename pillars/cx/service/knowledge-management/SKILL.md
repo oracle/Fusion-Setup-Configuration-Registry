@@ -26,11 +26,17 @@ depends_on:
   - "shared.implementation-planning.offering-task-map-builder"
   - "shared.implementation-planning.task-dependency-resolver"
   - "shared.setup-export.functional-area-export"
+  - "shared.setup-export.task-level-export"
+  - "shared.validation.setup-data-validator"
 uses_core:
   - "core.project-mgmt.artifact-version-manager"
   - "core.project-mgmt.artifact-registry-manager"
   - "core.project-mgmt.project-state-manager"
   - "core.diagnostics.role-access-check"
+  - "core.data-loader"
+  - "core.auth.fusion-oauth-authentication"
+  - "core.fusion-api.apps-common"
+  - "core.fusion-api.rest-api-client"
 persists_project_state: true
 token_usage_tracking:
   enabled: true
@@ -88,6 +94,7 @@ required_setup_tasks:
   - "ORA_CSO_USER_GROUPS_MGMT"
   - "ORA_MANAGE_KNOWLEDGE_FOR_SERVICE_REQUESTS_PROFILE_OPTIONS"
   - "ORA_CSO_CONTENT_TYPES_INDEXING_MGMT_REDWOOD"
+  - "ORA_MANAGE_KNOWLEDGE_WORKFLOWS"
 applicability:
   industries:
     - "All"
@@ -129,6 +136,7 @@ Use this functional-area skill after Service scope is confirmed and the project 
 10. [Manage Knowledge User Groups](manage-knowledge-user-groups.md) (`ORA_CSO_USER_GROUPS_MGMT`)
 11. [Manage Knowledge for Service Requests with Redwood User Interface Profile Options](manage-knowledge-for-service-requests-with-redwood-user-interface-profile-options.md) (`ORA_MANAGE_KNOWLEDGE_FOR_SERVICE_REQUESTS_PROFILE_OPTIONS`)
 12. [Manage Knowledge Content Types Redwood](manage-knowledge-content-types-redwood/SKILL.md) (`ORA_CSO_CONTENT_TYPES_INDEXING_MGMT_REDWOOD`)
+13. [Manage Knowledge Workflows](manage-knowledge-workflows.md) (`ORA_MANAGE_KNOWLEDGE_WORKFLOWS`)
 
 ## Inputs
 
@@ -148,3 +156,18 @@ Use this functional-area skill after Service scope is confirmed and the project 
 ## Implementation Notes
 
 Use the generated setup-task metadata files for task-level planning and sequencing. Track token usage for any generated project artifact or skill-run record using the manifest policy.
+
+
+## Task Validation Boundaries
+
+Classic content types use an assisted router/Run Book handoff to the separately
+persisted Redwood task before setup-data work. Task Hook returns the local
+Classic plan, not a structured redirect; ready means guidance only and cannot
+authorize Classic export, source preparation, preview or import. Resolve and
+bind Redwood separately through the active workflow; never coerce Classic
+identity into Redwood identity or transfer source approval. Redwood task validation
+executes all returned input, lookup, dependency, default and design resources
+before its final FSM handoff. User Groups explicitly distinguishes BU-required
+and BU-not-required branches; a disabled feature requires no fabricated lookup.
+Locale support comparison may normalize separators/case, while FSM output
+always preserves the exact approved export-derived identifier.

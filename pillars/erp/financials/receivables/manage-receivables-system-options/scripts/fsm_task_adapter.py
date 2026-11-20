@@ -733,6 +733,22 @@ def _validate_blueprint(
                     f"Operation {operation_id} create target {target_tuple!r} already "
                     "exists in the fresh current export."
                 )
+            if action == "update":
+                before = matches[target_tuple]
+                # A sparse update preserves omitted fields. Explicit clearing is
+                # different: apply the EO's static and posted-section requirements.
+                required_update = set()
+                for group in entity.get("requiredUpdateGroups", []):
+                    trigger = group.get("baselineNonblankField")
+                    if trigger is None or str(before.get(trigger, "")).strip():
+                        required_update.update(group["fields"])
+                cleared = sorted(field for field in required_update & set(values)
+                                 if values[field] is None or not str(values[field]).strip())
+                if cleared:
+                    raise AdapterError(
+                        f"Operation {operation_id} cannot clear required fields in "
+                        f"the configured section: {cleared}."
+                    )
 
 
 def _requirements(

@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0",
+  "task_code": "EXM_MANAGE_AUDIT_LOOKUP_TYPES",
+  "catalog_kind": "unpopulated-template",
+  "exhaustive": false,
+  "source": "Populate from the selected customer environment before use.",
+  "lookup_types": [],
+  "reference_sets": [],
+  "enabled_values": [
+    "Yes",
+    "No"
+  ]
+}

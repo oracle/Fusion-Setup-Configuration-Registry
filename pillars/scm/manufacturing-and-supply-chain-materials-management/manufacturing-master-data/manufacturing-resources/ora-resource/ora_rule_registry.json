@@ -14,16 +14,93 @@
           "action_type": "validate_input",
           "execution_route": "local",
           "transitions": {
-            "valid": "MFGRES.DEPENDENCIES",
+            "valid": "MFGRES.RESOLVE_ORGANIZATION",
             "invalid": "MFGRES.BLOCKED"
           },
           "prerequisites": [],
           "on_failure": "stop",
-          "applies_when": "A Manufacturing Resources create, update, child-instance, or program-file request is prepared.",
+          "applies_when": "Validate supplied Manufacturing Resources input and operation. For REST parent creates apply REST organization input; both nonblank identifiers require the next lookup before selection. Normalize UOM aliases and reject conflicts. Defer omitted create UOM and live UOM validity to MFGRES.RESOLVE_UOM; never require unchanged PATCH fields. Defer final serialized-artifact checks to the REST artifact nodes.",
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 49
+            "line": 84
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MFGRES.RESOLVE_ORGANIZATION",
+          "node_type": "decision",
+          "sequence": 2,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "MFGRES.RESOLVE_UOM",
+            "not_applicable": "MFGRES.RESOLVE_UOM",
+            "failure": "MFGRES.BLOCKED"
+          },
+          "prerequisites": [
+            "MFGRES.VALIDATE_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "For REST parent-create input containing both organization identifiers, run resolve_production_resource_organization through the active workflow's read-only core client. Resolve every distinct supplied pair before source preparation. Select not_applicable without a lookup for single-identifier input, PATCH, child-only operations, or native FSM.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 35
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MFGRES.RESOLVE_UOM",
+          "node_type": "decision",
+          "sequence": 3,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "MFGRES.APPLY_UOM_DEFAULT",
+            "not_applicable": "MFGRES.APPLY_UOM_DEFAULT",
+            "failure": "MFGRES.BLOCKED"
+          },
+          "prerequisites": [
+            "MFGRES.RESOLVE_ORGANIZATION"
+          ],
+          "on_failure": "stop",
+          "applies_when": "For parent creates in either mode or explicit UOM changes, choose the supplied code unchanged; only on create with UOM omitted run resolve_resource_hour_uom_profile. Run resolve_resource_uom for each distinct candidate. Resolve every applicable row before selecting resolved. Select not_applicable for child-only requests and updates with omitted UOM. No live writes or default application at this node.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 36
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MFGRES.APPLY_UOM_DEFAULT",
+          "node_type": "decision",
+          "sequence": 4,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "MFGRES.DEPENDENCIES",
+            "failure": "MFGRES.BLOCKED"
+          },
+          "prerequisites": [
+            "MFGRES.RESOLVE_UOM"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Apply only the UOMCode default in Standard Defaults when the create input omitted UOM and this run has verified profile and UOM evidence. Preserve explicit valid input and record whether the selected value is user-supplied or profile-derived. Map the value to REST UOMCode or the verified target-exported native FSM UOM field before source preparation. For updates and child-only requests, apply no UOM default. Stale, mismatched or missing required evidence blocks.",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 23
           },
           "readiness": {
             "status": "ready",
@@ -33,7 +110,7 @@
         {
           "id": "MFGRES.DEPENDENCIES",
           "node_type": "decision",
-          "sequence": 2,
+          "sequence": 5,
           "action_type": "resolve_dependency",
           "execution_route": "local",
           "transitions": {
@@ -41,14 +118,14 @@
             "blocked": "MFGRES.BLOCKED"
           },
           "prerequisites": [
-            "MFGRES.VALIDATE_INPUT"
+            "MFGRES.APPLY_UOM_DEFAULT"
           ],
           "on_failure": "stop",
-          "applies_when": "Applicable Manufacturing Resources dependencies are evaluated.",
+          "applies_when": "Applicable Manufacturing Resources dependencies are evaluated, including the verified organization pair when supplied for a REST parent create and validated selected UOM.",
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 34
+            "line": 36
           },
           "readiness": {
             "status": "ready",
@@ -58,7 +135,7 @@
         {
           "id": "MFGRES.DESIGN",
           "node_type": "decision",
-          "sequence": 3,
+          "sequence": 6,
           "action_type": "design_enforcement",
           "execution_route": "local",
           "transitions": {
@@ -69,7 +146,7 @@
             "MFGRES.DEPENDENCIES"
           ],
           "on_failure": "stop",
-          "applies_when": "A Manufacturing Resources request passes input and dependency validation.",
+          "applies_when": "A Manufacturing Resources request passes input and dependency validation, including the supplied/defaulted UOM.",
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
@@ -83,11 +160,11 @@
         {
           "id": "MFGRES.ROUTE_REST",
           "node_type": "decision",
-          "sequence": 4,
+          "sequence": 7,
           "action_type": "execution_gate",
           "execution_route": "local",
           "transitions": {
-            "rest_supported": "MFGRES.REST_READY",
+            "rest_supported": "MFGRES.VALIDATE_REST_ORGANIZATION",
             "rest_unsupported": "MFGRES.FSM_APPROVAL",
             "fsm_selected": "MFGRES.FSM_APPROVAL",
             "business_object_unconfirmed": "MFGRES.BLOCKED"
@@ -96,11 +173,61 @@
             "MFGRES.DESIGN"
           ],
           "on_failure": "stop",
-          "applies_when": "A Manufacturing Resources import is requested; use the manifest dataloader_import_mode unless the active workflow records an explicit supported mode override.",
+          "applies_when": "A Manufacturing Resources import is requested; use the manifest dataloader_import_mode unless the active workflow records an explicit supported mode override. Organization or UOM validation failure does not establish unsupported REST and must not trigger FSM fallback.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 40
+            "line": 49
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MFGRES.VALIDATE_REST_ORGANIZATION",
+          "node_type": "decision",
+          "sequence": 8,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "MFGRES.VALIDATE_REST_UOM",
+            "invalid": "MFGRES.BLOCKED"
+          },
+          "prerequisites": [
+            "MFGRES.ROUTE_REST"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Inspect every parent record and its column mapping in the exact prepared REST upload artifact under REST organization selection, serialization, mixed organization columns, and scope. Reject both organization attributes even if one is blank or null; require exactly one for creates. Verify PATCH and child-only boundaries without requiring create fields. Missing artifact or mapping evidence is invalid. Do not repair an immutable artifact here; return the correction for fresh core.data-loader preparation, validation, and approval.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 85
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "MFGRES.VALIDATE_REST_UOM",
+          "node_type": "decision",
+          "sequence": 9,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "MFGRES.REST_READY",
+            "invalid": "MFGRES.BLOCKED"
+          },
+          "prerequisites": [
+            "MFGRES.VALIDATE_REST_ORGANIZATION"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Apply REST UOM serialization and UOM update and format scope to every applicable parent row in the exact prepared artifact. Require current same-target and execution-identity lookup evidence, explicit UOMCode mapping on creates and supplied changes. An omitted PATCH UOM remains absent; child-only operations add no parent UOM. Missing evidence, a changed code or unproven mapping blocks readiness; any correction requires fresh preparation, validation and artifact-bound approval.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 86
           },
           "readiness": {
             "status": "ready",
@@ -110,19 +237,19 @@
         {
           "id": "MFGRES.REST_READY",
           "node_type": "terminal",
-          "sequence": 5,
+          "sequence": 10,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
           "prerequisites": [
-            "MFGRES.ROUTE_REST"
+            "MFGRES.VALIDATE_REST_UOM"
           ],
           "on_failure": "stop",
-          "applies_when": "REST Data Loader preflight and metadata validation support the requested operation.",
+          "applies_when": "REST Data Loader preflight, metadata validation, and the final artifact's REST organization and UOM checks support the requested operation.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 41
+            "line": 50
           },
           "readiness": {
             "status": "ready",
@@ -132,7 +259,7 @@
         {
           "id": "MFGRES.FSM_APPROVAL",
           "node_type": "decision",
-          "sequence": 6,
+          "sequence": 11,
           "action_type": "execution_gate",
           "execution_route": "local",
           "transitions": {
@@ -143,11 +270,11 @@
             "MFGRES.ROUTE_REST"
           ],
           "on_failure": "stop",
-          "applies_when": "The manifest default or an explicit supported override selects native FSM and CSVExportImportSupportedFlag is Y, or REST preflight establishes that REST cannot support the requested operation.",
+          "applies_when": "The manifest default or an explicit supported override selects native FSM and CSVExportImportSupportedFlag is Y, or REST preflight establishes that REST cannot support the requested operation. Validate selected UOM values against the exact native exported UOM mapping; preserve omitted update fields.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 42
+            "line": 51
           },
           "readiness": {
             "status": "ready",
@@ -157,7 +284,7 @@
         {
           "id": "MFGRES.FSM_READY",
           "node_type": "terminal",
-          "sequence": 7,
+          "sequence": 12,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
@@ -169,7 +296,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 43
+            "line": 52
           },
           "readiness": {
             "status": "ready",
@@ -179,17 +306,17 @@
         {
           "id": "MFGRES.BLOCKED",
           "node_type": "terminal",
-          "sequence": 8,
+          "sequence": 13,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
           "prerequisites": [],
           "on_failure": "stop",
-          "applies_when": "A required REST business-object confirmation, route determination, or FSM approval is missing.",
+          "applies_when": "Required input, organization identity, UOM resolution/defaulting or artifact checks, REST business-object confirmation, route determination, or FSM approval are missing or failed.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 44
+            "line": 53
           },
           "readiness": {
             "status": "ready",

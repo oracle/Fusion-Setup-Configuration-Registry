@@ -35,18 +35,26 @@ def analyze(candidate, operation, environment_url, binding, observation):
     require(origin.scheme == 'https' and origin.hostname and not origin.username
             and not origin.password and origin.path in ('', '/') and not origin.query
             and not origin.fragment, 'ATTEMPT_ENVIRONMENT')
-    require(isinstance(binding, dict) and set(binding) == {
+    require(isinstance(binding, dict), 'ATTEMPT_BINDING_SCHEMA')
+    version = binding.get('schema_version')
+    require(version in ('ar-customer-runtime-binding-v1',
+                        'ar-customer-runtime-binding-v2'), 'ATTEMPT_BINDING_VERSION')
+    # These hashes identify retained evidence, not an approval capability.
+    # v1 remains readable for historical attempts; v2 does not require core
+    # to export its private execution plan or emulate an old preflight file.
+    context_hashes = ('preflight_sha256',) if version.endswith('-v1') else (
+        'customer_review_sha256', 'core_evidence_sha256')
+    require(set(binding) == {
         'schema_version', 'candidate_sha256', 'environment_url', 'operation_intent',
-        'registration_sha256', 'arguments_sha256', 'preflight_sha256',
+        'registration_sha256', 'arguments_sha256',
         'initiation_request_id', 'content_id', 'run_id', 'task_code', 'initiated_at',
-        'initiation_evidence_reference'}, 'ATTEMPT_BINDING_SCHEMA')
-    require(binding['schema_version'] == 'ar-customer-runtime-binding-v1', 'ATTEMPT_BINDING_VERSION')
+        'initiation_evidence_reference'} | set(context_hashes), 'ATTEMPT_BINDING_SCHEMA')
     require(binding['candidate_sha256'] == preview['candidate_sha256']
             and binding['environment_url'] == environment_url
             and binding['operation_intent'] == operation and binding['task_code'] == TASK,
             'ATTEMPT_BINDING_MISMATCH')
     require(all(isinstance(binding[k], str) and re.fullmatch(r'[0-9a-f]{64}', binding[k])
-                for k in ('registration_sha256', 'arguments_sha256', 'preflight_sha256')),
+                for k in ('registration_sha256', 'arguments_sha256') + context_hashes),
             'ATTEMPT_CONTEXT_HASH')
     require(all(isinstance(binding[k], str) and identifier(binding[k]) for k in
                 ('initiation_request_id', 'run_id')), 'ATTEMPT_BINDING_ID')

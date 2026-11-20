@@ -1,0 +1,1968 @@
+{
+  "capabilities": {
+    "determinism": {
+      "evidence": [
+        "policy-reference-0001",
+        "policy-reference-0002"
+      ],
+      "status": "ready"
+    },
+    "identity": {
+      "evidence": [
+        "policy-reference-0003",
+        "policy-reference-0004"
+      ],
+      "status": "ready"
+    },
+    "packageBuild": {
+      "evidence": [
+        "policy-reference-0005",
+        "policy-reference-0006",
+        "policy-reference-0007"
+      ],
+      "status": "ready"
+    },
+    "prerequisiteChecks": {
+      "evidence": [
+        "policy-reference-0008",
+        "policy-reference-0009",
+        "policy-reference-0010"
+      ],
+      "status": "ready"
+    },
+    "promptNormalization": {
+      "evidence": [
+        "policy-reference-0011",
+        "policy-reference-0012"
+      ],
+      "status": "ready"
+    },
+    "reconciliation": {
+      "evidence": [
+        "policy-reference-0013",
+        "policy-reference-0014"
+      ],
+      "status": "ready"
+    },
+    "rollbackBuild": {
+      "evidence": [
+        "policy-reference-0015",
+        "Task-local governed restore builder requires --governed-design for mapping restoration and never executes an import."
+      ],
+      "status": "ready"
+    },
+    "semanticValidation": {
+      "evidence": [
+        "policy-reference-0016"
+      ],
+      "status": "ready"
+    }
+  },
+  "deletionPolicy": {
+    "boundary": "Do not infer physical delete from status or end-date updates.",
+    "childHandling": "Not applicable; delete is unsupported.",
+    "disposition": "unsupported",
+    "exactKeyRequired": true,
+    "executionOwner": "none",
+    "irreversible": true,
+    "mechanism": "No delete operation is supported by this task.",
+    "recovery": "Not applicable; delete is unsupported.",
+    "sourceIds": []
+  },
+  "entrypoints": {
+    "commands": {
+      "build": "build",
+      "determinism": "determinism",
+      "manifest": "manifest",
+      "normalize": "normalize",
+      "reconcile": "reconcile",
+      "rollback": "rollback",
+      "validate": "validate"
+    },
+    "descriptor": "e2e-adapter.json",
+    "runtime": "scripts/fsm_task_adapter.py"
+  },
+  "generation": {
+    "auditInferenceEvidence": [
+      "policy-reference-0017"
+    ],
+    "blockers": [],
+    "contractReference": "Task SKILL.md and ora-resource IDR singleton rule.",
+    "generator": "Task-specific extension of the generated FSM adapter; shared Builder unchanged.",
+    "keyInferenceEvidence": [
+      "policy-reference-0018",
+      "policy-reference-0019",
+      "policy-reference-0020",
+      "policy-reference-0021"
+    ],
+    "operationEvidence": {
+      "update": [
+        "Task-specific IDR validation rules"
+      ]
+    },
+    "readiness": "ready",
+    "sourceEvidence": [
+      "policy-reference-0022",
+      "policy-reference-0023",
+      "policy-reference-0024",
+      "policy-reference-0025",
+      "policy-reference-0008"
+    ]
+  },
+  "normalization": {
+    "designInput": {
+      "defaults": {
+        "preserveOtherValues": true,
+        "preserveUnspecifiedRows": true
+      },
+      "operationRequired": [
+        "id",
+        "action",
+        "entity",
+        "targetKey",
+        "values"
+      ],
+      "optional": [
+        "evidenceUnresolvedUpdateOverrides"
+      ],
+      "required": [
+        "operations"
+      ]
+    },
+    "entityOperationOwnershipPolicy": {
+      "mode": "evidence-backed-complete-matrix",
+      "overrideCannotBypassEntityOwnership": true,
+      "packageMembershipDoesNotEstablishOwnership": true
+    },
+    "evidenceUnresolvedUpdateOverridePolicy": {
+      "authoritativeValidator": "FSM",
+      "automaticRetryAllowed": false,
+      "executionOwner": "runbook-and-core.data-loader",
+      "mode": "governed-application-validation",
+      "operation": "update",
+      "requiresCandidateSpecificApproval": true,
+      "requiresEnvironmentAuthorization": true,
+      "requiresExactFieldBinding": true,
+      "requiresExactOperationBinding": true,
+      "requiresExplicitImplementorApproval": true,
+      "requiresImmutablePreview": true,
+      "requiresPreserveOtherValues": true,
+      "requiresPreserveUnspecifiedRows": true,
+      "singleSubmissionOnly": true
+    },
+    "mode": "agent-assisted-schema-validated",
+    "procedure": [
+      "Preserve the unchanged customer request outside the business blueprint.",
+      "Use the selected task skill and compiled ora_rule_registry.json to resolve task semantics and blockers.",
+      "Write only explicit operations, target keys, requested values, resolved scope, defaults, prerequisites, preservation assertions, and warnings into the normalized design input.",
+      "Validate the 13 normal options fields and extension EnabledFlag; route Mappings through its governed exact-field row/XML application-validation policy with Fusion BU validation at import. Reject protected-field changes; accept image-format values only when exactly equal to the selected fresh baseline.",
+      "Run the normalize command to validate the design and emit the portable blueprint, complete preview, and stable requirements list."
+    ],
+    "supportedOperations": [
+      "update"
+    ]
+  },
+  "package": {
+    "entities": [
+      {
+        "auditFields": [
+          "CreatedBy",
+          "CreationDate",
+          "LastUpdateDate",
+          "LastUpdateLogin",
+          "LastUpdatedBy"
+        ],
+        "conditionallyBlockedFields": [
+          {
+            "field": "BuDerivationBasisCode",
+            "reason": "Require resolver evidence for the requested BU choice and selected target.",
+            "resolver": "RESOLVER-IDR-BU-CHOICE",
+            "status": "partial"
+          }
+        ],
+        "createDefaults": {},
+        "createFields": {},
+        "fieldConstraints": {},
+        "headers": [
+          "BuDerivationBasisCode",
+          "Attribute1",
+          "Attribute10",
+          "Attribute2",
+          "Attribute3",
+          "Attribute4",
+          "Attribute5",
+          "Attribute6",
+          "Attribute7",
+          "Attribute8",
+          "Attribute9",
+          "AttributeCategory",
+          "BuEmailMapping",
+          "CalcTaxDuringImportFlag",
+          "CreatedBy",
+          "CreationDate",
+          "EnforceIncompleteStatusFlag",
+          "GlobalAttribute1",
+          "GlobalAttribute10",
+          "GlobalAttribute2",
+          "GlobalAttribute3",
+          "GlobalAttribute4",
+          "GlobalAttribute5",
+          "GlobalAttribute6",
+          "GlobalAttribute7",
+          "GlobalAttribute8",
+          "GlobalAttribute9",
+          "GlobalAttributeCategory",
+          "GlobalAttributeDate1",
+          "GlobalAttributeDate2",
+          "GlobalAttributeDate3",
+          "GlobalAttributeDate4",
+          "GlobalAttributeDate5",
+          "GlobalAttributeNumber1",
+          "GlobalAttributeNumber2",
+          "GlobalAttributeNumber3",
+          "GlobalAttributeNumber4",
+          "GlobalAttributeNumber5",
+          "IdrEmail",
+          "ImportFreightAmountFlag",
+          "ImportLinesMatchedFlag",
+          "ImportLinesUnmatchedFlag",
+          "ImportPairedLinesOnlyFlag",
+          "LastUpdateDate",
+          "LastUpdateLogin",
+          "LastUpdatedBy",
+          "ProcessDocAttachmentFlag",
+          "ProcessDocxAttachmentFlag",
+          "ProcessJpegAttachmentFlag",
+          "ProcessPdfAttachmentFlag",
+          "ProcessPngAttachmentFlag",
+          "ProcessTiffAttachmentFlag",
+          "ReferenceKey1",
+          "ReferenceKey2",
+          "ReferenceKey3",
+          "ReferenceKey4",
+          "ReferenceKey5",
+          "SingleLineAmountPoFlag",
+          "SingleLineUtilityInvFlag",
+          "UseTaxAmountAsControlFlag",
+          "Mappings",
+          "MappingUpdated",
+          "RequesterEmailDomain",
+          "ValidatePoLeFlag",
+          "IdrActivationStatus",
+          "ConvertEmailIntoAttachFlag"
+        ],
+        "keyFields": [],
+        "member": "ORA_INTELLIGENT_DOCUMENT_RECOGNITION_OPTIONS.csv",
+        "name": "ORA_INTELLIGENT_DOCUMENT_RECOGNITION_OPTIONS",
+        "nodePath": "/IdrSetupOptionVO/IdrSetupOptionVORow",
+        "nodeSequence": "1",
+        "nonPersistedFields": {},
+        "operationOwnership": {
+          "update": {
+            "boundary": "The fresh target options singleton is the update target. Expose only the normal update fields or the separately governed Mappings field; require fresh one-row identity and target evidence for each run.",
+            "implementorTarget": true,
+            "reconciliationEntity": "ORA_INTELLIGENT_DOCUMENT_RECOGNITION_OPTIONS",
+            "roles": [
+              "implementor-target",
+              "reconciliation-target"
+            ],
+            "sourceIds": [
+              "policy-reference-0020",
+              "policy-reference-0026"
+            ]
+          }
+        },
+        "requiredFields": [],
+        "types": {
+          "Attribute1": "string",
+          "Attribute2": "string",
+          "Attribute3": "string",
+          "Attribute4": "string",
+          "Attribute5": "string",
+          "Attribute6": "string",
+          "Attribute7": "string",
+          "Attribute8": "string",
+          "Attribute9": "string",
+          "Attribute10": "string",
+          "AttributeCategory": "string",
+          "BuDerivationBasisCode": "string",
+          "BuEmailMapping": "clob",
+          "CalcTaxDuringImportFlag": "string",
+          "ConvertEmailIntoAttachFlag": "string",
+          "CreatedBy": "string",
+          "CreationDate": "dateTime",
+          "EnforceIncompleteStatusFlag": "string",
+          "GlobalAttribute1": "string",
+          "GlobalAttribute2": "string",
+          "GlobalAttribute3": "string",
+          "GlobalAttribute4": "string",
+          "GlobalAttribute5": "string",
+          "GlobalAttribute6": "string",
+          "GlobalAttribute7": "string",
+          "GlobalAttribute8": "string",
+          "GlobalAttribute9": "string",
+          "GlobalAttribute10": "string",
+          "GlobalAttributeCategory": "string",
+          "GlobalAttributeDate1": "date",
+          "GlobalAttributeDate2": "date",
+          "GlobalAttributeDate3": "date",
+          "GlobalAttributeDate4": "date",
+          "GlobalAttributeDate5": "date",
+          "GlobalAttributeNumber1": "decimal",
+          "GlobalAttributeNumber2": "decimal",
+          "GlobalAttributeNumber3": "decimal",
+          "GlobalAttributeNumber4": "decimal",
+          "GlobalAttributeNumber5": "decimal",
+          "IdrActivationStatus": "string",
+          "IdrEmail": "string",
+          "ImportFreightAmountFlag": "string",
+          "ImportLinesMatchedFlag": "string",
+          "ImportLinesUnmatchedFlag": "string",
+          "ImportPairedLinesOnlyFlag": "string",
+          "LastUpdateDate": "dateTime",
+          "LastUpdateLogin": "string",
+          "LastUpdatedBy": "string",
+          "MappingUpdated": "boolean",
+          "Mappings": "string",
+          "ProcessDocAttachmentFlag": "string",
+          "ProcessDocxAttachmentFlag": "string",
+          "ProcessJpegAttachmentFlag": "string",
+          "ProcessPdfAttachmentFlag": "string",
+          "ProcessPngAttachmentFlag": "string",
+          "ProcessTiffAttachmentFlag": "string",
+          "ReferenceKey1": "string",
+          "ReferenceKey2": "string",
+          "ReferenceKey3": "string",
+          "ReferenceKey4": "string",
+          "ReferenceKey5": "string",
+          "RequesterEmailDomain": "clob",
+          "SingleLineAmountPoFlag": "string",
+          "SingleLineUtilityInvFlag": "string",
+          "UseTaxAmountAsControlFlag": "string",
+          "ValidatePoLeFlag": "string"
+        },
+        "unresolvedUpdateFields": {
+          "Mappings": {
+            "boundary": "Accept complete email/businessUnit row lists or supported Mappings XML through the governed exact-field application-validation path. The adapter serializes rows and rejects malformed/unsafe XML, ambiguous email inputs and duplicate rows. Fusion validates BU existence and application references during approved import; local structural validation is not a BU lookup. Preserve unrelated values, BuEmailMapping and MappingUpdated. Restoration requires a new exact governed restore design and independent ZIP approval; never reuse forward approval.",
+            "overrideBlockers": [],
+            "overrideEligible": true,
+            "sourceIds": [
+              "Task SKILL.md: Email to Business Unit Mapping",
+              "ora-resource/ora_input_validation.md: Mapping-dialog request",
+              "ora-resource/ora_reference_lookups.md: Email to Business Unit Mapping boundary"
+            ]
+          }
+        },
+        "updateFields": {
+          "BuDerivationBasisCode": {
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "CalcTaxDuringImportFlag": {
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "EnforceIncompleteStatusFlag": {
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "ImportFreightAmountFlag": {
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "ImportLinesMatchedFlag": {
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "ImportLinesUnmatchedFlag": {
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "ImportPairedLinesOnlyFlag": {
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "SingleLineAmountPoFlag": {
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "SingleLineUtilityInvFlag": {
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "UseTaxAmountAsControlFlag": {
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "RequesterEmailDomain": {
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "ValidatePoLeFlag": {
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "ConvertEmailIntoAttachFlag": {
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          }
+        },
+        "valueContracts": {
+          "BuDerivationBasisCode": {
+            "allowedValues": [
+              {
+                "code": "RA",
+                "label": "Email Routing Attribute",
+                "synonyms": []
+              },
+              {
+                "code": "SE",
+                "label": "Sender's Email Address",
+                "synonyms": []
+              },
+              {
+                "code": "RE",
+                "label": "Recipient Email Address",
+                "synonyms": []
+              },
+              {
+                "code": "N",
+                "label": "No selection (empty field)",
+                "synonyms": [
+                  "Blank",
+                  "Leave blank",
+                  "Clear selection"
+                ]
+              }
+            ],
+            "authoritativeFallback": "none",
+            "constraintKind": "fixed-enumeration",
+            "environmentVerificationRequired": false,
+            "extensible": false,
+            "normalization": "trim-case-insensitive-label-or-exact-code",
+            "publicPreflightPolicy": "not_applicable",
+            "sourceIds": [
+              "policy-reference-0027",
+              "policy-reference-0028"
+            ],
+            "sourceKind": "programmatic",
+            "valuePopulation": "programmatic"
+          },
+          "ProcessDocAttachmentFlag": {
+            "allowedValues": [
+              {
+                "code": "Y",
+                "label": "On",
+                "synonyms": []
+              },
+              {
+                "code": "N",
+                "label": "Off",
+                "synonyms": []
+              }
+            ],
+            "authoritativeFallback": "none",
+            "constraintKind": "fixed-enumeration",
+            "environmentVerificationRequired": false,
+            "extensible": false,
+            "normalization": "trim-case-insensitive-label-or-exact-code",
+            "publicPreflightPolicy": "not_applicable",
+            "sourceIds": [
+              "policy-reference-0020"
+            ],
+            "sourceKind": "fixed_enumeration",
+            "valuePopulation": "fixed_enumeration"
+          },
+          "ProcessDocxAttachmentFlag": {
+            "allowedValues": [
+              {
+                "code": "Y",
+                "label": "On",
+                "synonyms": []
+              },
+              {
+                "code": "N",
+                "label": "Off",
+                "synonyms": []
+              }
+            ],
+            "authoritativeFallback": "none",
+            "constraintKind": "fixed-enumeration",
+            "environmentVerificationRequired": false,
+            "extensible": false,
+            "normalization": "trim-case-insensitive-label-or-exact-code",
+            "publicPreflightPolicy": "not_applicable",
+            "sourceIds": [
+              "policy-reference-0020"
+            ],
+            "sourceKind": "fixed_enumeration",
+            "valuePopulation": "fixed_enumeration"
+          },
+          "ProcessJpegAttachmentFlag": {
+            "allowedValues": [
+              {
+                "code": "Y",
+                "label": "On",
+                "synonyms": []
+              },
+              {
+                "code": "N",
+                "label": "Off",
+                "synonyms": []
+              }
+            ],
+            "authoritativeFallback": "none",
+            "constraintKind": "fixed-enumeration",
+            "environmentVerificationRequired": false,
+            "extensible": false,
+            "normalization": "trim-case-insensitive-label-or-exact-code",
+            "publicPreflightPolicy": "not_applicable",
+            "sourceIds": [
+              "policy-reference-0020"
+            ],
+            "sourceKind": "fixed_enumeration",
+            "valuePopulation": "fixed_enumeration"
+          },
+          "ProcessPdfAttachmentFlag": {
+            "allowedValues": [
+              {
+                "code": "Y",
+                "label": "On",
+                "synonyms": []
+              },
+              {
+                "code": "N",
+                "label": "Off",
+                "synonyms": []
+              }
+            ],
+            "authoritativeFallback": "none",
+            "constraintKind": "fixed-enumeration",
+            "environmentVerificationRequired": false,
+            "extensible": false,
+            "normalization": "trim-case-insensitive-label-or-exact-code",
+            "publicPreflightPolicy": "not_applicable",
+            "sourceIds": [
+              "policy-reference-0020"
+            ],
+            "sourceKind": "fixed_enumeration",
+            "valuePopulation": "fixed_enumeration"
+          },
+          "ProcessPngAttachmentFlag": {
+            "allowedValues": [
+              {
+                "code": "Y",
+                "label": "On",
+                "synonyms": []
+              },
+              {
+                "code": "N",
+                "label": "Off",
+                "synonyms": []
+              }
+            ],
+            "authoritativeFallback": "none",
+            "constraintKind": "fixed-enumeration",
+            "environmentVerificationRequired": false,
+            "extensible": false,
+            "normalization": "trim-case-insensitive-label-or-exact-code",
+            "publicPreflightPolicy": "not_applicable",
+            "sourceIds": [
+              "policy-reference-0020"
+            ],
+            "sourceKind": "fixed_enumeration",
+            "valuePopulation": "fixed_enumeration"
+          },
+          "ProcessTiffAttachmentFlag": {
+            "allowedValues": [
+              {
+                "code": "Y",
+                "label": "On",
+                "synonyms": []
+              },
+              {
+                "code": "N",
+                "label": "Off",
+                "synonyms": []
+              }
+            ],
+            "authoritativeFallback": "none",
+            "constraintKind": "fixed-enumeration",
+            "environmentVerificationRequired": false,
+            "extensible": false,
+            "normalization": "trim-case-insensitive-label-or-exact-code",
+            "publicPreflightPolicy": "not_applicable",
+            "sourceIds": [
+              "policy-reference-0020"
+            ],
+            "sourceKind": "fixed_enumeration",
+            "valuePopulation": "fixed_enumeration"
+          },
+          "CalcTaxDuringImportFlag": {
+            "allowedValues": [
+              {
+                "code": "Y",
+                "label": "On",
+                "synonyms": []
+              },
+              {
+                "code": "N",
+                "label": "Off",
+                "synonyms": []
+              }
+            ],
+            "authoritativeFallback": "none",
+            "constraintKind": "fixed-enumeration",
+            "environmentVerificationRequired": false,
+            "extensible": false,
+            "normalization": "trim-case-insensitive-label-or-exact-code",
+            "publicPreflightPolicy": "not_applicable",
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed)"
+            ],
+            "sourceKind": "fixed_enumeration",
+            "valuePopulation": "fixed_enumeration"
+          },
+          "EnforceIncompleteStatusFlag": {
+            "allowedValues": [
+              {
+                "code": "Y",
+                "label": "On",
+                "synonyms": []
+              },
+              {
+                "code": "N",
+                "label": "Off",
+                "synonyms": []
+              }
+            ],
+            "authoritativeFallback": "none",
+            "constraintKind": "fixed-enumeration",
+            "environmentVerificationRequired": false,
+            "extensible": false,
+            "normalization": "trim-case-insensitive-label-or-exact-code",
+            "publicPreflightPolicy": "not_applicable",
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed)"
+            ],
+            "sourceKind": "fixed_enumeration",
+            "valuePopulation": "fixed_enumeration"
+          },
+          "ImportFreightAmountFlag": {
+            "allowedValues": [
+              {
+                "code": "Y",
+                "label": "On",
+                "synonyms": []
+              },
+              {
+                "code": "N",
+                "label": "Off",
+                "synonyms": []
+              }
+            ],
+            "authoritativeFallback": "none",
+            "constraintKind": "fixed-enumeration",
+            "environmentVerificationRequired": false,
+            "extensible": false,
+            "normalization": "trim-case-insensitive-label-or-exact-code",
+            "publicPreflightPolicy": "not_applicable",
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed)"
+            ],
+            "sourceKind": "fixed_enumeration",
+            "valuePopulation": "fixed_enumeration"
+          },
+          "ImportLinesMatchedFlag": {
+            "allowedValues": [
+              {
+                "code": "Y",
+                "label": "On",
+                "synonyms": []
+              },
+              {
+                "code": "N",
+                "label": "Off",
+                "synonyms": []
+              }
+            ],
+            "authoritativeFallback": "none",
+            "constraintKind": "fixed-enumeration",
+            "environmentVerificationRequired": false,
+            "extensible": false,
+            "normalization": "trim-case-insensitive-label-or-exact-code",
+            "publicPreflightPolicy": "not_applicable",
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed)"
+            ],
+            "sourceKind": "fixed_enumeration",
+            "valuePopulation": "fixed_enumeration"
+          },
+          "ImportLinesUnmatchedFlag": {
+            "allowedValues": [
+              {
+                "code": "Y",
+                "label": "On",
+                "synonyms": []
+              },
+              {
+                "code": "N",
+                "label": "Off",
+                "synonyms": []
+              }
+            ],
+            "authoritativeFallback": "none",
+            "constraintKind": "fixed-enumeration",
+            "environmentVerificationRequired": false,
+            "extensible": false,
+            "normalization": "trim-case-insensitive-label-or-exact-code",
+            "publicPreflightPolicy": "not_applicable",
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed)"
+            ],
+            "sourceKind": "fixed_enumeration",
+            "valuePopulation": "fixed_enumeration"
+          },
+          "ImportPairedLinesOnlyFlag": {
+            "allowedValues": [
+              {
+                "code": "Y",
+                "label": "On",
+                "synonyms": []
+              },
+              {
+                "code": "N",
+                "label": "Off",
+                "synonyms": []
+              }
+            ],
+            "authoritativeFallback": "none",
+            "constraintKind": "fixed-enumeration",
+            "environmentVerificationRequired": false,
+            "extensible": false,
+            "normalization": "trim-case-insensitive-label-or-exact-code",
+            "publicPreflightPolicy": "not_applicable",
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed)"
+            ],
+            "sourceKind": "fixed_enumeration",
+            "valuePopulation": "fixed_enumeration"
+          },
+          "SingleLineAmountPoFlag": {
+            "allowedValues": [
+              {
+                "code": "Y",
+                "label": "On",
+                "synonyms": []
+              },
+              {
+                "code": "N",
+                "label": "Off",
+                "synonyms": []
+              }
+            ],
+            "authoritativeFallback": "none",
+            "constraintKind": "fixed-enumeration",
+            "environmentVerificationRequired": false,
+            "extensible": false,
+            "normalization": "trim-case-insensitive-label-or-exact-code",
+            "publicPreflightPolicy": "not_applicable",
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed)"
+            ],
+            "sourceKind": "fixed_enumeration",
+            "valuePopulation": "fixed_enumeration"
+          },
+          "SingleLineUtilityInvFlag": {
+            "allowedValues": [
+              {
+                "code": "Y",
+                "label": "On",
+                "synonyms": []
+              },
+              {
+                "code": "N",
+                "label": "Off",
+                "synonyms": []
+              }
+            ],
+            "authoritativeFallback": "none",
+            "constraintKind": "fixed-enumeration",
+            "environmentVerificationRequired": false,
+            "extensible": false,
+            "normalization": "trim-case-insensitive-label-or-exact-code",
+            "publicPreflightPolicy": "not_applicable",
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed)"
+            ],
+            "sourceKind": "fixed_enumeration",
+            "valuePopulation": "fixed_enumeration"
+          },
+          "UseTaxAmountAsControlFlag": {
+            "allowedValues": [
+              {
+                "code": "Y",
+                "label": "On",
+                "synonyms": []
+              },
+              {
+                "code": "N",
+                "label": "Off",
+                "synonyms": []
+              }
+            ],
+            "authoritativeFallback": "none",
+            "constraintKind": "fixed-enumeration",
+            "environmentVerificationRequired": false,
+            "extensible": false,
+            "normalization": "trim-case-insensitive-label-or-exact-code",
+            "publicPreflightPolicy": "not_applicable",
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed)"
+            ],
+            "sourceKind": "fixed_enumeration",
+            "valuePopulation": "fixed_enumeration"
+          },
+          "ValidatePoLeFlag": {
+            "allowedValues": [
+              {
+                "code": "Y",
+                "label": "On",
+                "synonyms": []
+              },
+              {
+                "code": "N",
+                "label": "Off",
+                "synonyms": []
+              }
+            ],
+            "authoritativeFallback": "none",
+            "constraintKind": "fixed-enumeration",
+            "environmentVerificationRequired": false,
+            "extensible": false,
+            "normalization": "trim-case-insensitive-label-or-exact-code",
+            "publicPreflightPolicy": "not_applicable",
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed)"
+            ],
+            "sourceKind": "fixed_enumeration",
+            "valuePopulation": "fixed_enumeration"
+          }
+        },
+        "blockedUpdateFields": {
+          "Attribute1": {
+            "reason": "Attribute1 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "Attribute2": {
+            "reason": "Attribute2 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "Attribute3": {
+            "reason": "Attribute3 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "Attribute4": {
+            "reason": "Attribute4 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "Attribute5": {
+            "reason": "Attribute5 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "Attribute6": {
+            "reason": "Attribute6 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "Attribute7": {
+            "reason": "Attribute7 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "Attribute8": {
+            "reason": "Attribute8 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "Attribute9": {
+            "reason": "Attribute9 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "Attribute10": {
+            "reason": "Attribute10 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "AttributeCategory": {
+            "reason": "AttributeCategory is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "BuEmailMapping": {
+            "reason": "BuEmailMapping exports a Java SQLXML wrapper string; the editable email-to-BU rows are serialized in Mappings. Preserve BuEmailMapping; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "GlobalAttribute1": {
+            "reason": "GlobalAttribute1 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "GlobalAttribute2": {
+            "reason": "GlobalAttribute2 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "GlobalAttribute3": {
+            "reason": "GlobalAttribute3 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "GlobalAttribute4": {
+            "reason": "GlobalAttribute4 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "GlobalAttribute5": {
+            "reason": "GlobalAttribute5 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "GlobalAttribute6": {
+            "reason": "GlobalAttribute6 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "GlobalAttribute7": {
+            "reason": "GlobalAttribute7 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "GlobalAttribute8": {
+            "reason": "GlobalAttribute8 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "GlobalAttribute9": {
+            "reason": "GlobalAttribute9 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "GlobalAttribute10": {
+            "reason": "GlobalAttribute10 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "GlobalAttributeCategory": {
+            "reason": "GlobalAttributeCategory is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "GlobalAttributeDate1": {
+            "reason": "GlobalAttributeDate1 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "GlobalAttributeDate2": {
+            "reason": "GlobalAttributeDate2 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "GlobalAttributeDate3": {
+            "reason": "GlobalAttributeDate3 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "GlobalAttributeDate4": {
+            "reason": "GlobalAttributeDate4 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "GlobalAttributeDate5": {
+            "reason": "GlobalAttributeDate5 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "GlobalAttributeNumber1": {
+            "reason": "GlobalAttributeNumber1 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "GlobalAttributeNumber2": {
+            "reason": "GlobalAttributeNumber2 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "GlobalAttributeNumber3": {
+            "reason": "GlobalAttributeNumber3 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "GlobalAttributeNumber4": {
+            "reason": "GlobalAttributeNumber4 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "GlobalAttributeNumber5": {
+            "reason": "GlobalAttributeNumber5 is a flexfield attribute outside the editable IDR settings shown in the supplied UI. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "IdrActivationStatus": {
+            "reason": "Status is display-only before and after activation. Reject direct updates, including a repeated current value; overrides and image-format no-op exceptions cannot enable it.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "IdrEmail": {
+            "reason": "IdrEmail is the system-provided Image Email address displayed on the IDR page, not an editable setting. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "MappingUpdated": {
+            "reason": "MappingUpdated is an internal mapping-state field, not the editable email-to-BU XML payload. Preserve it; Mappings follows its separate governed update path. Reject direct MappingUpdated updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "ProcessDocAttachmentFlag": {
+            "reason": "Image Attachment Formats changes are blocked; a value proven identical to the fresh baseline is a no-op.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed)"
+            ]
+          },
+          "ProcessDocxAttachmentFlag": {
+            "reason": "Image Attachment Formats changes are blocked; a value proven identical to the fresh baseline is a no-op.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed)"
+            ]
+          },
+          "ProcessJpegAttachmentFlag": {
+            "reason": "Image Attachment Formats changes are blocked; a value proven identical to the fresh baseline is a no-op.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed)"
+            ]
+          },
+          "ProcessPdfAttachmentFlag": {
+            "reason": "Image Attachment Formats changes are blocked; a value proven identical to the fresh baseline is a no-op.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed)"
+            ]
+          },
+          "ProcessPngAttachmentFlag": {
+            "reason": "Image Attachment Formats changes are blocked; a value proven identical to the fresh baseline is a no-op.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed)"
+            ]
+          },
+          "ProcessTiffAttachmentFlag": {
+            "reason": "Image Attachment Formats changes are blocked; a value proven identical to the fresh baseline is a no-op.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed)"
+            ]
+          },
+          "ReferenceKey1": {
+            "reason": "ReferenceKey1 is an internal reference key, not an editable IDR page setting. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "ReferenceKey2": {
+            "reason": "ReferenceKey2 is an internal reference key, not an editable IDR page setting. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "ReferenceKey3": {
+            "reason": "ReferenceKey3 is an internal reference key, not an editable IDR page setting. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "ReferenceKey4": {
+            "reason": "ReferenceKey4 is an internal reference key, not an editable IDR page setting. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          },
+          "ReferenceKey5": {
+            "reason": "ReferenceKey5 is an internal reference key, not an editable IDR page setting. Preserve its exported value; reject direct updates and overrides.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Requested field update policy (user-confirmed editable UI controls)"
+            ]
+          }
+        },
+        "unchangedUpdateFields": {
+          "ProcessDocAttachmentFlag": {
+            "requiresFreshBaseline": true,
+            "sourceIds": [
+              "User-confirmed image-format protection: unchanged values are no-ops"
+            ]
+          },
+          "ProcessDocxAttachmentFlag": {
+            "requiresFreshBaseline": true,
+            "sourceIds": [
+              "User-confirmed image-format protection: unchanged values are no-ops"
+            ]
+          },
+          "ProcessPdfAttachmentFlag": {
+            "requiresFreshBaseline": true,
+            "sourceIds": [
+              "User-confirmed image-format protection: unchanged values are no-ops"
+            ]
+          },
+          "ProcessTiffAttachmentFlag": {
+            "requiresFreshBaseline": true,
+            "sourceIds": [
+              "User-confirmed image-format protection: unchanged values are no-ops"
+            ]
+          },
+          "ProcessPngAttachmentFlag": {
+            "requiresFreshBaseline": true,
+            "sourceIds": [
+              "User-confirmed image-format protection: unchanged values are no-ops"
+            ]
+          },
+          "ProcessJpegAttachmentFlag": {
+            "requiresFreshBaseline": true,
+            "sourceIds": [
+              "User-confirmed image-format protection: unchanged values are no-ops"
+            ]
+          }
+        }
+      },
+      {
+        "auditFields": [
+          "CreatedBy",
+          "CreationDate",
+          "LastUpdateDate",
+          "LastUpdateLogin",
+          "LastUpdatedBy"
+        ],
+        "conditionallyBlockedFields": [
+          {
+            "field": "OptionCode",
+            "reason": "Require fresh target evidence of exactly one existing AP_PRORATE_FREIGHT_MISC row.",
+            "resolver": "RESOLVER-IDR-EXT-OPTIONCODE",
+            "status": "partial"
+          }
+        ],
+        "createDefaults": {},
+        "createFields": {},
+        "fieldConstraints": {},
+        "headers": [
+          "OptionCode",
+          "Attribute1",
+          "Attribute10",
+          "Attribute2",
+          "Attribute3",
+          "Attribute4",
+          "Attribute5",
+          "Attribute6",
+          "Attribute7",
+          "Attribute8",
+          "Attribute9",
+          "AttributeCategory",
+          "CreatedBy",
+          "CreationDate",
+          "EnabledFlag",
+          "GlobalAttribute1",
+          "GlobalAttribute10",
+          "GlobalAttribute2",
+          "GlobalAttribute3",
+          "GlobalAttribute4",
+          "GlobalAttribute5",
+          "GlobalAttribute6",
+          "GlobalAttribute7",
+          "GlobalAttribute8",
+          "GlobalAttribute9",
+          "GlobalAttributeCategory",
+          "GlobalAttributeDate1",
+          "GlobalAttributeDate2",
+          "GlobalAttributeDate3",
+          "GlobalAttributeDate4",
+          "GlobalAttributeDate5",
+          "GlobalAttributeNumber1",
+          "GlobalAttributeNumber2",
+          "GlobalAttributeNumber3",
+          "GlobalAttributeNumber4",
+          "GlobalAttributeNumber5",
+          "LastUpdateDate",
+          "LastUpdateLogin",
+          "LastUpdatedBy",
+          "OptionValue",
+          "ReferenceKey1",
+          "ReferenceKey2"
+        ],
+        "keyFields": [
+          "OptionCode"
+        ],
+        "member": "ORA_INTELLIGENT_DOCUMENT_RECOGNITION_OPTION_EXTENSIONS.csv",
+        "name": "ORA_INTELLIGENT_DOCUMENT_RECOGNITION_OPTION_EXTENSIONS",
+        "nodePath": "/IdrOptionExtensionsVO/IdrOptionExtensionsVORow",
+        "nodeSequence": "2",
+        "nonPersistedFields": {},
+        "operationOwnership": {
+          "update": {
+            "boundary": "Existing extension row selected by exact OptionCode AP_PRORATE_FREIGHT_MISC is an update target for EnabledFlag only; do not create or change OptionCode.",
+            "implementorTarget": true,
+            "reconciliationEntity": "ORA_INTELLIGENT_DOCUMENT_RECOGNITION_OPTION_EXTENSIONS",
+            "roles": [
+              "implementor-target",
+              "reconciliation-target"
+            ],
+            "sourceIds": [
+              "policy-reference-0020",
+              "policy-reference-0029"
+            ]
+          }
+        },
+        "requiredFields": [
+          "OptionCode"
+        ],
+        "types": {
+          "Attribute1": "string",
+          "Attribute2": "string",
+          "Attribute3": "string",
+          "Attribute4": "string",
+          "Attribute5": "string",
+          "Attribute6": "string",
+          "Attribute7": "string",
+          "Attribute8": "string",
+          "Attribute9": "string",
+          "Attribute10": "string",
+          "AttributeCategory": "string",
+          "CreatedBy": "string",
+          "CreationDate": "dateTime",
+          "EnabledFlag": "string",
+          "GlobalAttribute1": "string",
+          "GlobalAttribute2": "string",
+          "GlobalAttribute3": "string",
+          "GlobalAttribute4": "string",
+          "GlobalAttribute5": "string",
+          "GlobalAttribute6": "string",
+          "GlobalAttribute7": "string",
+          "GlobalAttribute8": "string",
+          "GlobalAttribute9": "string",
+          "GlobalAttribute10": "string",
+          "GlobalAttributeCategory": "string",
+          "GlobalAttributeDate1": "date",
+          "GlobalAttributeDate2": "date",
+          "GlobalAttributeDate3": "date",
+          "GlobalAttributeDate4": "date",
+          "GlobalAttributeDate5": "date",
+          "GlobalAttributeNumber1": "decimal",
+          "GlobalAttributeNumber2": "decimal",
+          "GlobalAttributeNumber3": "decimal",
+          "GlobalAttributeNumber4": "decimal",
+          "GlobalAttributeNumber5": "decimal",
+          "LastUpdateDate": "dateTime",
+          "LastUpdateLogin": "string",
+          "LastUpdatedBy": "string",
+          "OptionCode": "string",
+          "OptionValue": "clob",
+          "ReferenceKey1": "string",
+          "ReferenceKey2": "string"
+        },
+        "unresolvedUpdateFields": {},
+        "updateFields": {
+          "EnabledFlag": {
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          }
+        },
+        "valueContracts": {
+          "OptionCode": {
+            "allowedValues": [
+              {
+                "code": "AP_PRORATE_FREIGHT_MISC",
+                "label": "AP_PRORATE_FREIGHT_MISC",
+                "synonyms": []
+              }
+            ],
+            "authoritativeFallback": "none",
+            "constraintKind": "fixed-enumeration",
+            "environmentVerificationRequired": true,
+            "extensible": false,
+            "normalization": "trim-case-insensitive-label-or-exact-code",
+            "publicPreflightPolicy": "not_applicable",
+            "sourceIds": [
+              "policy-reference-0020"
+            ],
+            "sourceKind": "fixed_enumeration",
+            "valuePopulation": "fixed_enumeration"
+          },
+          "EnabledFlag": {
+            "allowedValues": [
+              {
+                "code": "Y",
+                "label": "On",
+                "synonyms": []
+              },
+              {
+                "code": "N",
+                "label": "Off",
+                "synonyms": []
+              }
+            ],
+            "authoritativeFallback": "none",
+            "constraintKind": "fixed-enumeration",
+            "environmentVerificationRequired": false,
+            "extensible": false,
+            "normalization": "trim-case-insensitive-label-or-exact-code",
+            "publicPreflightPolicy": "not_applicable",
+            "sourceIds": [
+              "policy-reference-0020"
+            ],
+            "sourceKind": "fixed_enumeration",
+            "valuePopulation": "fixed_enumeration"
+          }
+        },
+        "blockedUpdateFields": {
+          "Attribute1": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "Attribute2": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "Attribute3": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "Attribute4": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "Attribute5": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "Attribute6": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "Attribute7": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "Attribute8": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "Attribute9": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "Attribute10": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "AttributeCategory": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "GlobalAttribute1": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "GlobalAttribute2": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "GlobalAttribute3": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "GlobalAttribute4": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "GlobalAttribute5": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "GlobalAttribute6": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "GlobalAttribute7": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "GlobalAttribute8": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "GlobalAttribute9": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "GlobalAttribute10": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "GlobalAttributeCategory": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "GlobalAttributeDate1": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "GlobalAttributeDate2": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "GlobalAttributeDate3": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "GlobalAttributeDate4": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "GlobalAttributeDate5": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "GlobalAttributeNumber1": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "GlobalAttributeNumber2": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "GlobalAttributeNumber3": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "GlobalAttributeNumber4": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "GlobalAttributeNumber5": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "OptionValue": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "ReferenceKey1": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          },
+          "ReferenceKey2": {
+            "reason": "Only EnabledFlag may be updated on the existing AP_PRORATE_FREIGHT_MISC extension row.",
+            "overrideEligible": false,
+            "sourceIds": [
+              "Task SKILL.md: Source-Backed Task Behavior (user-confirmed extension restriction)"
+            ]
+          }
+        }
+      }
+    ],
+    "evidenceRelease": "11.13.26.10.0",
+    "metadataMember": "ASM_SETUP_CSV_METADATA.xml",
+    "objectShortName": "ORA_MANAGE_INTELLIGENT_DOCUMENT_RECOGNITION_OPTIONS",
+    "schemaFingerprint": "3bb81153aa3d0d70d110cd5291084e45bf567e23342cd2d4b9d3bd21310b1965",
+    "metadataIdentityPolicy": {
+      "mode": "business-object-and-path",
+      "sourceEvidence": [
+        "policy-reference-0030"
+      ]
+    }
+  },
+  "protocol": {
+    "artifacts": {
+      "blueprint": {
+        "format": "json-object",
+        "producer": "normalize",
+        "requiredFields": [
+          "task",
+          "operations",
+          "resolvedScope",
+          "explicitDefaults",
+          "preservedValues",
+          "prerequisites",
+          "warnings"
+        ]
+      },
+      "candidateHandoff": {
+        "format": "json-object",
+        "producer": "build",
+        "requiredFields": [
+          "status",
+          "task",
+          "candidateSha256",
+          "templateSha256",
+          "baselineSha256",
+          "designSha256",
+          "schemaFingerprint",
+          "memberInventory",
+          "rowCounts",
+          "errors",
+          "warnings",
+          "unresolvedWarnings",
+          "businessSummary"
+        ]
+      },
+      "preview": {
+        "format": "json-object",
+        "producer": "normalize",
+        "requiredFields": [
+          "task",
+          "operations",
+          "explicitDefaults",
+          "preservedValues",
+          "prerequisites",
+          "warnings",
+          "designSha256"
+        ]
+      },
+      "reconciliationReport": {
+        "format": "json-object",
+        "producer": "reconcile",
+        "requiredFields": [
+          "status",
+          "task",
+          "candidateSha256",
+          "exportSha256",
+          "requirementMatrix",
+          "mismatchCount"
+        ]
+      },
+      "requirements": {
+        "format": "json-array",
+        "producer": "normalize",
+        "requiredFields": [
+          "id",
+          "requirement"
+        ]
+      },
+      "sourceManifest": {
+        "format": "json-object",
+        "producer": "manifest",
+        "requiredFields": [
+          "environment",
+          "baseUrl",
+          "taskName",
+          "taskCode",
+          "status",
+          "templateOnly",
+          "release",
+          "schemaFingerprint",
+          "members",
+          "headers",
+          "populatedMembers",
+          "unrelatedPopulatedMembers"
+        ]
+      },
+      "validationReport": {
+        "format": "json-object",
+        "producer": "validate",
+        "requiredFields": [
+          "status",
+          "task",
+          "candidateSha256",
+          "designSha256",
+          "requirementIds",
+          "errors",
+          "warnings",
+          "unresolvedWarnings"
+        ]
+      }
+    },
+    "commands": {
+      "build": {
+        "command": "build",
+        "outputs": [
+          "candidateZip",
+          "candidateHandoff"
+        ],
+        "requiredArguments": [
+          "template",
+          "baseline",
+          "blueprint",
+          "requirements",
+          "output"
+        ]
+      },
+      "determinism": {
+        "command": "determinism",
+        "outputs": [
+          "determinismReport"
+        ],
+        "requiredArguments": [
+          "template",
+          "baseline",
+          "blueprint",
+          "requirements"
+        ]
+      },
+      "manifest": {
+        "command": "manifest",
+        "outputs": [
+          "sourceManifest"
+        ],
+        "requiredArguments": [
+          "package",
+          "environment",
+          "base-url",
+          "template-only"
+        ]
+      },
+      "normalize": {
+        "command": "normalize",
+        "outputs": [
+          "blueprint",
+          "preview",
+          "requirements"
+        ],
+        "requiredArguments": [
+          "baseline",
+          "request",
+          "design",
+          "blueprint-output",
+          "preview-output",
+          "requirements-output"
+        ]
+      },
+      "reconcile": {
+        "command": "reconcile",
+        "outputs": [
+          "reconciliationReport"
+        ],
+        "requiredArguments": [
+          "baseline",
+          "candidate",
+          "blueprint",
+          "requirements",
+          "export"
+        ]
+      },
+      "rollback": {
+        "command": "rollback",
+        "outputs": [
+          "rollbackBlueprint",
+          "rollbackRequirements",
+          "candidateZip",
+          "candidateHandoff"
+        ],
+        "requiredArguments": [
+          "template",
+          "before",
+          "current",
+          "forward-blueprint",
+          "blueprint-output",
+          "requirements-output",
+          "output"
+        ]
+      },
+      "validate": {
+        "command": "validate",
+        "outputs": [
+          "validationReport"
+        ],
+        "requiredArguments": [
+          "template",
+          "baseline",
+          "blueprint",
+          "requirements",
+          "package"
+        ]
+      }
+    },
+    "governance": {
+      "fusionMutationAllowed": false,
+      "importApprovalOwner": "core.data-loader",
+      "offlineOnly": true
+    },
+    "implementationKind": "task-specific",
+    "name": "fscr-fsm-task-runtime",
+    "version": "1.0"
+  },
+  "reconciliationPolicy": {
+    "baselineRows": "fail-on-change-or-removal",
+    "concurrentUnrelatedRows": "allow",
+    "duplicateRequestedRows": "fail",
+    "requestedRows": "exact"
+  },
+  "schemaVersion": "fscr-fsm-task-adapter-v2",
+  "semanticModel": {
+    "coverage": {
+      "conditionalBlockerCount": 2,
+      "entityCount": 2,
+      "fieldCount": 108,
+      "relationshipCount": 0,
+      "supportedOperations": [
+        "update"
+      ]
+    },
+    "extension": {
+      "evidence": [
+        "Task-specific IDR validation rules: require exactly one options row in the fresh target export; zero or multiple rows block.",
+        "Task-local runtime indexes the sole options row without inventing a CSV key; the existing OptionCode key remains unchanged for extensions.",
+        "Task-specific IDR validation rules: ConvertEmailIntoAttachFlag is validated by this task-specific extension as Y, N, or an explicit empty restoration value; normalize On/Off/Empty exported value to Y/N/blank, preserve omission, and reject every other supplied value. See ora_input_validation.md."
+      ],
+      "runtime": "scripts/fsm_task_adapter.py",
+      "status": "ready",
+      "validatorCommand": "validate"
+    },
+    "fieldContract": "package.entities",
+    "mode": "task-specific-extension",
+    "relationships": [],
+    "rulePlan": "ora-resource/ora_rule_registry.json"
+  },
+  "task": {
+    "code": "ORA_MANAGE_INTELLIGENT_DOCUMENT_RECOGNITION_OPTIONS",
+    "csvSupported": true,
+    "functionalArea": "Payables",
+    "importMode": "FSM",
+    "name": "Manage Intelligent Document Recognition Options",
+    "offering": "Financials"
+  },
+  "fieldUpdatePolicy": {
+    "source": "Task SKILL.md: Requested field update policy (user-confirmed)",
+    "provenance": "User-confirmed FSCR scope; does not claim live importer verification for newly enabled fields.",
+    "blockedImageAttachmentFields": [
+      "ProcessDocAttachmentFlag",
+      "ProcessDocxAttachmentFlag",
+      "ProcessJpegAttachmentFlag",
+      "ProcessPdfAttachmentFlag",
+      "ProcessPngAttachmentFlag",
+      "ProcessTiffAttachmentFlag"
+    ],
+    "overrideMayChangeBlockedFields": false,
+    "extensionUpdateFields": [
+      "EnabledFlag"
+    ],
+    "optionsUpdateFields": [
+      "BuDerivationBasisCode",
+      "CalcTaxDuringImportFlag",
+      "EnforceIncompleteStatusFlag",
+      "ImportFreightAmountFlag",
+      "ImportLinesMatchedFlag",
+      "ImportLinesUnmatchedFlag",
+      "ImportPairedLinesOnlyFlag",
+      "SingleLineAmountPoFlag",
+      "SingleLineUtilityInvFlag",
+      "UseTaxAmountAsControlFlag",
+      "RequesterEmailDomain",
+      "ValidatePoLeFlag",
+      "ConvertEmailIntoAttachFlag"
+    ],
+    "scope": "15 intended UI settings: 13 normal options fields, governed Mappings and extension EnabledFlag. Status and all other non-UI fields remain protected. Actual image-format changes are blocked; baseline-identical image values are no-ops.",
+    "evidenceUnresolvedOptionsFields": [
+      "Mappings"
+    ],
+    "allowUnchangedImageFormatValues": true
+  }
+}

@@ -66,26 +66,13 @@ def require_runtime_query_compatibility(config):
             require_runtime_query_compatibility(value)
 
 
-def analyze(candidate, operation, environment, core_envelope, evidence, runbook_control):
+def review_registration(candidate, operation, environment, evidence):
+    """Review the customer recipe without consuming a core implementation format.
+
+    This is business/deployment evidence only. It cannot establish core routing,
+    approve a candidate, or replace the remaining execution gate.
+    """
     checked = context(candidate, operation, environment)
-    require(isinstance(core_envelope, dict) and set(core_envelope) == {
-        'schemaVersion','preflight','fingerprint'} and core_envelope['schemaVersion']=='1.0',
-        'REGISTRATION_CORE_ENVELOPE_SCHEMA')
-    unsigned = {key:core_envelope[key] for key in ('schemaVersion','preflight')}
-    require(core_envelope['fingerprint']==package.fingerprint(unsigned), 'REGISTRATION_CORE_ENVELOPE_CHANGED')
-    preflight = core_envelope['preflight']
-    require(isinstance(preflight, dict), 'REGISTRATION_CORE_PREFLIGHT')
-    require(preflight.get('archiveSha256')==checked['candidate_sha256']
-        and preflight.get('host')==environment and preflight.get('sourceType')=='FBDI'
-        and preflight.get('taskRouted') is True and preflight.get('supportsRunBookTaskCode') is True
-        and preflight.get('fbdiBusinessObject')=='customers'
-        and preflight.get('fbdiUcmAccount')=='fin$/receivables$/import$'
-        and preflight.get('fbdiLoadAdapterInterfaceId') in ('59',59)
-        and preflight.get('fbdiFiles')==['ArUpdCustomers.csv'], 'REGISTRATION_CORE_ROUTE_MISMATCH')
-    require(isinstance(runbook_control, dict) and runbook_control.get('mode')=='required'
-        and runbook_control.get('status')=='active' and runbook_control.get('environment')==environment
-        and positive_id(runbook_control.get('active_runbook_ref'))
-        and preflight.get('runID')==runbook_control['active_runbook_ref'], 'REGISTRATION_RUNBOOK_BINDING')
     require(isinstance(evidence, dict) and set(evidence)=={'schema_version','environment_url',
         'captured_at','evidence_reference','complete','records'}, 'REGISTRATION_EVIDENCE_SCHEMA')
     require(evidence['schema_version']=='ar-customer-registration-evidence-v1'
@@ -114,14 +101,47 @@ def analyze(candidate, operation, environment, core_envelope, evidence, runbook_
         'interface_id':row['LOAD_ADAPTER_INTERFACE_ID'],
         'applicationArguments':config['applicationArguments'],
         'scopeResolver':config['loadExecution']['scopeResolver']}
+    return {'schema_version': 'ar-customer-registration-business-review-v1',
+        'status': 'SUPPLIED_REGISTRATION_RECIPE_MATCH',
+        'candidate_sha256': checked['candidate_sha256'],
+        'operation_intent': operation, 'environment_url': environment,
+        'registration_sha256': package.fingerprint(normalized),
+        'arguments_sha256': package.fingerprint(argument_recipe),
+        'registration_evidence_sha256': package.fingerprint(evidence),
+        'registration_contract_sha256': package.fingerprint(expected),
+        'execution_authorized': False, 'live_ready': False,
+        'core_routing_verified': False, 'approval_verified': False}
+
+
+def analyze(candidate, operation, environment, core_envelope, evidence, runbook_control):
+    checked = context(candidate, operation, environment)
+    require(isinstance(core_envelope, dict) and set(core_envelope) == {
+        'schemaVersion','preflight','fingerprint'} and core_envelope['schemaVersion']=='1.0',
+        'REGISTRATION_CORE_ENVELOPE_SCHEMA')
+    unsigned = {key:core_envelope[key] for key in ('schemaVersion','preflight')}
+    require(core_envelope['fingerprint']==package.fingerprint(unsigned), 'REGISTRATION_CORE_ENVELOPE_CHANGED')
+    preflight = core_envelope['preflight']
+    require(isinstance(preflight, dict), 'REGISTRATION_CORE_PREFLIGHT')
+    require(preflight.get('archiveSha256')==checked['candidate_sha256']
+        and preflight.get('host')==environment and preflight.get('sourceType')=='FBDI'
+        and preflight.get('taskRouted') is True and preflight.get('supportsRunBookTaskCode') is True
+        and preflight.get('fbdiBusinessObject')=='customers'
+        and preflight.get('fbdiUcmAccount')=='fin$/receivables$/import$'
+        and preflight.get('fbdiLoadAdapterInterfaceId') in ('59',59)
+        and preflight.get('fbdiFiles')==['ArUpdCustomers.csv'], 'REGISTRATION_CORE_ROUTE_MISMATCH')
+    require(isinstance(runbook_control, dict) and runbook_control.get('mode')=='required'
+        and runbook_control.get('status')=='active' and runbook_control.get('environment')==environment
+        and positive_id(runbook_control.get('active_runbook_ref'))
+        and preflight.get('runID')==runbook_control['active_runbook_ref'], 'REGISTRATION_RUNBOOK_BINDING')
+    business = review_registration(candidate, operation, environment, evidence)
     binding = {'schema_version':'ar-customer-preflight-binding-v1',
         'candidate_sha256':checked['candidate_sha256'],'operation_intent':operation,
         'environment_url':environment,'task_code':TASK,
-        'registration_sha256':package.fingerprint(normalized),
-        'arguments_sha256':package.fingerprint(argument_recipe),
+        'registration_sha256':business['registration_sha256'],
+        'arguments_sha256':business['arguments_sha256'],
         'preflight_sha256':package.fingerprint(core_envelope),
-        'registration_evidence_sha256':package.fingerprint(evidence),
-        'registration_contract_sha256':package.fingerprint(expected),
+        'registration_evidence_sha256':business['registration_evidence_sha256'],
+        'registration_contract_sha256':business['registration_contract_sha256'],
         'runbook_control_sha256':package.fingerprint(runbook_control)}
     return {'schema_version':'ar-customer-registration-review-v1',
         'status':'SUPPLIED_REGISTRATION_AND_CORE_ROUTE_MATCH','binding':binding,
@@ -164,6 +184,10 @@ def analyze_published(candidate, operation, environment, core_envelope, publicat
     deployment review. This does not claim to have fetched the private recipe via REST.
     """
     review = analyze(candidate, operation, environment, core_envelope, publication, runbook_control)
+    return _published_review(review, environment, publication, live)
+
+
+def _published_review(review, environment, publication, live):
     require(isinstance(live, dict) and live.get('schema_version') == 'ar-customer-live-registration-v1'
         and live.get('environment_url') == environment and isinstance(live.get('evidence_reference'), str)
         and live['evidence_reference'].strip(), 'REGISTRATION_LIVE_EVIDENCE_SCHEMA')
@@ -230,3 +254,34 @@ def published_preview_context(candidate, operation, environment, core_envelope, 
     return {'environment_url': environment, 'preview_id': package.fingerprint(preview),
         'registration_sha256': review['binding']['registration_sha256'],
         'arguments_sha256': review['binding']['arguments_sha256']}
+
+
+def review_delegated_registration(candidate, operation, environment, publication, live,
+                                  capability_evidence, runbook_control):
+    """Customer-specific prerequisites, independent of core's approval protocol.
+
+    Core still owns actual source capture, route resolution, approval and writes.
+    This result is task evidence, never an emulated preflight/approval envelope.
+    """
+    import customer_loader_capability as capability
+    business = review_registration(candidate, operation, environment, publication)
+    required = capability.review(environment, capability_evidence)
+    require(isinstance(runbook_control, dict) and runbook_control.get('mode') == 'required'
+        and runbook_control.get('status') == 'active'
+        and runbook_control.get('environment') == environment
+        and positive_id(runbook_control.get('active_runbook_ref')), 'REGISTRATION_RUNBOOK_BINDING')
+    binding = {key: business[key] for key in ('candidate_sha256', 'operation_intent',
+        'environment_url', 'registration_sha256', 'arguments_sha256',
+        'registration_evidence_sha256', 'registration_contract_sha256')}
+    binding.update(schema_version='ar-customer-delegated-review-binding-v1',
+        task_code=TASK, runbook_control_sha256=package.fingerprint(runbook_control),
+        loader_capability_evidence_sha256=required['evidence_sha256'])
+    base = {'binding': binding, 'final_data': {'archiveSha256': business['candidate_sha256']},
+        'limits': ['Customer prerequisite evidence is not core approval or proof of executed routing.'],
+        'execution_authorized': False, 'live_ready': False}
+    result = _published_review(base, environment, publication, live)
+    result['schema_version'] = 'ar-customer-delegated-registration-review-v1'
+    result['status'] = 'CUSTOMER_REGISTRATION_PREREQUISITES_MATCH'
+    result['core_route_verified'] = False
+    result['core_decision_required'] = True
+    return result

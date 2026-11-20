@@ -1,18 +1,25 @@
 # Meals encoding, identity and evidence boundaries
 
+
 The executable scope and user fields are defined in
 [ordinary execution](ordinary-meals-execution.md),
 [the fixed intake schema](intake-fields.json) and
 [the runtime contract](fsm-runtime-contract.json). The full 19-entity,
 634-column export schema remains necessary for package validation and preservation;
-it does not enable authoring other categories. Historical broader research and
+that schema alone does not admit an unreviewed profile. The eight reviewed
+category profiles have their own authoring contracts and remaining limits;
+the Meals facts below do not establish another category's behavior. Historical broader research and
 qualification campaigns remain in Git/project history, outside the runtime package.
 
 ## Field encoding and managed values
 
 [Boolean evidence](boolean-encoding-evidence.json) retains the nine Meals
 field-specific mappings, including five user inputs and four hidden/managed
-flags. Use the explicit Yes-to-Y and No-to-N mapping for each listed field. Do not infer a mapping for another field from a Flag suffix.
+flags. The pinned UI VO binds these fields to EXM_YES_NO; the seed maps
+Yes to Y and No to N. EO/FSM attributes and reviewed String accessors preserve
+the codes. Do not infer a mapping for another field from a Flag suffix.
+The MealsPolicyEOImpl.java source hash is
+6f7bcc8a3dfede8366a7340080b1163eb7d88dc4eea2e6631302b87afdd0c165.
 
 The intake contract maps the two enforcement labels to UPPER and VIOLATION.
 [Date evidence](date-encoding-evidence.json) binds the observed Meals StartDate
@@ -44,14 +51,21 @@ remain empty under the supported profile. Removing their
 workbook inputs does not remove them from the FSM key. Reject ambiguous and
 case-only matches. Keys, date, currency, status and determinants are immutable.
 
-Batch admission preserves the full rate key and the alternate key excluding Start Date, and conservatively requires nonoverlapping inclusive effective periods, including retained rates. No existing rate is automatically closed or deleted. Multi-rate and EndDate generation remain pending live qualification. Local validation is not target acceptance.
+The reviewed Meals rate source derives MigrationFlag from a Service-root
+application module other than ExpenseMobileServiceAM. MigrationFlagType starts
+with that flag; its CATCH_ALL branch does not reset other cases. XML declares
+AltKey and AltKey_NoStart uniqueness validators. Batch admission preserves both
+keys and conservatively requires nonoverlapping inclusive effective periods,
+including retained rates. No existing rate is automatically closed or deleted.
+Multi-rate and EndDate generation remain pending live qualification. MigratorHelper and
+CSV-converter internals remain unproved; source facts are not target acceptance.
 
 ## Qualification boundaries
 
-Historical review does not establish target-release equivalence. The shipped
+Pinned source is FPH label 261013.0000.S; exact paths/hashes remain in the JSON
+source registers. Do not infer target-release equivalence from it. The shipped
 [profile evidence](accepted-meals-profile.json) preserves accepted basic
-CREATE/UPDATE hashes and historical observation release. Private target identity
-is omitted; every selected target retains the live-reconciliation warning. Runtime has no
+CREATE/UPDATE hashes and historical observation target/release. Runtime has no
 release allowlist; admission requires the exact task schema and release provenance.
 Other environments or releases need
 fresh bound evidence and live reconciliation, not edits to the historical target.
@@ -62,3 +76,15 @@ qualification notices and per-run native approval/reconciliation requirements.
 Keep baseline descriptor/nonCSV bytes exact. [Metadata handling](metadata-contract.md)
 retains strict sequence drift as a finding; no arbitrary ordering equivalence,
 package-wide atomicity, guaranteed rollback or cleanup is established.
+
+## Accommodations authoring evidence
+
+[Accommodations profile](accommodations-profile.json) records the user-provided
+UI evidence and previously reviewed source snapshot restored from bebd2328e.
+The screenshots establish the requested fixed daily limit and reduced fields;
+the pinned source facts record category-specific portable keys and validators.
+They are not live CSV acceptance evidence. Date/Boolean encodings, managed DRAFT
+status, disabled determinant flags and explicit-empty serialization are an
+engineering extension of the existing authoring path. All Accommodations
+candidates disclose live reconciliation pending. Daily Limit? is workbook-only,
+grey and prefilled Yes; it is never mapped to a parent CSV flag.

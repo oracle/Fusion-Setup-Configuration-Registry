@@ -77,6 +77,9 @@ workspace_outputs:
     versioning_policy: "append-only"
 required_setup_tasks:
   - "AR_MANAGE_RECEIPT_SOURCES"
+  - "IBY_MANAGE_FUNDS_CAPTURE_PROCESS_PROFILES"
+  - "IBY_MANAGE_INTERNAL_PAYEES"
+  - "AR_MANAGE_RECEIPT_CLASSES_AND_METHODS"
 applicability:
   industries:
     - "All"
@@ -107,6 +110,9 @@ Use this functional-area skill after Financials scope is confirmed and the proje
 ## Setup Tasks
 
 1. [Manage Receipt Sources](manage-receipt-sources/SKILL.md) (`AR_MANAGE_RECEIPT_SOURCES`)
+2. [Manage Funds Capture Process Profiles](manage-funds-capture-process-profiles/SKILL.md) (`IBY_MANAGE_FUNDS_CAPTURE_PROCESS_PROFILES`)
+3. [Manage Internal Payees](manage-internal-payees/SKILL.md) (`IBY_MANAGE_INTERNAL_PAYEES`)
+4. [Manage Receipt Classes and Methods](manage-receipt-classes-and-methods/SKILL.md) (`AR_MANAGE_RECEIPT_CLASSES_AND_METHODS`)
 
 ## Inputs
 

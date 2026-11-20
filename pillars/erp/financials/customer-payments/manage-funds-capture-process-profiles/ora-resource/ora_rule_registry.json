@@ -1,0 +1,157 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "IBY_MANAGE_FUNDS_CAPTURE_PROCESS_PROFILES",
+      "task_name": "Manage Funds Capture Process Profiles",
+      "start_node": "FCPP.INPUT",
+      "nodes": [
+        {
+          "id": "FCPP.INPUT",
+          "node_type": "step",
+          "sequence": 10,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "success": "FCPP.DEPENDENCY"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Selected task request",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 342
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "FCPP.DEPENDENCY",
+          "node_type": "step",
+          "sequence": 20,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "success": "FCPP.DEFAULTS"
+          },
+          "prerequisites": [
+            "FCPP.INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Selected task request",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 45
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "FCPP.DEFAULTS",
+          "node_type": "step",
+          "sequence": 30,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "success": "FCPP.DESIGN"
+          },
+          "prerequisites": [
+            "FCPP.DEPENDENCY"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Selected task request",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 167
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "FCPP.DESIGN",
+          "node_type": "step",
+          "sequence": 40,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "success": "FCPP.HANDOFF"
+          },
+          "prerequisites": [
+            "FCPP.DEFAULTS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Selected task request",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 36
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "FCPP.HANDOFF",
+          "node_type": "step",
+          "sequence": 50,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "success": "FCPP.READY"
+          },
+          "prerequisites": [
+            "FCPP.DESIGN"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Selected task request",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 39
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "FCPP.READY",
+          "node_type": "terminal",
+          "sequence": 60,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "FCPP.HANDOFF"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Local checks complete; return readiness to the active Run Book and Data Loader, not import success",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 43
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

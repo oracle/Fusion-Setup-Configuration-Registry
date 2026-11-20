@@ -814,6 +814,1760 @@
           "csv_field": "EndDate"
         }
       ]
+    },
+    {
+      "name": "Accommodations",
+      "entity": "ORA_EXM_ACCOM_POLICY",
+      "kind": "policy",
+      "shared_entities": [],
+      "columns": [
+        {
+          "field": "PolicyName",
+          "label": "Policy Name*",
+          "type": "string",
+          "boolean": false,
+          "key": true,
+          "csv_field": "PolicyName"
+        },
+        {
+          "field": "Description",
+          "label": "Description",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "Description"
+        },
+        {
+          "field": "_DailyLimitEnabled",
+          "label": "Daily Limit?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": null,
+          "fixed_value": "Yes",
+          "workbook_only": true
+        },
+        {
+          "field": "CurrencyCode",
+          "label": "Currency Code",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "CurrencyCode"
+        },
+        {
+          "field": "PolicyEnforcementCode",
+          "label": "Policy Enforcement",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "PolicyEnforcementCode",
+          "display_values": {
+            "Reimburse upper limit when expense exceeds defined rate": "UPPER",
+            "Generate policy violation when expense exceeds defined rate": "VIOLATION"
+          }
+        },
+        {
+          "field": "PolicyViolationFlag",
+          "label": "Policy Violation Warning?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "PolicyViolationFlag"
+        },
+        {
+          "field": "WarningTolerance",
+          "label": "Warning Tolerance Percentage",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "WarningTolerance"
+        },
+        {
+          "field": "DispWarningToUserFlag",
+          "label": "Display Warning to User?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "DispWarningToUserFlag"
+        },
+        {
+          "field": "PreventSubmissionFlag",
+          "label": "Prevent Report Submission?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "PreventSubmissionFlag"
+        },
+        {
+          "field": "ErrorTolerance",
+          "label": "Error Tolerance Percentage",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "ErrorTolerance"
+        }
+      ]
+    },
+    {
+      "name": "Accommodations Rates",
+      "entity": "ORA_EXM_ACCOM_POLICY_LINE",
+      "kind": "rate",
+      "shared_entities": [],
+      "columns": [
+        {
+          "field": "_PolicyName",
+          "label": "Policy Name*",
+          "type": "string",
+          "key": true,
+          "csv_field": "ORA_EXM_ACCOM_POLICY.PolicyName"
+        },
+        {
+          "field": "DailyLimit",
+          "label": "Daily Limit",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "DailyLimit"
+        },
+        {
+          "field": "StartDate",
+          "label": "Start Date",
+          "type": "date",
+          "boolean": false,
+          "csv_field": "StartDate"
+        },
+        {
+          "field": "EndDate",
+          "label": "End Date",
+          "type": "date",
+          "boolean": false,
+          "csv_field": "EndDate"
+        }
+      ]
+    },
+    {
+      "name": "Entertainment",
+      "entity": "ORA_EXM_ENTERTAINMENT_POLICY",
+      "kind": "policy",
+      "shared_entities": [],
+      "columns": [
+        {
+          "field": "PolicyName",
+          "label": "Policy Name*",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "PolicyName",
+          "key": true
+        },
+        {
+          "field": "Description",
+          "label": "Description",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "Description"
+        },
+        {
+          "field": "NumOfAttendeesFlag",
+          "label": "Capture Number of Attendees?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "NumOfAttendeesFlag"
+        },
+        {
+          "field": "NumOfAttendeesAmount",
+          "label": "Attendee Count Threshold",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "NumOfAttendeesAmount"
+        },
+        {
+          "field": "NumOfAttendeesCurrCode",
+          "label": "Threshold Currency Code",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "NumOfAttendeesCurrCode"
+        },
+        {
+          "field": "EmployeeAttendeeInfoFlag",
+          "label": "Display Employee Attendee Information?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "EmployeeAttendeeInfoFlag"
+        },
+        {
+          "field": "EmpAttendeeAmtCode",
+          "label": "Employee Attendee Amount",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "EmpAttendeeAmtCode",
+          "display_values": {
+            "Hidden": "DISABLED",
+            "Optional": "ENABLED",
+            "Required": "REQUIRED"
+          }
+        },
+        {
+          "field": "EmplReqAsAttendeeFlag",
+          "label": "Require Employee Attendee?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "EmplReqAsAttendeeFlag"
+        },
+        {
+          "field": "NonEmplAttendeeInfoFlag",
+          "label": "Display Nonemployee Attendee Information?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "NonEmplAttendeeInfoFlag"
+        },
+        {
+          "field": "NonempAttendeeTypeCode",
+          "label": "Nonemployee Attendee Type",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "NonempAttendeeTypeCode",
+          "display_values": {
+            "Hidden": "DISABLED",
+            "Optional": "ENABLED",
+            "Required": "REQUIRED"
+          }
+        },
+        {
+          "field": "NonempAttendeeAmtCode",
+          "label": "Nonemployee Attendee Amount",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "NonempAttendeeAmtCode",
+          "display_values": {
+            "Hidden": "DISABLED",
+            "Optional": "ENABLED",
+            "Required": "REQUIRED"
+          }
+        },
+        {
+          "field": "NonempJobTitleCode",
+          "label": "Nonemployee Job Title",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "NonempJobTitleCode",
+          "display_values": {
+            "Hidden": "DISABLED",
+            "Optional": "ENABLED",
+            "Required": "REQUIRED"
+          }
+        },
+        {
+          "field": "NonempCreationFlag",
+          "label": "Enable Nonemployee Creation?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "NonempCreationFlag"
+        },
+        {
+          "field": "NonempRequiredAttendeeFlag",
+          "label": "Require Nonemployee Attendee?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "NonempRequiredAttendeeFlag"
+        },
+        {
+          "field": "EnabledRateLimitFlag",
+          "label": "Enable Rate Limit?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "EnabledRateLimitFlag"
+        },
+        {
+          "field": "SingleInstanceLimitFlag",
+          "label": "Single Instance Limit?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "SingleInstanceLimitFlag"
+        },
+        {
+          "field": "DailyLimitFlag",
+          "label": "Daily Sum Limit?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "DailyLimitFlag"
+        },
+        {
+          "field": "YearlyLimitFlag",
+          "label": "Yearly Limit?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "YearlyLimitFlag"
+        },
+        {
+          "field": "PeriodMonth",
+          "label": "Period Start Month",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "PeriodMonth",
+          "display_values": {
+            "January": "01",
+            "February": "02",
+            "March": "03",
+            "April": "04",
+            "May": "05",
+            "June": "06",
+            "July": "07",
+            "August": "08",
+            "September": "09",
+            "October": "10",
+            "November": "11",
+            "December": "12"
+          }
+        },
+        {
+          "field": "PeriodDay",
+          "label": "Period Start Day",
+          "type": "integer",
+          "boolean": false,
+          "csv_field": "PeriodDay"
+        },
+        {
+          "field": "CurrencyCode",
+          "label": "Currency Code",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "CurrencyCode"
+        },
+        {
+          "field": "PolicyEnforcementCode",
+          "label": "Policy Enforcement",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "PolicyEnforcementCode",
+          "display_values": {
+            "Reimburse upper limit when expense exceeds defined rate": "UPPER",
+            "Generate policy violation when expense exceeds defined rate": "VIOLATION"
+          }
+        },
+        {
+          "field": "PolicyViolationFlag",
+          "label": "Policy Violation Warning?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "PolicyViolationFlag"
+        },
+        {
+          "field": "WarningTolerance",
+          "label": "Warning Tolerance Percentage",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "WarningTolerance"
+        },
+        {
+          "field": "DispWarningToUserFlag",
+          "label": "Display Warning to User?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "DispWarningToUserFlag"
+        },
+        {
+          "field": "PreventSubmissionFlag",
+          "label": "Prevent Report Submission?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "PreventSubmissionFlag"
+        },
+        {
+          "field": "ErrorTolerance",
+          "label": "Error Tolerance Percentage",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "ErrorTolerance"
+        }
+      ]
+    },
+    {
+      "name": "Entertainment Rates",
+      "entity": "ORA_EXM_ENTERTAINMENT_POLICY_LINE",
+      "kind": "rate",
+      "shared_entities": [],
+      "columns": [
+        {
+          "field": "_PolicyName",
+          "label": "Policy Name*",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "ORA_EXM_ENTERTAINMENT_POLICY.PolicyName",
+          "key": true
+        },
+        {
+          "field": "SingleInstanceLimit",
+          "label": "Single Instance Limit",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "SingleInstanceLimit"
+        },
+        {
+          "field": "DailyLimit",
+          "label": "Daily Sum Limit",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "DailyLimit"
+        },
+        {
+          "field": "YearlyLimit",
+          "label": "Yearly Limit",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "YearlyLimit"
+        },
+        {
+          "field": "StartDate",
+          "label": "Start Date",
+          "type": "date",
+          "boolean": false,
+          "csv_field": "StartDate"
+        },
+        {
+          "field": "EndDate",
+          "label": "End Date",
+          "type": "date",
+          "boolean": false,
+          "csv_field": "EndDate"
+        }
+      ]
+    },
+    {
+      "name": "Airfare",
+      "entity": "ORA_EXM_AIRFARE_POLICY",
+      "kind": "policy",
+      "shared_entities": [],
+      "columns": [
+        {
+          "field": "PolicyName",
+          "label": "Policy Name*",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "PolicyName",
+          "key": true
+        },
+        {
+          "field": "Description",
+          "label": "Description",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "Description"
+        },
+        {
+          "field": "PolicyEnforcementCode",
+          "label": "Policy Enforcement",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "PolicyEnforcementCode",
+          "lookup": "EXM_PREFERRED_ENFORCEMENT",
+          "display_values": {
+            "Prevent report submission": "PREVENT",
+            "Policy violation warning": "VIOLATION"
+          }
+        },
+        {
+          "field": "DispWarningToUserFlag",
+          "label": "Display Warning to User?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "DispWarningToUserFlag",
+          "lookup": "EXM_YES_NO"
+        }
+      ],
+      "qualification": "source_qualified_create_preparation_live_pending_updates_require_exact_field_acceptance"
+    },
+    {
+      "name": "Airfare Rates",
+      "entity": "ORA_EXM_AIRFARE_POLICY_LINE",
+      "kind": "rate",
+      "shared_entities": [],
+      "columns": [
+        {
+          "field": "_PolicyName",
+          "label": "Policy Name*",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "ORA_EXM_AIRFARE_POLICY.PolicyName",
+          "key": true
+        },
+        {
+          "field": "StartDate",
+          "label": "Start Date",
+          "type": "date",
+          "boolean": false,
+          "csv_field": "StartDate"
+        },
+        {
+          "field": "EndDate",
+          "label": "End Date",
+          "type": "date",
+          "boolean": false,
+          "csv_field": "EndDate"
+        },
+        {
+          "field": "FlightClassCode",
+          "label": "Flight Class",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "FlightClassCode",
+          "lookup": "EXM_TICKET_CLASS",
+          "display_values": {
+            "Any": "ANY",
+            "Business": "BUSINESS",
+            "Coach": "COACH"
+          }
+        }
+      ],
+      "qualification": "source_qualified_create_preparation_live_pending_updates_require_exact_field_acceptance"
+    },
+    {
+      "name": "Car Rental",
+      "entity": "ORA_EXM_CARRENTAL_POLICY",
+      "kind": "policy",
+      "shared_entities": [],
+      "columns": [
+        {
+          "field": "PolicyName",
+          "label": "Policy Name*",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "PolicyName",
+          "key": true
+        },
+        {
+          "field": "Description",
+          "label": "Description",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "Description"
+        },
+        {
+          "field": "_DailyLimitEnabled",
+          "label": "Daily Limit?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": null,
+          "fixed_value": "Yes",
+          "workbook_only": true
+        },
+        {
+          "field": "CurrencyCode",
+          "label": "Currency Code",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "CurrencyCode",
+          "lookup": "enabled_active_currency"
+        },
+        {
+          "field": "PolicyEnforcementCode",
+          "label": "Policy Enforcement",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "PolicyEnforcementCode",
+          "display_values": {
+            "Reimburse upper limit when expense exceeds defined rate": "UPPER",
+            "Generate policy violation when expense exceeds defined rate": "VIOLATION"
+          },
+          "lookup": "EXM_POLICY_ENFORCEMENT"
+        },
+        {
+          "field": "PolicyViolationFlag",
+          "label": "Policy Violation Warning?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "PolicyViolationFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "WarningTolerance",
+          "label": "Warning Tolerance Percentage",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "WarningTolerance"
+        },
+        {
+          "field": "DispWarningToUserFlag",
+          "label": "Display Warning to User?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "DispWarningToUserFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "PreventSubmissionFlag",
+          "label": "Prevent Report Submission?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "PreventSubmissionFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "ErrorTolerance",
+          "label": "Error Tolerance Percentage",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "ErrorTolerance"
+        }
+      ],
+      "qualification": "source_qualified_create_preparation_live_pending_existing_updates_scoped"
+    },
+    {
+      "name": "Car Rental Rates",
+      "entity": "ORA_EXM_CARRENTAL_POLICY_LINE",
+      "kind": "rate",
+      "shared_entities": [],
+      "columns": [
+        {
+          "field": "_PolicyName",
+          "label": "Policy Name*",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "ORA_EXM_CARRENTAL_POLICY.PolicyName",
+          "key": true
+        },
+        {
+          "field": "StartDate",
+          "label": "Start Date",
+          "type": "date",
+          "boolean": false,
+          "csv_field": "StartDate"
+        },
+        {
+          "field": "EndDate",
+          "label": "End Date",
+          "type": "date",
+          "boolean": false,
+          "csv_field": "EndDate"
+        },
+        {
+          "field": "DailyLimit",
+          "label": "Daily Limit",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "DailyLimit"
+        }
+      ],
+      "qualification": "source_qualified_create_preparation_live_pending_existing_updates_scoped"
+    },
+    {
+      "name": "Mileage",
+      "entity": "ORA_EXM_MILEAGE_POLICY",
+      "kind": "policy",
+      "shared_entities": [],
+      "columns": [
+        {
+          "field": "PolicyName",
+          "label": "Policy Name*",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "PolicyName",
+          "key": true
+        },
+        {
+          "field": "Description",
+          "label": "Description",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "Description"
+        },
+        {
+          "field": "CountryCode",
+          "label": "Country Code",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "CountryCode",
+          "lookup": "enabled_territory"
+        },
+        {
+          "field": "CurrencyCode",
+          "label": "Currency Code",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "CurrencyCode",
+          "lookup": "enabled_active_currency"
+        },
+        {
+          "field": "UnitOfMeasureCode",
+          "label": "Unit of Measure",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "UnitOfMeasureCode",
+          "lookup": "EXM_UNIT_OF_MEASURE",
+          "display_values": {
+            "Kilometer": "KILOMETER",
+            "Mile": "MILE",
+            "Swedish mile": "SWEDISH_MILE"
+          }
+        },
+        {
+          "field": "EnabledStdDeductionFlag",
+          "label": "Standard Mileage Deduction?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "EnabledStdDeductionFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "MileageDeduction",
+          "label": "Distance Deduction",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "MileageDeduction"
+        },
+        {
+          "field": "EnabledEligibilityFlag",
+          "label": "Minimum Distance for Eligibility?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "EnabledEligibilityFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "EligibilityDistance",
+          "label": "Minimum Distance",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "EligibilityDistance"
+        },
+        {
+          "field": "EnabledDeductCommuteFlag",
+          "label": "Enable Commute Mileage Deduction?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "EnabledDeductCommuteFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "CommuteDistanceRequiredFlag",
+          "label": "Commute Mileage Deduction",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "CommuteDistanceRequiredFlag",
+          "lookup": "ORA_EXM_COMMUTE_DEDUCTION",
+          "display_values": {
+            "Optional": "ORA_EXM_OPTIONAL",
+            "Required per day": "ORA_EXM_REQUIRED"
+          }
+        },
+        {
+          "field": "EnabledPassengerFlag",
+          "label": "Enable Passenger Rate?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "EnabledPassengerFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "PassengerRuleCode",
+          "label": "Passenger Rate Type",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "PassengerRuleCode",
+          "lookup": "EXM_PASSENGER_RULE",
+          "display_values": {
+            "Rates by range of passengers": "RANGE",
+            "Single rate per passenger": "SINGLE"
+          }
+        },
+        {
+          "field": "CapturePassNamesFlag",
+          "label": "Capture Passenger Name?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "CapturePassNamesFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "CalcPassRateByDistFlag",
+          "label": "Calculate Passenger Rate by Distance?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "CalcPassRateByDistFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "EnabledMaxPassFlag",
+          "label": "Restrict Passengers Reimbursed?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "EnabledMaxPassFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "MaximumPassengers",
+          "label": "Maximum Number of Passengers",
+          "type": "integer",
+          "boolean": false,
+          "csv_field": "MaximumPassengers"
+        },
+        {
+          "field": "EnabledAdditnlRatesFlag",
+          "label": "Enable Company-Specific Rates?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "EnabledAdditnlRatesFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "AdditionalRatesListCode",
+          "label": "Company-Specific Lookup Type",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "AdditionalRatesListCode",
+          "lookup": "expenses_user_extensible_lookup_type"
+        }
+      ],
+      "qualification": "source_qualified_create_preparation_live_pending_existing_updates_scoped"
+    },
+    {
+      "name": "Mileage Rates",
+      "entity": "ORA_EXM_MILEAGE_LINE",
+      "kind": "rate",
+      "shared_entities": [],
+      "columns": [
+        {
+          "field": "_PolicyName",
+          "label": "Policy Name*",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "ORA_EXM_MILEAGE_POLICY.PolicyName",
+          "key": true
+        },
+        {
+          "field": "StartDate",
+          "label": "Start Date",
+          "type": "date",
+          "boolean": false,
+          "csv_field": "StartDate"
+        },
+        {
+          "field": "EndDate",
+          "label": "End Date",
+          "type": "date",
+          "boolean": false,
+          "csv_field": "EndDate"
+        },
+        {
+          "field": "TypeOfRateCode",
+          "label": "Rate Kind",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "TypeOfRateCode",
+          "display_values": {
+            "Mileage": "MILEAGE",
+            "Passenger": "PASSENGER",
+            "Company-specific": "ADDITIONAL"
+          }
+        },
+        {
+          "field": "Rate",
+          "label": "Rate",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "Rate"
+        },
+        {
+          "field": "CalculationMethodCode",
+          "label": "Calculation Method",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "CalculationMethodCode",
+          "lookup": "EXM_CALCULATION_METHOD",
+          "display_values": {
+            "Amount": "AMOUNT",
+            "Percentage": "PERCENTAGE"
+          }
+        },
+        {
+          "field": "PassengerThreshold",
+          "label": "Passenger Range Upper Limit",
+          "type": "integer",
+          "boolean": false,
+          "csv_field": "PassengerThreshold"
+        },
+        {
+          "field": "AdditionalRateCode",
+          "label": "Company-Specific Rate Code",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "AdditionalRateCode",
+          "lookup": "selected_company_lookup_code"
+        }
+      ],
+      "qualification": "source_qualified_create_preparation_live_pending_existing_updates_scoped"
+    },
+    {
+      "name": "Miscellaneous",
+      "entity": "ORA_EXM_MISCELLANEOUS_POLICY",
+      "kind": "policy",
+      "shared_entities": [],
+      "columns": [
+        {
+          "field": "PolicyName",
+          "label": "Policy Name*",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "PolicyName",
+          "key": true
+        },
+        {
+          "field": "Description",
+          "label": "Description",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "Description"
+        },
+        {
+          "field": "EnabledEligibilityFlag",
+          "label": "Minimum Number of Days?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "EnabledEligibilityFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "EligibilityDays",
+          "label": "Days",
+          "type": "integer",
+          "boolean": false,
+          "csv_field": "EligibilityDays"
+        },
+        {
+          "field": "DaysBasedItemParentFlag",
+          "label": "Based on Parent Line Days?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "DaysBasedItemParentFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "RateTypeCode",
+          "label": "Rate Type",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "RateTypeCode",
+          "lookup": "EXM_RATE_TYPE",
+          "display_values": {
+            "Percentage reimbursement with upper limit": "BOTH",
+            "Rate limit": "LIMIT",
+            "Percentage reimbursement": "PERCENT"
+          }
+        },
+        {
+          "field": "SingleInstanceLimitFlag",
+          "label": "Single Instance Limit?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "SingleInstanceLimitFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "DailyLimitFlag",
+          "label": "Daily Sum Limit?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "DailyLimitFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "MonthlyLimitFlag",
+          "label": "Monthly Limit?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "MonthlyLimitFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "YearlyLimitFlag",
+          "label": "Yearly Limit?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "YearlyLimitFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "LifetimeLimitFlag",
+          "label": "Lifetime Limit?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "LifetimeLimitFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "PeriodMonth",
+          "label": "Period Start Month",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "PeriodMonth",
+          "display_values": {
+            "January": "01",
+            "February": "02",
+            "March": "03",
+            "April": "04",
+            "May": "05",
+            "June": "06",
+            "July": "07",
+            "August": "08",
+            "September": "09",
+            "October": "10",
+            "November": "11",
+            "December": "12"
+          },
+          "lookup": "MONTH"
+        },
+        {
+          "field": "PeriodDay",
+          "label": "Period Start Day",
+          "type": "integer",
+          "boolean": false,
+          "csv_field": "PeriodDay"
+        },
+        {
+          "field": "CurrencyCode",
+          "label": "Currency Code",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "CurrencyCode",
+          "lookup": "enabled_active_currency"
+        },
+        {
+          "field": "PolicyEnforcementCode",
+          "label": "Policy Enforcement",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "PolicyEnforcementCode",
+          "display_values": {
+            "Reimburse upper limit when expense exceeds defined rate": "UPPER",
+            "Generate policy violation when expense exceeds defined rate": "VIOLATION"
+          },
+          "lookup": "EXM_POLICY_ENFORCEMENT"
+        },
+        {
+          "field": "PolicyViolationFlag",
+          "label": "Policy Violation Warning?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "PolicyViolationFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "WarningTolerance",
+          "label": "Warning Tolerance Percentage",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "WarningTolerance"
+        },
+        {
+          "field": "DispWarningToUserFlag",
+          "label": "Display Warning to User?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "DispWarningToUserFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "PreventSubmissionFlag",
+          "label": "Prevent Report Submission?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "PreventSubmissionFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "ErrorTolerance",
+          "label": "Error Tolerance Percentage",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "ErrorTolerance"
+        }
+      ],
+      "qualification": "source_qualified_create_preparation_live_pending_existing_updates_scoped"
+    },
+    {
+      "name": "Miscellaneous Rates",
+      "entity": "ORA_EXM_MISCELLANEOUS_POLICY_LINE",
+      "kind": "rate",
+      "shared_entities": [],
+      "columns": [
+        {
+          "field": "_PolicyName",
+          "label": "Policy Name*",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "ORA_EXM_MISCELLANEOUS_POLICY.PolicyName",
+          "key": true
+        },
+        {
+          "field": "StartDate",
+          "label": "Start Date",
+          "type": "date",
+          "boolean": false,
+          "csv_field": "StartDate"
+        },
+        {
+          "field": "EndDate",
+          "label": "End Date",
+          "type": "date",
+          "boolean": false,
+          "csv_field": "EndDate"
+        },
+        {
+          "field": "SingleInstanceLimit",
+          "label": "SingleInstance Limit",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "SingleInstanceLimit"
+        },
+        {
+          "field": "DailyLimit",
+          "label": "Daily Limit",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "DailyLimit"
+        },
+        {
+          "field": "MonthlyLimit",
+          "label": "Monthly Limit",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "MonthlyLimit"
+        },
+        {
+          "field": "YearlyLimit",
+          "label": "Yearly Limit",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "YearlyLimit"
+        },
+        {
+          "field": "LifetimeLimit",
+          "label": "Lifetime Limit",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "LifetimeLimit"
+        },
+        {
+          "field": "ReimbursementPercentage",
+          "label": "Reimbursement Percentage",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "ReimbursementPercentage"
+        }
+      ],
+      "qualification": "source_qualified_create_preparation_live_pending_existing_updates_scoped"
+    },
+    {
+      "name": "Per Diem",
+      "entity": "ORA_EXM_PERDIEM_POLICY",
+      "kind": "policy",
+      "shared_entities": [],
+      "columns": [
+        {
+          "field": "PolicyName",
+          "label": "Policy Name*",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "PolicyName",
+          "key": true
+        },
+        {
+          "field": "Description",
+          "label": "Description",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "Description"
+        },
+        {
+          "field": "RateFormulaMethodCode",
+          "label": "Rate Calculation Method",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "RateFormulaMethodCode",
+          "lookup": "ORA_EXM_RATE_FORMULA_METHOD",
+          "display_values": {
+            "Daily rate": "SINGLE",
+            "Sum of separate rates": "SUMUP",
+            "Daily time range rates": "TIME_SINGLE",
+            "Sum of separate time range rates": "TIME_SUMUP"
+          }
+        },
+        {
+          "field": "CurrencyCode",
+          "label": "Currency Code",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "CurrencyCode",
+          "lookup": "enabled_active_currency"
+        },
+        {
+          "field": "AllowRateConversionFlag",
+          "label": "Allow Rate Conversion?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "AllowRateConversionFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "RateIncludeMealsFlag",
+          "label": "Includes Meals?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "RateIncludeMealsFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "MealDeductionFlag",
+          "label": "Meals Deduction?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "MealDeductionFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "RateIncludeAccomFlag",
+          "label": "Includes Accommodations?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "RateIncludeAccomFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "AccomDeductionFlag",
+          "label": "Accommodations Deduction?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "AccomDeductionFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "RateIncludeOtherFlag",
+          "label": "Includes Other?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "RateIncludeOtherFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "RateMultiplierCode",
+          "label": "Rate Multiplier",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "RateMultiplierCode",
+          "lookup": "ORA_EXM_PERDIEM_MULTIPLIER",
+          "display_values": {
+            "Number of Days": "DAYS",
+            "Number of Nights": "NIGHTS"
+          }
+        },
+        {
+          "field": "WithinEmployeeCityFlag",
+          "label": "Travel Cannot Be Within Employee Home City?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "WithinEmployeeCityFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "MealsDeductionCode",
+          "label": "Meals Deduction Type",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "MealsDeductionCode",
+          "lookup": "ORA_EXM_PERDIEM_MEAL_DEDUCTION",
+          "display_values": {
+            "Daily meals deduction": "DAILY",
+            "Meals deduction by number of free meals": "NUMBER",
+            "Meals deduction by meal type": "TYPE"
+          }
+        },
+        {
+          "field": "MealsDeductCalcMethCode",
+          "label": "Meals Deduction Calculation",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "MealsDeductCalcMethCode",
+          "lookup": "ORA_EXM_PERDIEM_CALCMETH",
+          "display_values": {
+            "Percentage": "PERCENTAGE",
+            "Rate": "RATE",
+            "Spreadsheet": "SPREADSHEET"
+          }
+        },
+        {
+          "field": "AccomDeductCalcMethCode",
+          "label": "Accommodation Deduction Calculation",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "AccomDeductCalcMethCode",
+          "lookup": "ORA_EXM_PERDIEM_CALCMETH",
+          "display_values": {
+            "Percentage": "PERCENTAGE",
+            "Rate": "RATE",
+            "Spreadsheet": "SPREADSHEET"
+          }
+        },
+        {
+          "field": "MinimumReimbursement",
+          "label": "Minimum Reimbursement",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "MinimumReimbursement"
+        },
+        {
+          "field": "AccomMinNightHoursStay",
+          "label": "Minimum Night Stay Hours",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "AccomMinNightHoursStay"
+        },
+        {
+          "field": "BreakfastEligStartHour",
+          "label": "Breakfast Eligibility Start Hour",
+          "type": "integer",
+          "boolean": false,
+          "csv_field": "BreakfastEligStartHour"
+        },
+        {
+          "field": "BreakfastEligStartMinute",
+          "label": "Breakfast Eligibility Start Minute",
+          "type": "integer",
+          "boolean": false,
+          "csv_field": "BreakfastEligStartMinute"
+        },
+        {
+          "field": "BreakfastEligEndHour",
+          "label": "Breakfast Eligibility End Hour",
+          "type": "integer",
+          "boolean": false,
+          "csv_field": "BreakfastEligEndHour"
+        },
+        {
+          "field": "BreakfastEligEndMinute",
+          "label": "Breakfast Eligibility End Minute",
+          "type": "integer",
+          "boolean": false,
+          "csv_field": "BreakfastEligEndMinute"
+        },
+        {
+          "field": "LunchEligStartHour",
+          "label": "Lunch Eligibility Start Hour",
+          "type": "integer",
+          "boolean": false,
+          "csv_field": "LunchEligStartHour"
+        },
+        {
+          "field": "LunchEligStartMinute",
+          "label": "Lunch Eligibility Start Minute",
+          "type": "integer",
+          "boolean": false,
+          "csv_field": "LunchEligStartMinute"
+        },
+        {
+          "field": "LunchEligEndHour",
+          "label": "Lunch Eligibility End Hour",
+          "type": "integer",
+          "boolean": false,
+          "csv_field": "LunchEligEndHour"
+        },
+        {
+          "field": "LunchEligEndMinute",
+          "label": "Lunch Eligibility End Minute",
+          "type": "integer",
+          "boolean": false,
+          "csv_field": "LunchEligEndMinute"
+        },
+        {
+          "field": "DinnerEligStartHour",
+          "label": "Dinner Eligibility Start Hour",
+          "type": "integer",
+          "boolean": false,
+          "csv_field": "DinnerEligStartHour"
+        },
+        {
+          "field": "DinnerEligStartMinute",
+          "label": "Dinner Eligibility Start Minute",
+          "type": "integer",
+          "boolean": false,
+          "csv_field": "DinnerEligStartMinute"
+        },
+        {
+          "field": "DinnerEligEndHour",
+          "label": "Dinner Eligibility End Hour",
+          "type": "integer",
+          "boolean": false,
+          "csv_field": "DinnerEligEndHour"
+        },
+        {
+          "field": "DinnerEligEndMinute",
+          "label": "Dinner Eligibility End Minute",
+          "type": "integer",
+          "boolean": false,
+          "csv_field": "DinnerEligEndMinute"
+        },
+        {
+          "field": "AccomEligibStartHour",
+          "label": "Accommodation Eligibility Start Hour",
+          "type": "integer",
+          "boolean": false,
+          "csv_field": "AccomEligibStartHour"
+        },
+        {
+          "field": "AccomEligibStartMinute",
+          "label": "Accommodation Eligibility Start Minute",
+          "type": "integer",
+          "boolean": false,
+          "csv_field": "AccomEligibStartMinute"
+        },
+        {
+          "field": "AccomEligibEndHour",
+          "label": "Accommodation Eligibility End Hour",
+          "type": "integer",
+          "boolean": false,
+          "csv_field": "AccomEligibEndHour"
+        },
+        {
+          "field": "AccomEligibEndMinute",
+          "label": "Accommodation Eligibility End Minute",
+          "type": "integer",
+          "boolean": false,
+          "csv_field": "AccomEligibEndMinute"
+        },
+        {
+          "field": "MealRateTypeCode",
+          "label": "Meals Rate Type",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "MealRateTypeCode",
+          "lookup": "ORA_EXM_PERDIEM_MEAL_RATE",
+          "display_values": {
+            "Daily rate": "DAILY",
+            "Rates by number of meals": "NUMBER",
+            "Rates by meal type": "TYPE"
+          }
+        },
+        {
+          "field": "MealsCalcMethodCode",
+          "label": "Meals Calculation Method",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "MealsCalcMethodCode",
+          "lookup": "ORA_EXM_PERDIEM_CALCMETH",
+          "display_values": {
+            "Percentage": "PERCENTAGE",
+            "Rate": "RATE",
+            "Spreadsheet": "SPREADSHEET"
+          }
+        },
+        {
+          "field": "OthersCalcMethodCode",
+          "label": "Other Calculation Method",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "OthersCalcMethodCode",
+          "lookup": "ORA_EXM_PERDIEM_CALCMETH",
+          "display_values": {
+            "Percentage": "PERCENTAGE",
+            "Rate": "RATE",
+            "Spreadsheet": "SPREADSHEET"
+          }
+        },
+        {
+          "field": "OthersEligibCriteriaCode",
+          "label": "Other Eligibility",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "OthersEligibCriteriaCode",
+          "lookup": "ORA_EXM_PERDIEM_ELIG_CRITERIA",
+          "display_values": {
+            "Meets accommodations eligibility": "ACCOM",
+            "Meets meals eligibility": "MEALS",
+            "Meets meals and accommodations eligibility": "MEALS_ACCOM",
+            "None": "NONE"
+          }
+        },
+        {
+          "field": "TimePeriodCode",
+          "label": "Time Period",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "TimePeriodCode",
+          "lookup": "ORA_EXM_PERDIEM_TIME_PERIOD",
+          "display_values": {
+            "Midnight to midnight": "MIDNIGHT",
+            "Start time plus 24 hours": "START"
+          }
+        },
+        {
+          "field": "TimeCalcMethodCode",
+          "label": "Time Calculation Method",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "TimeCalcMethodCode",
+          "lookup": "ORA_EXM_PERDIEM_CALCMETH",
+          "display_values": {
+            "Percentage": "PERCENTAGE",
+            "Rate": "RATE",
+            "Spreadsheet": "SPREADSHEET"
+          }
+        },
+        {
+          "field": "TimeSameDayRuleCode",
+          "label": "Same-Day Rule",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "TimeSameDayRuleCode",
+          "lookup": "ORA_EXM_PERDIEM_SAME_DAY_RULE",
+          "display_values": {
+            "Trips less than 24 hours": "LESS",
+            "Trips with no overnight": "NOOVERNIGHT"
+          }
+        },
+        {
+          "field": "MealInclIncidentalFlag",
+          "label": "Meals Include Incidentals?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "MealInclIncidentalFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "MinTripDuratFlag",
+          "label": "Minimum Trip Duration?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "MinTripDuratFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "AccomFreeOnlyFlag",
+          "label": "Only Free Accommodations?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "AccomFreeOnlyFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "AccomReqMealsEligibFlag",
+          "label": "Accommodations Require Meals Eligibility?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "AccomReqMealsEligibFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "AccomMinTripDuratFlag",
+          "label": "Accommodations Minimum Trip Duration?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "AccomMinTripDuratFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "TimeAllowSameDayFlag",
+          "label": "Allow Same-Day Time Rates?",
+          "type": "string",
+          "boolean": true,
+          "csv_field": "TimeAllowSameDayFlag",
+          "lookup": "EXM_YES_NO"
+        },
+        {
+          "field": "MinDurationHours",
+          "label": "Minimum Duration Hours",
+          "type": "integer",
+          "boolean": false,
+          "csv_field": "MinDurationHours"
+        },
+        {
+          "field": "MinDurationMinutes",
+          "label": "Minimum Duration Minutes",
+          "type": "integer",
+          "boolean": false,
+          "csv_field": "MinDurationMinutes"
+        },
+        {
+          "field": "AccomMinDurationHours",
+          "label": "Accommodation Minimum Duration Hours",
+          "type": "integer",
+          "boolean": false,
+          "csv_field": "AccomMinDurationHours"
+        },
+        {
+          "field": "AccomMinDurationMinutes",
+          "label": "Accommodation Minimum Duration Minutes",
+          "type": "integer",
+          "boolean": false,
+          "csv_field": "AccomMinDurationMinutes"
+        }
+      ],
+      "qualification": "source_qualified_new_policy_preparation_live_pending_existing_updates_scoped"
+    },
+    {
+      "name": "Per Diem Rates",
+      "entity": "ORA_EXM_PERDIEM_POLICY_LINE",
+      "kind": "rate",
+      "shared_entities": [],
+      "columns": [
+        {
+          "field": "_PolicyName",
+          "label": "Policy Name*",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "ORA_EXM_PERDIEM_POLICY.PolicyName",
+          "key": true
+        },
+        {
+          "field": "StartDate",
+          "label": "Start Date",
+          "type": "date",
+          "boolean": false,
+          "csv_field": "StartDate"
+        },
+        {
+          "field": "EndDate",
+          "label": "End Date",
+          "type": "date",
+          "boolean": false,
+          "csv_field": "EndDate"
+        },
+        {
+          "field": "BaseRate",
+          "label": "Standard Daily Rate",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "BaseRate"
+        },
+        {
+          "field": "MealsDailyDeduction",
+          "label": "Meals Daily Deduction",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "MealsDailyDeduction"
+        },
+        {
+          "field": "MealsBreakfastDeduction",
+          "label": "Meals Breakfast Deduction",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "MealsBreakfastDeduction"
+        },
+        {
+          "field": "MealsLunchDeduction",
+          "label": "Meals Lunch Deduction",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "MealsLunchDeduction"
+        },
+        {
+          "field": "MealsDinnerDeduction",
+          "label": "Meals Dinner Deduction",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "MealsDinnerDeduction"
+        },
+        {
+          "field": "MealsOneMealDeduction",
+          "label": "Meals One Meal Deduction",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "MealsOneMealDeduction"
+        },
+        {
+          "field": "MealsTwoMealsDeduction",
+          "label": "Meals Two Meals Deduction",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "MealsTwoMealsDeduction"
+        },
+        {
+          "field": "MealsThreeMealsDeduction",
+          "label": "Meals Three Meals Deduction",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "MealsThreeMealsDeduction"
+        },
+        {
+          "field": "AccommodationDeduction",
+          "label": "Accommodation Deduction",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "AccommodationDeduction"
+        },
+        {
+          "field": "TypeOfLineCode",
+          "label": "Rate Component",
+          "type": "string",
+          "boolean": false,
+          "csv_field": "TypeOfLineCode",
+          "display_values": {
+            "Combined daily head": "ANCHOR",
+            "Standard time range": "STANDARD",
+            "Same-day time range": "SAME",
+            "Other standard time range": "OTHER_STANDARD"
+          }
+        },
+        {
+          "field": "LineHours",
+          "label": "Upper-Bound Hours",
+          "type": "integer",
+          "boolean": false,
+          "csv_field": "LineHours"
+        },
+        {
+          "field": "LineMinutes",
+          "label": "Upper-Bound Minutes",
+          "type": "integer",
+          "boolean": false,
+          "csv_field": "LineMinutes"
+        },
+        {
+          "field": "MealsBreakfastRate",
+          "label": "Meals Breakfast Rate",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "MealsBreakfastRate"
+        },
+        {
+          "field": "MealsLunchRate",
+          "label": "Meals Lunch Rate",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "MealsLunchRate"
+        },
+        {
+          "field": "MealsDinnerRate",
+          "label": "Meals Dinner Rate",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "MealsDinnerRate"
+        },
+        {
+          "field": "MealsOneMealRate",
+          "label": "Meals One Meal Rate",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "MealsOneMealRate"
+        },
+        {
+          "field": "MealsTwoMealsRate",
+          "label": "Meals Two Meals Rate",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "MealsTwoMealsRate"
+        },
+        {
+          "field": "MealsThreeMealsRate",
+          "label": "Meals Three Meals Rate",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "MealsThreeMealsRate"
+        },
+        {
+          "field": "AccomNightRate",
+          "label": "Accommodation Nightly Rate",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "AccomNightRate"
+        },
+        {
+          "field": "OthersStandardRate",
+          "label": "Other Standard Rate",
+          "type": "decimal",
+          "boolean": false,
+          "csv_field": "OthersStandardRate"
+        }
+      ],
+      "qualification": "source_qualified_new_policy_preparation_live_pending_existing_updates_scoped"
     }
   ],
   "csv_header_authority": "Same-task template export 300105111831338; release 11.13.27.01.0",
@@ -821,30 +2575,17 @@
     "source_entities": 19,
     "csv_columns": 634,
     "exported_attribute_occurrences": 625,
-    "user_input_csv_columns": 16,
-    "input_sheets": 2,
-    "scope_note": "All 19 export entities and 634 ordered columns remain. Reduced inputs do not authorize writes to removed fields. Protected managed create values are supported by the accepted core profile; expanded combinations and other targets remain pending live reconciliation.",
-    "workbook_columns": 16,
-    "fixed_display_columns": 0
+    "user_input_csv_columns": 212,
+    "input_sheets": 16,
+    "scope_note": "All 19 export entities and 634 ordered columns remain. Eight-category workbook intake excludes rate determinants. Existing runtime qualification and pending expansion contracts are tracked separately.",
+    "workbook_columns": 214,
+    "fixed_display_columns": 2
   },
   "excluded_sheets": [
-    "Accommodations",
-    "Accommodations Rates",
-    "Airfare",
-    "Airfare Rates",
-    "Car Rental",
-    "Car Rental Rates",
-    "Entertainment",
     "Entertainment Attendees",
-    "Entertainment Rates",
-    "Mileage",
     "Mileage Add-On Settings",
     "Mileage Determinants",
     "Mileage Periods",
-    "Mileage Rates",
-    "Miscellaneous",
-    "Miscellaneous Rates",
-    "Per Diem",
     "Per Diem Accommodation",
     "Per Diem Flexfields",
     "Per Diem Meals",
@@ -859,30 +2600,39 @@
   ],
   "authoring_scope": {
     "categories": [
-      "Meals"
-    ],
-    "excluded_categories": [
+      "Meals",
       "Accommodations",
+      "Entertainment",
       "Airfare",
       "Car Rental",
-      "Entertainment",
       "Mileage",
       "Miscellaneous",
       "Per Diem"
     ],
+    "excluded_categories": [],
     "scope_is_not_live_readiness": true,
-    "exported_entities_retained_for_preservation": 19
+    "exported_entities_retained_for_preservation": 19,
+    "runtime_qualified_categories": [
+      "Meals",
+      "Accommodations",
+      "Entertainment"
+    ],
+    "new_category_boundary": "Workbook intake and source-backed checks; FSM create/update contracts and target lookup contexts remain pending. No candidate construction for unqualified categories."
   },
-  "intake_revision": "3.2-single-currency-meals",
+  "intake_revision": "4.0-eight-category-intake",
   "authoring_limits": {
-    "policy_rows_per_request": 1,
-    "rate_rows_per_request": 1,
-    "rates_per_selected_policy": 1,
+    "policy_rows_per_request": null,
+    "rate_rows_per_request": null,
+    "rates_per_selected_policy": null,
     "same_exact_policy_name_required": true,
-    "unrelated_baseline_rows_preserved": true
+    "unrelated_baseline_rows_preserved": true,
+    "row_limit_semantics": "Multiple policies and nonoverlapping rates; no fixed count limit"
   },
   "skill_constants": {
     "ORA_EXM_MEALS_POLICY": {
+      "CurrencyOptionCode": "SINGLE"
+    },
+    "ORA_EXM_ACCOM_POLICY": {
       "CurrencyOptionCode": "SINGLE"
     }
   }

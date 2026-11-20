@@ -2,7 +2,7 @@
 
 Input is the normalized operation-planner JSON. Use a workflow-verified fresh
 baseline ZIP and the user's selected createAuditPolicy. Customer data must stay
-in protected runtime files, outside tracked source and project workspaces.
+in the active untracked project workspace, outside reusable tracked source.
 """
 import argparse
 import csv

@@ -23,7 +23,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 104
+            "line": 117
           },
           "readiness": {
             "status": "ready",
@@ -48,7 +48,7 @@
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 74
+            "line": 83
           },
           "readiness": {
             "status": "ready",
@@ -73,7 +73,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 181
+            "line": 237
           },
           "readiness": {
             "status": "ready",
@@ -98,7 +98,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 182
+            "line": 238
           },
           "readiness": {
             "status": "ready",
@@ -112,7 +112,7 @@
           "action_type": "validate_input",
           "execution_route": "local",
           "transitions": {
-            "reuse": "FY.DONE_EXISTS",
+            "reuse": "FY.VERIFY_REUSE_DFF",
             "create_new": "FY.VALIDATE_DPIS_CONTAINMENT",
             "unresolved": "FY.HANDLE_DEPENDENCY"
           },
@@ -124,7 +124,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 105
+            "line": 118
           },
           "readiness": {
             "status": "ready",
@@ -150,7 +150,33 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 106
+            "line": 119
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "FY.VERIFY_REUSE_DFF",
+          "node_type": "decision",
+          "sequence": 50,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "no_criteria": "FY.DONE_EXISTS",
+            "match": "FY.DONE_EXISTS",
+            "unresolved": "FY.HANDLE_LOOKUP"
+          },
+          "prerequisites": [
+            "FY.DECIDE_EQUIVALENT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "User selected an exact verified fiscal year for reuse. Without supplied DFF criteria, return no_criteria without a DFF export. Otherwise execute resolve_fiscal_year_dff_segments in reuse-criteria mode and require an exact match.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 239
           },
           "readiness": {
             "status": "ready",
@@ -164,7 +190,7 @@
           "action_type": "apply_default",
           "execution_route": "local",
           "transitions": {
-            "applied": "FY.ENFORCE_DESIGN",
+            "applied": "FY.RESOLVE_DFF",
             "blocked": "FY.HANDLE_DEPENDENCY"
           },
           "prerequisites": [
@@ -175,7 +201,33 @@
           "source": {
             "file": "ora_defaulting_rules.md",
             "anchor": "task-nodes",
-            "line": 46
+            "line": 47
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "FY.RESOLVE_DFF",
+          "node_type": "decision",
+          "sequence": 65,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "FY.ENFORCE_DESIGN",
+            "missing_or_invalid_input": "FY.HANDLE_INPUT",
+            "unverified": "FY.HANDLE_LOOKUP"
+          },
+          "prerequisites": [
+            "FY.APPLY_DEFAULTS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Create-new decision, selected-name checks, and annual-row generation are complete. Execute resolve_fiscal_year_dff_segments in create mode for every proposed annual row before Design Preview or package preparation.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 240
           },
           "readiness": {
             "status": "ready",
@@ -193,14 +245,14 @@
             "blocked": "FY.HANDLE_DESIGN"
           },
           "prerequisites": [
-            "FY.APPLY_DEFAULTS"
+            "FY.RESOLVE_DFF"
           ],
           "on_failure": "stop",
           "applies_when": "Defaults and lookup results are available; validate the design and render the required Design Preview.",
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 30
+            "line": 43
           },
           "readiness": {
             "status": "ready",
@@ -214,18 +266,18 @@
           "action_type": "execution_gate",
           "execution_route": "local",
           "transitions": {
-            "approved": "FY.HANDED_OFF_TO_PARENT",
-            "approval_missing": "FY.HANDLE_APPROVAL"
+            "ready": "FY.VALIDATED",
+            "incomplete": "FY.HANDLE_READINESS"
           },
           "prerequisites": [
             "FY.ENFORCE_DESIGN"
           ],
           "on_failure": "stop",
-          "applies_when": "The Final ZIP Preview identifies one validated immutable package for live import.",
+          "applies_when": "Require applicable read-only task validation and immutable-artifact checks for the exact target and requested scope. Return ready without requiring upload approval or a submission receipt: core.data-loader obtains submission approval after task validation. This node does not submit, poll, or report acceptance. Missing, stale, or mismatched validation/artifact evidence returns incomplete.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 74
+            "line": 83
           },
           "readiness": {
             "status": "ready",
@@ -249,7 +301,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 75
+            "line": 84
           },
           "readiness": {
             "status": "ready",
@@ -273,7 +325,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 76
+            "line": 85
           },
           "readiness": {
             "status": "ready",
@@ -297,7 +349,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 77
+            "line": 86
           },
           "readiness": {
             "status": "ready",
@@ -321,7 +373,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 78
+            "line": 87
           },
           "readiness": {
             "status": "ready",
@@ -329,7 +381,7 @@
           }
         },
         {
-          "id": "FY.HANDLE_APPROVAL",
+          "id": "FY.HANDLE_READINESS",
           "node_type": "step",
           "sequence": 130,
           "action_type": "error_handler",
@@ -341,11 +393,11 @@
             "FY.IMPORT_GATE"
           ],
           "on_failure": "stop",
-          "applies_when": "Import approval is missing.",
+          "applies_when": "Required task validation or immutable-artifact evidence is missing, stale, or mismatched. Return the issue for correction; do not request submission approval, submit, or claim acceptance during task validation.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 79
+            "line": 88
           },
           "readiness": {
             "status": "ready",
@@ -353,7 +405,7 @@
           }
         },
         {
-          "id": "FY.HANDED_OFF_TO_PARENT",
+          "id": "FY.VALIDATED",
           "node_type": "terminal",
           "sequence": 170,
           "action_type": "terminal",
@@ -362,12 +414,12 @@
           "prerequisites": [
             "FY.IMPORT_GATE"
           ],
-          "on_failure": "continue",
-          "applies_when": "Fiscal Years import is accepted \u2014 pending parent verification.",
+          "on_failure": "stop",
+          "applies_when": "Return validated_for_import for the current validation scope; no upload approval, submission, acceptance, or Fusion completion is implied. The parent/Core workflow may report accepted only after its accepted-initiation response supplies a request ID correlated to the exact target and reviewed immutable archive/hash. Parent verification remains required.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 80
+            "line": 89
           },
           "readiness": {
             "status": "ready",
@@ -389,7 +441,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 81
+            "line": 90
           },
           "readiness": {
             "status": "ready",
@@ -409,7 +461,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 82
+            "line": 91
           },
           "readiness": {
             "status": "ready",

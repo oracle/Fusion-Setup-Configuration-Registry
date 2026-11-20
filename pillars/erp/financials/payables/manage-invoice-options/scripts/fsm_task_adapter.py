@@ -175,7 +175,7 @@ def _validate_reference_provenance(
 
 def _validate_blueprint_reference_provenance(blueprint: dict[str, Any], baseline: Any = None) -> None:
     receipts = [item for item in blueprint.get("prerequisites", [])
-                if isinstance(item, dict) and item.get("status") in ("satisfied", "validation_skipped", "unavailable")]
+                if isinstance(item, dict) and item.get("status") in ("satisfied", "validation_skipped", "unavailable", "overridden")]
     scope = blueprint.get("resolvedScope", {})
     if isinstance(scope, dict) and isinstance(scope.get("businessUnits"), list):
         receipts += [item for item in scope["businessUnits"] if isinstance(item, dict)]
@@ -706,6 +706,12 @@ def _validate_field_value(
     # local validation in either shared-row task.
     if entity["name"] == "AP_SYSTEM_PARAMETER" and field == "BankChargeBearer":
         return
+    # Shared Payment Options rows may explicitly clear this optional field.
+    # Retain the blank for FSM validation rather than treating it as zero.
+    if (entity["name"] == "AP_SYSTEM_PARAMETER"
+            and field == "EscheatmentEligibilityPeriod" and value == ""
+            and field not in entity.get("requiredFields", [])):
+        return
     expected = entity["types"].get(field, "string") or "string"
     lowered = expected.lower()
     if lowered in {"datetime", "timestamp"} or "timestamp" in lowered:
@@ -950,6 +956,9 @@ UI_BOOLEAN_FIELDS = frozenset({
     "AttachmentMandatorySsFlag",
     "DisallowAttachmentDelFlag",
     "ReleaseDupInvoiceHoldFlag",
+    "CombinedFilingFlag",
+    "IncomeTaxRegionFlag",
+    "Enable1099OnAwtFlag",
 })
 
 
@@ -964,13 +973,17 @@ def _nonnegative_integer(value: Any) -> int | None:
 def _effective_invoice_values(
     entity: dict[str, Any], values: dict[str, Any], action: str = "update",
 ) -> dict[str, Any]:
-    """Include source-backed interest enable defaults and disable effects.
+    """Include source-backed checkbox defaults and dependent effects.
 
     Keep caller values intact for contradiction checks. The N setter clears
     account/tolerance and the inactive allocation method is left blank.
     These effects also belong in requirements, ZIP validation and readback.
     """
     effective = dict(values)
+    if entity["name"] == "AP_SYSTEM_PARAMETER" and values.get("CombinedFilingFlag") == "N":
+        # Product setter resets this flag; explicit contradictions are rejected
+        # before building. Include the effect in ZIP, requirements and readback.
+        effective.setdefault("IncomeTaxRegionFlag", "N")
     if entity["name"] == "AP_SYSTEM_PARAMETER" and values.get("AutoCalculateInterestFlag") == "Y":
         # Match the UI enable action without replacing an explicit selection.
         effective.setdefault("ProrateIntInvAcrossDists", "N")
@@ -981,6 +994,37 @@ def _effective_invoice_values(
     return effective
 
 
+def _validate_income_tax_region_request(
+    entity: dict[str, Any], changes: dict[str, Any], proposed: dict[str, Any],
+    operation_id: str, before: dict[str, Any] | None = None,
+) -> None:
+    """Check requested income-tax choices against the complete resulting state.
+
+    Do not impose new settings on an unrelated update or treat an unchanged
+    hidden region in an exported row as a request to edit the disabled control.
+    Region LOV membership remains owned by Fusion.
+    """
+    if (entity["name"] != "AP_SYSTEM_PARAMETER" or not
+            set(changes) & {"CombinedFilingFlag", "IncomeTaxRegionFlag", "IncomeTaxRegion"}):
+        return
+    combined = proposed.get("CombinedFilingFlag")
+    supplier = proposed.get("IncomeTaxRegionFlag")
+    region = proposed.get("IncomeTaxRegion", "")
+    if combined == "Y" and supplier == "N" and not str(region or "").strip():
+        raise AdapterError(
+            f"Operation {operation_id}: Income Tax Region is required when Use combined "
+            "filing program is Yes and Use supplier tax region is No. Retain an existing "
+            "populated region or select a region from the applicable LOV; do not clear it."
+        )
+    if (combined == "Y" and supplier == "Y" and "IncomeTaxRegion" in changes
+            and changes["IncomeTaxRegion"] != (before or {}).get("IncomeTaxRegion", "")):
+        raise AdapterError(
+            f"Operation {operation_id}: Income Tax Region is disabled while Use supplier "
+            "tax region is Yes. Set Use supplier tax region to No and supply a region, "
+            "or keep the existing region unchanged."
+        )
+
+
 def _validate_invoice_ui_values(
     entity: dict[str, Any], values: dict[str, Any], operation_id: str
 ) -> None:
@@ -989,11 +1033,24 @@ def _validate_invoice_ui_values(
         return
     for field in sorted(UI_BOOLEAN_FIELDS & set(values)):
         value = values[field]
-        if not isinstance(value, str) or value.strip().upper() not in {"Y", "N"}:
+        if (not isinstance(value, str) or value.strip().upper() not in {"Y", "N"}
+                or (field in {"CombinedFilingFlag", "IncomeTaxRegionFlag", "Enable1099OnAwtFlag"}
+                    and value not in {"Y", "N"})):
             raise AdapterError(
                 f"Operation {operation_id} field {entity['name']}.{field} must be Y or N "
                 "for its Manage Invoice Options checkbox."
             )
+    if values.get("CombinedFilingFlag") == "N" and values.get("IncomeTaxRegionFlag") == "Y":
+        raise AdapterError(
+            f"Operation {operation_id}: turning off Use combined filing program also "
+            "turns off Use supplier tax region. These choices cannot be kept together. "
+            "Set both to No, or keep combined filing enabled to use the supplier tax region."
+        )
+    if values.get("CombinedFilingFlag") == "N" and values.get("IncomeTaxRegion", ""):
+        raise AdapterError(
+            f"Operation {operation_id}: Income Tax Region must be blank when "
+            "Use combined filing program is No. Request an explicit clear or keep combined filing enabled."
+        )
     if "ReceiptAcceptanceDays" in values:
         number = _nonnegative_integer(values["ReceiptAcceptanceDays"])
         if number is None or number < 0:
@@ -1283,7 +1340,9 @@ def _normalized_blueprint(
         if isinstance(values, dict):
             entity = entities.get(operation.get("entity"), {"name": ""})
             operation["values"] = {
-                field: (_canonical_currency_code(value)
+                field: (value.strip().upper()
+                        if field in {"CombinedFilingFlag", "IncomeTaxRegionFlag", "Enable1099OnAwtFlag"}
+                        and isinstance(value, str) else _canonical_currency_code(value)
                         if field in CURRENCY_RECEIPT_CONTRACTS else
                         _normalize_account_input(entity, field, value))
                 for field, value in values.items()
@@ -1590,6 +1649,28 @@ def _validate_interest_account_receipt(
                 return
         except AdapterError:
             continue
+    # An explicit waiver records a failed check; it never claims a usable CCID.
+    if baseline is not None:
+        from interest_account_override import validate_override, warning as override_warning
+        for item in blueprint.get('prerequisites', []):
+            if validate_override(item, operation=operation, account=account, ledger=ledger,
+                                 baseline_sha256=baseline.archive_sha256):
+                _validate_reference_provenance(item.get('provenance'), blueprint.get('referenceContext'), baseline)
+                if override_warning(item) not in blueprint.get('warnings', []):
+                    raise AdapterError('The explicit account override and risk must remain visible in the import preview.')
+                return
+    # A deferred account is not valid or created yet. Only the narrow, bound
+    # creation rejection permits preparing a package for normal import approval.
+    if baseline is not None:
+        from interest_account_fsm_fallback import validate_deferral
+        for item in blueprint.get('prerequisites', []):
+            if validate_deferral(item, operation=operation, account=account, ledger=ledger,
+                                 baseline_sha256=baseline.archive_sha256):
+                _validate_reference_provenance(item.get('provenance'), blueprint.get('referenceContext'), baseline)
+                required = (f"Operation {operation['id']}: the import will attempt to create the missing account combination while saving Invoice Options. Include this effect in the exact import preview and approval.")
+                if required not in blueprint.get('warnings', []):
+                    raise AdapterError('FSM account creation effect must be included in the import preview warnings.')
+                return
     raise AdapterError(
         f"Operation {operation['id']} InterestSegments requires a valid existing CCID receipt "
         "from validate_account_segments_read_only, bound to this operation, target, ledger, "
@@ -1783,6 +1864,10 @@ def _validate_blueprint_failfast(
             # Include it when checking enabled-interest dependencies.
             ui_values = {**values, "SOBName": sob_name}
         _validate_invoice_ui_values(entity, ui_values, operation_id)
+        if action == "create":
+            _validate_income_tax_region_request(
+                entity, values, _effective_invoice_values(entity, values, action), operation_id
+            )
         if baseline is not None:
             matches = _row_index(baseline, entity)
             if action == "update" and target_tuple not in matches:
@@ -1802,6 +1887,28 @@ def _validate_blueprint_failfast(
                 # an Invoice-owned change.
                 resulting_row = dict(matches[target_tuple])
                 resulting_row.update(_effective_invoice_values(entity, values))
+                if (entity_name == "AP_SYSTEM_PARAMETER"
+                        and "IncomeTaxRegionFlag" in values
+                        and resulting_row.get("CombinedFilingFlag") == "N"
+                        and resulting_row.get("IncomeTaxRegionFlag") == "Y"):
+                    raise AdapterError(
+                        f"Operation {operation_id}: Use supplier tax region cannot be Yes "
+                        "while Use combined filing program is No. Set both to No, or "
+                        "enable combined filing to use the supplier tax region."
+                    )
+                if (entity_name == "AP_SYSTEM_PARAMETER"
+                        and set(values) & {"CombinedFilingFlag", "IncomeTaxRegionFlag", "IncomeTaxRegion"}
+                        and resulting_row.get("CombinedFilingFlag") == "N"
+                        and resulting_row.get("IncomeTaxRegion", "")):
+                    raise AdapterError(
+                        f"Operation {operation_id}: Income Tax Region must be blank when "
+                        "Use combined filing program is No. Request an explicit clear of "
+                        "IncomeTaxRegion or keep combined filing enabled; the populated "
+                        "exported value cannot be promised preservation."
+                    )
+                _validate_income_tax_region_request(
+                    entity, values, resulting_row, operation_id, matches[target_tuple]
+                )
                 _validate_invoice_ui_dependencies(resulting_row, operation_id)
                 _validate_payment_owned_values(
                     entity, action, resulting_row, operation_id
@@ -1938,6 +2045,16 @@ def _requirement_contract(
     return expected
 
 
+def _customer_view(value):
+    """Return a display copy without internal provenance; never mutate execution data."""
+    if isinstance(value, dict):
+        return {key: _customer_view(item) for key, item in value.items()
+                if key not in {"sourceIds", "sourceEvidence"}}
+    if isinstance(value, list):
+        return [_customer_view(item) for item in value]
+    return value
+
+
 def normalize_design(
     contract: dict[str, Any],
     baseline_path: Path,
@@ -1951,6 +2068,16 @@ def normalize_design(
     blueprint["enterpriseIdResolution"] = _create_enterprise_resolution(
         contract, blueprint, baseline
     )
+    for operation in blueprint["operations"]:
+        if (operation["entity"] == "AP_SYSTEM_PARAMETER"
+                and operation["values"].get("CombinedFilingFlag") == "N"):
+            message = (
+                f"Operation {operation['id']}: turning off Use combined filing program "
+                "also sets Use supplier tax region to No. The candidate and fresh-export "
+                "checks expect both flags to be N; unrelated values must be preserved."
+            )
+            if message not in blueprint["warnings"]:
+                blueprint["warnings"].append(message)
     requirements = _requirements(contract, blueprint)
     design_sha = _sha256_bytes(_canonical_bytes(blueprint))
     entities = _entity_map(contract)
@@ -1978,7 +2105,7 @@ def normalize_design(
         "warnings": blueprint["warnings"],
         "requirementCount": len(requirements),
     }
-    return blueprint, preview, requirements
+    return blueprint, _customer_view(preview), requirements
 
 
 def _candidate_rows(
@@ -3200,6 +3327,7 @@ def main(argv: list[str] | None = None) -> int:
             )
         else:
             raise AdapterError(f"Unknown command {args.command!r}.")
+        result = _customer_view(result)
         if args.report:
             _write_new_json(args.report, result)
         print(json.dumps(result, indent=2, sort_keys=True, ensure_ascii=False))

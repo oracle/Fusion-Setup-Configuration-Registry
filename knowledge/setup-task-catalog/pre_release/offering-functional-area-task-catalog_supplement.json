@@ -9235,6 +9235,15 @@
       "FunctionalAreaCode": "ORA_TIME_AND_LABOR_FOUNDATION",
       "FunctionalAreaName": "Time and Labor Foundation",
       "DisplaySequence": "47"
+    },
+    {
+      "TaskCode": "ORA_PO_MANAGE_SPECIAL_HANDLING_TYPES",
+      "TaskName": "Manage Special Handling Types",
+      "Pillar": "SCM",
+      "OfferingCode": "PO_PROCUREMENT",
+      "OfferingName": "Procurement",
+      "FunctionalAreaCode": "ORA_PO_PURCHASING_FOUNDATION",
+      "FunctionalAreaName": "Purchasing Foundation"
     }
   ]
 }

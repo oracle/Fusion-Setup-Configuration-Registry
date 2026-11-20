@@ -10,8 +10,58 @@
 
 | Resolver | Runs When | Source Values | Request Path or URL | Requested Fields | Match Rule | Values to Fill | If No Match or Many Matches |
 |---|---|---|---|---|---|---|---|
+| resolve_system_controls_dff_segments | Confirmed create path after local creation-input checks | Immutable batch identity, target, Enterprise Name, supplied context and values | One completed FA_MANAGE_FIXED_ASSETS_DESCRIPTIVE_FLEXFILEDS data export through core.fusion-api.apps-common.descriptive-flexfields; execute System Controls DFF Resolution | Definition/process identity, application/DFF/context, enabled segments, requiredness, columns, and type/value-set contracts | Validate applicable global and selected-context segments against the same batch definition | Required-field map, validated values, conversions, and evidence | Missing required input, invalid values, ambiguous mappings, or incomplete evidence blocks creation |
 | resolve_existing_system_controls | Before a create decision | Enterprise Name | Primary: BOSS System Controls resource through `core.fusion-api.rest-api-client`. Fallback: current same-target-environment `FA_MANAGE_SYSTEM_CONTROL` FSM export through `shared.setup-export.task-level-export` only when BOSS is unavailable, fails, or returns no exact Enterprise Name row. | Existing system-control fields, current values, and enterprise identity | Require one exact Enterprise Name match. A successful fallback export with the expected `FA_SYSTEM_CONTROL.csv` header and zero data rows confirms no System Controls record. | Existing definition and read-only status, or confirmed absence | An exact BOSS or fallback row means System Controls is already set: show it as read-only and do not prepare a ZIP or allow an update. A confirmed empty fallback export permits a create path after all other gates pass. Multiple rows, an incomplete export, or an unavailable fallback export blocks the work. |
 | resolve_assets_flexfield_structures | Before package preparation | Selected Category, Location, and Asset Key structure names or identifiers | Current same-target-environment `FA_MANAGE_FIXED_ASSETS_KEY_FLEXFIELDS` FSM export through `shared.setup-export.task-level-export` | Structure Code, structure `EnabledFlag`, matching `StructureInstanceCode`, separate instance `EnabledFlag`, and Assets applicability | Require one exact enabled structure and one matching enabled instance for each required flexfield type. If multiple matching enabled instances exist, require the user's exact instance selection. | Populate the three `FA_SYSTEM_CONTROL.csv` structure fields from the selected enabled `StructureInstanceCode`; retain the identifier only as read-back evidence. | No enabled structure, no enabled matching instance, multiple enabled instances without selection, incomplete export, or unavailable export blocks the work. |
+
+## System Controls DFF Resolution
+
+Obtain one completed same-environment Manage Fixed Assets Descriptive
+Flexfields data export per immutable confirmed-create batch through
+core.fusion-api.apps-common.descriptive-flexfields.
+Use FA_MANAGE_FIXED_ASSETS_DESCRIPTIVE_FLEXFILEDS, Financials / Fixed Assets;
+resolve task sequence and eligibility through the authoritative catalog
+and shared export workflow.
+Retain ProcessId, ZIP reference, outcome, environment, and batch identity.
+
+Reuse that definition export throughout the unchanged batch, including
+package validation. Do not export again per stage or approval reply.
+Obtain a new export for a new batch or changed batch/environment.
+Never invoke this resolver from the existing read-only terminal path.
+
+1. Confirm ApplicationId=140 and DescriptiveFlexfieldCode=FA_SYSTEM_CONTROLS
+   from current target metadata. Stop on missing or conflicting identity.
+2. Read all enabled global definitions from
+   ORA_FND_APP_DESCRIPTIVE_FLEXFIELD_GLOBAL_SEGMENT.csv, scoped to that
+   exact application and DFF.
+3. Resolve any supplied context from
+   ORA_FND_APP_DESCRIPTIVE_FLEXFIELD_CONTEXT.csv in the same export:
+   one exact enabled ContextCode, otherwise one exact enabled Name.
+4. Read enabled context-sensitive definitions from
+   ORA_FND_APP_DESCRIPTIVE_FLEXFIELD_SEGMENT.csv for that exact application,
+   DFF, and context. Blank context never waives global requirements.
+5. Require nonblank values for applicable RequiredFlag=Y segments, including
+   hidden segments. Validate optional supplied values too. Map by unique
+   current ColumnName, SegmentCode, or Prompt within the applicable scope.
+   Reject unknown, disabled, out-of-context, ambiguous, or conflicting input.
+6. Delegate only read-only value-set verification through Manage Fixed Assets
+   Flexfield Value Sets. Never create, enable, or modify sets or values.
+   With no ValueSetCode, validate the supported column contract.
+   Format Only requires applicable type/format/length/precision/scale/range
+   checks, not enumerated membership. Independent requires exact eligible
+   membership; Dependent also requires the exact eligible parent/value pair.
+   Table membership is unsupported by the current delegated workflow:
+   report unverified and stop. Unsupported types, incomplete coverage,
+   unresolved visibility, and invalid values remain blockers.
+7. Retain supplied values and documented canonical conversions separately.
+   Show conversions in review. Resolve actual FA_SYSTEM_CONTROL.csv headers
+   from the current import contract, never from assumed database column names.
+
+This export establishes DFF requirements, not System Controls setup values.
+It is distinct from the task's structural and existing-state exports.
+A failed or incomplete definition export does not prove no required segments.
+Do not create another enterprise's controls or authorize an update through
+this resolver.
 
 ### Existing-State BOSS Lookup
 
@@ -104,21 +154,25 @@ this verification after the request is accepted. After terminal success, it
 queries the BOSS System Controls resource first and requires one exact
 Enterprise Name row that matches the approved System Controls scope. Use a
 fresh same-target `FA_MANAGE_SYSTEM_CONTROL` FSM export only when BOSS is
-unavailable, fails, or returns no exact Enterprise Name row.
+unavailable, fails, returns no exact Enterprise Name row, or cannot expose
+every approved DFF field needed for the comparison.
 
 | Evidence | Required result | If absent or different |
 |---|---|---|
 | Accepted request | Preserve the Data Loader request/content identity and immutable archive hash. | Treat missing correlation as an unresolved import-process blocker. |
 | Terminal process | Preserve terminal status and FSM ProcessLog, including created, skipped, warned, and failed counts when available. | Pending, failed, timed-out, or conflicting status blocks completion; never resubmit automatically. |
-| Primary BOSS verification | Page the BOSS resource and require exactly one approved `enterpriseName` row. Reconcile every approved field BOSS returns. | If BOSS is unavailable, fails, or has no exact row, continue to fresh FSM export. A returned row that differs from the approved scope is a target-state mismatch. |
-| Fallback fresh System Controls export | Re-export `FA_MANAGE_SYSTEM_CONTROL` only after BOSS is unavailable, fails, or returns no exact row; require exactly one approved Enterprise Name row. | Missing, stale, zero-row, multiple-row, malformed, or unavailable fallback read-back blocks completion. |
-| Field reconciliation | Reconcile Enterprise Name, the CSV-normalized Oldest Date Placed in Service (`YYYY/MM/DD`), Initial Asset Number, and the three approved `StructureInstanceCode` values from the selected verification source. | Report the target-state mismatch; do not correct by trial and error. |
+| Primary BOSS verification | Page the BOSS resource and require exactly one approved `enterpriseName` row. Reconcile every approved field, including approved DFF context and values. | If BOSS is unavailable, fails, has no exact row, or cannot expose every approved DFF field, continue to fresh FSM export. An observed value difference is a target-state mismatch, not permission to substitute evidence. |
+| Fallback fresh System Controls export | Re-export `FA_MANAGE_SYSTEM_CONTROL` only after BOSS is unavailable, fails, returns no exact row, or cannot expose every approved DFF field; require exactly one approved Enterprise Name row and complete approved DFF read-back. | Missing, stale, zero-row, multiple-row, malformed, incomplete, or unavailable fallback read-back blocks completion. |
+| Field reconciliation | Reconcile Enterprise Name, the CSV-normalized Oldest Date Placed in Service (`YYYY/MM/DD`), Initial Asset Number, the three approved `StructureInstanceCode` values, and every approved DFF context/value using its verified field mapping. | Report a target-state mismatch or incomplete DFF comparison; do not correct by trial and error. |
 
-When BOSS returns one exact Enterprise Name row that matches the approved scope,
-it completes the post-import target verification. Do not perform an additional
-FSM export merely to duplicate successful BOSS evidence. A returned BOSS row
-that differs from the approved scope is an unresolved target-state mismatch;
-do not correct it by trial and error.
+When BOSS returns one exact Enterprise Name row that proves the complete
+approved scope, including every approved DFF context/value, it completes the
+post-import target verification. Do not perform an additional FSM export
+merely to duplicate complete successful BOSS evidence. If BOSS otherwise
+matches but lacks approved DFF fields, use the declared fresh same-target
+System Controls data export to complete the comparison. A returned value
+that differs from the approved scope remains an unresolved target-state
+mismatch; do not hide it by substituting evidence or correct it by trial and error.
 
 A verification blocker never authorizes another System Controls package or
 import.
@@ -128,4 +182,5 @@ import.
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|
 | SYS.LOOKUP_EXISTING | decision | 30 | reference_lookup | create_path->SYS.COLLECT_CREATE_INPUTS;already_configured->SYS.DONE_READ_ONLY;unresolved->SYS.HANDLE_LOOKUP | SYS.VALIDATE_INPUT | stop | Enterprise Name is valid |
+| SYS.RESOLVE_DFF | decision | 37 | reference_lookup | resolved->SYS.RESOLVE_DEPENDENCIES;missing_or_invalid_input->SYS.HANDLE_INPUT;unverified->SYS.HANDLE_LOOKUP | SYS.COLLECT_CREATE_INPUTS | stop | System Controls absence is confirmed and local creation inputs are valid. Execute resolve_system_controls_dff_segments before structure dependency resolution, reference preview, or package preparation. |
 | SYS.PRESENT_REFERENCE_PREVIEW | decision | 39 | evaluate_result | complete->SYS.APPLY_DEFAULTS;incomplete->SYS.HANDLE_LOOKUP | SYS.RESOLVE_DEPENDENCIES | stop | The System Controls create path is confirmed |

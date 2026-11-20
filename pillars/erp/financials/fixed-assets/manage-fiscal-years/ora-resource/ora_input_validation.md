@@ -7,6 +7,19 @@
 | User-defined | Fiscal-year cycle. Fiscal Year Name may be omitted until existing fiscal years matching that cycle are listed and the user chooses reuse or create-new. Start year is optional because it can default from System Controls. | Stop for a missing fiscal-year cycle. If the user chooses create-new, stop until the user supplies a new Fiscal Year Name. |
 | Ledger-derived | Ledger Name. Resolve the target environment from configured properties or active project context. Fiscal Year Name may be omitted only until the equivalent-fiscal-year lookup and reuse-or-create decision are complete. | Stop for a missing ledger name. If the user chooses create-new, stop until the user supplies a new Fiscal Year Name. |
 
+## DFF Input Intake
+
+Preserve supplied DFF context and values by Fiscal Year Name and annual
+Fiscal Year row. Do not copy values between annual rows, into the type
+header, or into translations unless an explicit supported mapping requires it.
+
+Generated annual rows remain subject to environment-defined required segments.
+Do not invent DFF values while generating dates or applying defaults.
+Recover supplied values before requesting unresolved business input.
+
+Keep the existing cycle, coverage, exact-name, and reuse-or-create gates.
+Reuse without DFF criteria does not require new-record DFF input.
+
 ## Field Validation
 
 Validate each supplied or derived field as soon as it is received or resolved, before any lookup, reuse/create decision, or package work.
@@ -102,5 +115,5 @@ present, failed check, and correction required; never silently omit a row.
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|
 | FY.VALIDATE_INPUT | decision | 10 | validate_input | valid->FY.RESOLVE_DEPENDENCIES;invalid->FY.HANDLE_INPUT | none | stop | Every request. |
-| FY.DECIDE_EQUIVALENT | decision | 40 | validate_input | reuse->FY.DONE_EXISTS;create_new->FY.VALIDATE_DPIS_CONTAINMENT;unresolved->FY.HANDLE_DEPENDENCY | FY.LOOKUP_EXISTING | stop | Equivalent fiscal-year results and the supplied candidate name's exact status, when a name was supplied, are available; user must choose reuse or create-new. |
+| FY.DECIDE_EQUIVALENT | decision | 40 | validate_input | reuse->FY.VERIFY_REUSE_DFF;create_new->FY.VALIDATE_DPIS_CONTAINMENT;unresolved->FY.HANDLE_DEPENDENCY | FY.LOOKUP_EXISTING | stop | Equivalent fiscal-year results and the supplied candidate name's exact status, when a name was supplied, are available; user must choose reuse or create-new. |
 | FY.VALIDATE_DPIS_CONTAINMENT | decision | 45 | validate_input | valid->FY.APPLY_DEFAULTS;not_applicable->FY.APPLY_DEFAULTS;invalid->FY.HANDLE_INPUT | FY.DECIDE_EQUIVALENT | stop | User selected create-new. For an Oldest-DPIS-based start, including a missing start defaulted from System Controls, require the first Fiscal Year Date interval to contain Oldest DPIS; return valid or invalid. For a ledger-derived or explicitly supplied non-DPIS start, validate its selected cycle and coverage, preserve the accepted basis, and return not_applicable for DPIS containment; invalid basis or coverage returns invalid. |

@@ -1697,7 +1697,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 53
+            "line": 54
           },
           "readiness": {
             "status": "ready",
@@ -1711,18 +1711,46 @@
           "action_type": "apply_default",
           "execution_route": "local",
           "transitions": {
-            "applied": "SRSTATUS.LOOKUP",
+            "applied": "SRSTATUS.CODE_LOOKUP",
             "issues": "RETURN_ISSUES"
           },
           "prerequisites": [
             "SRSTATUS.VALIDATE"
           ],
           "on_failure": "stop",
-          "applies_when": "A status request needs documented lookup root, lookup-code, audit, and parent-relationship defaults",
+          "applies_when": "Apply only declared relationship constants and contract-supported new-code defaults; never synthesize lookup roots or audit fields in the SR mapping package",
           "source": {
             "file": "ora_defaulting_rules.md",
             "anchor": "task-nodes",
-            "line": 55
+            "line": 61
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "SRSTATUS.CODE_LOOKUP",
+          "node_type": "step",
+          "sequence": 25,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "found_create": "RETURN_ISSUES",
+            "missing_create": "SRSTATUS.LOOKUP",
+            "found_update": "SRSTATUS.LOOKUP",
+            "missing_update": "RETURN_ISSUES",
+            "issues": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "SRSTATUS.DEFAULTS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Resolve status definition existence with resolve_service_request_status_lookup_code; create requires absence, while an existing-code change requires one match",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 46
           },
           "readiness": {
             "status": "ready",
@@ -1736,18 +1764,18 @@
           "action_type": "reference_lookup",
           "execution_route": "fusion-rest",
           "transitions": {
-            "found": "SRSTATUS.ENFORCE",
-            "missing": "RETURN_ISSUES"
+            "resolved": "SRSTATUS.ENFORCE",
+            "issues": "RETURN_ISSUES"
           },
           "prerequisites": [
-            "SRSTATUS.DEFAULTS"
+            "SRSTATUS.CODE_LOOKUP"
           ],
           "on_failure": "stop",
-          "applies_when": "Status lookup validation is required after parent-relationship defaults are applied",
+          "applies_when": "Use resolve_service_request_status for requested relationship resolution. A new code need not already appear in the LOV; any requested parent must resolve. Existing selected-status operations require one matching relationship. An omitted parent does not require a mapping.",
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 45
+            "line": 47
           },
           "readiness": {
             "status": "ready",

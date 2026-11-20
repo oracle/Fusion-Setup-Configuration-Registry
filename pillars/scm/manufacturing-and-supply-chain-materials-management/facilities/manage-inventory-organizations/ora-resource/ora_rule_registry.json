@@ -23,7 +23,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 26
+            "line": 29
           },
           "readiness": {
             "status": "ready",
@@ -37,8 +37,8 @@
           "action_type": "reference_lookup",
           "execution_route": "fusion-rest",
           "transitions": {
-            "resolved": "INVORG.READY",
-            "not_required": "INVORG.READY",
+            "resolved": "INVORG.COUNT_DEFINITION",
+            "not_required": "INVORG.COUNT_DEFINITION",
             "blocked": "INVORG.HANDLE_ERROR",
             "failure": "INVORG.HANDLE_ERROR"
           },
@@ -50,7 +50,84 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 28
+            "line": 33
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "INVORG.COUNT_DEFINITION",
+          "node_type": "decision",
+          "sequence": 30,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "counted": "INVORG.COUNT_REFERENCE",
+            "not_required": "INVORG.READY_NOT_REQUIRED",
+            "unavailable": "INVORG.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "INVORG.RESOLVE_EXISTING"
+          ],
+          "on_failure": "stop",
+          "applies_when": "For a proposed inventory-organization create, resolve the estimated existing definition-organization count; an unavailable count is an error",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 34
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "INVORG.COUNT_REFERENCE",
+          "node_type": "decision",
+          "sequence": 40,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "counted": "INVORG.ENFORCE_DEFINITION_REFERENCE_MIX",
+            "unavailable": "INVORG.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "INVORG.COUNT_DEFINITION"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Resolve the estimated existing reference-organization count using the same scope as the definition count",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 35
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "INVORG.ENFORCE_DEFINITION_REFERENCE_MIX",
+          "node_type": "decision",
+          "sequence": 60,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "blocked": "INVORG.HANDLE_ERROR",
+            "passed": "INVORG.READY",
+            "unavailable": "INVORG.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "INVORG.COUNT_REFERENCE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Enforce the projected definition/reference mix for proposed inventory-organization creates using the completed lookups",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 62
           },
           "readiness": {
             "status": "ready",
@@ -60,17 +137,39 @@
         {
           "id": "INVORG.HANDLE_ERROR",
           "node_type": "terminal",
-          "sequence": 30,
+          "sequence": 70,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
           "prerequisites": [],
           "on_failure": "stop",
-          "applies_when": "Any invalid input or lookup failure",
+          "applies_when": "Invalid input, required lookup failure, unavailable definition/reference check, or blocked projected mix",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 41
+            "line": 47
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "INVORG.READY_NOT_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 80,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "INVORG.COUNT_DEFINITION"
+          ],
+          "on_failure": "stop",
+          "applies_when": "The request is not an inventory-organization create, so the definition/reference design check does not apply",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 48
           },
           "readiness": {
             "status": "ready",
@@ -80,19 +179,19 @@
         {
           "id": "INVORG.READY",
           "node_type": "terminal",
-          "sequence": 40,
+          "sequence": 90,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
           "prerequisites": [
-            "INVORG.RESOLVE_EXISTING"
+            "INVORG.ENFORCE_DEFINITION_REFERENCE_MIX"
           ],
           "on_failure": "stop",
-          "applies_when": "All documented input and optional lookup checks pass; the request is ready for its separately approved execution workflow",
+          "applies_when": "The internal organization-mix check passes; the request may continue to its separately approved execution workflow",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 42
+            "line": 49
           },
           "readiness": {
             "status": "ready",

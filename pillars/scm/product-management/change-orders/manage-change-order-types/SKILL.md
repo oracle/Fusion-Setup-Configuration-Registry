@@ -19,7 +19,7 @@ source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 type: "planning"
 execution_mode: "assisted"
 owner_team: "SCM product management pillar team"
-version: "0.1.6"
+version: "0.1.11"
 inputs:
   - "implementation_objective"
   - "project_context"
@@ -120,6 +120,12 @@ Provides task-specific setup planning, routing, export, import, and validation g
 
 Use this skill when planning, sequencing, exporting, importing, or validating setup data for `Manage Change Order Types` under `Change Orders`.
 
+## Oracle Change Type Setup Reference
+
+For every Change Order Type creation and update, use Oracle's [Overview of
+Change Type Setup](https://docs.oracle.com/en/cloud/saas/supply-chain-and-manufacturing/26d/faipr/overview-of-change-type-setup.html)
+as the business-configuration reference for supported change-type setup areas.
+
 ## Setup Task Metadata
 
 - Task name: `Manage Change Order Types`
@@ -156,17 +162,53 @@ Clear a default only when the user explicitly requests removal. Confirm the
 target field is nonblank in a fresh export, and clear only the explicitly
 requested `PriorityCode`, `ReasonCode`, or both. This restriction applies to
 lookup clearing, not to other independently valid changes in the package.
-Process Start Date separately under the Change Type Header Dates rules;
-neither operation requires nor blocks the other. Allow independently requested
-changes and applicable defaults in the same package, while preserving unrelated
-values and shared lookup definitions. Retain required dependent rows, validate the exact ZIP through
+Allow independently requested changes and applicable defaults in the same
+package, while preserving unrelated values and shared lookup definitions.
+Retain required dependent rows, validate the exact ZIP through
 `core.data-loader`, then present the previous and blank values, ZIP contents,
 and target environment for import
 approval. If validation rejects the blank value, stop without upload or retry.
 
+## Sequence Generated Numbering Input Gate
+
+When a change type's number-generation method is set to **Sequence Generated**,
+require **Starting Number**, **Increment**, and at least one nonblank **Prefix**
+or **Suffix**. Either Prefix or Suffix is sufficient; both are allowed. Treat
+omitted, null, empty, and whitespace-only values as missing. Check presence
+rather than truthiness so a supplied numeric zero is not classified as missing;
+validate supported values separately against the export contract.
+
+Check the request and established task context in `COT.VALIDATE_INPUT`, before
+starting the setup-data export. If any required detail is missing, classify the
+failure as input validation, pause, and ask: "Sequence Generated numbering
+requires Prefix or Suffix, Starting Number, and Increment. Please provide:
+<missing fields>." Replace the placeholder with only the missing fields; ask
+for "Prefix or Suffix" only when both are missing. Wait for the user's response
+and revalidate before export or import begins. This is a missing-input request,
+not an import approval prompt. Do not invent defaults or silently copy source
+numbering settings to satisfy missing requested sequence details.
+
+Apply this gate to creation and update requests that select Sequence Generated,
+and whenever that method is already known from established task context. If an
+unchanged method is first discovered to be Sequence Generated in a fresh export,
+check the resulting configuration immediately; request any missing details and
+stop further export or import work until they are supplied. Recheck the final
+package before import handoff. Preserve valid unchanged sequence settings for
+unrelated updates; do not require the user to re-enter details already available
+in established context or the validated unchanged baseline. This requirement
+does not apply to Rule Generated or User-Defined numbering.
+
+Validation scenarios: Prefix only, Suffix only, or both with Starting Number and
+Increment pass this presence gate. Neither Prefix nor Suffix, a missing Starting
+Number, or a missing Increment blocks export/import and prompts only for the
+missing details. Blank values also block. Other numbering methods skip this
+conditional gate.
+
 ## CSV Export, Import, and Validation Workflow
 
 `CSVExportImportSupportedFlag` is `Y` for this task, so route task setup data work through the relevant skills:
+
+Complete the Sequence Generated numbering input gate above before step 1.
 
 1. Export setup task data with `shared.setup-export.task-level-export`.
 2. Validate setup task data with `shared.validation.setup-data-validator`.
@@ -188,7 +230,59 @@ When a Manage Change Order Types export attempt returns no Process ID, ZIP, or p
 2. Submit exactly one new read-only Manage Change Order Types setup-data export through shared.setup-export.task-level-export for EGO_MANAGE_CHANGE_ORDER_TYPES. Capture and persist the new attempt's Process ID, ZIP, and process log wherever available; identify explicitly which evidence was not returned.
 3. If the retry returns none of those, stop and report a Fusion export-process issue with the environment, task code, attempt details, and missing evidence. Do not prepare an import package from stale exports, upload, import, or silently retry again.
 4. If only a Process ID or process log is returned, use the shared export workflow's bounded status/log handling for that process. Neither is a substitute for a successful fresh setup-data ZIP. On failure or timeout, stop and disclose the process status and available evidence.
-5. Choose the user handoff from the export outcome. When a fresh setup-data ZIP is available and validated, prepare the requested changes without intermediate confirmation, show the prepared import ZIP contents, and request explicit import approval. When export fails or produces no usable ZIP, request direction to restart export or restart runbook execution through the existing workflow. If runbook execution was interrupted, request direction to resume or restart it from its recorded state; do not replay completed imports or other mutations automatically. Do not offer import from stale or missing data.
+5. Choose the user handoff from the export outcome. When a fresh setup-data ZIP is available and validated, prepare the requested changes without intermediate confirmation except the required constructed Internal Name confirmation, show the prepared import ZIP contents, and request explicit import approval. When export fails or produces no usable ZIP, request direction to restart export or restart runbook execution through the existing workflow. If runbook execution was interrupted, request direction to resume or restart it from its recorded state; do not replay completed imports or other mutations automatically. Do not offer import from stale or missing data.
+
+## New Change Type Internal Name and Category Code
+
+For **Create, including cloning**, use the user's supplied Internal Name when
+nonblank. If it is omitted, null, empty, or whitespace-only, require the new
+change type Name and construct Internal Name by replacing each literal space
+with `_`, preserving case and all other characters. For example, `Design Review
+Change` becomes `Design_Review_Change`; two spaces become two underscores. Do
+not take the new Internal Name or Category Code from the copied source type.
+Do not apply this derivation to an Update; retain the existing identity.
+
+Validate supplied, constructed, and replacement Internal Names as nonempty
+strings matching `^[A-Za-z0-9_]+$`: numbers, letters, and underscores only. Spaces
+in an explicitly supplied Internal Name and punctuation such as hyphens are
+invalid; do not silently sanitize them. If the new Name contains punctuation,
+replace only its spaces and reject the resulting invalid candidate. Show this
+exact error and ask the user to change the Internal Name:
+
+**error: "You must enter numbers, letters, and underscore (_) characters or any combination of these."**
+
+For a valid constructed candidate, ask: "The constructed Internal Name is
+'<internal name>'. Please confirm this Internal Name or provide a replacement."
+Wait for confirmation of that exact candidate or a valid explicit replacement
+before preparing the creation package. Record the accepted value in the active
+task context. Do not treat export/import approval as confirmation of a candidate
+that has not been shown. If a candidate is regenerated after the Name changes,
+obtain confirmation again. A valid user-supplied Internal Name, including an
+explicit replacement, needs no derivation-confirmation prompt.
+
+Set the new change type's Internal Name and Category Code to the exact same
+accepted value. Resolve their real CSV carrier columns and dependent references
+through `resolve_change_type_identity_fields` in ora-resource/ora_reference_lookups.md,
+using the current source export as schema evidence only. Do not invent a column
+or retain the source identity/category code. A missing or ambiguous carrier
+mapping blocks package preparation; do not skip Category Code. Validate both
+values in the final ZIP. Reject an identity already used by an exported type
+and ask for another Internal Name; do not invent a suffix.
+
+This requested Internal Name confirmation is an explicit exception to the
+usual rule against intermediate confirmation during package preparation. It
+is separate from the mandatory approval of the exact import ZIP and target.
+
+| Create scenario | Expected behavior |
+|---|---|
+| Name Design Review Change; Internal Name omitted | Construct Design_Review_Change and wait for confirmation |
+| Name Design  Review; Internal Name omitted | Construct Design__Review and wait for confirmation |
+| Internal Name Design_Review2 supplied | Use directly; copy to Category Code |
+| Internal Name Design-Review or Design Review supplied | Show the exact character error and request a changed Internal Name |
+| Name Design-Review Change; Internal Name omitted | Candidate Design-Review_Change fails; show exact error and request replacement |
+| New Name missing and Internal Name omitted | Ask for the new change type Name; do not copy the source identity |
+| Derived candidate rejected or changed | Wait for a valid explicit replacement or confirmation of a new candidate |
+| Accepted Internal Name | Use identically in new Internal Name and Category Code; validate final ZIP |
 
 ## Base and Child Change Type Identification
 
@@ -295,6 +389,64 @@ For creation and update packages, emit exactly one ORA_EGO_WORKFLOW_STATUS_CONTR
 - Rejection Reason, Inherited, Enabled, Start Date, and End Date are informational at the change-type level and cannot be updated. Reject a request to change any of them and Sequence number is updatable.
 - Removing a rejection reason from a change type is unsupported. Direct the user to remove the row in the Change Order Type UI; do not prepare or submit a rejection-reason deletion ZIP.
 
+### Default Assignee and Assignee Role
+
+For both **Create (including cloning)** and **Update**, validate the effective
+Change Policy Assignee Role and Default Assignee together. When **Assignee Role
+is present**, **Default Assignee must be nonblank and belong to that role**.
+When **Assignee Role is absent**, **Default Assignee may be blank**: do not
+prompt for an assignee or block export/import for that reason. A supplied user
+without a role is also allowed; no role-membership check applies.
+
+Resolve effective values before asking for missing input. For cloning, copy
+each selected source value unless the user explicitly overrides that field.
+If the source already has both values and neither is overridden, copy the pair
+without asking the user to re-enter or reconfirm it. The source's configured
+pair is the preservation baseline; do not claim independent membership
+verification, and block if available evidence establishes a mismatch. If source
+values are not yet available, resolve them through the active workflow's
+declared source export rather than treating omission from the prompt as missing
+input; apply this gate immediately before any further export/import work.
+
+Explicit overrides take precedence over source values, including an explicit
+blank or clear. For a partial override, preserve the other source value and
+validate the resulting pair. For updates, an omitted field retains its existing
+value; omission of Assignee Role does not remove an established role. Never
+silently replace an explicitly cleared assignee with a copied value or remove
+a role to permit a blank assignee.
+
+In `COT.VALIDATE_INPUT`, before export/import begins, check the effective pair
+available from the request, established context, and resolved source baseline.
+When the role is present and the effective assignee is omitted, null, empty,
+whitespace-only, or explicitly cleared, stop with input validation and ask:
+"Please provide a Default Assignee user who belongs to the selected Assignee
+Role '<assignee role>'." Substitute the actual role. For a new or changed pair,
+clarify uncertain membership or request a suitable replacement for a known
+nonmember. Wait for the required details and revalidate before proceeding.
+These are missing-input prompts, not import-approval prompts. Use only the
+active workflow's available membership evidence; do not invent users, change
+memberships, or initiate an undeclared external lookup.
+
+Apply the check before materializing the target configuration and recheck the
+final ZIP before import handoff. Never prepare, approve, or import a Create or
+Update configuration with a present Assignee Role and a blank Default Assignee,
+including an unchanged invalid baseline or an explicit clear request. Removing
+the role explicitly permits a blank assignee in the resulting configuration.
+This rule concerns Change Policy assignment, not creator or workflow roles;
+the Role Code requirement below still applies to requested role assignments.
+
+| Scenario | Expected behavior |
+|---|---|
+| No effective role; assignee omitted, null, empty, whitespace-only, or explicitly cleared | Allow blank; do not prompt for an assignee |
+| No effective role; assignee supplied | Allow; skip role-membership check |
+| Clone source has role and assignee; neither overridden | Copy both without re-entry or reconfirmation |
+| Clone source or existing update target has role but no assignee | Stop and request a user belonging to that role; do not preserve the invalid pair |
+| Role present; assignee explicitly cleared | Stop and prompt; do not refill from source |
+| Only one field overridden | Preserve the other source/existing value; validate resulting pair |
+| Role changed; retained assignee is a nonmember or membership is unclear | Request a suitable member or clarify before export/import |
+| Update omits existing role | Retain role; require nonblank assignee belonging to it |
+| Role explicitly removed and assignee blank | Allow blank without an assignee prompt |
+
 ### Required Role Code
 
 When a creation or update request adds or changes a role assignment, require an explicit Role Code in the request or established task context. A role display name alone is not sufficient. If the code is missing or blank, stop validation for the requested assignment and show: "Role Code is missing from your request. Please provide the Role Code for the role you want to assign." Do not guess a code from a display name or substitute another role. Do not prepare or submit the affected assignment until the code is provided. If no role change is requested, preserve the exported role values without asking the user to re-enter them. Requests to remove a creator continue to follow the unsupported-removal guidance below.
@@ -312,9 +464,14 @@ If any workflow step resolves to Scheduled using the exported status identity or
 
 ## Change Type Header Dates
 
-For creation and update packages, convert any user-provided Change Type header Start Date or End Date to the format evidenced by the corresponding date fields in the fresh exported CSV. Preserve the supplied date's meaning; do not assume a generic date format. If header Start Date is not provided, use the current date at package preparation in that same format, rather than copying the exported Start Date. This is an explicit exception to unchanged-value preservation. If End Date is not provided, preserve its exported value, including a blank value.
-
-If a supplied date is ambiguous or invalid, or the exported date format cannot be established, report the specific issue before preparing the affected fields. Show the applied header dates in the package preview and identify a defaulted Start Date. These rules apply only to Change Type header dates, not rejection-reason informational dates or attachment-category association dates, which retain their separate rules.
+Change Type header Start Date and End Date are not supported by this FSM import
+workflow. When a create or update request includes either date, skip only the
+unsupported date change and show: "Warning: Change Type Start Date and End
+Date are not supported by the import/export process and will be skipped."
+Continue to prepare and process all other supported requested changes. Do not
+default, derive, add, or invent either header date column. This restriction
+does not apply to the separate Start Date required for an attachment-category
+Change Policy association.
 
 ## Item Effectivity Field Rules
 
@@ -336,7 +493,13 @@ Apply these rules when preparing either a new change type or an update:
 
 ## Validation, ZIP Preparation, and Import Approval
 
-Do not ask for confirmation during validation or ZIP preparation. Complete the supported validation and prepare the import ZIP without an intermediate approval gate. Before any import, show the prepared ZIP contents, including its member paths and the configuration rows or files to be imported, then obtain explicit approval for that exact prepared ZIP and target environment. Do not import if the ZIP changes after it is shown; revalidate, show the replacement ZIP contents, and obtain new explicit approval.
+Except for confirmation of a constructed Internal Name as specified above, do not ask for confirmation during validation or ZIP preparation. Complete the supported validation and prepare the import ZIP without an intermediate approval gate. Before any import, show the prepared ZIP contents, including its member paths and the configuration rows or files to be imported, then obtain explicit approval for that exact prepared ZIP and target environment. Do not import if the ZIP changes after it is shown; revalidate, show the replacement ZIP contents, and obtain new explicit approval.
+
+After approval, submit the approved ZIP through `core.data-loader` and keep the
+task running until Fusion confirms submission with an import job or process
+identifier. Do not stop at the approval handoff or report completion before
+submission is confirmed. Once submitted, tell the user that the import was
+submitted, including the target environment and job or process identifier.
 
 ## Post-Import Log Review and Request Reconciliation
 
@@ -369,7 +532,7 @@ Present the Fusion job status separately from the request outcome. If logs are m
 
 - Define the Change Policy at the change-type level before users create or import change orders.
 - Use a consistent, enterprise-approved number-generation method for each change type: Sequence Generated, Rule Generated, or User-Defined.
-- For sequence-generated numbers, define and govern the prefix, starting number, increment, and suffix; prevent overlapping sequences across change types and environments.
+- For sequence-generated numbers, require at least one of Prefix or Suffix, Starting Number, and Increment before export/import under the input gate above; prevent overlapping sequences across change types and environments.
 - For rule-generated numbers, associate a tested rule set with the correct change type and validate uniqueness, required inputs, exception handling, and import behavior.
 - Use user-defined numbers only when an external or regulatory identifier must be retained; establish uniqueness and format controls before enabling manual entry.
 - Do not change a number-generation method without impact assessment. Existing change-order numbers remain unchanged, but new records will follow the new method.

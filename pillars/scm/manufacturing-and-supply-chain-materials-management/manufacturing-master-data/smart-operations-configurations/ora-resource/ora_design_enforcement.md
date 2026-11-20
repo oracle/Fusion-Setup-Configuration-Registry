@@ -35,8 +35,11 @@
 |---|---|---|---|---|---|---|---|
 | SOC.ENFORCE_DESIGN | decision | 80 | design_enforcement | ready->SOC.CHECK_APPROVAL_BOUNDARY;blocked->SOC.HANDLE_ERROR | SOC.CHECK_DEPENDENCIES | stop | Evaluate Design Rules for the proposed task configuration; no Run Book selection or cross-task sequencing is owned here. |
 
-## Source Authority
+## Configuration Scope
 
-This restoration uses the historical Smart Operations task rules in the FSCR source repository at commit efd2e765b2dc89533646189bc44fbcf3eec96427, under pillars/scm/manufacturing-and-supply-chain-materials-management/manufacturing-master-data/ora-resource/. Its five ora_* Markdown sources were verified as existing blobs and byte-identical to the historical source read for this restoration. Dated September 2026 procedure snapshots in docs/SMART-OPERATIONS-CONFIGURATIONS-FSCR-DEVELOPMENT-STORY.md and docs/SMART-OPERATIONS-CONFIGURATIONS-FSCR-QA-GUIDE.md supply the approved historical run context; the latter is the complete guide named by the QA-GUIDE.md pointer. Current published procedure context is the parent and demo versions cited below. None of these dated sources establishes a fresh target result.
-
-The parent [Smart Operations guidance](https://confluence.oraclecorp.com/confluence/pages/viewpage.action?pageId=21846452541), version 11, and [demo](https://confluence.oraclecorp.com/confluence/pages/viewpage.action?pageId=21846452542), version 6, were read on 2026-10-05 by the coordinating agent. The parent confirms the fresh-template, approved-row, second-reviewer and administrator handoff and distinguishes task CSV results from the separate Run Book load and completion. No reusable rule below supplies a demonstration organization, UOM, percentage, reason code, language choice, row count, or approval as a new implementation default.
+Use the fresh template, approved row values, second-reviewer findings and
+administrator handoff defined in this skill's Scoped Preparation and Reviewer
+Handoffs. Keep task CSV results separate from Run Book load and completion.
+Example organizations, UOMs, percentages, reason codes, languages, row counts
+and prior approvals are not defaults for a new implementation. Historical
+results do not establish readiness or completion for the selected target.

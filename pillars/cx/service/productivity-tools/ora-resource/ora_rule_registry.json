@@ -23,7 +23,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 37
+            "line": 47
           },
           "readiness": {
             "status": "ready",
@@ -48,7 +48,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 31
+            "line": 41
           },
           "readiness": {
             "status": "ready",
@@ -70,7 +70,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 40
+            "line": 48
           },
           "readiness": {
             "status": "ready",
@@ -90,7 +90,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 41
+            "line": 49
           },
           "readiness": {
             "status": "ready",
@@ -124,7 +124,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 44
+            "line": 49
           },
           "readiness": {
             "status": "ready",
@@ -149,7 +149,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 40
+            "line": 44
           },
           "readiness": {
             "status": "ready",
@@ -171,7 +171,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 51
+            "line": 55
           },
           "readiness": {
             "status": "ready",
@@ -191,7 +191,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 52
+            "line": 56
           },
           "readiness": {
             "status": "ready",
@@ -226,7 +226,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 41
+            "line": 48
           },
           "readiness": {
             "status": "ready",
@@ -251,7 +251,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 35
+            "line": 42
           },
           "readiness": {
             "status": "ready",
@@ -265,7 +265,7 @@
           "action_type": "reference_lookup",
           "execution_route": "fusion-rest",
           "transitions": {
-            "found": "NOTETYPE.UPDATE_APPROVAL_GATE",
+            "found": "NOTETYPE.UPDATE_HANDOFF_GATE",
             "issues": "RETURN_ISSUES"
           },
           "prerequisites": [
@@ -276,7 +276,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 36
+            "line": 43
           },
           "readiness": {
             "status": "ready",
@@ -284,24 +284,24 @@
           }
         },
         {
-          "id": "NOTETYPE.UPDATE_APPROVAL_GATE",
+          "id": "NOTETYPE.UPDATE_HANDOFF_GATE",
           "node_type": "decision",
           "sequence": 30,
           "action_type": "execution_gate",
           "execution_route": "local",
           "transitions": {
-            "approved": "NOTETYPE.UPDATE_READY",
-            "denied": "NOTETYPE.UPDATE_REFUSED"
+            "ready": "NOTETYPE.UPDATE_READY",
+            "blocked": "NOTETYPE.UPDATE_REFUSED"
           },
           "prerequisites": [
             "NOTETYPE.UPDATE_PREFLIGHT"
           ],
           "on_failure": "stop",
-          "applies_when": "Exact-match preflight found one target and the exact Meaning update payload is ready for user approval",
+          "applies_when": "Return validated business intent only when the owning active Run Book and core.data-loader FSM preflight identify this exact task and immutable source; task validation does not request load approval",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 45
+            "line": 51
           },
           "readiness": {
             "status": "ready",
@@ -316,14 +316,14 @@
           "execution_route": "local",
           "transitions": {},
           "prerequisites": [
-            "NOTETYPE.UPDATE_APPROVAL_GATE"
+            "NOTETYPE.UPDATE_HANDOFF_GATE"
           ],
           "on_failure": "stop",
-          "applies_when": "Explicit approval permits one PATCH to the documented Note Type lookup-code endpoint",
+          "applies_when": "Return task-validation results to the owning Run Book and core.data-loader FSM workflow; that workflow owns artifact mapping, exact preview, approval, execution and verification; this terminal permits no direct POST or PATCH",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 46
+            "line": 52
           },
           "readiness": {
             "status": "ready",
@@ -338,14 +338,14 @@
           "execution_route": "local",
           "transitions": {},
           "prerequisites": [
-            "NOTETYPE.UPDATE_APPROVAL_GATE"
+            "NOTETYPE.UPDATE_HANDOFF_GATE"
           ],
           "on_failure": "stop",
-          "applies_when": "The update preview was denied or approval was not granted",
+          "applies_when": "Owning Run Book or matching core.data-loader FSM preflight is unavailable; stop the write handoff without selecting another route",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 47
+            "line": 53
           },
           "readiness": {
             "status": "ready",
@@ -367,7 +367,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 44
+            "line": 50
           },
           "readiness": {
             "status": "ready",
@@ -387,7 +387,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 48
+            "line": 54
           },
           "readiness": {
             "status": "ready",
@@ -421,7 +421,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 47
+            "line": 50
           },
           "readiness": {
             "status": "ready",
@@ -446,7 +446,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 43
+            "line": 45
           },
           "readiness": {
             "status": "ready",
@@ -468,7 +468,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 55
+            "line": 57
           },
           "readiness": {
             "status": "ready",
@@ -488,7 +488,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 56
+            "line": 58
           },
           "readiness": {
             "status": "ready",
@@ -513,7 +513,7 @@
           "action_type": "validate_input",
           "execution_route": "local",
           "transitions": {
-            "valid": "GSEARCH.LOOKUP",
+            "valid": "GSEARCH.DEFINITION",
             "issues": "RETURN_ISSUES"
           },
           "prerequisites": [],
@@ -522,7 +522,32 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 25
+            "line": 43
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "GSEARCH.DEFINITION",
+          "node_type": "step",
+          "sequence": 15,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "found": "GSEARCH.LOOKUP",
+            "issues": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "GSEARCH.VALIDATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "The configured Global Search profile definition must be verified",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 36
           },
           "readiness": {
             "status": "ready",
@@ -540,14 +565,14 @@
             "issues": "RETURN_ISSUES"
           },
           "prerequisites": [
-            "GSEARCH.VALIDATE"
+            "GSEARCH.DEFINITION"
           ],
           "on_failure": "stop",
           "applies_when": "The Global Search profile value must be checked",
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 19
+            "line": 37
           },
           "readiness": {
             "status": "ready",
@@ -568,11 +593,11 @@
             "GSEARCH.LOOKUP"
           ],
           "on_failure": "stop",
-          "applies_when": "Global Search is being enabled",
+          "applies_when": "Every Global Search request; apply the conditional enable default or preserve the supplied Y or N unchanged",
           "source": {
             "file": "ora_defaulting_rules.md",
             "anchor": "task-nodes",
-            "line": 13
+            "line": 14
           },
           "readiness": {
             "status": "ready",
@@ -615,11 +640,11 @@
             "GSEARCH.DESIGN"
           ],
           "on_failure": "stop",
-          "applies_when": "Global Search guidance is ready for preview handoff",
+          "applies_when": "Validated requested/current Global Search values are returned to the owning workflow for preview; no profile change is performed by this terminal",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 20
+            "line": 36
           },
           "readiness": {
             "status": "ready",
@@ -639,7 +664,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 21
+            "line": 37
           },
           "readiness": {
             "status": "ready",
@@ -665,15 +690,67 @@
           "execution_route": "local",
           "transitions": {
             "valid": "DYNLINK.LOOKUP",
+            "fsm_create_valid": "DYNLINK.CREATE_PREFLIGHT",
+            "fsm_update_valid": "DYNLINK.UPDATE_PREFLIGHT",
             "issues": "RETURN_ISSUES"
           },
           "prerequisites": [],
           "on_failure": "stop",
-          "applies_when": "A read-only request to list Dynamic Link records",
+          "applies_when": "Classify collection GET, catalog-supported FSM create or FSM update for the selected task. The valid outcome is only a read; FSM outcomes require the matching operation-specific package inputs below. REST mutations and unresolved routes return issues.",
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 30
+            "line": 45
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "DYNLINK.CREATE_PREFLIGHT",
+          "node_type": "decision",
+          "sequence": 15,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "DYNLINK.CREATE_HANDOFF_GATE",
+            "issues": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "DYNLINK.VALIDATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Validate the FSM create Required Groups contract using the supplied matching same-task export/XML and core.data-loader preflight evidence. Missing source, absent/ambiguous target or duplicate create identity, unapproved values, unsupported flags and unresolved mappings return issues. This node performs no API call or import.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 51
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "DYNLINK.UPDATE_PREFLIGHT",
+          "node_type": "decision",
+          "sequence": 16,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "DYNLINK.UPDATE_HANDOFF_GATE",
+            "issues": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "DYNLINK.VALIDATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Validate the FSM update Required Groups contract using the supplied matching same-task export/XML and core.data-loader preflight evidence. Missing source, absent/ambiguous target or duplicate create identity, unapproved values, unsupported flags and unresolved mappings return issues. This node performs no API call or import.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 52
           },
           "readiness": {
             "status": "ready",
@@ -698,7 +775,101 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 22
+            "line": 38
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "DYNLINK.CREATE_HANDOFF_GATE",
+          "node_type": "decision",
+          "sequence": 30,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "DYNLINK.CREATE_READY",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "DYNLINK.CREATE_PREFLIGHT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return validated FSM create intent only when the active Run Book and owning core.data-loader preflight identify this exact task, operation and immutable source. Preserve originating offering, functional area, task sequence, project and environment. Missing or changed bindings block; request no duplicate load approval.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 59
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "DYNLINK.CREATE_READY",
+          "node_type": "terminal",
+          "sequence": 31,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "DYNLINK.CREATE_HANDOFF_GATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return validation evidence to the selected Run Book/core.data-loader FSM workflow; core owns export/schema mapping, immutable artifact, exact preview, approval, execution, polling and verification. This terminal grants no POST, PATCH, direct import or retry permission.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 60
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "DYNLINK.UPDATE_HANDOFF_GATE",
+          "node_type": "decision",
+          "sequence": 35,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "DYNLINK.UPDATE_READY",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "DYNLINK.UPDATE_PREFLIGHT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return validated FSM update intent only when the active Run Book and owning core.data-loader preflight identify this exact task, operation and immutable source. Preserve originating offering, functional area, task sequence, project and environment. Missing or changed bindings block; request no duplicate load approval.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 61
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "DYNLINK.UPDATE_READY",
+          "node_type": "terminal",
+          "sequence": 36,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "DYNLINK.UPDATE_HANDOFF_GATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return validation evidence to the selected Run Book/core.data-loader FSM workflow; core owns export/schema mapping, immutable artifact, exact preview, approval, execution, polling and verification. This terminal grants no POST, PATCH, direct import or retry permission.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 62
           },
           "readiness": {
             "status": "ready",
@@ -716,11 +887,11 @@
             "DYNLINK.LOOKUP"
           ],
           "on_failure": "stop",
-          "applies_when": "Dynamic Link guidance is ready for preview handoff",
+          "applies_when": "Return only the requested Dynamic Link collection GET result; this read terminal is not an FSM write handoff.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 28
+            "line": 40
           },
           "readiness": {
             "status": "ready",
@@ -740,7 +911,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 29
+            "line": 41
           },
           "readiness": {
             "status": "ready",
@@ -774,7 +945,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 27
+            "line": 44
           },
           "readiness": {
             "status": "ready",
@@ -796,7 +967,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 24
+            "line": 38
           },
           "readiness": {
             "status": "ready",
@@ -816,7 +987,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 25
+            "line": 39
           },
           "readiness": {
             "status": "ready",
@@ -842,16 +1013,42 @@
           "execution_route": "local",
           "transitions": {
             "list_valid": "TAG.LOOKUP",
-            "create_valid": "TAG.CREATE_PREFLIGHT",
+            "create_valid": "TAG.CREATE_DEFAULTS",
+            "fsm_update_valid": "TAG.UPDATE_PREFLIGHT",
             "issues": "RETURN_ISSUES"
           },
           "prerequisites": [],
           "on_failure": "stop",
-          "applies_when": "A Tags collection read or create request",
+          "applies_when": "Classify Tags collection read, create or catalog-supported FSM update. Validate the selected task code, requested operation, exact target or create intent, and flag mapping before selecting a branch; unsupported operations return issues.",
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 43
+            "line": 46
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "TAG.CREATE_DEFAULTS",
+          "node_type": "step",
+          "sequence": 15,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "applied": "TAG.CREATE_PREFLIGHT",
+            "issues": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "TAG.VALIDATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Apply only a missing AdministratorCreatedFlag business-intent default from Standard Defaults; retain explicit true/false. If a supplied FSM flag needs normalization, require the selected export/XML to confirm its representation; unresolved encoding returns issues. Do not serialize an FSM row here.",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 15
           },
           "readiness": {
             "status": "ready",
@@ -876,7 +1073,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 37
+            "line": 39
           },
           "readiness": {
             "status": "ready",
@@ -890,19 +1087,19 @@
           "action_type": "reference_lookup",
           "execution_route": "fusion-rest",
           "transitions": {
-            "absent": "TAG.CREATE_APPROVAL_GATE",
+            "absent": "TAG.CREATE_HANDOFF_GATE",
             "exists": "TAG.DUPLICATE",
             "issues": "RETURN_ISSUES"
           },
           "prerequisites": [
-            "TAG.VALIDATE"
+            "TAG.CREATE_DEFAULTS"
           ],
           "on_failure": "stop",
           "applies_when": "A validated Tag create request needs an exact-name duplicate preflight",
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 38
+            "line": 40
           },
           "readiness": {
             "status": "ready",
@@ -910,24 +1107,49 @@
           }
         },
         {
-          "id": "TAG.CREATE_APPROVAL_GATE",
+          "id": "TAG.UPDATE_PREFLIGHT",
+          "node_type": "decision",
+          "sequence": 22,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "TAG.UPDATE_HANDOFF_GATE",
+            "issues": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "TAG.VALIDATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Validate the FSM update Required Groups contract using the supplied matching same-task export/XML and core.data-loader preflight evidence. Missing source, absent/ambiguous target or duplicate create identity, unapproved values, unsupported flags and unresolved mappings return issues. This node performs no API call or import.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 53
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "TAG.CREATE_HANDOFF_GATE",
           "node_type": "decision",
           "sequence": 30,
           "action_type": "execution_gate",
           "execution_route": "local",
           "transitions": {
-            "approved": "TAG.CREATE_READY",
-            "denied": "TAG.CREATE_REFUSED"
+            "ready": "TAG.CREATE_READY",
+            "blocked": "TAG.CREATE_REFUSED"
           },
           "prerequisites": [
             "TAG.CREATE_PREFLIGHT"
           ],
           "on_failure": "stop",
-          "applies_when": "Exact-name preflight found no match and the exact create payload is ready for user approval",
+          "applies_when": "Return validated business intent only when the owning active Run Book and core.data-loader FSM preflight identify this exact task and immutable source; task validation does not request load approval",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 41
+            "line": 43
           },
           "readiness": {
             "status": "ready",
@@ -942,14 +1164,14 @@
           "execution_route": "local",
           "transitions": {},
           "prerequisites": [
-            "TAG.CREATE_APPROVAL_GATE"
+            "TAG.CREATE_HANDOFF_GATE"
           ],
           "on_failure": "stop",
-          "applies_when": "Explicit approval permits one POST to the documented Tags collection endpoint",
+          "applies_when": "Return task-validation results to the owning Run Book and core.data-loader FSM workflow; that workflow owns artifact mapping, exact preview, approval, execution and verification; this terminal permits no direct POST or PATCH",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 42
+            "line": 44
           },
           "readiness": {
             "status": "ready",
@@ -971,7 +1193,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 43
+            "line": 45
           },
           "readiness": {
             "status": "ready",
@@ -986,14 +1208,61 @@
           "execution_route": "local",
           "transitions": {},
           "prerequisites": [
-            "TAG.CREATE_APPROVAL_GATE"
+            "TAG.CREATE_HANDOFF_GATE"
           ],
           "on_failure": "stop",
-          "applies_when": "The create preview was denied or approval was not granted",
+          "applies_when": "Owning Run Book or matching core.data-loader FSM preflight is unavailable; stop the write handoff without selecting another route",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 44
+            "line": 46
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "TAG.UPDATE_HANDOFF_GATE",
+          "node_type": "decision",
+          "sequence": 40,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "TAG.UPDATE_READY",
+            "blocked": "RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "TAG.UPDATE_PREFLIGHT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return validated FSM update intent only when the active Run Book and owning core.data-loader preflight identify this exact task, operation and immutable source. Preserve originating offering, functional area, task sequence, project and environment. Missing or changed bindings block; request no duplicate load approval.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 63
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "TAG.UPDATE_READY",
+          "node_type": "terminal",
+          "sequence": 41,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "TAG.UPDATE_HANDOFF_GATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return validation evidence to the selected Run Book/core.data-loader FSM workflow; core owns export/schema mapping, immutable artifact, exact preview, approval, execution, polling and verification. This terminal grants no POST, PATCH, direct import or retry permission.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 64
           },
           "readiness": {
             "status": "ready",
@@ -1011,11 +1280,11 @@
             "TAG.LOOKUP"
           ],
           "on_failure": "stop",
-          "applies_when": "Tag guidance is ready for preview handoff",
+          "applies_when": "Return only the requested Tags collection GET result; this read terminal is not an FSM write handoff.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 40
+            "line": 42
           },
           "readiness": {
             "status": "ready",
@@ -1035,7 +1304,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 45
+            "line": 47
           },
           "readiness": {
             "status": "ready",

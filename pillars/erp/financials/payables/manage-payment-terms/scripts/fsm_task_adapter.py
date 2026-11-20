@@ -827,11 +827,24 @@ def _validate_payment_term_rank_uniqueness(
 def _validate_payment_term_line_semantics(
     row: dict[str, Any], operation_id: str
 ) -> None:
-    """Apply the AP_TERMS_LINES ADF BC rules to one effective line.
+    """Validate the resulting Payment Terms line using these business rules.
 
-    Evidence: PaymentTermLineEO.xml, rules 0-19, in the reviewed Fusion
-    CodeSearch branch.  This is intentionally task-local: it models Payment
-    Terms business semantics, not a generic CSV rule.
+    - Supply exactly one due basis: percentage (0 through 100) or amount
+      (zero or greater).
+    - Choose exactly one due-date method: days, day of month with months
+      forward, fixed date, or calendar.
+    - Days and months forward cannot be negative. A day of month must be
+      between 1 and 31 and must be paired with months forward.
+    - Each discount needs a percentage greater than 0 and at most 100, plus
+      exactly one date method: days or day of month with months forward.
+      Discount dates without a percentage are also rejected. The same day
+      and month ranges apply to each discount tier.
+    - The second discount requires the first; the third requires both earlier
+      tiers. Populated day counts must increase across adjacent tiers, and
+      discount percentages must decrease across adjacent tiers.
+
+    These checks apply to one line. Separate validation checks the complete
+    payment term's lines for a consistent due basis and the required totals.
     """
     due_percent = _is_populated(row, "DuePercent")
     due_amount = _is_populated(row, "DueAmount")
@@ -1379,6 +1392,16 @@ def _requirement_contract(
     return expected
 
 
+def _customer_view(value):
+    """Return a display copy without internal provenance; never mutate execution data."""
+    if isinstance(value, dict):
+        return {key: _customer_view(item) for key, item in value.items()
+                if key not in {"sourceIds", "sourceEvidence"}}
+    if isinstance(value, list):
+        return [_customer_view(item) for item in value]
+    return value
+
+
 def normalize_design(
     contract: dict[str, Any],
     baseline_path: Path,
@@ -1418,7 +1441,7 @@ def normalize_design(
         "resolverFindings": blueprint["resolverFindings"],
         "requirementCount": len(requirements),
     }
-    return blueprint, preview, requirements
+    return blueprint, _customer_view(preview), requirements
 
 
 def _candidate_rows(
@@ -2333,6 +2356,7 @@ def main(argv: list[str] | None = None) -> int:
             )
         else:
             raise AdapterError(f"Unknown command {args.command!r}.")
+        result = _customer_view(result)
         if args.report:
             _write_new_json(args.report, result)
         print(json.dumps(result, indent=2, sort_keys=True, ensure_ascii=False))

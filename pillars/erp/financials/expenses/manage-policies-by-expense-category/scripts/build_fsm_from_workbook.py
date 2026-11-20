@@ -15,15 +15,18 @@ from pathlib import Path
 from zipfile import BadZipFile, ZipFile
 
 from workbook_intake import ROOT, TASK, IntakeError, artifact_output, checked_zip, csv_bytes, load_catalog, read_package, read_workbook, sha256, xml
-from category_scope import require_scoped_records, require_target_rate_identities
+from category_scope import (ENTITIES, PARENTS, require_scoped_records, require_target_rate_identities,
+                            owning_policy, submitted_identity_records)
 from no_default_inputs import enforce_no_default_inputs
 from reference_gate import require_qualified_reference_route
 import baseline_evidence
+from environment_identity import same_environment
 from metadata_contract import descriptor
 from identity_contract import select_identity
 from operation_contract import resolve_policy_operation_contract
 from single_currency_policy import policy_constants
 from managed_create_fields import managed_create_values
+import field_uncertainty
 
 
 class ContractBlocked(IntakeError):
@@ -119,12 +122,24 @@ def validate_result(row, entity_contract, contract):
                 raise IntakeError('Resulting end date precedes start date')
 
 
-def resolve_policy_resulting_state(row, entity_contract, contract):
+def resolve_policy_resulting_state(row, entity_contract, contract, *, entity=None):
     """Apply only the reviewed rule inventory to the complete proposed row."""
     evidence(contract,entity_contract.get('cross_field_source_ids'),'Resulting-state rule inventory')
     if not isinstance(entity_contract.get('cross_field_rules'),list):
         raise ContractBlocked('Explicit resulting-state rule inventory required')
     validate_result(row,entity_contract,contract)
+    if entity in {'ORA_EXM_CARRENTAL_POLICY','ORA_EXM_CARRENTAL_POLICY_LINE'}:
+        from car_rental_profile import validate_parent,validate_rate
+        (validate_parent if entity=='ORA_EXM_CARRENTAL_POLICY' else validate_rate)(row)
+    if entity in {'ORA_EXM_AIRFARE_POLICY','ORA_EXM_AIRFARE_POLICY_LINE'}:
+        from airfare_profile import validate_parent,validate_rate
+        (validate_parent if entity=='ORA_EXM_AIRFARE_POLICY' else validate_rate)(row)
+    if entity in {'ORA_EXM_MISCELLANEOUS_POLICY','ORA_EXM_MISCELLANEOUS_POLICY_LINE'}:
+        from miscellaneous_profile import validate_parent,validate_rate
+        (validate_parent if entity=='ORA_EXM_MISCELLANEOUS_POLICY' else validate_rate)(row)
+    if entity == 'ORA_EXM_MILEAGE_POLICY':
+        from mileage_profile import validate_parent
+        validate_parent(row)
 
 
 def validate_create_empties(row, entity_contract, contract, entity, input_fields):
@@ -161,21 +176,37 @@ def validate_create_empties(row, entity_contract, contract, entity, input_fields
 
 def candidate(workbook, baseline_zip, contract_path, output_dir, *, dry_run=False, expected_environment=None, expected_process_id=None,
               baseline_receipt=None, baseline_export_plan=None, baseline_export_approval=None,
-              currency_receipt=None, target_origin=None, validation_date=None, project_root=None):
+              currency_receipt=None, target_origin=None, validation_date=None, project_root=None,
+              lookup_receipts=None, field_acceptances=None):
     catalog=load_catalog()
     model=read_workbook(workbook,catalog)
     if model['status']!='local_shape_valid':
-        raise IntakeError('Workbook needs input/correction; no import artifact was created')
+        raise IntakeError('Workbook needs input/correction; no import artifact was created',
+                          issues=model['issues'])
     try:
         require_scoped_records(model['records'])
+        from expanded_category_intake import require_qualified_operations
     except ValueError as error:
         raise ContractBlocked(str(error)) from error
     contract=json.loads(Path(contract_path).read_text())
+    if any(r['entity'] in {'ORA_EXM_CARRENTAL_POLICY','ORA_EXM_CARRENTAL_POLICY_LINE',
+            'ORA_EXM_AIRFARE_POLICY','ORA_EXM_AIRFARE_POLICY_LINE',
+            'ORA_EXM_MILEAGE_POLICY','ORA_EXM_MILEAGE_LINE',
+            'ORA_EXM_MISCELLANEOUS_POLICY','ORA_EXM_MISCELLANEOUS_POLICY_LINE',
+            'ORA_EXM_PERDIEM_POLICY','ORA_EXM_PERDIEM_POLICY_LINE','ORA_EXM_PER_DIEM_POLICY_VALUE'} for r in model['records']):
+        if sha256(Path(contract_path).read_bytes())!=sha256((ROOT/'references/fsm-runtime-contract.json').read_bytes()):
+            raise ContractBlocked('Category field review requires the exact task-owned runtime contract')
+    try:
+        require_qualified_operations(model['records'],contract)
+    except ValueError as error:
+        raise ContractBlocked(str(error)) from error
     currency_binding = None
-    if currency_receipt is not None:
+    lookup_binding = None
+    if currency_receipt is not None or lookup_receipts is not None:
         from currency_receipt import binding
         currency_binding = binding(workbook, baseline_zip, contract_path,
                                    expected_environment, target_origin, validation_date)
+        lookup_binding = {**currency_binding,'intake_catalog_sha256':sha256((ROOT/'references/intake-fields.json').read_bytes())}
     if contract.get('schema_version')!='1.0' or contract.get('task_code')!=TASK:
         raise ContractBlocked('Runtime contract identity/version mismatch')
     package=contract.get('package')
@@ -194,7 +225,7 @@ def candidate(workbook, baseline_zip, contract_path, output_dir, *, dry_run=Fals
         metadata_member=next(n for n in archive.namelist() if Path(n).name=='ASM_SETUP_CSV_METADATA.xml')
         metadata=xml(archive.read(metadata_member))
         context={x.tag.rsplit('}',1)[-1]:x.text for x in metadata.iter() if x.tag.rsplit('}',1)[-1] in {'ProcessEnv','ProcessId','ProcessRelease'}}
-    if expected_environment and context.get('ProcessEnv')!=expected_environment:
+    if expected_environment and not same_environment(context.get('ProcessEnv'), expected_environment):
         raise IntakeError('Baseline environment mismatch')
     provenance = None
     if expected_process_id is not None or any([baseline_receipt, baseline_export_plan, baseline_export_approval]):
@@ -209,19 +240,22 @@ def candidate(workbook, baseline_zip, contract_path, output_dir, *, dry_run=Fals
     accepted_profile = contract.get('executable_profile') is not None
     if accepted_profile:
         ensure_task_plan()
-        from accepted_meals_profile import validate_context, validate_selection
+        from policy_profiles import validate_context, validate_selection
         try:
             target_review = validate_context(contract,context,provenance,validation_date,baseline_receipt)
-            validate_selection(model['records'],rows)
-            supplied_parents = {r['policy_name'] for r in model['records'] if r['entity']=='ORA_EXM_MEALS_POLICY'}
-            retained_parents = {r['policy_name'] for r in model['records']} - supplied_parents
-            for name in sorted(retained_parents):
-                parent = next(r for r in rows['ORA_EXM_MEALS_POLICY']
-                    if r['PolicyName']==name)
-                require_qualified_reference_route('ORA_EXM_MEALS_POLICY',{},contract['entities']['ORA_EXM_MEALS_POLICY'],
-                    currency_context=None if currency_binding is None else {
-                        'receipt':currency_receipt,'binding':currency_binding,'policy_name':parent['PolicyName'],
-                        'operation':'update','resulting_currency':parent['CurrencyCode']})
+            validate_selection(model['records'],rows,contract)
+            for entity in (*PARENTS, 'ORA_EXM_PERDIEM_POLICY'):
+                supplied_parents = {r['policy_name'] for r in model['records'] if r['entity']==entity}
+                retained_parents = {r['policy_name'] for r in model['records']
+                    if r['entity'].endswith('_LINE') and owning_policy(r['entity'])==entity} - supplied_parents
+                for name in sorted(retained_parents):
+                    parent = next(r for r in rows[entity] if r['PolicyName']==name)
+                    require_qualified_reference_route(entity,{},contract['entities'][entity],
+                        resulting_values=parent,
+                        currency_context=None if currency_binding is None else {
+                            'receipt':currency_receipt,'binding':currency_binding,'policy_name':parent['PolicyName'],
+                            'operation':'update','resulting_currency':parent['CurrencyCode'],
+                            'resulting_threshold_currency':parent.get('NumOfAttendeesCurrCode')})
         except ValueError as error:
             raise ContractBlocked(str(error)) from error
     try:
@@ -242,6 +276,7 @@ def candidate(workbook, baseline_zip, contract_path, output_dir, *, dry_run=Fals
     changes=[]
     selected_rows={e:[] for e in rows}
     parent_context=[]
+    uncertainty_requests=[]
     for record in sorted(model['records'],key=lambda r:r['kind']!='policy'):
         entity=record['entity']
         if record['unmapped_inputs']:
@@ -273,6 +308,28 @@ def candidate(workbook, baseline_zip, contract_path, output_dir, *, dry_run=Fals
                 source = next((s for s in record['sources'] if field in s.get('fields',{})),{})
                 location = source.get('sheet',entity)+'!'+source.get('fields',{}).get(field,field)
                 raise type(error)(location+': '+str(error)) from error
+        identity_context = {}
+        if entity == 'ORA_EXM_AIRFARE_POLICY_LINE':
+            from airfare_profile import existing_identity_context, validate_evidence
+            try:
+                validate_evidence(contract)
+                identity_context = existing_identity_context(values, rows[entity],
+                    create_allowed='create' in current.get('operations',[]))
+            except ValueError as error:
+                raise ContractBlocked(str(error)) from error
+            values.update(identity_context)
+        if entity in {'ORA_EXM_MISCELLANEOUS_POLICY_LINE','ORA_EXM_PERDIEM_POLICY_LINE'}:
+            if entity == 'ORA_EXM_MISCELLANEOUS_POLICY_LINE':
+                from miscellaneous_profile import existing_identity_context, validate_evidence
+            else:
+                from per_diem_profile import existing_identity_context, validate_evidence
+            try:
+                validate_evidence(contract)
+                identity_context = existing_identity_context(values, rows[entity],
+                    create_allowed='create' in current.get('operations',[]))
+            except ValueError as error:
+                raise ContractBlocked(str(error)) from error
+            values.update(identity_context)
         nullable=current.get('nullable_identity_fields',[])
         if any(f not in identity for f in nullable):
             raise ContractBlocked('Invalid nullable identity contract')
@@ -286,9 +343,19 @@ def candidate(workbook, baseline_zip, contract_path, output_dir, *, dry_run=Fals
         operation='update' if matches else 'create'
         if operation not in current.get('operations',[]):
             raise ContractBlocked(entity+': '+operation+' is not supported by the reviewed contract')
+        if operation == 'create' and entity in {
+                'ORA_EXM_AIRFARE_POLICY','ORA_EXM_AIRFARE_POLICY_LINE',
+                'ORA_EXM_MISCELLANEOUS_POLICY','ORA_EXM_MISCELLANEOUS_POLICY_LINE',
+                'ORA_EXM_MILEAGE_POLICY','ORA_EXM_MILEAGE_LINE',
+                'ORA_EXM_PERDIEM_POLICY','ORA_EXM_PERDIEM_POLICY_LINE'}:
+            from dom_empty_element_contract import validate as validate_dom_create_evidence
+            try:
+                validate_dom_create_evidence(contract)
+            except ValueError as error:
+                raise ContractBlocked(str(error)) from error
         before=matches[0] if matches else {f:'' for f in catalog['entities'][entity]}
         try:
-            constants = policy_constants(entity, operation, before)
+            constants = policy_constants(entity, operation, before, values)
         except ValueError as error:
             raise ContractBlocked(str(error)) from error
         for field, value in constants.items():
@@ -304,13 +371,38 @@ def candidate(workbook, baseline_zip, contract_path, output_dir, *, dry_run=Fals
             raise ContractBlocked(str(error)) from error
         for field,value in managed_values.items():
             values[field]=field_value(value,field_rules[field],{'type':'string'})
+        derived_review=[]
+        if entity=='ORA_EXM_MILEAGE_POLICY':
+            from mileage_create_values import create_values
+            try:
+                derived,derived_review=create_values(entity,operation,values,current,contract)
+            except ValueError as error:
+                raise ContractBlocked(str(error))from error
+            for field,value in derived.items():values[field]=field_value(value,field_rules[field],{'type':'string'})
+        if operation=='create' and entity in {'ORA_EXM_PERDIEM_POLICY','ORA_EXM_PERDIEM_POLICY_LINE'}:
+            from per_diem_create import derive_create_fields
+            try:
+                derived,per_diem_review=derive_create_fields(entity,values,model['records'],original_rows,contract)
+            except ValueError as error:
+                raise ContractBlocked(str(error)) from error
+            for field,value in derived.items():
+                values[field]=field_value(value,field_rules[field],{'type':'string'})
+            managed_values.update(derived)
+            managed_review.extend(per_diem_review)
         after=dict(before)
         try:
-            currency_review = require_qualified_reference_route(entity,values,current,
+            # Misc's hidden full-key context is read from an exact existing row,
+            # not newly supplied reference data. Its owning parent's applicable
+            # currency still requires operation-bound evidence independently.
+            reference_values = ({f:v for f,v in values.items() if f not in identity_context}
+                if entity == 'ORA_EXM_MISCELLANEOUS_POLICY_LINE' else values)
+            currency_review = require_qualified_reference_route(entity,reference_values,current,
+                resulting_values={**before,**values},
                 currency_context=None if currency_binding is None else {
                     'receipt': currency_receipt, 'binding': currency_binding,
-                    'policy_name': values.get('PolicyName', values.get(entity.removesuffix('_LINE')+'.PolicyName')),
-                    'operation': operation, 'resulting_currency': values.get('CurrencyCode',before.get('CurrencyCode'))})
+                    'policy_name': values.get('PolicyName', values.get(owning_policy(entity)+'.PolicyName')),
+                    'operation': operation, 'resulting_currency': values.get('CurrencyCode',before.get('CurrencyCode')),
+                    'resulting_threshold_currency': values.get('NumOfAttendeesCurrCode',before.get('NumOfAttendeesCurrCode'))})
         except ValueError as exc:
             raise ContractBlocked(str(exc)) from exc
         for field,value in values.items():
@@ -318,10 +410,15 @@ def candidate(workbook, baseline_zip, contract_path, output_dir, *, dry_run=Fals
                 continue
             if operation=='update' and field=='Status':
                 raise ContractBlocked(entity+': status transitions are not qualified by create-status input support')
-            if field not in managed_values and field_rules[field].get(operation)!='supported':
-                raise ContractBlocked(entity+'.'+field+': '+operation+' acceptance is unproved or unsupported')
             if field in identity and operation=='update':
                 raise IntakeError('Identity renames are not supported')
+            if field not in managed_values and field_rules[field].get(operation)!='supported':
+                try:
+                    proposed={**before,**values}
+                    uncertainty_requests.append(field_uncertainty.request(
+                        entity,operation,field,before,proposed,current,contract))
+                except ValueError as error:
+                    raise ContractBlocked(entity+'.'+field+': '+operation+' acceptance is unproved or unsupported: '+str(error)) from error
             after[field]=value
         required=current.get('required_fields')
         if not isinstance(required,dict) or not isinstance(required.get(operation),list):
@@ -335,7 +432,7 @@ def candidate(workbook, baseline_zip, contract_path, output_dir, *, dry_run=Fals
             raise ContractBlocked(str(exc)) from exc
         parent=current.get('parent')
         if sparse and entity.endswith('_LINE'):
-            expected_parent=entity[:-5]
+            expected_parent=owning_policy(entity)
             if (not isinstance(parent,dict) or parent.get('entity')!=expected_parent
                     or parent.get('child_field')!=expected_parent+'.PolicyName'
                     or parent.get('parent_field')!='PolicyName'):
@@ -351,7 +448,7 @@ def candidate(workbook, baseline_zip, contract_path, output_dir, *, dry_run=Fals
                 raise IntakeError('Parent policy must resolve to exactly one existing or included policy')
             from reduced_rate_profile import validate_resulting_rate, validate_reduced_parent
             try:
-                validate_reduced_parent(parents[0])
+                validate_reduced_parent(parents[0], parent['entity'])
                 validate_resulting_rate(entity,after,parents[0])
             except ValueError as error:
                 raise ContractBlocked(str(error)) from error
@@ -361,18 +458,38 @@ def candidate(workbook, baseline_zip, contract_path, output_dir, *, dry_run=Fals
             empty_rule = current.get('create_empty_fields', {})
             empty_rule = empty_rule.get('Status', {}) if isinstance(empty_rule, dict) else {}
             consumer_status = managed_values.get('Status') == 'DRAFT'
+            if entity=='ORA_EXM_PERDIEM_POLICY_LINE':
+                from per_diem_create import owns_line_status
+                consumer_status=owns_line_status(entity,after,managed_values,contract)
             if not consumer_status and (status_rule.get('create') != 'system-managed' or empty_rule.get('behavior') != 'system_generated'):
                 raise ContractBlocked(entity+': Status is not user-enterable; system-managed create status has not been qualified')
             evidence(contract, status_rule.get('source_ids'), entity+' managed Status ownership')
             if not consumer_status:
                 evidence(contract, empty_rule.get('source_ids'), entity+' managed Status serialization')
         if accepted_profile:
-            from accepted_meals_profile import validate_change
+            from policy_profiles import validate_change
             try:
                 validate_change(entity,operation,before,after,original_rows)
             except ValueError as error:
                 raise ContractBlocked(str(error)) from error
-        resolve_policy_resulting_state(after,current,contract)
+        resolve_policy_resulting_state(after,current,contract,entity=entity)
+        from policy_lookup_preflight import verify_resulting_fields
+        try:
+            operation_receipts = None if lookup_receipts is None else lookup_receipts.get(entity, {}).get(record['policy_name'], {}).get(operation)
+            company_context = None
+            company_receipt = None
+            if entity in {'ORA_EXM_MILEAGE_POLICY','ORA_EXM_MILEAGE_LINE'}:
+                from mileage_company_lookup import P as company_parent, R as company_rate, FIELD as company_field, context as company_binding,workbook_rates
+                resolved_parent = after if entity==company_parent else parents[0]
+                if resolved_parent.get('EnabledAdditnlRatesFlag')=='Y':
+                    company_context=company_binding(resolved_parent,workbook_rates(model['records'],rows[company_rate],record['policy_name']),record['policy_name'],operation)
+                    parent_receipts=None if lookup_receipts is None else lookup_receipts.get(company_parent,{}).get(record['policy_name'],{}).get(operation,{})
+                    from policy_lookup_preflight import receipt_for_code
+                    company_receipt=receipt_for_code(parent_receipts,company_field,resolved_parent.get(company_field))
+            lookup_review = verify_resulting_fields(entity,record['policy_name'],operation,after,
+                operation_receipts,lookup_binding,company_context=company_context,company_receipt=company_receipt)
+        except ValueError as error:
+            raise ContractBlocked(str(error)) from error
         empty_review = validate_create_empties(after,current,contract,entity,
             {f for e,f in specs if e==entity}) if operation=='create' else []
         selected_rows[entity].append(after)
@@ -383,13 +500,19 @@ def candidate(workbook, baseline_zip, contract_path, output_dir, *, dry_run=Fals
                 rows[entity].append(after)
             changed.add(entity)
             changes.append({'entity':entity,'operation':operation,'sources':record['sources'],
+                            ('create_identity_context' if operation=='create' and identity_context else 'retained_identity_context'):identity_context,
                             'currency_reference_review':currency_review,
+                            'lookup_reference_review':lookup_review,
                             'create_empty_field_contracts':empty_review,
                             'no_default_input_review':default_review,
                             'skill_constant_review':{'values':constants,'authority':'Explicit user instruction: single currency only; no workbook mode input'},
                             'managed_create_review':managed_review,
+                            **({'derived_create_review':derived_review}if derived_review else{}),
                             'fields':[{'field':f,'before':before[f],'after':after[f]} for f in values if before[f]!=after[f]]})
     try:
+        from per_diem_effects import append_existing_effects
+        append_existing_effects(model['records'], rows, selected_rows, changes, changed,
+            uncertainty_requests, contract,original_rows=original_rows)
         require_target_rate_identities(model['records'], rows)
     except ValueError as error:
         raise ContractBlocked(str(error)) from error
@@ -402,8 +525,20 @@ def candidate(workbook, baseline_zip, contract_path, output_dir, *, dry_run=Fals
             raise IntakeError('Parent context changed or became ambiguous during preparation')
         row=context_rows[0]
         if row not in selected_rows[entity]:
+            # A rate-only workbook resubmits its unchanged owning policy as
+            # context. Its retained choices require the same target eligibility
+            # checks as an explicitly selected parent update.
+            from policy_lookup_preflight import verify_retained_parent
+            try:
+                retained_lookup_review=verify_retained_parent(
+                    entity,row,lookup_receipts,lookup_binding,
+                    company_context=(company_binding(row,rows[company_rate],row['PolicyName'],'update')
+                        if entity=='ORA_EXM_MILEAGE_POLICY' and row.get('EnabledAdditnlRatesFlag')=='Y' else None))
+            except ValueError as error:
+                raise ContractBlocked(str(error)) from error
             selected_rows[entity].append(row)
-            context_review.append({'entity':entity,'field':field,'value':value})
+            context_review.append({'entity':entity,'field':field,'value':value,
+                **({'lookup_reference_review':retained_lookup_review} if retained_lookup_review else {})})
     replacement={members[e]:csv_bytes(catalog['entities'][e],selected_rows[e]) for e in rows}
     buffer=io.BytesIO()
     with ZipFile(io.BytesIO(baseline_data)) as source, ZipFile(buffer,'w') as output:
@@ -419,24 +554,20 @@ def candidate(workbook, baseline_zip, contract_path, output_dir, *, dry_run=Fals
             grid=list(csv.reader(io.StringIO(archive.read(member).decode('utf-8-sig'))))
             if grid[0]!=catalog['entities'][entity] or any(len(r)!=len(grid[0]) for r in grid[1:]):
                 raise IntakeError('Independent candidate row-width verification failed')
-            if entity not in {'ORA_EXM_MEALS_POLICY','ORA_EXM_MEALS_POLICY_LINE'} and len(grid)>1:
-                raise ContractBlocked('Meals package cannot resubmit unrelated entity rows')
+            if entity not in ENTITIES and len(grid)>1:
+                raise ContractBlocked('Policy package cannot resubmit unrelated entity rows')
             submitted_records.extend({'entity':entity,'values':dict(zip(grid[0],row)),'shared_entities':[]}
                                      for row in grid[1:])
     # Full submitted rows contain preserved non-input columns. Check identities
     # and counts independently of the input-field allowlist.
-    submitted_identities = [{'entity':r['entity'],'values':{
-        **({f:r['values'][f] for f in ('StartDate','EndDate')} if r['entity'].endswith('_LINE') else {}),
-        ('PolicyName' if r['entity']=='ORA_EXM_MEALS_POLICY' else 'ORA_EXM_MEALS_POLICY.PolicyName'):
-        r['values'].get('PolicyName',r['values'].get('ORA_EXM_MEALS_POLICY.PolicyName'))},'shared_entities':[]}
-        for r in submitted_records]
+    submitted_identities = submitted_identity_records(submitted_records)
     try:
         require_scoped_records(submitted_identities)
     except ValueError as error:
         raise ContractBlocked(str(error)) from error
     profile_review = None
     if accepted_profile:
-        from accepted_meals_profile import verify_result
+        from policy_profiles import verify_result
         try:
             profile_review = verify_result(submitted_records,original_rows)
             profile_review['target_qualification'] = target_review
@@ -445,6 +576,19 @@ def candidate(workbook, baseline_zip, contract_path, output_dir, *, dry_run=Fals
                 profile_review['qualification'] = 'selected_target_live_pending'
         except ValueError as error:
             raise ContractBlocked(str(error)) from error
+    field_review=None
+    if uncertainty_requests or field_acceptances is not None:
+        from currency_receipt import binding
+        if provenance is None:
+            raise ContractBlocked('Field uncertainty review requires verified target baseline provenance')
+        uncertainty_binding=binding(workbook,baseline_zip,contract_path,
+            expected_environment,target_origin,validation_date)
+        if (uncertainty_binding['workbook_sha256']!=model['workbook_sha256']
+                or uncertainty_binding['baseline_sha256']!=sha256(baseline_data)):
+            raise ContractBlocked('Field uncertainty preparation inputs changed')
+        decision=field_uncertainty.load(field_acceptances) if field_acceptances is not None else None
+        field_review=field_uncertainty.verify(decision,field_uncertainty.plan(
+            uncertainty_requests,uncertainty_binding,sha256(data)))
     review={'schema_version':'1.0','task_code':TASK,'status':'locally_validated_candidate','live_qualified':False,
             'baseline_sha256':sha256(baseline_data),'workbook_sha256':model['workbook_sha256'],
             'runtime_contract_sha256':sha256(Path(contract_path).read_bytes()),'candidate_sha256':sha256(data),
@@ -456,6 +600,7 @@ def candidate(workbook, baseline_zip, contract_path, output_dir, *, dry_run=Fals
                 'added_parent_context':context_review,
                 'preservation_boundary':'Submission shape only; persisted unsubmitted-row and context/audit effects require fresh reconciliation.'},
             'approval_boundary':'This build does not authorize import. Current rule-plan, Run Book, Task Hook and Data Loader gates remain authoritative.'}
+    if field_review is not None:review['field_uncertainty_acceptance']=field_review
     if accepted_profile:
         review['status']='validated_candidate_for_native_preflight'
         review['import_ready']=False
@@ -507,11 +652,16 @@ def main():
     parser.add_argument('--baseline-export-approval',type=Path,required=True)
     parser.add_argument('--dry-run',action='store_true')
     parser.add_argument('--currency-receipt',type=Path)
+    parser.add_argument('--lookup-receipts',type=Path,
+                        help='Offline entity/policy/operation/field receipt-index JSON')
+    parser.add_argument('--field-acceptances',type=Path,help='Exact implementor decision on a previously displayed field uncertainty plan')
     parser.add_argument('--target-origin')
     parser.add_argument('--validation-date')
     args=parser.parse_args()
     try:
         ensure_task_plan()
+        from policy_lookup_preflight import load_receipt_index
+        lookup_receipts = load_receipt_index(args.lookup_receipts) if args.lookup_receipts else None
         if json.loads(args.runtime_contract.read_text()).get('executable_profile') != 'meals-single-currency-v2':
             raise ContractBlocked('Only the ordinary supported Meals executable profile is accepted by the CLI')
         review=candidate(args.workbook,args.baseline_zip,args.runtime_contract,args.output_dir,dry_run=args.dry_run,
@@ -519,16 +669,34 @@ def main():
                          baseline_receipt=args.baseline_receipt, baseline_export_plan=args.baseline_export_plan,
                          baseline_export_approval=args.baseline_export_approval,
                          currency_receipt=args.currency_receipt, target_origin=args.target_origin,
-                         validation_date=args.validation_date, project_root=args.project_root)
+                         validation_date=args.validation_date, project_root=args.project_root,
+                         lookup_receipts=lookup_receipts,field_acceptances=args.field_acceptances)
         print(json.dumps({'status':review['status'],'live_qualified':review['live_qualified'],
             'native_preflight_ready':review.get('native_preflight_ready',False),
             'import_approved':False,'changed_entities':review['changed_entities']}))
         return 0
+    except field_uncertainty.FieldAcceptanceRequired as exc:
+        try:
+            directory=artifact_output(args.output_dir,args.project_root)
+            directory.mkdir(parents=True,exist_ok=False)
+            with (directory/'field-uncertainty-plan.json').open('x') as stream:
+                stream.write(json.dumps(exc.plan,indent=2)+'\n')
+        except (OSError,ValueError) as error:
+            print(json.dumps({'status':'blocked','stage':'field_review_persistence',
+                'failure_class':'artifact_persistence' if isinstance(error,OSError) else 'input_validation',
+                'message':str(error),'candidate_created':False,'import_approved':False}))
+            return 2
+        print(json.dumps({'status':'implementor_decision_required','failure_class':exc.failure_class,
+            'plan':str(directory/'field-uncertainty-plan.json'),'candidate_created':False,'import_approved':False}))
+        return 2
     except ContractBlocked as exc:
         print(json.dumps({'status':'blocked','failure_class':'catalog_mismatch','message':str(exc)}))
         return 2
     except (IntakeError, OSError, ValueError, KeyError, BadZipFile, subprocess.TimeoutExpired) as exc:
-        print(json.dumps({'status':'blocked','failure_class':'input_validation','message':str(exc)}))
+        failure={'status':'blocked','failure_class':'input_validation','message':str(exc)}
+        if getattr(exc,'issues',None):
+            failure['issues']=exc.issues
+        print(json.dumps(failure))
         return 2
 
 

@@ -1,0 +1,152 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "ORA_PO_MANAGE_BUYER_ASSIGNMENT_RULES",
+      "task_name": "Manage Buyer Assignment Rules",
+      "start_node": "BAR.VALIDATE_INPUT",
+      "nodes": [
+        {
+          "id": "BAR.VALIDATE_INPUT",
+          "node_type": "decision",
+          "sequence": 10,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "BAR.LOOKUP_NEXT_SEQUENCE",
+            "invalid": "BAR.INPUT_INVALID"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Always",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 64
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "BAR.LOOKUP_NEXT_SEQUENCE",
+          "node_type": "decision",
+          "sequence": 20,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "BAR.APPLY_DEFAULTS",
+            "not_applicable": "BAR.APPLY_DEFAULTS",
+            "unavailable": "BAR.SEQUENCE_DEFAULT_UNAVAILABLE"
+          },
+          "prerequisites": [
+            "BAR.VALIDATE_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "RuleSequenceNumber is missing; otherwise return not_applicable without a REST request.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 32
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "BAR.APPLY_DEFAULTS",
+          "node_type": "step",
+          "sequence": 30,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "applied": "BAR.READY"
+          },
+          "prerequisites": [
+            "BAR.LOOKUP_NEXT_SEQUENCE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Apply RuleSet when omitted or blank and, only when RuleSequenceNumber was missing, assign the lookup result plus 1; otherwise preserve supplied values.",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 34
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "BAR.READY",
+          "node_type": "terminal",
+          "sequence": 40,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "BAR.APPLY_DEFAULTS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "All applicable local input checks pass and the conditional RuleSet default has been evaluated",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 42
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "BAR.INPUT_INVALID",
+          "node_type": "terminal",
+          "sequence": 50,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Input validation fails",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 43
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "BAR.SEQUENCE_DEFAULT_UNAVAILABLE",
+          "node_type": "terminal",
+          "sequence": 60,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "A missing RuleSequenceNumber could not be derived from the declared live lookup.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 44
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

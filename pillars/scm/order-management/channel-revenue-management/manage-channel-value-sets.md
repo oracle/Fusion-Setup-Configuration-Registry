@@ -38,14 +38,30 @@ The selected Apps Common workflow owns the supported direct REST behavior:
 1. Read a value-set definition and its validation-table metadata.
 2. Read, create, update, or delete supported child value-set values, subject
    to its preflight and immediate approval gate for writes.
-3. Do not treat a root value-set definition as writable through this route;
-   root definition create or update is unsupported until the core skill has a
-   current supported contract.
+3. Do not treat a root value-set definition as writable through this route.
 
-`dataloader_import_mode: FSM` remains the catalog-derived route for an
-explicit, approved task-level CSV artifact. It does not replace Apps Common as
-the primary route, and it must not be used as an unverified fallback for a
-direct REST request.
+## Supported Create and Update Operations
+
+Use the task-level FSM route for root value-set definitions and for a package
+that changes a value set together with its values. The current Apps Common REST
+route remains limited to reads and child-value operations.
+
+| Target | Create | Update | Required route |
+| --- | --- | --- | --- |
+| Root value-set definition | Supported | Supported for template-supported mutable fields | Validated task-level FSM package through `core.data-loader` |
+| Value-set values | Supported | Supported | Task-level FSM package, or Apps Common REST for a child-value-only request |
+
+Use the rows scoped to `ORA_CJM_MANAGE_CHANNEL_VALUE_SETS` in the shared
+`ora-resource/` files as the rule source. Read input validation, dependency
+readiness, reference lookups, defaulting, and error handling, then consume the
+compiled task graph using the resource-authoring execution guide. These
+resources own create/update requirements, carrier prerequisites, serialization
+and identity resolvers, preservation defaults, and failure diagnostics.
+
+`dataloader_import_mode: FSM` is the catalog-derived route for root-definition
+create or update and for combined parent-and-value changes. It requires the
+normal immutable-archive validation and approval workflow. It must not be used
+as an unverified fallback for a direct REST child-value request.
 
 ## CSV Export, Import, and Validation Workflow
 

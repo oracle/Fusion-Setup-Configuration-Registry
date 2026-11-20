@@ -15,15 +15,16 @@
           "execution_route": "local",
           "transitions": {
             "valid": "COR.RESOLVE_COST_ORGANIZATION",
+            "delete": "COR.RESOLVE_DELETE_COST_ORGANIZATION",
             "invalid": "COR.HANDLE_ISSUE"
           },
           "prerequisites": [],
           "on_failure": "stop",
-          "applies_when": "Creating or updating Cost Organization Relationships",
+          "applies_when": "Validate the requested operation and exact Cost Organization selector first; return delete for deletion, valid for create/update, and invalid for unsupported operations or malformed input",
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 70
+            "line": 78
           },
           "readiness": {
             "status": "ready",
@@ -49,7 +50,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 60
+            "line": 63
           },
           "readiness": {
             "status": "ready",
@@ -75,7 +76,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 61
+            "line": 64
           },
           "readiness": {
             "status": "ready",
@@ -101,7 +102,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 62
+            "line": 65
           },
           "readiness": {
             "status": "ready",
@@ -127,7 +128,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 63
+            "line": 66
           },
           "readiness": {
             "status": "ready",
@@ -153,7 +154,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 64
+            "line": 67
           },
           "readiness": {
             "status": "ready",
@@ -180,7 +181,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 65
+            "line": 68
           },
           "readiness": {
             "status": "ready",
@@ -207,7 +208,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 66
+            "line": 69
           },
           "readiness": {
             "status": "ready",
@@ -234,7 +235,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 67
+            "line": 70
           },
           "readiness": {
             "status": "ready",
@@ -261,7 +262,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 68
+            "line": 71
           },
           "readiness": {
             "status": "ready",
@@ -288,7 +289,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 69
+            "line": 72
           },
           "readiness": {
             "status": "ready",
@@ -314,7 +315,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 70
+            "line": 73
           },
           "readiness": {
             "status": "ready",
@@ -341,7 +342,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 71
+            "line": 74
           },
           "readiness": {
             "status": "ready",
@@ -366,7 +367,7 @@
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 62
+            "line": 73
           },
           "readiness": {
             "status": "ready",
@@ -392,7 +393,7 @@
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 72
+            "line": 75
           },
           "readiness": {
             "status": "ready",
@@ -466,7 +467,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 68
+            "line": 77
           },
           "readiness": {
             "status": "ready",
@@ -474,21 +475,25 @@
           }
         },
         {
-          "id": "COR.HANDLE_ISSUE",
+          "id": "COR.RESOLVE_DELETE_COST_ORGANIZATION",
           "node_type": "step",
           "sequence": 19,
-          "action_type": "error_handler",
-          "execution_route": "local",
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
           "transitions": {
-            "disclosed": "RETURN_ISSUES"
+            "resolved": "COR.RESOLVE_DELETE_INVENTORY_ASSOCIATIONS",
+            "blocked": "COR.HANDLE_ISSUE",
+            "failure": "COR.HANDLE_ISSUE"
           },
-          "prerequisites": [],
+          "prerequisites": [
+            "COR.VALIDATE_INPUT"
+          ],
           "on_failure": "stop",
-          "applies_when": "A prior node reports invalid, blocked, or failed",
+          "applies_when": "Deleting a relationship or association; use resolve_cost_organization_exact with its existing request, match rules, and output mappings",
           "source": {
-            "file": "ora_error_handling.md",
+            "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 69
+            "line": 76
           },
           "readiness": {
             "status": "ready",
@@ -510,7 +515,180 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 70
+            "line": 79
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "COR.RESOLVE_DELETE_INVENTORY_ASSOCIATIONS",
+          "node_type": "step",
+          "sequence": 21,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "COR.RESOLVE_DELETE_COST_BOOK_ASSOCIATIONS",
+            "not_applicable": "COR.RESOLVE_DELETE_COST_BOOK_ASSOCIATIONS",
+            "blocked": "COR.HANDLE_ISSUE",
+            "failure": "COR.HANDLE_ISSUE"
+          },
+          "prerequisites": [
+            "COR.RESOLVE_DELETE_COST_ORGANIZATION"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Use resolve_existing_inventory_associations_by_cost_organization when inventory association removal is requested; for header-only or Cost Book-only scope return not_applicable without a lookup",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 77
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "COR.RESOLVE_DELETE_COST_BOOK_ASSOCIATIONS",
+          "node_type": "step",
+          "sequence": 22,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "COR.VALIDATE_DELETE_INPUT",
+            "not_applicable": "COR.VALIDATE_DELETE_INPUT",
+            "blocked": "COR.HANDLE_ISSUE",
+            "failure": "COR.HANDLE_ISSUE"
+          },
+          "prerequisites": [
+            "COR.RESOLVE_DELETE_INVENTORY_ASSOCIATIONS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Use resolve_existing_cost_book_associations_by_cost_organization when Cost Book association removal is requested; otherwise return not_applicable without a lookup",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 78
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "COR.VALIDATE_DELETE_INPUT",
+          "node_type": "decision",
+          "sequence": 23,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "COR.CHECK_DELETE_DEPENDENCIES",
+            "invalid": "COR.HANDLE_ISSUE"
+          },
+          "prerequisites": [
+            "COR.RESOLVE_DELETE_COST_BOOK_ASSOCIATIONS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Deleting a relationship header or Inventory Organization or Cost Book association; validate only the deletion input rules",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 79
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "COR.CHECK_DELETE_DEPENDENCIES",
+          "node_type": "decision",
+          "sequence": 24,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "COR.DELETE_PREVIEW_GATE",
+            "blocked": "COR.HANDLE_ISSUE"
+          },
+          "prerequisites": [
+            "COR.VALIDATE_DELETE_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Deleting existing relationship or association targets; evaluate only applicable deletion dependency rules",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 74
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "COR.DELETE_PREVIEW_GATE",
+          "node_type": "decision",
+          "sequence": 26,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "COR.DELETE_COMPLETE",
+            "blocked": "COR.HANDLE_ISSUE"
+          },
+          "prerequisites": [
+            "COR.CHECK_DELETE_DEPENDENCIES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "The exact deletion source passed input and dependency validation and is ready for core Data Loader validation, preview, and its authoritative approval workflow",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 81
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "COR.DELETE_COMPLETE",
+          "node_type": "terminal",
+          "sequence": 27,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "COR.DELETE_PREVIEW_GATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Task-local deletion validation completed; this terminal is not evidence of a completed live deletion",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 82
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "COR.HANDLE_ISSUE",
+          "node_type": "step",
+          "sequence": 30,
+          "action_type": "error_handler",
+          "execution_route": "local",
+          "transitions": {
+            "disclosed": "RETURN_ISSUES"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "A prior node reports invalid, blocked, or failed",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 78
           },
           "readiness": {
             "status": "ready",
@@ -520,7 +698,7 @@
         {
           "id": "RETURN_ISSUES",
           "node_type": "terminal",
-          "sequence": 21,
+          "sequence": 31,
           "action_type": "terminal",
           "execution_route": "local",
           "transitions": {},
@@ -530,7 +708,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 71
+            "line": 80
           },
           "readiness": {
             "status": "ready",

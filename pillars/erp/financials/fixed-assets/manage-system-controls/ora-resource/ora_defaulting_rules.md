@@ -4,6 +4,7 @@
 
 | Field | Internal | Resolved Value | Applies When | User Override | Resolver |
 |---|---|---|---|---|---|
+| System Controls DFF values | No | Preserve supplied values. Leave omitted create values blank only when the current definition permits. Never invent a required value or copy another enterprise's values. | After resolve_system_controls_dff_segments | Yes, subject to validation | resolve_system_controls_dff_segments |
 | Flexfield structure fields | Yes | Use only the exact selected enabled target `StructureInstanceCode` values for Category, Location, and Asset Key. | Each requested structure and its selected matching instance are enabled and uniquely resolved. | No | resolve_assets_flexfield_structures |
 | FSM package format | Yes | Use the skill's declared System Controls field mapping. Validate only the CSV member names, headers, field order, encoding, and XML contract against the current target export and metadata. Never copy or infer a new System Controls row from an existing row. | FSM CSV package preparation | No | resolve_system_controls_export_metadata |
 

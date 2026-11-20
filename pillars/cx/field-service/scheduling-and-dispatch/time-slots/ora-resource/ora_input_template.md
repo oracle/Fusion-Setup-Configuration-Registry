@@ -1,6 +1,6 @@
 # Time Slots Input Template
 
-Source: [API Structure - Configuration](https://confluence.oraclecorp.com/confluence/display/OFSCdev/API+Structure+-+Configuration), Time Slots PUT contract (accessed 2026-08-19).
+Source: Configuration API contract (public source verification pending), Time Slots PUT contract (accessed 2026-08-19).
 
 Use the `Time Slots` worksheet in
 `../assets/time-slots-input-template.xlsx` as the canonical input shape.

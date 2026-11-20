@@ -1,0 +1,77 @@
+{
+  "source_id": "SHARED-FSM-MISC-CREATE-SERIALIZATION",
+  "revision": {
+    "series": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64",
+    "label": "261028.0600.S"
+  },
+  "evidence_kind": "Pinned primary compiled implementation plus task-owned Java and XML declarations",
+  "libraries": [
+    {
+      "path": "fmwtools/BUILD_HOME/atgpf/fsext/modules/oracle.fs.fsext/AdfFunctionalSetupPublicModel.jar",
+      "sha256": "528e6b6cbc653f16a9ce892932f7c461992894c2c925075052ec89510b9cc9a7"
+    },
+    {
+      "path": "fmwtools/BUILD_HOME/oracle_common/modules/oracle.adf.model/adfm.jar",
+      "sha256": "e56e55d7b84721dce9b63a671b4dff789b1a61fe2f3d44a4648c049975df2321"
+    }
+  ],
+  "facts": [
+    {
+      "symbol": "oracle.adf.model.adapter.dataformat.csv.CSVParser.getNextValue(boolean,boolean)",
+      "offsets": "254-273",
+      "fact": "An empty value buffer returns Java null; empty quoted text is not an omission instruction."
+    },
+    {
+      "symbol": "oracle.apps.setupHub.xml.transform.CSVXmlTransform.populateXmlRequest",
+      "offsets": "1104-1126",
+      "fact": "Nonnull scalar input is stored in the row data map; SQL staging and header inclusion still govern the emitted XML."
+    },
+    {
+      "symbol": "oracle.apps.setupHub.xml.transform.CSVXmlTransform.createViewObject/getIncludedAttrMap",
+      "offsets": "createViewObject 250-287; getIncludedAttrMap 36-121",
+      "fact": "CSV attribute/header mappings determine included XML attributes independently of each scalar cell's null value."
+    },
+    {
+      "symbol": "oracle.apps.setupHub.xml.transform.CSVXmlTransform.markVOsToUseXMLExplicitNull; oracle.apps.setupHub.common.util.model.ModelUtil.markVOToUseXMLExplicitNull",
+      "fact": "The transform marks its dynamic VOs with XML_EXPLICIT_NULL=true before XML writing."
+    },
+    {
+      "symbol": "oracle.jbo.server.ViewRowImpl.renderAttributeValueInXMLElement",
+      "offsets": "60-100",
+      "fact": "An included null value under explicit-null mode renders an element with null=true."
+    },
+    {
+      "symbol": "oracle.jbo.server.AttributeDefImpl.getXMLValue",
+      "offsets": "170-184,374-376",
+      "fact": "An element marked null=true reads as Java null."
+    },
+    {
+      "symbol": "oracle.jbo.server.ViewRowImpl.readAttributeFromXMLElement/readAttrsFromXML",
+      "fact": "Absent XML scalars are skipped; present changed values, including explicit null, reach the attribute setter list. Non-updateable VO attributes are skipped."
+    },
+    {
+      "symbol": "oracle.apps.setupHub.remoteApp.publicModel.migrator.MigratorHelper.updatePrimaryKeysInXML",
+      "offsets": "138-286,598-674,735-944",
+      "fact": "Alternate-key matches reuse existing primary keys; supported single globally-unique primary-key definitions generate IDs on a miss and propagate matching association keys to nested children. No client ID is needed or admitted."
+    },
+    {
+      "symbol": "oracle.jbo.server.ViewObjectImpl.updateRowSetFromXML; oracle.jbo.server.ViewRowImpl.updateRowFromXML",
+      "fact": "Primary-key lookup supplies the existing row or null; a null row invokes createAndInitRow/createRow before XML attribute application. This generic create path does not establish every entity's defaults."
+    }
+  ],
+  "qualified_use": [
+    "Miscellaneous no-determinant parent and ordinary child only, including LIMIT, PERCENT and BOTH rate types; native target qualification remains pending.",
+    "Own service resolves parent/child AltKey, then reads the nested Misc graph at depth -1 with both declared boolean arguments true.",
+    "Explicit managed DRAFT and N role/location/gender values. Monetary modes serialize SINGLE explicitly; PERCENT deliberately clears the nullable EO SINGLE default through explicit null.",
+    "Every create business rate-type/enforcement/control choice is explicit; no EO business default, rate amount, reset date or customer StartDate is inferred.",
+    "Own ordinary doCreateSingleRate supplies no TypeOfRateCode. Service migration currency getter suppresses parent inheritance; new ordinary type/currency and determinant coordinates stay raw null.",
+    "Null-first service getters return null for blank RoleName, GeoLocName and Raw geography fields without evaluating localized lookups; RoleCode/GradeCode derive no value with blank parent role/null RoleId.",
+    "Both import VOs mark the five audit attributes non-updateable; numeric primary/association IDs and audit values remain server owned."
+  ],
+  "boundaries": [
+    "Source-qualified local preparation only. No target build parity, native create acceptance or persisted-state result is demonstrated.",
+    "Full business identity, no-Start uniqueness, inclusive schedules, exact parent association and operation-bound target lookups/currency remain mandatory.",
+    "Existing update fields keep exact uncertainty/native approval controls; no determinant, delete, key/status/currency update, retry or other-category admission.",
+    "No 100-percent maximum is invented; finite nonnegative local percentage policy is not a claim of broad server acceptance."
+  ]
+}

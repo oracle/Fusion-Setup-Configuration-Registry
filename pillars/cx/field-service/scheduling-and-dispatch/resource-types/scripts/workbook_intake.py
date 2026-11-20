@@ -7,6 +7,10 @@ from urllib.parse import quote
 import xml.etree.ElementTree as ElementTree
 import zipfile
 
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
+from guarded_xlsx import GuardedWorkbook, column_index, shared_string
+
 
 class WorkbookInputError(ValueError):
     pass
@@ -50,11 +54,7 @@ def _role(values: dict[str, object], label: str) -> str:
     raise WorkbookInputError(f"{label}: Role is required and must be a supported Resource Type role.")
 
 
-def _cell_column(reference: str) -> int:
-    result = 0
-    for character in (letter for letter in reference.upper() if letter.isalpha()):
-        result = result * 26 + ord(character) - ord("A") + 1
-    return result
+_cell_column = column_index
 
 
 def _read_xlsx(workbook: Path) -> dict[str, list[list[object]]]:
@@ -62,11 +62,11 @@ def _read_xlsx(workbook: Path) -> dict[str, list[list[object]]]:
     rel_ns = "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}"
     package_ns = "{http://schemas.openxmlformats.org/package/2006/relationships}"
     try:
-        with zipfile.ZipFile(workbook) as archive:
-            shared_root = ElementTree.fromstring(archive.read("xl/sharedStrings.xml")) if "xl/sharedStrings.xml" in archive.namelist() else None
+        with GuardedWorkbook(workbook) as archive:
+            shared_root = archive.xml("xl/sharedStrings.xml") if "xl/sharedStrings.xml" in archive.namelist() else None
             shared = [] if shared_root is None else ["".join(node.itertext()) for node in shared_root.findall(f"{ns}si")]
-            book = ElementTree.fromstring(archive.read("xl/workbook.xml"))
-            rels = ElementTree.fromstring(archive.read("xl/_rels/workbook.xml.rels"))
+            book = archive.xml("xl/workbook.xml")
+            rels = archive.xml("xl/_rels/workbook.xml.rels")
             targets = {item.attrib["Id"]: item.attrib["Target"] for item in rels.findall(f"{package_ns}Relationship")}
             sheets: dict[str, list[list[object]]] = {}
             for sheet in book.findall(f"{ns}sheets/{ns}sheet"):
@@ -74,7 +74,7 @@ def _read_xlsx(workbook: Path) -> dict[str, list[list[object]]]:
                 if not target:
                     raise WorkbookInputError("Workbook sheet relationship is missing.")
                 path = target.lstrip("/") if target.startswith("/") else "xl/" + target
-                data = ElementTree.fromstring(archive.read(path))
+                data = archive.xml(path)
                 rows: list[list[object]] = []
                 for row in data.findall(f"{ns}sheetData/{ns}row"):
                     cells: dict[int, object] = {}
@@ -83,14 +83,14 @@ def _read_xlsx(workbook: Path) -> dict[str, list[list[object]]]:
                         raw = cell.find(f"{ns}v")
                         if cell.attrib.get("t") == "inlineStr": value = "".join(cell.itertext())
                         elif raw is None: value = None
-                        elif cell.attrib.get("t") == "s": value = shared[int(raw.text or "")]
+                        elif cell.attrib.get("t") == "s": value = shared_string(shared, raw.text)
                         elif cell.attrib.get("t") == "b": value = raw.text == "1"
                         else: value = raw.text
                         cells[index] = value
                     rows.append([cells.get(index) for index in range(1, max(cells, default=0) + 1)])
                 sheets[sheet.attrib.get("name", "")] = rows
             return sheets
-    except (OSError, KeyError, ValueError, ElementTree.ParseError, zipfile.BadZipFile) as error:
+    except (OSError, KeyError, IndexError, ValueError, ElementTree.ParseError, zipfile.BadZipFile) as error:
         raise WorkbookInputError(f"Workbook could not be read: {error}") from error
 
 

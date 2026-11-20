@@ -22,7 +22,6 @@ depends_on:
   - "shared.project-intake.scope-definition"
   - "shared.implementation-planning.offering-task-map-builder"
 uses_core:
-  - "core.fusion-dev.pillar-skill-gen"
   - "core.project-mgmt.project-state-manager"
 persists_project_state: true
 token_usage_tracking:
@@ -73,7 +72,9 @@ Coordinates implementation work for offering `Field Service` (`ORA_FIELD_SERVICE
 
 ## Routing Responsibility
 
-Use `core.fusion-dev.pillar-skill-gen` to create functional-area child skills registered under this offering in the effective catalog.
+Resolve the requested functional area against the effective catalog and route to
+its existing child `SKILL.md`. If the catalog entry has no packaged child skill,
+report the missing route and stop before execution.
 
 ## Functional Areas From Effective Catalog
 
@@ -86,3 +87,29 @@ Setup task count: `32`
 - `ORA_ASK_USERS_AND_SECURITY`: Users and Security
 - `ORA_FFS_FA_MOBILE_EXPERIENCE`: Mobile Experience
 - `ORA_FFS_FA_SCHEDULING_AND_DISPATCH`: Scheduling and Dispatch
+
+### Field Service guarded workbook intake
+
+`pillars/cx/field-service/scripts/guarded_xlsx.py` provides the Field Service `GuardedWorkbook`,
+`column_index`, and `shared_string` Python interfaces for local XLSX intake.
+It bounds ZIP inflation, XML structure, worksheet allocation, string sizes,
+and elapsed parsing time before callers construct task-specific Field Service records.
+Callers use a context manager and handle `ValueError` as an input-validation
+failure. Limits are cumulative for one open workbook. Field mappings and
+business validation remain with the caller. The primitive reads local files
+only and performs no network requests, archive extraction, or writes. Using
+this primitive does not initiate a load or grant approval for execution.
+
+Architecture exception `FFS-LAYER-001` is accepted by the user for this helper
+and its six Field Service consumers. The bounded reader remains owned and
+maintained inside Field Service. This exception concerns placement only; it
+does not waive input limits, adversarial tests, approval checks, or other
+security findings.
+
+### Typed REST read failures
+
+`scripts/rest_client_status.py` delegates to the existing Core REST client and
+returns a small JSON error envelope based on its typed HTTP exception. The
+shared task runner treats only an authoritative numeric HTTP 404 as absence.
+Response-body text and authentication diagnostics cannot establish a creation
+baseline. The adapter adds no authentication, transport, or retry mechanism.

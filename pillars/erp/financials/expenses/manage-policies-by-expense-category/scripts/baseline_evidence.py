@@ -6,6 +6,7 @@ import re
 from urllib.parse import urlsplit
 
 from workbook_intake import IntakeError, TASK
+from environment_identity import same_environment
 
 
 def digest(path):
@@ -34,7 +35,7 @@ def verify(baseline, receipt_path, plan_path, approval_path, environment, proces
     body = {'TaskCode': TASK, 'SetupTaskCSVExportProcess': [{'TaskCode': TASK}]}
     endpoint = '/fscmRestApi/resources/11.13.18.05/setupTaskCSVExports'
     for value in [plan, approval]:
-        if value.get('method') != 'POST' or value.get('path') != endpoint or value.get('body') != body or value.get('environment') != environment:
+        if value.get('method') != 'POST' or value.get('path') != endpoint or value.get('body') != body or not same_environment(value.get('environment'), environment):
             raise IntakeError('Baseline evidence must identify the exact approved task data export')
         for key in ['importApproved', 'import_approved', 'newImportApproved',
                     'validationWaiverGranted', 'validation_waiver_granted', 'repairReplayCleanupApproved']:
@@ -49,7 +50,7 @@ def verify(baseline, receipt_path, plan_path, approval_path, environment, proces
     plan_sha, approval_sha = digest(plan_path), digest(approval_path)
     if not (receipt.get('recordedFrom') == 'observed-declared-route-result'
             and receipt.get('processId') == process_id and receipt.get('taskCode') == TASK
-            and receipt.get('environment') == environment and receipt.get('origin') == origin
+            and same_environment(receipt.get('environment'), environment) and receipt.get('origin') == origin
             and receipt.get('completed') is True and receipt.get('retrieved') == 'FileContent'
             and receipt.get('artifactSha256') == digest(baseline)
             and receipt.get('artifactBytes') == Path(baseline).stat().st_size

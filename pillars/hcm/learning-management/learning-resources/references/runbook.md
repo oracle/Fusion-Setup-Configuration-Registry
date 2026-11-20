@@ -1,7 +1,5 @@
 # Learning Resources Operational Runbook
 
-> Data classification: Oracle Restricted
-
 ## Purpose
 
 Use this runbook to plan, validate, approve, create, and verify Learning Resources setup data for Oracle Fusion Cloud Learning Management. It governs these setup tasks:

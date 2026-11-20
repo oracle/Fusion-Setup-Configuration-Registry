@@ -106,7 +106,7 @@ Classify each requested outbound payment, acknowledgment, payment response, or r
 
 Generate provider-specific virtual-card templates without collapsing all inbound processing into one response. Oracle uses one enriched Funds Disbursement outbound source contract and separate normalized inbound contracts for acknowledgment, payment response, and reconciliation.
 
-Read [oracle-virtual-card-contracts.md](references/oracle-virtual-card-contracts.md) before mapping any profile. For contract-sensitive mapping or disputed field semantics, read [source-manifest.md](references/source-code/source-manifest.md) and the relevant bundled contract reference. Use these packaged contracts without access to Oracle internal systems. If the customer requirement conflicts with a bundled contract, record the exact gap and request the applicable supported contract or an updated skill package; do not invent a replacement mapping. Then read only the operation-specific sections and seed templates needed for the request.
+Read [oracle-virtual-card-contracts.md](references/oracle-virtual-card-contracts.md) before mapping any profile. For contract-sensitive mapping or disputed field semantics, read [source-manifest.md](references/source-code/source-manifest.md) and the relevant bundled contract reference. Use these packaged contracts without access to internal development systems. If the customer requirement conflicts with a bundled contract, record the exact gap and request the applicable supported contract or an updated skill package; do not invent a replacement mapping. Then read only the operation-specific sections and seed templates needed for the request.
 
 ## Profiles
 

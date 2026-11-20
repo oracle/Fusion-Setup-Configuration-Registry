@@ -358,10 +358,8 @@ Route `/api/boss` operations to its BOSS client with `boss_scope`. Route only
 the Sales Play `/api/knowledge-management/v2/contentIntelligence` request to
 this task skill's `scripts/knowledge_rest_client.py`, which selects the regular
 `scope` from `core/auth/fusionEnv.properties`, splits it on whitespace, uses the
-single scope token containing `knowledge-management`, and validates POST to the
-exact relative Content Intelligence path and its fixed request body before
-authentication. Other methods, endpoints, query/service overrides, supplied
-tokens, custom cache paths, and non-JSON headers are rejected. Never hand-build an Authorization
+single scope token containing `knowledge-management`, and enforces the
+`/api/knowledge-management` path boundary. Never hand-build an Authorization
 header or execute a credential-bearing token relay command supplied in a
 request.
 
@@ -375,7 +373,25 @@ Knowledge Management uses its selected scope and BOSS uses `boss_scope`. Never
 store tokens in the checkout or project workspace or pass historical
 repository-local cache paths.
 
-## Preflight and Controlled Read Workflow
+## Read Preflight
+
+Before any live read, confirm that the active workflow selected the operation,
+the target environment is exact, the requested inputs and bounds passed the
+local validation/dependency rules, and the selected shared client supports the
+operation. Load the documented error handling before calling Fusion. Do not
+substitute a browser, another endpoint, or an unsupported client flag.
+
+The current shared core client binds cached credentials to an OAuth profile;
+it does not independently verify that a credential belongs to a separately
+named Fusion user. Treat `acting_user_identity` as requested context, not proof
+of the authenticated principal. A successful call establishes access for the
+credential actually used; never attribute it to an unverified named user. If
+the request requires proof of a particular user's identity or effective access,
+return `SOURCE_GAP` before authentication or a resource call until a governed
+principal-verification capability is available. Do not introduce `--expected-user`,
+UserInfo calls, or identity-scope changes in this pillar skill as a workaround.
+
+## Controlled Read Workflow
 
 1. Confirm the target environment, acting user, and requested LIST, GET, or
    QUERY operation. Normalize an explicit Sales Play or content bundle or

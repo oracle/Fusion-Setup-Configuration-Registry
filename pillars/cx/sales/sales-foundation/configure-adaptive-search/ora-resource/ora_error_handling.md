@@ -21,7 +21,7 @@ automatic retry or ESS. Standalone fallback/approval behavior is unchanged.
 | Authentication fails | Classify as auth_expired_or_invalid; refresh a managed cache once only when supported |
 | User lacks publish privilege | Classify as authorization_or_privilege and stop |
 | Another publish is active, including ZCA-210166 | Classify as approval_blocker or Fusion concurrency conflict and stop without retry |
-| publishStatus GET returns HTTP 404 with exactly `{"Error":"Cannot parse null string"}` | Classify as no_prior_publish and continue through payload mapping and the combined confirmation; this is expected when the Entities GET established a new environment. |
+| publishStatus GET returns HTTP 404 with exactly either `{"Error":"No prior publish job was found."}` or `{"Error":"Cannot parse null string"}` | Classify as no_prior_publish and continue through payload mapping and the combined confirmation; this is expected when the Entities GET established a new environment. |
 | publishStatus GET returns another HTTP error or a malformed 404 body | Classify as fusion_api_error, show the status and redacted message, and stop; do not submit. |
 | Publish POST reports that an active sandbox prevents metamodel synchronization | Classify as fusion_api_error, report it, require sandbox resolution, and do not retry automatically |
 | Publish POST returns Invalid Preference Parameter | Verify the embedded contract requires `Preference: transient`, invalidate the prior approval if the header binding changed, regenerate the preview, and require explicit approval before one new POST |

@@ -19,7 +19,7 @@ source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 type: "planning"
 execution_mode: "assisted"
 owner_team: "ERP financials pillar team"
-version: "0.1.0"
+version: "0.1.1"
 inputs:
   - "implementation_objective"
   - "project_context"
@@ -32,6 +32,7 @@ outputs:
   - "skill_run_record"
   - "token_usage_record"
 depends_on:
+  - "core.fusion-api.rest-api-client"
   - "shared.setup-export.task-level-export"
   - "shared.validation.setup-data-validator"
   - "shared.validation.reference-data-validator"
@@ -148,17 +149,18 @@ The compiled registry is incomplete while any applicable resolver contract remai
 
 Before package generation, enforce these exact `AR_SYSTEM_OPTIONS` string maxima in characters: 1 character for `AccrueInterest`, `AutoSiteNumbering`, `CalcDiscountOnLinesFlag`, `ChangePrintedInvoiceFlag`, `CreateReciprocalFlag`, `GenerateCustomerNumber`, `InvoiceDeletionFlag`, `PartialDiscountFlag`, `PayUnrelatedInvoicesFlag`, `PopulateGlSegmentsFlag`, `PrintHomeCountryFlag`, `PrintRemitTo`, `RunGlJournalImportFlag`, `SalesrepRequiredFlag`, `ServicedByAnyBuFlag`, `SiteRequiredFlag`, `TrxHeaderLevelRounding`, `UnearnedDiscount`; 30 characters for `AccountingMethod`, `DefaultCbDueDate`, `TaxInvoicePrint`, `CreateDetailedDist`; and 80 characters for `DocumentSeqGenLevel`. The same-task package establishes the fields and string types, `SystemParameterEO.xml` establishes the ADF character precision, and Oracle Financials EDM 26C corroborates the owning table lengths. Validate target-key and operation values before candidate ZIP generation. On overflow, report the entity, field, actual length, maximum, and unit, ask for a shorter business value, and require a new preview; never truncate silently.
 
-- One persisted system-options row is owned by a business unit (`ORG_ID`). Resolve the package business-unit name exactly once in the enterprise context.
+- One persisted system-options row is owned by a business unit (`ORG_ID`). Resolve its active identity with `finBusinessUnitsLOV`, verify applicable business functions and primary-ledger agreement, and retain the canonical name. Independently use a fresh same-target RSO export to reject duplicate creates and missing updates. Follow the Business-Unit Validation Procedure in `ora_reference_lookups.md`; an RSO export alone cannot validate a new BU.
 - Resolve ledger and chart of accounts before validating any account-combination segments.
 - Resolve set-scoped rules, sources, and transaction types only after their reference-data set; resolve activities and remittance accounts only after their business-unit context.
 - A missing or ambiguous public-preflight result, or a null FSM alternate-key/existence result, is an invalid dependency. Stop the row and never choose a candidate.
 - For receipt rules, exception rules, and Receivables activities, FSM import resolves the documented business/context keys to internal identifiers. For `AiAcctFlexKeyLeftPrompt`, FSM import performs an enabled `GL#` segment existence check under the ledger-derived chart of accounts and does not replace the supplied prompt.
 - Every create requires an explicit nonblank `RuleSetName`. Never infer or copy it from another business unit; validate it through the confirmed FSM-import application-rule-set resolver before accepting the import result.
-- Every create also requires explicit nonblank business choices for whether printed transactions may be changed (`ChangePrintedInvoiceFlag`), partial payments may earn discounts (`PartialDiscountFlag`), and receipts require a customer site (`SiteRequiredFlag`). Ask for any omitted choice in one concise business-language clarification and reject the create before ZIP generation if any remains blank. Controlled FSM diagnostics prove requiredness but do not establish a universal default.
+- Every create also requires explicit nonblank business choices for whether printed transactions may be changed (`ChangePrintedInvoiceFlag`), partial payments may earn discounts (`PartialDiscountFlag`), receipts require a customer site (`SiteRequiredFlag`), and a salesperson is required (`SalesrepRequiredFlag`). Ask for any omitted choice in one concise business-language clarification and reject the create before ZIP generation if any remains blank. Controlled FSM diagnostics prove requiredness but do not establish a universal default.
 - Normalize the confirmed RSO business labels before package validation: `Show total tax only` or `Total tax only` maps to `TaxInvoicePrint=TOTAL ONLY`; `Assign when transaction is completed` or `When completed` maps to `DocumentSeqGenLevel=WHEN_TRX_COMPLETED`; `Due date of open invoice` or `Open invoice due date` maps to `DefaultCbDueDate=DUE_DATE`; and Discount Basis maps `Invoice Amount` to `CalcDiscountOnLinesFlag=I`, `Lines Only` to `L`, `Lines, Freight Items, and Tax` to `T`, and `Lines and Tax, not Freight Items and Tax` to `F`. Match case-insensitively after trimming and preserve an exact supported package value already supplied. Despite its package name, `CalcDiscountOnLinesFlag` is not Boolean; reject `N`, `Y`, and every value outside `I`, `L`, `T`, and `F` before ZIP generation.
 - Normalize a positive whole-number AutoInvoice memory value expressed in MB to `AiMaxMemoryInBytes` using `MB x 1048576`; for example, `5 MB` becomes `5242880`. Preserve an explicit nonnegative byte integer without reconversion. Do not invent a default.
 - An FSM import resolver/validation failure emits recoverable `AR:::AR_ATTR_NOT_EXISTS_TARGET_INS` with `ATTRIBUTE_NAME_LIST` and alternate-key values, records the field-specific dependency token, and removes the invalid `AR_SYSTEM_OPTIONS` XML element from further import processing. The prompt-specific failure includes `AiAcctFlexKeyLeftPrompt <value> does not exist`.
 - When header-level rounding is enabled, require a valid rounding account. Once enabled and saved, Oracle Help documents that it cannot be disabled.
+- Complete the source-audited create field set in `ora-resource/ora_input_validation.md`, including reciprocal relationships and unrelated-customer payments. Apply only documented defaults; report every remaining missing/blank choice together before package generation.
 - When salesperson is required, require an explicit sales-credit percent limit decision; a blank limit means no enforced limit.
 - Bills Receivable cannot be disabled while dependent Bills Receivable records exist.
 - MFAR/detailed-distribution changes can affect other business-unit rows sharing the ledger; claim-management behavior can create a Claim Investigation payment-schedule sentinel. Before create preview, inspect the fresh export for an existing exact-ledger row. If that ledger already has detailed distributions enabled, show `Y` as the effective result and require explicit business acceptance instead of promising `N`; keep any persisted `N`-to-`Y` difference material and visible. Disclose and reconcile these effects.
@@ -169,7 +171,7 @@ Before package generation, enforce these exact `AR_SYSTEM_OPTIONS` string maxima
 1. Export current task data with `shared.setup-export.task-level-export`.
 2. Verify target/release, successful process state, `AR_SYSTEM_OPTIONS` metadata identity, the exact current headers, and archive fingerprint.
 3. Validate task data with `shared.validation.setup-data-validator`.
-4. Validate reference data with `shared.validation.reference-data-validator` and the task resources. Use a supported public preflight when documented; otherwise require a complete confirmed FSM import resolution/validation contract and defer the field-scoped check to the immutable Data Loader preview. Stop only when the applicable contract is missing, partial, or fails.
+4. Validate reference data with `shared.validation.reference-data-validator` and the task resources. Use a supported public preflight when documented; otherwise require a complete confirmed FSM import resolution/validation contract and defer final field-scoped resolution or validation to FSM import after immutable Data Loader preview and approval; confirm the result during reconciliation. Stop only when the applicable contract is missing, partial, or fails.
 5. Preserve unrelated rows and current-data confidentiality while building a candidate package.
    If every requested update already exactly matches the fresh current-data baseline, complete source, field, target, prerequisite, and requirement validation and return `NO_OP` without an import ZIP. Retain input/design hashes and the business summary; `candidateSha256` is null and the member inventory is empty. Record the no-change outcome and do not hand it to Data Loader. This also applies to an already-restored update rollback. Do not treat approximate text or date-format differences as exact equality. A create or batch containing any real change follows the normal package, validation, preview, and approval workflow.
 6. Route import only through `core.data-loader` with mode `FSM` and an empty `businessObject`.

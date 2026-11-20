@@ -29,8 +29,8 @@ The default direction is `data_loader_execution`. It remains blocked until Core 
 
 1. GET each work schedule by label. A 404 is a creation baseline; PUT the workbook parent with `If-None-Match: {label}`.
 2. GET each shift by label. A 404 is a creation baseline; PUT the workbook parent with `If-None-Match: {label}`.
-3. After the ordered parent requests are planned, GET `/api/field-service/configuration/v1/workSchedules/{label}/items`, construct item requests, and execute them after approval.
-4. After every write, GET the resource or item collection and verify the exact changed values. Stop on the first failure.
+3. After the ordered parent requests are planned, GET `/api/field-service/configuration/v1/workSchedules/{label}/items` and reconcile proposed item POSTs before preview. The creation key is the schedule plus item type, shift/non-working label, shift type, start date and recurrence type/every/weekdays (weekday order is immaterial). Omit an exact existing match. Block duplicate workbook keys, multiple existing matches, changed content for an existing key, or an incomplete/paginated baseline; use an explicit itemId update for changed content. Do not infer absence from a missing collection for an existing parent.
+4. After a POST, require a positive itemId in the write response that was absent from the approved collection baseline. Bind GET verification to that returned ID, rather than any item with matching content. Missing or reused IDs stop execution for reconciliation without retry. After every write, GET the resource or item collection and verify the exact changed values. Stop on the first failure.
 
 ## API Mapping
 
@@ -43,4 +43,4 @@ The default direction is `data_loader_execution`. It remains blocked until Core 
 
 The filled workbook retains implementor-friendly columns: `shiftLabel` maps to item `label`; `nonWorkingReasonLabel` maps to item `label`; `repeatType` and `repeatDays` map to `recurrence.type` and full weekday values in `recurrence.weekdays`. `itemId` is OFSC-generated for POST and is used only in PUT and DELETE paths.
 
-Source: [API Structure - Configuration](https://confluence.oraclecorp.com/confluence/display/OFSCdev/API+Structure+-+Configuration), Work Schedules and Shifts v1 sections.
+Source: Configuration API contract (public source verification pending), Work Schedules and Shifts v1 sections.

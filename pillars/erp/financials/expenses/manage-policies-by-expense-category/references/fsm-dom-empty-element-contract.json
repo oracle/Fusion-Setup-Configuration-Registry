@@ -1,0 +1,23 @@
+{
+  "source_id": "PINNED-FSM-DOM-EMPTY-ELEMENT",
+  "status": "CONFIRMED_PINNED_DEFAULT_ORACLE_PROVIDER_NO_CHILD_PATH",
+  "revision": {"series": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64", "label": "261028.0600.S"},
+  "libraries": [
+    {"path": "oracle_common/modules/oracle.xdk/xmlparserv2.jar", "sha256": "279256d5a1c975c38cd2e43ef5562aa03dc6990d8306b9d6149f422a443e3981"},
+    {"path": "atgpf/fsext/modules/oracle.fs.fsext/AdfFunctionalSetupPublicModel.jar", "sha256": "528e6b6cbc653f16a9ce892932f7c461992894c2c925075052ec89510b9cc9a7"}
+  ],
+  "facts": [
+    {"symbol": "ImportDataVORowImpl.getDataXMLElements", "offsets": "0-18", "fact": "The saved import BlobDomain stream is passed to ZipUtil.getZipXMLFiles."},
+    {"symbol": "ZipUtil.getZipXMLFiles", "offsets": "119-145", "fact": "A JAXP factory creates the builder; parsed document elements are retained for the task service."},
+    {"symbol": "META-INF/services/javax.xml.parsers.DocumentBuilderFactory", "fact": "The pinned XML JAR names oracle.xml.jaxp.JXDocumentBuilderFactory as its service provider. This establishes the default supported provider path, not target factory selection."},
+    {"symbol": "JXDocumentBuilderFactory.newDocumentBuilder; JXDocumentBuilder.parse", "fact": "The factory constructs the Oracle builder and DOMParser. The InputStream overload wraps InputSource; parsing returns DOMParser's XMLDocument."},
+    {"symbol": "DOMParser.getDocument; oracle.xml.parser.v2.DocumentBuilder.startDocument/getDocument/startElement", "offsets": "handler startDocument 46-63,85-97,336-349; getDocument 0-17; startElement 265-277", "fact": "The ordinary nonpartial handler creates and returns XMLDocument and uses its element factory. Custom NodeFactory and alternate document kinds are excluded."},
+    {"symbol": "XMLDocument.getDocumentElement/createNodeFromType/createNodeFromAddress", "offsets": "36-70;76-84;76-86", "fact": "The document selects XMLElement; ordinary and compact element factories construct that exact class."},
+    {"symbol": "XMLNode.getTextContent", "offsets": "130-139,214-216", "fact": "An element with no first child returns the empty String constant directly. XMLElement and XMLNSNode do not override this method. The child iteration/StringBuffer branch is excluded."},
+    {"symbol": "ViewRowImpl.renderAttributeValueInXMLElement/readXML", "fact": "The previously reviewed explicit-null serializer creates null=true with no text child. The consumer forwards that Element and casts it to XMLNode; this proof joins that exact no-child path."},
+    {"symbol": "JVMS 5.1 string constants", "url": "https://docs.oracle.com/javase/specs/jvms/se17/html/jvms-5.html#jvms-5.1", "fact": "String constants use interning, establishing reference identity for this literal return and the service's empty literal guard."}
+  ],
+  "assessment": "The pinned explicit-null/no-child Oracle XMLElement path satisfies the task service getTextContent() != empty-literal identity guard without invoking excluded role/geography lookups.",
+  "excluded_claims": ["Target build or library parity", "Target classloader or JAXP factory overrides", "Other DOM providers or custom NodeFactory", "Empty text children, comments, processing instructions or arbitrary empty String results", "Live creation or native import acceptance", "General field-write qualification"],
+  "qualification": "Source-qualified local preparation only. Fresh operation-bound lookups, native validation, exact import approval and fresh-export reconciliation remain mandatory. Existing update uncertainty remains unchanged."
+}

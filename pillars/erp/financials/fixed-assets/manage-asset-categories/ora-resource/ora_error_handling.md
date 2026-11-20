@@ -1,5 +1,14 @@
 ﻿# Error Handling
 
+## DFF Failures
+
+Report each affected category, book, default date range/source row, DFF scope,
+and segment prompt. Recover supplied input before requesting missing values.
+Missing required input or invalid values stops before preview/package work.
+Incomplete definition, context, membership, applicability, or preservation
+evidence remains unverified, including for JG_FA_CATEGORY_BOOKS. Never create
+value-set values, substitute contexts, or clear existing values to pass validation.
+
 ## Failure Handling
 
 | Failure | Message direction | Next action |
@@ -21,7 +30,7 @@
 | Duplicate package data | Name the duplicate business key and member scope: category, category-book, default-rule date range, or translation language. | Follow `ora_design_enforcement.md`; remove or reconcile duplicate rows before preview. Ask the customer to identify the authoritative row when they conflict. |
 | Malformed or incompatible package shape | Report the member, expected versus actual shape, and first malformed field when available. | Rebuild from the current task export and validate locally before preview. Do not treat a header-only template as sufficient evidence. |
 | Invalid category-book account serialization | Identify every affected account role and any changed value/order, missing blank position, missing terminator, or malformed multiline CSV cell. | Do not submit or retry the ZIP. Rebuild only the affected account cells using Category-Book Account Format in ora_reference_lookups.md; repeat package validation, immutable preview, and approval. |
-| Invalid Default depreciation expense combination | State that the UI value must be Yes or No and `DefaultExpenseCcidFlag` must serialize as `Y` or `N`. | Rebuild the ZIP with Yes → `Y` or No → `N`; reject `YES`, `NO`, selected, and cleared. Repeat package validation, immutable preview, and approval. |
+| Invalid Default depreciation expense combination | State that user input may be `Y`/`N` or `YES`/`NO` in any letter case, while `DefaultExpenseCcidFlag` must serialize as uppercase `Y` or `N`. | Translate recognized input and rebuild the ZIP with affirmative input → `Y` or negative input → `N`. Reject unrecognized input and any serialized value other than `Y` or `N`. Repeat package validation, immutable preview, and approval. |
 | Missing category parent row or orphan child row | Identify the affected `FA_ASSET_CATEGORY_BOOK` or default-row member and the category combination whose `FA_ASSET_CATEGORY` parent is absent. | Do not submit or retry the ZIP. Rebuild it with the required matching parent row, repeat package validation and immutable preview, then obtain fresh approval. |
 | Cross-environment or donor-value use | State that source and target environments differ, or that donor business values were detected. | Regenerate the affected preview using approved customer values and target-derived accounts/defaults. A same-book donor may provide formatting evidence only. |
 | Preview or approval gate missing or stale | State that no unapproved ZIP creation or Fusion import has occurred. | Follow the parent Fixed Assets shared preview and immutable-artifact approval gates before the next task action. |
@@ -94,6 +103,7 @@ dependent work from the accepted state.
 |---|---|---:|---|---|---|---|---|
 | MAC.IMPORT_GATE | decision | 60 | execution_gate | ready->MAC.VALIDATED;incomplete->MAC.HANDLE_APPROVAL | MAC.ENFORCE_DESIGN | stop | Read-only design validation and immutable package preparation are complete. Approval is owned by the surrounding Data Loader workflow. |
 | MAC.HANDLE_INPUT | step | 70 | error_handler | handled->MAC.ISSUES | MAC.VALIDATE_INPUT | stop | Input is invalid. |
+| MAC.HANDLE_DFF_LOOKUP | step | 75 | error_handler | handled->MAC.ISSUES | MAC.RESOLVE_DFF_INPUT | stop | Read-only foundation or DFF definition, applicability, or context evidence is unavailable or ambiguous during input preflight. Report the safe lookup blocker; do not begin prerequisite or package preparation. |
 | MAC.HANDLE_DEPENDENCY | step | 80 | error_handler | handled->MAC.ISSUES | MAC.CHECK_DEPENDENCIES | stop | Dependency is blocked; include Account Review Disclosure when account evidence is incomplete. |
 | MAC.HANDLE_LOOKUP | step | 90 | error_handler | handled->MAC.ISSUES | MAC.RESOLVE_REFERENCES | stop | Lookup or export baseline is blocked, ambiguous, or failed; include Account Review Disclosure for unresolved accounts. |
 | MAC.HANDLE_EXISTING_DIFFERENT | step | 95 | error_handler | decision_required->MAC.ISSUES | MAC.RESOLVE_REFERENCES | stop | One exact category exists but differs materially; show the delta and request an explicit category-header update-existing or preserve/create-new decision. |

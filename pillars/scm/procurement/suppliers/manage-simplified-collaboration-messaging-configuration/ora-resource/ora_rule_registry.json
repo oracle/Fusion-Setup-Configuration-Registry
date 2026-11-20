@@ -5,8 +5,209 @@
     {
       "task_code": "ORA_CMK_MNGE_SIMPLIFIED_COLLAB_MSG_CONFIG",
       "task_name": "Manage Simplified Collaboration Messaging Configuration",
-      "start_node": "CMKSC.VALIDATE_INPUT",
+      "start_node": "CMKSC.ROUTING_REFERENCE",
       "nodes": [
+        {
+          "id": "CMKSC.ROUTING_REFERENCE",
+          "node_type": "decision",
+          "sequence": 1,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "task_composition": "CMKSC.COMPOSITION_INPUT",
+            "task_composition_verification": "CMKSC.COMPOSITION_VERIFY",
+            "native_combined_create": "CMKSC.COMBINED_INPUT",
+            "native_combined_verify": "CMKSC.COMBINED_VERIFY",
+            "verified": "CMKSC.PARTNER_CUSTOMER",
+            "not_applicable": "CMKSC.PARTNER_CUSTOMER",
+            "missing": "CMKSC.RETURN_ISSUES",
+            "blocked": "CMKSC.RETURN_ISSUES",
+            "native_account_create": "CMKSC.FSM_ACCOUNT_INPUT",
+            "native_account_verify": "CMKSC.FSM_ACCOUNT_VERIFY_INPUT",
+            "native_ship_to_create": "CMKSC.FSM_SHIP_TO_INPUT",
+            "native_ship_to_verify": "CMKSC.FSM_SHIP_TO_VERIFY_INPUT",
+            "native_location_create": "CMKSC.FSM_LOCATION_INPUT",
+            "native_location_verify": "CMKSC.FSM_LOCATION_VERIFY_INPUT",
+            "native_settings_configure": "CMKSC.FSM_SETTINGS_INPUT",
+            "native_settings_verify": "CMKSC.FSM_SETTINGS_VERIFY_INPUT",
+            "native_routing_create": "CMKSC.FSM_ROUTING_INPUT",
+            "native_routing_verify": "CMKSC.FSM_ROUTING_VERIFY_INPUT"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "For qualify_configuration_task_composition_fsm return task_composition without GET; for verify_configuration_task_composition_fsm return task_composition_verification with original immutable intent and actual terminal job. Configuration Task Composition owns those independently bounded operations without broadening the old account/ship-to branch. After the FSM-only route check, create_account_ship_to_combined_fsm returns native_combined_create and verify_account_ship_to_combined_fsm returns native_combined_verify without GET; the bounded Combined Account and Physical Ship-To profile owns these operations. Otherwise create_account_number_fsm returns native_account_create and verify_account_number_fsm returns native_account_verify without a lookup; these operations use only their dedicated native account branch below. Likewise create_ship_to_assignment_fsm returns native_ship_to_create and verify_ship_to_assignment_fsm returns native_ship_to_verify without a lookup. create_location_code_fsm returns native_location_create and verify_location_code_fsm returns native_location_verify without a lookup. configure_initial_settings_fsm returns native_settings_configure and verify_initial_settings_fsm returns native_settings_verify without a lookup. create_document_routing_fsm returns native_routing_create and verify_document_routing_fsm returns native_routing_verify without a lookup. All other operations retain the following behavior. First apply FSM-Only Route Enforcement: runbook_rest_operation and assisted UI setup/execute return blocked locally without any external call. Otherwise only configure_document_messaging with an explicit connection invokes verify_cmksc_routing_connection_reference on the qualified current complete export supplied by its invoking workflow. Missing connection stops before operator context or routing preview. For assisted_configuration_setup outside that exact document/connection scope, assisted_configuration_verify and every other task operation return not_applicable without GET or artifact inspection.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 286
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.PARTNER_CUSTOMER",
+          "node_type": "decision",
+          "sequence": 2,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSC.PARTNER_ACCOUNT",
+            "not_applicable": "CMKSC.PARTNER_ACCOUNT",
+            "selection_required": "CMKSC.CUSTOMER_REQUIRED",
+            "blocked": "CMKSC.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.ROUTING_REFERENCE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "For assisted_configuration_setup and assisted_configuration_verify return not_applicable without GET or lookup questions. Otherwise: Partner-property intake: execute only resolve_cmksc_customer; missing kind asks supplier or customer before GET",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 226
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.PARTNER_ACCOUNT",
+          "node_type": "decision",
+          "sequence": 3,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSC.PARTNER_SUPPLIER",
+            "not_applicable": "CMKSC.PARTNER_SUPPLIER",
+            "selection_required": "CMKSC.ACCOUNT_REQUIRED",
+            "blocked": "CMKSC.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.PARTNER_CUSTOMER"
+          ],
+          "on_failure": "stop",
+          "applies_when": "For assisted_configuration_setup and assisted_configuration_verify return not_applicable without GET or lookup questions. Otherwise: Execute only resolve_cmksc_customer_account; ask customer-wide or specific account when scope missing",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 227
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.PARTNER_SUPPLIER",
+          "node_type": "decision",
+          "sequence": 4,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSC.PARTNER_SITE",
+            "not_applicable": "CMKSC.PARTNER_SITE",
+            "selection_required": "CMKSC.SUPPLIER_REQUIRED",
+            "blocked": "CMKSC.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.PARTNER_ACCOUNT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "For assisted_configuration_setup and assisted_configuration_verify return not_applicable without GET or lookup questions. Otherwise: Execute only resolve_cmksc_supplier for supplier properties; prefer its exact supplied-number or exact-name scope and require completeness only in that scope",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 228
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.PARTNER_SITE",
+          "node_type": "decision",
+          "sequence": 5,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSC.PARTNER_PROVIDER",
+            "not_applicable": "CMKSC.PARTNER_PROVIDER",
+            "selection_required": "CMKSC.SITE_REQUIRED",
+            "blocked": "CMKSC.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.PARTNER_SUPPLIER"
+          ],
+          "on_failure": "stop",
+          "applies_when": "For assisted_configuration_setup and assisted_configuration_verify return not_applicable without GET or lookup questions. Otherwise: Execute only resolve_cmksc_supplier_site after selected supplier",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 229
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.PARTNER_PROVIDER",
+          "node_type": "decision",
+          "sequence": 6,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSC.PARTNER_CUSTOMER_BU",
+            "not_applicable": "CMKSC.PARTNER_CUSTOMER_BU",
+            "selection_required": "CMKSC.PROVIDER_REQUIRED",
+            "blocked": "CMKSC.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.PARTNER_SITE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "For assisted_configuration_setup and assisted_configuration_verify return not_applicable without GET or lookup questions. Otherwise: Execute only resolve_cmksc_provider; reuse and revalidate retained provider",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 230
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.PARTNER_CUSTOMER_BU",
+          "node_type": "decision",
+          "sequence": 7,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSC.VALIDATE_INPUT",
+            "not_applicable": "CMKSC.VALIDATE_INPUT",
+            "selection_required": "CMKSC.CUSTOMER_BU_REQUIRED",
+            "blocked": "CMKSC.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.PARTNER_PROVIDER"
+          ],
+          "on_failure": "stop",
+          "applies_when": "For assisted_configuration_setup and assisted_configuration_verify return not_applicable without GET or lookup questions. Otherwise: Execute only resolve_cmksc_customer_business_unit; supplier skips without GET",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 231
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
         {
           "id": "CMKSC.VALIDATE_INPUT",
           "node_type": "step",
@@ -14,16 +215,201 @@
           "action_type": "validate_input",
           "execution_route": "local",
           "transitions": {
+            "assisted_operation_ready": "CMKSC.ASSISTED_CONTEXT",
+            "assisted_verification_ready": "CMKSC.ASSISTED_RESULT",
             "valid": "CMKSC.RESOLVE_FEATURE_STATE",
-            "invalid": "CMKSC.RETURN_ISSUES"
+            "invalid": "CMKSC.RETURN_ISSUES",
+            "rest_operation_ready": "CMKSC.REST_PREFLIGHT",
+            "rest_verification_ready": "CMKSC.REST_VERIFY"
           },
-          "prerequisites": [],
+          "prerequisites": [
+            "CMKSC.PARTNER_CUSTOMER_BU"
+          ],
           "on_failure": "stop",
-          "applies_when": "Always",
+          "applies_when": "For implementation_mode greenfield apply Greenfield Initial Setup Inputs at the current stage before the applicable operation branch. For qualify_existing_document_routing first apply Existing Routing Read-Only Inputs below; valid returns valid to the existing feature check, invalid returns invalid. This operation requires no import approval or operator UI context and performs no mutation. First assisted_configuration_setup applies Assisted Configuration Inputs and returns assisted_operation_ready or invalid; assisted_configuration_verify requires bound intent and actual operator result and returns assisted_verification_ready or invalid without CSV/REST prerequisites. For runbook_rest_verify require the approved REST intent and actual dispatch result, return rest_verification_ready or invalid without an import/source export. For runbook_rest_operation evaluate Declared Run Book REST Inputs and current partner/target binding, return rest_operation_ready or invalid with no CSV prerequisite. For other operations: Apply Current Request and Customer Result Inputs for attachment identity and stage-appropriate result evidence. For ensure_partner_setup apply Business Attachment Input Semantics and Partner Reconciliation Inputs; other operations retain their stage checks. Intake/source export do not require a final ZIP or verified new-row mappings  Apply All Object Package Validation to every selected package member at source review and final package stages; technical schema success never bypasses object-specific business preparation.",
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 40
+            "line": 86
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.REST_PREFLIGHT",
+          "node_type": "decision",
+          "sequence": 11,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "ready": "CMKSC.REST_GATE",
+            "blocked": "CMKSC.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.VALIDATE_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only the declared runbook_rest_operation: execute verify_cmksc_runbook_rest_preflight. This node performs reads only and cannot approve or dispatch a mutation",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 257
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.REST_GATE",
+          "node_type": "step",
+          "sequence": 12,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "CMKSC.REST_APPROVAL_READY",
+            "blocked": "CMKSC.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.REST_PREFLIGHT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Retained historical node only. FSM-Only Route Enforcement rejects new REST or assisted setup before this node; return the task failure outcome if reached for a new write. No Core helper, approval handoff, dispatch or operator Save is authorized.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 258
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.REST_VERIFY",
+          "node_type": "decision",
+          "sequence": 13,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSC.REST_VERIFIED",
+            "blocked": "CMKSC.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.VALIDATE_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only runbook_rest_verify: execute verify_cmksc_runbook_rest_state for the exact approved operation. No preparation, approval or dispatch",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 270
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.ASSISTED_CONTEXT",
+          "node_type": "decision",
+          "sequence": 14,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "CMKSC.ASSISTED_DESIGN",
+            "context_required": "CMKSC.ASSISTED_CONTEXT_REQUIRED",
+            "invalid": "CMKSC.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.VALIDATE_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only assisted_configuration_setup: evaluate Assisted Configuration Inputs without REST, CSV, route recovery or credential collection",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 330
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.ASSISTED_DESIGN",
+          "node_type": "decision",
+          "sequence": 15,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "passed": "CMKSC.ASSISTED_GATE",
+            "blocked": "CMKSC.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.ASSISTED_CONTEXT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only selected assisted setup: apply Assisted Configuration Design and current effective business rules",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 92
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.ASSISTED_GATE",
+          "node_type": "step",
+          "sequence": 16,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "CMKSC.ASSISTED_APPROVAL_READY",
+            "blocked": "CMKSC.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.ASSISTED_DESIGN"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Retained historical node only. FSM-Only Route Enforcement rejects new REST or assisted setup before this node; return the task failure outcome if reached for a new write. No Core helper, approval handoff, dispatch or operator Save is authorized.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 273
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.ASSISTED_RESULT",
+          "node_type": "decision",
+          "sequence": 17,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "verified": "CMKSC.ASSISTED_VERIFIED",
+            "unchanged": "CMKSC.ASSISTED_REUSED",
+            "state_only": "CMKSC.ASSISTED_STATE_ONLY",
+            "confirmation_required": "CMKSC.ASSISTED_CONFIRMATION_REQUIRED",
+            "blocked": "CMKSC.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.VALIDATE_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only assisted_configuration_verify: classify the bound historical evidence outcome. No save, import or external call",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 331
           },
           "readiness": {
             "status": "ready",
@@ -37,18 +423,202 @@
           "action_type": "reference_lookup",
           "execution_route": "fusion-rest",
           "transitions": {
-            "enabled": "CMKSC.ENFORCE_DESIGN",
+            "enabled": "CMKSC.VERIFY_IDENTIFIER_TYPE",
             "blocked": "CMKSC.RETURN_ISSUES"
           },
           "prerequisites": [
             "CMKSC.VALIDATE_INPUT"
           ],
           "on_failure": "stop",
-          "applies_when": "Check the Simplify feature on the selected operation host",
+          "applies_when": "Execute only resolve_simplified_feature_state to check the Simplify feature on the selected operation host",
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 28
+            "line": 232
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.VERIFY_IDENTIFIER_TYPE",
+          "node_type": "decision",
+          "sequence": 21,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSC.CHECK_PROPERTY_COLLISION",
+            "not_applicable": "CMKSC.CHECK_PROPERTY_COLLISION",
+            "qualification_verified": "CMKSC.QUALIFY_SUPPLIER_STATE",
+            "verification_ready": "CMKSC.VERIFY_PROPERTY_STATE",
+            "blocked": "CMKSC.RETURN_ISSUES",
+            "routing_verification_ready": "CMKSC.VERIFY_ROUTING_STATE"
+          },
+          "prerequisites": [
+            "CMKSC.RESOLVE_FEATURE_STATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "For qualify_existing_document_routing after its input and feature checks, return routing_verification_ready without identifier-type lookup. Otherwise Execute only verify_cmksc_partner_id_type. For operation qualify_existing_supplier_property, inspect codes and validate any retained supplied code, then use qualification_verified. For post_import_verify, return verification_ready after any applicable code check; other operations use verified or not_applicable according to applicability",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 233
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.QUALIFY_SUPPLIER_STATE",
+          "node_type": "decision",
+          "sequence": 22,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSC.QUALIFICATION_DONE",
+            "blocked": "CMKSC.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.VERIFY_IDENTIFIER_TYPE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only operation qualify_existing_supplier_property: execute qualify_cmksc_supplier_property_state after all qualification preflight checks. Differences, missing/ambiguous records and incomplete reads are blocked outcomes",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 234
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.VERIFY_PROPERTY_STATE",
+          "node_type": "decision",
+          "sequence": 23,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSC.VERIFICATION_DONE",
+            "blocked": "CMKSC.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.VERIFY_IDENTIFIER_TYPE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only post_import_verify: execute verify_cmksc_partner_property_state after completed import and approved-intent/before-snapshot checks",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 235
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.VERIFY_ROUTING_STATE",
+          "node_type": "decision",
+          "sequence": 24,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSC.ROUTING_STATE_VERIFIED",
+            "blocked": "CMKSC.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.VERIFY_IDENTIFIER_TYPE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only qualify_existing_document_routing executes qualify_cmksc_existing_document_routing after current input and feature checks. Read-only; no preparation, approval, import or setup mutation",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 394
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.CHECK_PROPERTY_COLLISION",
+          "node_type": "decision",
+          "sequence": 25,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "clear": "CMKSC.VERIFY_PARTNER_DEPENDENCIES",
+            "not_applicable": "CMKSC.VERIFY_PARTNER_DEPENDENCIES",
+            "blocked": "CMKSC.RETURN_ISSUES",
+            "reconciled": "CMKSC.RECONCILE_SETUP"
+          },
+          "prerequisites": [
+            "CMKSC.VERIFY_IDENTIFIER_TYPE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Execute check_cmksc_partner_property_duplicate for create preparation/final validation or ensure_partner_setup reconciliation. Source export and unchanged-package operations skip without GET; explicit create retains strict collision blocking",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 236
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.VERIFY_PARTNER_DEPENDENCIES",
+          "node_type": "decision",
+          "sequence": 30,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "satisfied": "CMKSC.ENFORCE_DESIGN",
+            "not_applicable": "CMKSC.ENFORCE_DESIGN",
+            "blocked": "CMKSC.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.CHECK_PROPERTY_COLLISION"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Partner creation checks applicable resolver evidence and parent/target consistency; other operations skip",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 52
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.RECONCILE_SETUP",
+          "node_type": "decision",
+          "sequence": 36,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "reuse": "CMKSC.REUSE_DONE",
+            "create_needed": "CMKSC.CREATE_NEEDED",
+            "review_required": "CMKSC.REVIEW_REQUIRED",
+            "blocked": "CMKSC.RETURN_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.CHECK_PROPERTY_COLLISION"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only ensure_partner_setup: apply Setup Reconciliation Policy and the applicable effective-value provider design rules; no mutation or artifact approval",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 73
           },
           "readiness": {
             "status": "ready",
@@ -66,14 +636,14 @@
             "blocked": "CMKSC.RETURN_ISSUES"
           },
           "prerequisites": [
-            "CMKSC.RESOLVE_FEATURE_STATE"
+            "CMKSC.VERIFY_PARTNER_DEPENDENCIES"
           ],
           "on_failure": "stop",
-          "applies_when": "Always",
+          "applies_when": "Apply design rules for current operation and stage; package-delta checks apply only once a package is prepared",
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 34
+            "line": 72
           },
           "readiness": {
             "status": "ready",
@@ -98,7 +668,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 59
+            "line": 162
           },
           "readiness": {
             "status": "ready",
@@ -114,11 +684,209 @@
           "transitions": {},
           "prerequisites": [],
           "on_failure": "continue",
-          "applies_when": "Any blocking condition",
+          "applies_when": "Any blocking condition Apply Customer Result Presentation using current-request evidence; preserve the full operational result. Apply Feature State Presentation when the blocker concerns the Simplified B2B Messaging feature. Apply Business Name Presentation.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 60
+            "line": 163
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.CUSTOMER_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 61,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.PARTNER_CUSTOMER"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return missing partner kind or customer selection with current readable choices Apply Customer Result Presentation using current-request evidence; preserve the full operational result. Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 164
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.ACCOUNT_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 62,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.PARTNER_ACCOUNT"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return missing customer account scope or selection Apply Customer Result Presentation using current-request evidence; preserve the full operational result. Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 165
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.SUPPLIER_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 63,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.PARTNER_SUPPLIER"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return missing supplier selection Apply Customer Result Presentation using current-request evidence; preserve the full operational result. Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 166
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.SITE_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 64,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.PARTNER_SITE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return missing selected supplier site Apply Customer Result Presentation using current-request evidence; preserve the full operational result. Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 167
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.PROVIDER_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 65,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.PARTNER_PROVIDER"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return missing provider selection Apply Customer Result Presentation using current-request evidence; preserve the full operational result. Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 168
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.CUSTOMER_BU_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 66,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.PARTNER_CUSTOMER_BU"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return optional BU select/skip decision or invalid supplied selection Apply Customer Result Presentation using current-request evidence; preserve the full operational result. Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 169
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.REUSE_DONE",
+          "node_type": "terminal",
+          "sequence": 67,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.RECONCILE_SETUP"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return reused_and_verified for current requested partner scope with matched/preserved coverage and no mutation; historical strict-import verification remains separate Apply Customer Result Presentation using current-request evidence; preserve the full operational result. Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 173
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.VERIFICATION_DONE",
+          "node_type": "terminal",
+          "sequence": 68,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.VERIFY_PROPERTY_STATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return exact verified property and compared-snapshot coverage after completed import; report no broader environment or document-exchange claim Apply Customer Result Presentation using current-request evidence; preserve the full operational result. Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 170
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.QUALIFICATION_DONE",
+          "node_type": "terminal",
+          "sequence": 69,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.QUALIFY_SUPPLIER_STATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return read-only supplier qualification evidence and per-field comparison coverage; preserve all runtime import, installed-build and target-wide qualification limits Apply Customer Result Presentation using current-request evidence; preserve the full operational result. Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 171
           },
           "readiness": {
             "status": "ready",
@@ -136,11 +904,1952 @@
             "CMKSC.GATE_EXECUTION"
           ],
           "on_failure": "continue",
-          "applies_when": "Execution gate passed",
+          "applies_when": "Execution gate passed Apply Customer Result Presentation using current-request evidence; preserve the full operational result. Apply Business Name Presentation.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 61
+            "line": 172
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.CREATE_NEEDED",
+          "node_type": "terminal",
+          "sequence": 71,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.RECONCILE_SETUP"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return create_needed and private normalized request/evidence to the invoking Run Book's existing create workflow, not approval or creation success Apply Customer Result Presentation using current-request evidence; preserve the full operational result. Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 174
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.REVIEW_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 72,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.RECONCILE_SETUP"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return grouped meaningful differences, missing business decision or precise unsupported change; no implicit update or duplicate create Apply Customer Result Presentation using current-request evidence; preserve the full operational result. Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 175
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.REST_APPROVAL_READY",
+          "node_type": "terminal",
+          "sequence": 81,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.REST_GATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Retained historical node only. FSM-Only Route Enforcement rejects new REST or assisted setup before this node; return the task failure outcome if reached for a new write. No Core helper, approval handoff, dispatch or operator Save is authorized. Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 259
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.REST_VERIFIED",
+          "node_type": "terminal",
+          "sequence": 82,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.REST_VERIFY"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return actual action outcome and verified requested-state coverage separately. Preserve any credential/connectivity or partial-result boundary; do not claim another component is ready, infer no changes or report a PO delivered Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 266
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.ASSISTED_APPROVAL_READY",
+          "node_type": "terminal",
+          "sequence": 83,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.ASSISTED_GATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Retained historical node only. FSM-Only Route Enforcement rejects new REST or assisted setup before this node; return the task failure outcome if reached for a new write. No Core helper, approval handoff, dispatch or operator Save is authorized. Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 274
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.ASSISTED_CONTEXT_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 84,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.ASSISTED_CONTEXT"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return the exact current-screen context/identity confirmation step; retain supplied values and request no internal document, runtime URL, secret or ZIP Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 275
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.ASSISTED_VERIFIED",
+          "node_type": "terminal",
+          "sequence": 85,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.ASSISTED_RESULT"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return saved configuration and per-field operator verification. No whole-environment, transport-authentication or PO receipt claim Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 276
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.ASSISTED_REUSED",
+          "node_type": "terminal",
+          "sequence": 86,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.ASSISTED_RESULT"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return unchanged requested configuration with current scope and field evidence; no setup write occurred Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 277
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.ASSISTED_STATE_ONLY",
+          "node_type": "terminal",
+          "sequence": 87,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.ASSISTED_RESULT"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return requested state confirmed while the prior action remains uncertain. Never replay a save or infer creation Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 278
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.ASSISTED_CONFIRMATION_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 88,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.ASSISTED_RESULT"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return the exact missing fresh screen/field confirmation; preserve actual action outcome without a new save Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 279
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.ROUTING_STATE_VERIFIED",
+          "node_type": "terminal",
+          "sequence": 94,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.VERIFY_ROUTING_STATE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Existing requested default and supplier-site routing verified. Return exact current setup-state coverage and preserved requested scope; do not claim new routing creation, document enablement, activation or business delivery Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 294
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_ACCOUNT_INPUT",
+          "node_type": "step",
+          "sequence": 100,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "CMKSC.FSM_ACCOUNT_REFERENCES",
+            "invalid": "CMKSC.FSM_ACCOUNT_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.ROUTING_REFERENCE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only create_account_number_fsm: apply Business Attachment Input Semantics, Current Request and Customer Result Inputs, Greenfield Initial Setup Inputs and Native FSM Account Number Creation for business_intake, source_export or prepared_import. Reject an unknown stage. No provider or partner-property questions and no external call from this node",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 555
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_ACCOUNT_REFERENCES",
+          "node_type": "decision",
+          "sequence": 101,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSC.FSM_ACCOUNT_PACKAGE",
+            "source_required": "CMKSC.FSM_ACCOUNT_SOURCE_REQUIRED",
+            "blocked": "CMKSC.FSM_ACCOUNT_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.FSM_ACCOUNT_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only create_account_number_fsm: execute qualify_cmksc_fsm_account_create. This is the selected read-only feature/parent/source/collision step; no provider selection, export submission or setup mutation",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 628
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_ACCOUNT_PACKAGE",
+          "node_type": "decision",
+          "sequence": 102,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "prepare_needed": "CMKSC.FSM_ACCOUNT_PREPARE_NEEDED",
+            "loader_ready": "CMKSC.FSM_ACCOUNT_LOAD_READY",
+            "invalid": "CMKSC.FSM_ACCOUNT_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.FSM_ACCOUNT_REFERENCES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "After references are qualified, business_intake/source_export returns prepare_needed to the declared Run Book step. prepared_import validates the exact four-cell row, all-object package rules and immutable preparation evidence before loader_ready. This node never approves or submits an import",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 556
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_ACCOUNT_SOURCE_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 103,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.FSM_ACCOUNT_REFERENCES"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return the precise source/template requirements to the invoking shared export step with retained account/supplier/site intent. No import or guessed package Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 336
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_ACCOUNT_PREPARE_NEEDED",
+          "node_type": "terminal",
+          "sequence": 104,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.FSM_ACCOUNT_PACKAGE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return the qualified four-cell business intent, source/template fingerprints and private before-snapshot to Prepare Account Number CSV ZIP. This is preparation readiness, not creation or approval Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 337
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_ACCOUNT_LOAD_READY",
+          "node_type": "terminal",
+          "sequence": 105,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.FSM_ACCOUNT_PACKAGE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return the exact immutable prepared account ZIP and rule evidence to Core Data Loader's preflight, Task Hook and approval workflow. Never claim submitted or created from this terminal Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 338
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_ACCOUNT_ISSUES",
+          "node_type": "terminal",
+          "sequence": 106,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "continue",
+          "applies_when": "Return stage/failure class, precise business/reference/profile issue, sanitized evidence and one safe resume step. Apply Native FSM Account Number Outcomes and Customer Result Presentation; no write or fallback Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 339
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_ACCOUNT_VERIFY_INPUT",
+          "node_type": "step",
+          "sequence": 110,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "CMKSC.FSM_ACCOUNT_VERIFY_STATE",
+            "invalid": "CMKSC.FSM_ACCOUNT_VERIFY_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.ROUTING_REFERENCE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only verify_account_number_fsm: apply Business Attachment Input Semantics and Current Request and Customer Result Inputs, then require completed successful import, exact current request and approved intent/hash bindings and current complete before/after exports. No new selection, creation or import from this branch",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 557
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_ACCOUNT_VERIFY_STATE",
+          "node_type": "decision",
+          "sequence": 111,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSC.FSM_ACCOUNT_VERIFIED",
+            "blocked": "CMKSC.FSM_ACCOUNT_VERIFY_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.FSM_ACCOUNT_VERIFY_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only verify_account_number_fsm: execute verify_cmksc_fsm_account_state on the bound completed-import and supplied before/after evidence. No external call or setup mutation",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 629
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_ACCOUNT_VERIFIED",
+          "node_type": "terminal",
+          "sequence": 112,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.FSM_ACCOUNT_VERIFY_STATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return the new account mapping and exact fresh-export verification coverage. No generated numeric ID, ship-to assignment, routing or message-delivery claim Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 340
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_ACCOUNT_VERIFY_ISSUES",
+          "node_type": "terminal",
+          "sequence": 113,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "continue",
+          "applies_when": "Preserve the actual account import result separately from missing/failed saved-state verification; return safe comparison diagnostics without a new import Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 341
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_SHIP_TO_INPUT",
+          "node_type": "step",
+          "sequence": 120,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "CMKSC.FSM_SHIP_TO_REFERENCES",
+            "invalid": "CMKSC.FSM_SHIP_TO_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.ROUTING_REFERENCE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only create_ship_to_assignment_fsm: apply Business Attachment Input Semantics, Current Request and Customer Result Inputs, Greenfield Initial Setup Inputs and Native FSM Physical Ship-To Assignment Creation for business_intake, source_export or prepared_import. Reject an unknown stage. This node performs no read or mutation",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 579
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_SHIP_TO_REFERENCES",
+          "node_type": "decision",
+          "sequence": 121,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSC.FSM_SHIP_TO_PACKAGE",
+            "source_required": "CMKSC.FSM_SHIP_TO_SOURCE_REQUIRED",
+            "blocked": "CMKSC.FSM_SHIP_TO_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.FSM_SHIP_TO_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only create_ship_to_assignment_fsm executes qualify_cmksc_fsm_ship_to_create. Read-only parent/source/location/collision qualification; no account or assignment mutation",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 647
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_SHIP_TO_PACKAGE",
+          "node_type": "decision",
+          "sequence": 122,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "prepare_needed": "CMKSC.FSM_SHIP_TO_PREPARE_NEEDED",
+            "loader_ready": "CMKSC.FSM_SHIP_TO_LOAD_READY",
+            "invalid": "CMKSC.FSM_SHIP_TO_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.FSM_SHIP_TO_REFERENCES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Qualified business_intake/source_export returns prepare_needed. prepared_import requires exact seven-cell intent, immutable archive, provenance and all-object checks before loader_ready. No approval or submission",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 580
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_SHIP_TO_SOURCE_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 123,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.FSM_SHIP_TO_REFERENCES"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return exact-task full-baseline/template requirements to invoking shared export while retaining valid business choices; no guessed package Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 355
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_SHIP_TO_PREPARE_NEEDED",
+          "node_type": "terminal",
+          "sequence": 124,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.FSM_SHIP_TO_PACKAGE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return qualified seven-cell intent and private parent/location/absence evidence to Prepare Ship-To Assignment CSV ZIP; preparation readiness only Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 356
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_SHIP_TO_LOAD_READY",
+          "node_type": "terminal",
+          "sequence": 125,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.FSM_SHIP_TO_PACKAGE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return exact immutable assignment ZIP and validation evidence to Core Data Loader preflight, Task Hook and approval; no submitted/created claim Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 357
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_SHIP_TO_ISSUES",
+          "node_type": "terminal",
+          "sequence": 126,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "continue",
+          "applies_when": "Return exact input/reference/profile/process failure, safe evidence and resume stage. No implicit account creation, reassignment, setup REST/UI fallback or import retry Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 358
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_SHIP_TO_VERIFY_INPUT",
+          "node_type": "step",
+          "sequence": 130,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "CMKSC.FSM_SHIP_TO_VERIFY_STATE",
+            "invalid": "CMKSC.FSM_SHIP_TO_VERIFY_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.ROUTING_REFERENCE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only verify_ship_to_assignment_fsm: apply Business Attachment Input Semantics and Current Request and Customer Result Inputs, then require bound current request/approved intent, successful completed import and full before/after evidence; no new selection, account creation or import",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 581
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_SHIP_TO_VERIFY_STATE",
+          "node_type": "decision",
+          "sequence": 131,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSC.FSM_SHIP_TO_VERIFIED",
+            "blocked": "CMKSC.FSM_SHIP_TO_VERIFY_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.FSM_SHIP_TO_VERIFY_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only verify_ship_to_assignment_fsm executes verify_cmksc_fsm_ship_to_state on supplied immutable before/after evidence. No external call",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 648
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_SHIP_TO_VERIFIED",
+          "node_type": "terminal",
+          "sequence": 132,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.FSM_SHIP_TO_VERIFY_STATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return the newly saved assignment, verified account parent and seven-field/preservation coverage only; no document-routing or delivery claim Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 359
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_SHIP_TO_VERIFY_ISSUES",
+          "node_type": "terminal",
+          "sequence": 133,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "continue",
+          "applies_when": "Preserve actual import result separately from failed/missing assignment comparison; return safe diagnostics without reimport Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 360
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_LOCATION_INPUT",
+          "node_type": "step",
+          "sequence": 140,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "CMKSC.FSM_LOCATION_REFERENCES",
+            "invalid": "CMKSC.FSM_LOCATION_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.ROUTING_REFERENCE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only create_location_code_fsm: apply Business Attachment Input Semantics, Current Request and Customer Result Inputs, Greenfield Initial Setup Inputs and Native FSM Customer Location Code Creation for business_intake, source_export or prepared_import. Reject unknown stage before reads",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 613
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_LOCATION_REFERENCES",
+          "node_type": "decision",
+          "sequence": 141,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSC.FSM_LOCATION_PACKAGE",
+            "source_required": "CMKSC.FSM_LOCATION_SOURCE_REQUIRED",
+            "blocked": "CMKSC.FSM_LOCATION_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.FSM_LOCATION_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only create_location_code_fsm executes qualify_cmksc_fsm_location_create. Read-only exact source/customer/site/purpose/account-site/collision qualification; no setup or master mutation",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 758
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_LOCATION_PACKAGE",
+          "node_type": "decision",
+          "sequence": 142,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "prepare_needed": "CMKSC.FSM_LOCATION_PREPARE_NEEDED",
+            "loader_ready": "CMKSC.FSM_LOCATION_LOAD_READY",
+            "invalid": "CMKSC.FSM_LOCATION_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.FSM_LOCATION_REFERENCES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Qualified business_intake/source_export returns prepare_needed to the declared preparation step. prepared_import requires all thirteen cells, purpose/account-site coverage, immutable package and all-object validation before loader_ready. No import approval or submission",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 614
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_LOCATION_SOURCE_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 143,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.FSM_LOCATION_REFERENCES"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return exact-task header-only template/full-baseline requirements to the invoking shared export workflow with current customer/site/code intent and request fingerprints retained; no guessed package Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 375
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_LOCATION_PREPARE_NEEDED",
+          "node_type": "terminal",
+          "sequence": 144,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.FSM_LOCATION_PACKAGE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return the qualified thirteen-cell intent, complete purpose/account-site/collision evidence and bound source/target/request fingerprints to Prepare Customer Location Code CSV ZIP. Preparation readiness only Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 376
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_LOCATION_LOAD_READY",
+          "node_type": "terminal",
+          "sequence": 145,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.FSM_LOCATION_PACKAGE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return exact immutable native location ZIP and all-field validation evidence to Core Data Loader preflight, Task Hook and its approval. Never claim creation or submission from this terminal Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 377
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_LOCATION_ISSUES",
+          "node_type": "terminal",
+          "sequence": 146,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "continue",
+          "applies_when": "Return the exact current input/source/reference/profile/process failure, preserved requested fields, safe evidence and resume stage. Apply Native FSM Customer Location Outcomes and Customer Result Presentation; no setup REST/UI fallback, new master record or retry Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 378
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_LOCATION_VERIFY_INPUT",
+          "node_type": "step",
+          "sequence": 150,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "CMKSC.FSM_LOCATION_VERIFY_STATE",
+            "invalid": "CMKSC.FSM_LOCATION_VERIFY_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.ROUTING_REFERENCE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only verify_location_code_fsm: apply Business Attachment Input Semantics and Current Request and Customer Result Inputs, then require bound completed successful FSM import, exact current request/approved row/hash and complete before/after exports. No new selection or mutation",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 615
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_LOCATION_VERIFY_STATE",
+          "node_type": "decision",
+          "sequence": 151,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSC.FSM_LOCATION_VERIFIED",
+            "blocked": "CMKSC.FSM_LOCATION_VERIFY_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.FSM_LOCATION_VERIFY_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only verify_location_code_fsm executes verify_cmksc_fsm_location_state on the bound actual import and complete immutable before/after evidence. No external call",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 759
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_LOCATION_VERIFIED",
+          "node_type": "terminal",
+          "sequence": 152,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.FSM_LOCATION_VERIFY_STATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return the newly saved location code and exact thirteen-field purpose/account-site/preservation coverage, bound current customer request and actual FSM result. No generated-ID, inbound transaction or message-delivery claim Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 379
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_LOCATION_VERIFY_ISSUES",
+          "node_type": "terminal",
+          "sequence": 153,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "continue",
+          "applies_when": "Preserve actual import result independently from missing or failed saved-state comparison. Return exact field/current-request/evidence failure and safe next check without reimport Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 380
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_SETTINGS_INPUT",
+          "node_type": "step",
+          "sequence": 160,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "CMKSC.FSM_SETTINGS_REFERENCES",
+            "invalid": "CMKSC.FSM_SETTINGS_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.ROUTING_REFERENCE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only configure_initial_settings_fsm: apply Business Attachment Input Semantics, Current Request and Customer Result Inputs, Greenfield Initial Setup Inputs and Native FSM Initial Settings Inputs for business_intake, source_export or prepared_import. No unrelated provider/partner questions or external call",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 648
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_SETTINGS_REFERENCES",
+          "node_type": "decision",
+          "sequence": 161,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSC.FSM_SETTINGS_DESIGN",
+            "source_required": "CMKSC.FSM_SETTINGS_SOURCE_REQUIRED",
+            "blocked": "CMKSC.FSM_SETTINGS_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.FSM_SETTINGS_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only configure_initial_settings_fsm executes qualify_cmksc_fsm_initial_settings. This is the declared read-only source/identity/semantic/field qualification; no provider/supplier creation, export initiation or setup mutation",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 787
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_SETTINGS_DESIGN",
+          "node_type": "decision",
+          "sequence": 162,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "changed_required": "CMKSC.FSM_SETTINGS_PACKAGE",
+            "already_satisfied": "CMKSC.FSM_SETTINGS_ALREADY_SATISFIED",
+            "blocked": "CMKSC.FSM_SETTINGS_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.FSM_SETTINGS_REFERENCES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only configure_initial_settings_fsm: apply Native Initial Settings Design using qualified current rows, field states and effective values. Changed preparation and verified no-op have separate terminals; no external call, mutation or approval",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 135
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_SETTINGS_PACKAGE",
+          "node_type": "decision",
+          "sequence": 163,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "prepare_needed": "CMKSC.FSM_SETTINGS_PREPARE_NEEDED",
+            "loader_ready": "CMKSC.FSM_SETTINGS_LOAD_READY",
+            "invalid": "CMKSC.FSM_SETTINGS_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.FSM_SETTINGS_DESIGN"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Qualified changed-value business_intake/source_export returns prepare_needed. prepared_import requires exact intended selected full rows and immutable archive/provenance/all-object checks before loader_ready. No approval or submission",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 649
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_SETTINGS_SOURCE_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 164,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.FSM_SETTINGS_REFERENCES"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return full-before/template requirements and retained business intent to the invoking shared export step; no import or guessed row Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 397
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_SETTINGS_PREPARE_NEEDED",
+          "node_type": "terminal",
+          "sequence": 165,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.FSM_SETTINGS_PACKAGE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return qualified selected existing rows, field deltas/units and private source/reference fingerprints to Prepare Initial Settings CSV ZIP; preparation readiness only Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 398
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_SETTINGS_LOAD_READY",
+          "node_type": "terminal",
+          "sequence": 166,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.FSM_SETTINGS_PACKAGE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return exact immutable settings ZIP and rule evidence to Core Data Loader preflight, Task Hook and approval. No submitted/configured claim Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 399
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_SETTINGS_ISSUES",
+          "node_type": "terminal",
+          "sequence": 167,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "continue",
+          "applies_when": "Return exact input/reference/profile/effective-design issue, failure class, sanitized evidence and safe resume. No new global row, guessed ID, fallback or retry Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 400
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_SETTINGS_ALREADY_SATISFIED",
+          "node_type": "terminal",
+          "sequence": 168,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.FSM_SETTINGS_DESIGN"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return requested initial settings as already satisfied with current comparisons and unspecified fields preserved. No import, new change, scheduler or delivery claim Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 401
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_SETTINGS_VERIFY_INPUT",
+          "node_type": "step",
+          "sequence": 170,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "CMKSC.FSM_SETTINGS_VERIFY_STATE",
+            "invalid": "CMKSC.FSM_SETTINGS_VERIFY_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.ROUTING_REFERENCE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only verify_initial_settings_fsm: apply Current Request and Customer Result Inputs and require bound successful completed approved import, immutable intended full rows/units/hash and complete full before/after exports. No new import or setting selection",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 650
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_SETTINGS_VERIFY_STATE",
+          "node_type": "decision",
+          "sequence": 171,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSC.FSM_SETTINGS_VERIFIED",
+            "blocked": "CMKSC.FSM_SETTINGS_VERIFY_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.FSM_SETTINGS_VERIFY_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only verify_initial_settings_fsm executes verify_cmksc_fsm_initial_settings_state on supplied approved actual-import and full before/after evidence. No external call",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 788
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_SETTINGS_VERIFIED",
+          "node_type": "terminal",
+          "sequence": 172,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.FSM_SETTINGS_VERIFY_STATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return actual FSM setup outcome and exact changed/same-value per-field comparison, preserved identities/counts/unrelated state and current request binding. No reprocessing or delivery claim Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 402
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_SETTINGS_VERIFY_ISSUES",
+          "node_type": "terminal",
+          "sequence": 173,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "continue",
+          "applies_when": "Preserve actual import result separately from failed/missing comparison. Return the exact issue and safe next read without another import Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 403
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_ROUTING_INPUT",
+          "node_type": "step",
+          "sequence": 180,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "CMKSC.FSM_ROUTING_REFERENCES",
+            "invalid": "CMKSC.FSM_ROUTING_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.ROUTING_REFERENCE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only create_document_routing_fsm applies Business Attachment Input Semantics, Current Request and Customer Result Inputs, Greenfield Initial Setup Inputs and Native FSM Document Routing Creation at its explicit stage. No new supplier/master creation",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 670
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_ROUTING_REFERENCES",
+          "node_type": "decision",
+          "sequence": 181,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "qualified": "CMKSC.FSM_ROUTING_PACKAGE",
+            "source_required": "CMKSC.FSM_ROUTING_SOURCE_REQUIRED",
+            "blocked": "CMKSC.FSM_ROUTING_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.FSM_ROUTING_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only create_document_routing_fsm executes qualify_cmksc_fsm_routing_create; fully qualified current native/reference evidence is required at prepared_import. No mutation",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 811
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_ROUTING_PACKAGE",
+          "node_type": "decision",
+          "sequence": 182,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "prepare_needed": "CMKSC.FSM_ROUTING_PREPARE_NEEDED",
+            "loader_ready": "CMKSC.FSM_ROUTING_LOAD_READY",
+            "invalid": "CMKSC.FSM_ROUTING_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.FSM_ROUTING_REFERENCES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Qualified business_intake/source_export returns prepare_needed. prepared_import requires exact eight cells, all Data fields, blank new IDs, immutable package/provenance/all-object validation and coupled-effect disclosure before loader_ready. No import approval or submission",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 671
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_ROUTING_SOURCE_REQUIRED",
+          "node_type": "terminal",
+          "sequence": 183,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.FSM_ROUTING_REFERENCES"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return exact full-before/provider/header-only-template needs and retained business scope to the invoking shared export workflow; no speculative ZIP Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 420
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_ROUTING_PREPARE_NEEDED",
+          "node_type": "terminal",
+          "sequence": 184,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.FSM_ROUTING_PACKAGE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return qualified eight-cell intent, new-ID contract, complete references/collisions and coupled supplier effect to Prepare Document Routing CSV ZIP; preparation readiness only Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 421
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_ROUTING_LOAD_READY",
+          "node_type": "terminal",
+          "sequence": 185,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.FSM_ROUTING_PACKAGE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return exact immutable native rule ZIP and all-field/provenance validation to Core Data Loader preflight, Task Hook and its own approval. No submitted/created claim Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 422
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_ROUTING_ISSUES",
+          "node_type": "terminal",
+          "sequence": 186,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "continue",
+          "applies_when": "Return exact input/catalog/auth/transport/contract/process/artifact/approval failure, preserved request, safe evidence and resume step. No generated ID invention, master creation, setup REST/UI fallback or automatic replay Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 423
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_ROUTING_VERIFY_INPUT",
+          "node_type": "step",
+          "sequence": 190,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "CMKSC.FSM_ROUTING_VERIFY_STATE",
+            "invalid": "CMKSC.FSM_ROUTING_VERIFY_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.ROUTING_REFERENCE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only verify_document_routing_fsm requires current request binding, exact approved row/ZIP/hash, successful completed FSM result and full before/after evidence. No new rule, input substitution or import",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 672
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_ROUTING_VERIFY_STATE",
+          "node_type": "decision",
+          "sequence": 191,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "verified": "CMKSC.FSM_ROUTING_VERIFIED",
+            "blocked": "CMKSC.FSM_ROUTING_VERIFY_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.FSM_ROUTING_VERIFY_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only verify_document_routing_fsm executes verify_cmksc_fsm_routing_state; exact one-rule result and all-object preservation, no replay",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 812
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_ROUTING_VERIFIED",
+          "node_type": "terminal",
+          "sequence": 192,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.FSM_ROUTING_VERIFY_STATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return the saved requested routing rule, generated identity, exact all-field and all-object preservation coverage and actual coupled-effect comparison. Both default and supplier-site passes are required for combined completion; no activation or message-delivery claim Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 424
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.FSM_ROUTING_VERIFY_ISSUES",
+          "node_type": "terminal",
+          "sequence": 193,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "continue",
+          "applies_when": "Preserve actual job result separately from missing/different rule or unexpected state. Return exact comparison and safe next read without another import Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 425
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.COMBINED_INPUT",
+          "node_type": "step",
+          "sequence": 194,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "CMKSC.COMBINED_REFERENCES",
+            "blocked": "CMKSC.COMBINED_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.ROUTING_REFERENCE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only create_account_ship_to_combined_fsm: apply Combined Account and Physical Ship-To bounded request, current request/source binding, staged inputs and applicable field/design contracts before reference reads",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 701
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.COMBINED_REFERENCES",
+          "node_type": "decision",
+          "sequence": 195,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "qualified": "CMKSC.COMBINED_PACKAGE",
+            "blocked": "CMKSC.COMBINED_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.COMBINED_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only create_account_ship_to_combined_fsm: execute qualify_cmksc_combined_account_ship_to and all applicable Combined Account and Physical Ship-To rules. Package-local intended account is not a claim of prior saved setup",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 825
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.COMBINED_PACKAGE",
+          "node_type": "decision",
+          "sequence": 196,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "prepare_needed": "CMKSC.COMBINED_PREPARE",
+            "loader_ready": "CMKSC.COMBINED_LOAD_READY",
+            "blocked": "CMKSC.COMBINED_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.COMBINED_REFERENCES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "For qualified intake/source_export return prepare_needed to the declared Run Book processing step. At prepared_import require all Combined Account and Physical Ship-To package, reference, source/schema, feature/dependency/design and immutable Core preflight checks before loader_ready. No approval or external write",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 702
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.COMBINED_PREPARE",
+          "node_type": "terminal",
+          "sequence": 197,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.COMBINED_PACKAGE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return qualified retained inputs to the active Run Book Prepare Combined Account and Ship-To CSV ZIP step and continue preparation without a new proceed question. This is not creation or approval Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 439
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.COMBINED_LOAD_READY",
+          "node_type": "terminal",
+          "sequence": 198,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.COMBINED_PACKAGE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return one immutable two-row native ZIP and complete source/reference/rule evidence to Core Data Loader and Task Hook for their authoritative approval/upload workflow. Preapproval readiness does not establish runtime acceptance Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 440
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.COMBINED_VERIFY",
+          "node_type": "decision",
+          "sequence": 199,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "verified": "CMKSC.COMBINED_VERIFIED",
+            "blocked": "CMKSC.COMBINED_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.ROUTING_REFERENCE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only verify_account_ship_to_combined_fsm: apply Combined Account and Physical Ship-To verification inputs and exact all-cell/two-addition/all-eight-object preservation result rules; report actual job processing separately. No external operation",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 703
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.COMBINED_VERIFIED",
+          "node_type": "terminal",
+          "sequence": 200,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.COMBINED_VERIFY"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return both created-and-verified business components, actual single job/result, bound intent/snapshot hashes and preservation coverage. This proves only the bounded account/physical assignment setup and not arbitrary batching, reassignment, routing or delivery Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 441
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.COMBINED_ISSUES",
+          "node_type": "terminal",
+          "sequence": 201,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Return the exact failed input/reference/package/job/verification check, completed path, actual partial side effects and one safe next action. Preserve unknown outcomes and do not submit another import Apply Business Name Presentation.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 442
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.COMPOSITION_INPUT",
+          "node_type": "decision",
+          "sequence": 400,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "CMKSC.COMPOSITION_REFERENCES",
+            "blocked": "CMKSC.COMPOSITION_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.ROUTING_REFERENCE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only qualify_configuration_task_composition_fsm: apply Configuration Task Composition bounded shape, stages, explicit field states and dependency firewall before any component GET. Do not borrow new provider/location references",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 728
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.COMPOSITION_REFERENCES",
+          "node_type": "decision",
+          "sequence": 401,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "qualified": "CMKSC.COMPOSITION_PACKAGE",
+            "blocked": "CMKSC.COMPOSITION_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.COMPOSITION_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only qualify_configuration_task_composition_fsm: execute qualify_cmksc_task_composition and retain separate evidence for every component; no saved-provider or other standalone-parent rule is waived",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 850
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.COMPOSITION_PACKAGE",
+          "node_type": "decision",
+          "sequence": 402,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "prepare_needed": "CMKSC.COMPOSITION_PREPARE",
+            "loader_ready": "CMKSC.COMPOSITION_LOAD_READY",
+            "blocked": "CMKSC.COMPOSITION_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.COMPOSITION_REFERENCES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Qualified intake/source_export returns prepare_needed. prepared_import requires Configuration Task Composition exact seven-row inventory, all per-row gates, metadata/CSV/source preservation, round-trip and immutable Core preflight. No approval or write",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 729
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.COMPOSITION_PREPARE",
+          "node_type": "terminal",
+          "sequence": 403,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.COMPOSITION_PACKAGE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return qualified retained seven-row intent to active Run Book assisted Prepare Configuration Task Composition CSV ZIP and continue preparation without another proceed question. This is not creation or approval",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 448
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.COMPOSITION_LOAD_READY",
+          "node_type": "terminal",
+          "sequence": 404,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.COMPOSITION_PACKAGE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return one seven-row immutable native archive, exact task/target, component rule outcomes and source/intent/reference hashes to Core Data Loader and Task Hook. Preserve their authoritative approvals and initiation terminal. This is a qualification candidate, not saved-state acceptance",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 449
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.COMPOSITION_VERIFY",
+          "node_type": "decision",
+          "sequence": 405,
+          "action_type": "evaluate_result",
+          "execution_route": "local",
+          "transitions": {
+            "verified": "CMKSC.COMPOSITION_VERIFIED",
+            "blocked": "CMKSC.COMPOSITION_ISSUES"
+          },
+          "prerequisites": [
+            "CMKSC.ROUTING_REFERENCE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Only verify_configuration_task_composition_fsm: apply Configuration Task Composition verification and partial-failure rules to bound actual result and complete original-intent/full-snapshot evidence. Compare all eight datasets; no GET, export, preparation or replay",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 730
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.COMPOSITION_VERIFIED",
+          "node_type": "terminal",
+          "sequence": 406,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.COMPOSITION_VERIFY"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return actual one-job/per-object outcomes, five created components, both selected settings dispositions, exact approved/saved cell comparisons and complete eight-object prior-row/unspecified-cell preservation. No activation, delivery, transform execution, arbitrary batching or rollback claim",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 450
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CMKSC.COMPOSITION_ISSUES",
+          "node_type": "terminal",
+          "sequence": 407,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CMKSC.ROUTING_REFERENCE"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Return the exact failing composition input/reference/package/job/cell check, actual per-component saved side effects and errors, complete source/request fingerprints and safe resume context. Do not omit scope, infer approval or retry a mutation",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 451
           },
           "readiness": {
             "status": "ready",

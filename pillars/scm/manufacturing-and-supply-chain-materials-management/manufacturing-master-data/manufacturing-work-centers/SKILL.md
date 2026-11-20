@@ -13,7 +13,7 @@ parent_skill_id: "scm.manufacturing-and-supply-chain-materials-management.manufa
 available_flag: "Y"
 export_import_supported_flag: "Y"
 csv_export_import_supported_flag: "Y"
-dataloader_import_mode: "FSM"
+dataloader_import_mode: "REST"
 businessObject: "workCenters"
 source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 type: "planning"
@@ -148,22 +148,24 @@ Use this skill when planning, sequencing, exporting, importing, or validating se
 ## Import Mode Selection
 
 Use the manifest's `dataloader_import_mode` as the default unless the active
-workflow records an explicit supported mode override. Both modes use `core.data-loader` validation, immutable-artifact approval,
-and execution; selecting FSM does not bypass the central workflow.
+workflow records an explicit supported mode override. `REST` selects Data Loader
+uploads; `FSM` selects native FSM import/export. Both modes use `core.data-loader`
+validation, immutable-artifact approval, and execution; selecting FSM does not
+bypass the central workflow.
 
 - For `FSM`, use the selected task's target-exported CSV package and
   `ASM_SETUP_CSV_METADATA.xml`. Preserve required members, exported column names,
   parent-child keys, and native Y/N flags. Keep unrequested child CSVs header-only
   and exclude unrelated baseline records. Validate mappings before preparation;
   do not convert native FSM CSVs to a REST DAT or require REST BO registration.
-- For `REST` (the HCM Data Loader route), retain `workCenters` as the
-  `businessObject`, require its corrected live registration, and use the existing
+- For `REST` (the Data Loader route), retain `workCenters` as the
+  `businessObject`, verify its exact live registration, and use the existing
   sample, metadata, operation, and task rules. REST field encodings and child
   contracts still apply; native FSM exceptions do not apply to REST sources.
-- To restore the REST default after the BO configuration is fixed, update
-  `dataloader_import_mode` to `REST`,
-  retaining the declared business object. Revalidate new sources through the
-  selected route; never reuse an approval for a different mode or artifact.
+- To select the other mode for a request, record an explicit supported mode
+  override in the active workflow, retaining the declared business object.
+  Revalidate new sources through the selected route; never reuse an approval for
+  a different mode or artifact.
 - FSM selection alone does not authorize deletion. Stop on a requested operation
   unsupported by the selected route; never turn a delete into a merge or silently
   switch routes after a failed or uncertain write.

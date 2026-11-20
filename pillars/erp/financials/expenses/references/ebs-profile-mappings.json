@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "mappings": [
+    {
+      "application_id": "200",
+      "profile_option_name": "AP_WEB_ALLOW_OVERRIDE_APPROVER",
+      "task_folder": "manage-expenses-system-options",
+      "task_code": "EXM_MANAGE_EXPENSES_SYSTEM_OPTIONS",
+      "target_code": "ENABLE_OVERRIDE_APPROVER",
+      "value_map": {"Y": "Y", "N": "N"},
+      "evidence": [
+        "EBS FND profile metadata identifies AP_WEB_ALLOW_OVERRIDE_APPROVER as OIE:Enable Approver; do not match by display label or profile ID",
+        "https://docs.oracle.com/cd/E26401_01/doc.122/e48899/T214904T396825.htm",
+        "../manage-expenses-system-options/references/intake-fields.json: allow_overriding_approver confirmed option contract",
+        "../manage-expenses-system-options/references/ebs-profile-intake.md"
+      ]
+    },
+    {
+      "application_id": "200",
+      "profile_option_name": "AP_WEB_TAX_ENABLE",
+      "task_folder": "manage-tax-fields",
+      "task_code": "EXM_MANAGE_TAX_FIELDS",
+      "target_code": "ENABLE_TAX",
+      "value_map": {"Y": "Y", "N": "N"},
+      "confirmation": "tax_field_behavior",
+      "evidence": [
+        "EBS 12.2 Profile Options: OIE: Enable Tax; internal name confirmed by source extract metadata, not by display-name matching",
+        "https://docs.oracle.com/cd/E26401_01/doc.122/e48899/T214904T396825.htm",
+        "https://docs.oracle.com/en/cloud/saas/financials/26d/faiex/implementing-expenses.pdf#page=143",
+        "../manage-tax-fields/references/fsm-package-contract.md"
+      ]
+    }
+  ],
+  "discovery_hints": [
+    {"display_name": "OIE: Enable Approver", "task_folder": "manage-expenses-system-options", "candidate_field": "Allow Overriding Approver", "status": "research_only for unmatched internal names; the maintained mapping requires exact application/name"},
+    {"display_name": "OIE: Enable Bar Code", "task_folder": "manage-expenses-system-options", "candidate_field": "Display Bar Code", "status": "research_only"},
+    {"display_name": "OIE: Allow Non-Base Pay", "task_folder": "manage-expenses-system-options", "candidate_field": "Allow Reimbursement Currency Selection", "status": "research_only"},
+    {"display_name": "OIE: Enable DescFlex", "task_folder": "manage-expenses-system-options", "candidate_field": "Enable Descriptive Flexfields", "status": "research_only; EBS header/line choices are not a boolean mapping"}
+  ]
+}

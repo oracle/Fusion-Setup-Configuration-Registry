@@ -9,7 +9,7 @@
 | Workbook authority is not documented | Stop before reporting the task ready; obtain the authoritative source and evaluation method for workbook values. |
 | Read-only lookup is rejected or returns an ambiguous identity | Stop and report the resolver, sanitized response classification, and correction needed. |
 | Describe metadata is absent for a requested write | Stop before preview; do not hand-build a payload or substitute an endpoint. |
-| An independent live write fails | Persist the request and sanitized server response, do not retry that slot or change routes, then continue the remaining approved independent slots. Return `partial_failed`. |
+| An independent live write fails | Persist only its sequence and allowlisted HTTP status/code/field/ECID; keep raw server detail transient. Do not retry that slot or change routes, then continue the remaining approved independent slots. Return `partial_failed` and a nonzero CLI exit code. |
 
 ## Error Classifications
 

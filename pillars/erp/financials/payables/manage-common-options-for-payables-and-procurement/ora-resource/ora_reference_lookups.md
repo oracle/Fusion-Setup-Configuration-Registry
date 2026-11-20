@@ -114,7 +114,7 @@ GET {pod}/fscmRestApi/resources/11.13.18.05/finBusinessUnitsLOV?q=BusinessUnitNa
 GET {pod}/fscmRestApi/resources/11.13.18.05/ledgersLOV/{PrimaryLedgerId}?fields=LedgerId,Name
 ```
 
-Use the SOAP account-combination preflight with `DynamicInsertion=No` for account segments. It is an import-path preflight, not a substitute for every UI-only KFF condition. Any remaining UI-only difference is disclosed, rather than treated as a missing field-level validation gate.
+Use the SOAP account-combination preflight with `DynamicInsertion=No` for account segments. It is an import-path preflight, not a substitute for every UI-only KFF condition. Any remaining UI-only difference is disclosed, rather than treated as a missing field-level validation gate. For a completed Invalid response, follow [account-validation recovery](ora_error_handling.md#account-validation-recovery) to explain and offer the governed next choices; never infer absence from Invalid or require the user to supply technical flags.
 
 ## Execution Rule
 

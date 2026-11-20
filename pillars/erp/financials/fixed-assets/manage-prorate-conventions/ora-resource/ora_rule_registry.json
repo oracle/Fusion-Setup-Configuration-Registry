@@ -23,7 +23,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 72
+            "line": 89
           },
           "readiness": {
             "status": "ready",
@@ -40,17 +40,19 @@
             "resolved": "PRC.GENERATE_DATES",
             "name_exists": "PRC.DONE_EXISTS",
             "matches_listed": "PRC.DONE_FISCAL_YEARS",
-            "not_found_or_failed": "PRC.HANDLE_LOOKUP"
+            "not_found_or_failed": "PRC.HANDLE_LOOKUP",
+            "missing_required_dff": "PRC.HANDLE_INPUT",
+            "invalid_dff_value": "PRC.HANDLE_INPUT"
           },
           "prerequisites": [
             "PRC.VALIDATE_INPUT"
           ],
           "on_failure": "stop",
-          "applies_when": "Apply Lookup Execution Rules and Fiscal-Year Lookup Freshness for the route selected by Required Dependency Order in ora_dependency_readiness.md. For create, any exact convention-name match returns name_exists immediately, without existing-definition or date-row comparison. Otherwise, under Fiscal-Year Selection Rules, return matches_listed for a complete nonempty inquiry finding, resolved for completed generation context and all applicable lookups, or not_found_or_failed for invalid, unresolved, or failed lookups.",
+          "applies_when": "Apply Lookup Execution Rules and Fiscal-Year Lookup Freshness for the route selected by Required Dependency Order in ora_dependency_readiness.md. For create, any exact convention-name match returns name_exists immediately, without existing-definition or date-row comparison. Otherwise, under Fiscal-Year Selection Rules, return matches_listed for a complete nonempty inquiry finding, resolved for completed generation context and all applicable lookups, or not_found_or_failed for invalid, unresolved, or failed lookups. For a create candidate, explicit update, or existing ZIP, execute resolve_prorate_dff_segments before returning resolved. Route missing required DFF input and invalid values to their input outcomes; unverified definition, membership, or mapping evidence follows not_found_or_failed. Preserve immediate create-name-conflict and fiscal-year inquiry outcomes.",
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 97
+            "line": 154
           },
           "readiness": {
             "status": "ready",
@@ -100,7 +102,7 @@
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 38
+            "line": 40
           },
           "readiness": {
             "status": "ready",
@@ -127,7 +129,7 @@
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 129
+            "line": 140
           },
           "readiness": {
             "status": "ready",
@@ -149,7 +151,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 73
+            "line": 75
           },
           "readiness": {
             "status": "ready",
@@ -171,7 +173,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 74
+            "line": 76
           },
           "readiness": {
             "status": "ready",
@@ -195,7 +197,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 75
+            "line": 77
           },
           "readiness": {
             "status": "ready",
@@ -219,7 +221,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 76
+            "line": 78
           },
           "readiness": {
             "status": "ready",
@@ -243,7 +245,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 77
+            "line": 79
           },
           "readiness": {
             "status": "ready",
@@ -267,7 +269,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 78
+            "line": 80
           },
           "readiness": {
             "status": "ready",
@@ -291,7 +293,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 79
+            "line": 81
           },
           "readiness": {
             "status": "ready",
@@ -305,18 +307,18 @@
           "action_type": "execution_gate",
           "execution_route": "local",
           "transitions": {
-            "approved": "PRC.HANDED_OFF_TO_PARENT",
-            "approval_missing": "PRC.HANDLE_APPROVAL"
+            "ready": "PRC.VALIDATED",
+            "incomplete": "PRC.HANDLE_READINESS"
           },
           "prerequisites": [
             "PRC.RESOLVE_PACKAGE"
           ],
           "on_failure": "stop",
-          "applies_when": "The Final ZIP Preview identifies one validated immutable package for live import.",
+          "applies_when": "Require applicable read-only task validation and immutable-artifact checks for the exact target and requested scope. Return ready without requiring upload approval or a submission receipt: core.data-loader obtains submission approval after task validation. This node does not submit, poll, or report acceptance. Missing, stale, or mismatched validation/artifact evidence returns incomplete.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 80
+            "line": 82
           },
           "readiness": {
             "status": "ready",
@@ -324,7 +326,7 @@
           }
         },
         {
-          "id": "PRC.HANDLE_APPROVAL",
+          "id": "PRC.HANDLE_READINESS",
           "node_type": "step",
           "sequence": 76,
           "action_type": "error_handler",
@@ -336,11 +338,11 @@
             "PRC.IMPORT_GATE"
           ],
           "on_failure": "stop",
-          "applies_when": "Import approval is missing.",
+          "applies_when": "Required task validation or immutable-artifact evidence is missing, stale, or mismatched. Return the issue for correction; do not request submission approval, submit, or claim acceptance during task validation.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 81
+            "line": 83
           },
           "readiness": {
             "status": "ready",
@@ -360,7 +362,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 82
+            "line": 84
           },
           "readiness": {
             "status": "ready",
@@ -368,7 +370,7 @@
           }
         },
         {
-          "id": "PRC.HANDED_OFF_TO_PARENT",
+          "id": "PRC.VALIDATED",
           "node_type": "terminal",
           "sequence": 170,
           "action_type": "terminal",
@@ -377,12 +379,12 @@
           "prerequisites": [
             "PRC.IMPORT_GATE"
           ],
-          "on_failure": "continue",
-          "applies_when": "Prorate Conventions import is accepted \u2014 pending parent verification.",
+          "on_failure": "stop",
+          "applies_when": "Return validated_for_import for the current validation scope; no upload approval, submission, acceptance, or Fusion completion is implied. The parent/Core workflow may report accepted only after its accepted-initiation response supplies a request ID correlated to the exact target and reviewed immutable archive/hash. Parent verification remains required.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 83
+            "line": 85
           },
           "readiness": {
             "status": "ready",

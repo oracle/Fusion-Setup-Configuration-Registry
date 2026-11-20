@@ -1,0 +1,540 @@
+{
+  "capabilities": {
+    "determinism": {
+      "evidence": [
+        "policy-reference-0001",
+        "policy-reference-0002"
+      ],
+      "status": "ready"
+    },
+    "identity": {
+      "evidence": [
+        "policy-reference-0003",
+        "policy-reference-0004"
+      ],
+      "status": "ready"
+    },
+    "packageBuild": {
+      "evidence": [
+        "policy-reference-0005",
+        "policy-reference-0006",
+        "policy-reference-0007"
+      ],
+      "status": "ready"
+    },
+    "prerequisiteChecks": {
+      "evidence": [
+        "policy-reference-0008",
+        "policy-reference-0009",
+        "policy-reference-0010"
+      ],
+      "status": "ready"
+    },
+    "promptNormalization": {
+      "evidence": [
+        "policy-reference-0011",
+        "policy-reference-0012"
+      ],
+      "status": "ready"
+    },
+    "reconciliation": {
+      "evidence": [
+        "policy-reference-0013",
+        "policy-reference-0014"
+      ],
+      "status": "ready"
+    },
+    "rollbackBuild": {
+      "evidence": [
+        "policy-reference-0015"
+      ],
+      "status": "ready"
+    },
+    "semanticValidation": {
+      "evidence": [
+        "policy-reference-0016"
+      ],
+      "status": "ready"
+    }
+  },
+  "deletionPolicy": {
+    "boundary": "Do not infer physical delete from status or end-date updates.",
+    "childHandling": "Not applicable; delete is unsupported.",
+    "disposition": "unsupported",
+    "exactKeyRequired": true,
+    "executionOwner": "none",
+    "irreversible": true,
+    "mechanism": "No delete operation is supported by this task.",
+    "recovery": "Not applicable; delete is unsupported.",
+    "sourceIds": []
+  },
+  "entrypoints": {
+    "commands": {
+      "build": "build",
+      "determinism": "determinism",
+      "manifest": "manifest",
+      "normalize": "normalize",
+      "reconcile": "reconcile",
+      "rollback": "rollback",
+      "validate": "validate"
+    },
+    "descriptor": "e2e-adapter.json",
+    "runtime": "scripts/fsm_task_adapter.py"
+  },
+  "generation": {
+    "auditInferenceEvidence": [
+      "policy-reference-0017"
+    ],
+    "blockers": [],
+    "contractReference": "fscr-deliverable-builder/references/fsm-task-adapter-contract-v1.md",
+    "generator": "fscr-deliverable-builder/scripts/generate_fsm_task_adapter.py",
+    "keyInferenceEvidence": [],
+    "operationEvidence": {
+      "create": [
+        "policy-reference-0018",
+        "policy-reference-0019",
+        "policy-reference-0020"
+      ],
+      "update": [
+        "policy-reference-0018",
+        "policy-reference-0019",
+        "policy-reference-0020"
+      ]
+    },
+    "readiness": "ready",
+    "sourceEvidence": [
+      "policy-reference-0021",
+      "policy-reference-0022",
+      "policy-reference-0023",
+      "policy-reference-0024",
+      "policy-reference-0008"
+    ]
+  },
+  "normalization": {
+    "designInput": {
+      "defaults": {
+        "preserveOtherValues": true,
+        "preserveUnspecifiedRows": true
+      },
+      "operationRequired": [
+        "id",
+        "action",
+        "entity",
+        "targetKey",
+        "values"
+      ],
+      "optional": [
+        "evidenceUnresolvedUpdateOverrides"
+      ],
+      "required": [
+        "operations"
+      ]
+    },
+    "entityOperationOwnershipPolicy": {
+      "mode": "evidence-backed-complete-matrix",
+      "overrideCannotBypassEntityOwnership": true,
+      "packageMembershipDoesNotEstablishOwnership": true
+    },
+    "evidenceUnresolvedUpdateOverridePolicy": {
+      "authoritativeValidator": "FSM",
+      "automaticRetryAllowed": false,
+      "executionOwner": "runbook-and-core.data-loader",
+      "mode": "governed-application-validation",
+      "operation": "update",
+      "requiresCandidateSpecificApproval": true,
+      "requiresEnvironmentAuthorization": true,
+      "requiresExactFieldBinding": true,
+      "requiresExactOperationBinding": true,
+      "requiresExplicitImplementorApproval": true,
+      "requiresImmutablePreview": true,
+      "requiresPreserveOtherValues": true,
+      "requiresPreserveUnspecifiedRows": true,
+      "singleSubmissionOnly": true
+    },
+    "mode": "agent-assisted-schema-validated",
+    "procedure": [
+      "Preserve the unchanged customer request outside the business blueprint.",
+      "Use the selected task skill and compiled ora_rule_registry.json to resolve task semantics and blockers.",
+      "Write only explicit operations, target keys, requested values, resolved scope, defaults, prerequisites, preservation assertions, and warnings into the normalized design input.",
+      "Apply every known deterministic validation first; when an update field remains explicitly evidence-unresolved, disclose the gap and offer the implementor the exact governed application-validation override without relabeling the field as supported.",
+      "Run the normalize command to validate the design and emit the portable blueprint, complete preview, and stable requirements list."
+    ],
+    "supportedOperations": [
+      "create",
+      "update"
+    ]
+  },
+  "package": {
+    "entities": [
+      {
+        "auditFields": [
+          "CreatedBy",
+          "CreationDate",
+          "LastUpdatedBy",
+          "LastUpdateDate",
+          "LastUpdateLogin"
+        ],
+        "conditionallyBlockedFields": [],
+        "createDefaults": {},
+        "createFields": {
+          "AnnualInterestRate": {
+            "sourceIds": [
+              "policy-reference-0018",
+              "policy-reference-0019",
+              "policy-reference-0020",
+              "policy-reference-0025"
+            ]
+          },
+          "EndDate": {
+            "sourceIds": [
+              "policy-reference-0018",
+              "policy-reference-0019",
+              "policy-reference-0020",
+              "policy-reference-0025"
+            ]
+          },
+          "StartDate": {
+            "sourceIds": [
+              "policy-reference-0018",
+              "policy-reference-0019",
+              "policy-reference-0020",
+              "policy-reference-0025"
+            ]
+          }
+        },
+        "fieldConstraints": {},
+        "headers": [
+          "StartDate",
+          "CreatedBy",
+          "CreationDate",
+          "LastUpdatedBy",
+          "LastUpdateDate",
+          "LastUpdateLogin",
+          "AnnualInterestRate",
+          "EndDate"
+        ],
+        "keyFields": [
+          "StartDate"
+        ],
+        "member": "AP_INTEREST_PERIOD.csv",
+        "name": "AP_INTEREST_PERIOD",
+        "nodePath": "/InterestPeriodVO/InterestPeriodVORow",
+        "nodeSequence": "1",
+        "nonPersistedFields": {},
+        "operationOwnership": {
+          "create": {
+            "boundary": "Single interest period; StartDate is AltKey. Leave read-only audit cells blank and let Fusion manage them. Revalidate after a release or template change.",
+            "implementorTarget": true,
+            "roles": [
+              "implementor-target",
+              "reconciliation-target"
+            ],
+            "sourceIds": [
+              "policy-reference-0026",
+              "policy-reference-0018",
+              "policy-reference-0019",
+              "policy-reference-0020"
+            ]
+          },
+          "update": {
+            "boundary": "Single interest period; StartDate is AltKey. Leave read-only audit cells blank; revalidate after a release or template change.",
+            "implementorTarget": true,
+            "roles": [
+              "implementor-target",
+              "reconciliation-target"
+            ],
+            "sourceIds": [
+              "policy-reference-0026",
+              "policy-reference-0018",
+              "policy-reference-0019",
+              "policy-reference-0020"
+            ]
+          }
+        },
+        "requiredFields": [
+          "StartDate"
+        ],
+        "types": {
+          "AnnualInterestRate": "decimal",
+          "CreatedBy": "string",
+          "CreationDate": "dateTime",
+          "EndDate": "date",
+          "LastUpdateDate": "dateTime",
+          "LastUpdateLogin": "string",
+          "LastUpdatedBy": "string",
+          "StartDate": "date"
+        },
+        "unresolvedUpdateFields": {},
+        "updateFields": {
+          "AnnualInterestRate": {
+            "sourceIds": [
+              "policy-reference-0018",
+              "policy-reference-0019",
+              "policy-reference-0020"
+            ]
+          },
+          "EndDate": {
+            "sourceIds": [
+              "policy-reference-0018",
+              "policy-reference-0019",
+              "policy-reference-0020"
+            ]
+          }
+        },
+        "valueContracts": {}
+      }
+    ],
+    "evidenceRelease": "11.13.26.10.0",
+    "metadataMember": "ASM_SETUP_CSV_METADATA.xml",
+    "objectShortName": "AP_MANAGE_INTEREST_RATES",
+    "schemaFingerprint": "ac5fbf5af00c4f758a3ed6b532536dfb67ca7c3ca5355cc763bd9d8c798eb012"
+  },
+  "protocol": {
+    "artifacts": {
+      "blueprint": {
+        "format": "json-object",
+        "producer": "normalize",
+        "requiredFields": [
+          "task",
+          "operations",
+          "resolvedScope",
+          "explicitDefaults",
+          "preservedValues",
+          "prerequisites",
+          "warnings"
+        ]
+      },
+      "candidateHandoff": {
+        "format": "json-object",
+        "producer": "build",
+        "requiredFields": [
+          "status",
+          "task",
+          "candidateSha256",
+          "templateSha256",
+          "baselineSha256",
+          "designSha256",
+          "schemaFingerprint",
+          "memberInventory",
+          "rowCounts",
+          "errors",
+          "warnings",
+          "unresolvedWarnings",
+          "businessSummary"
+        ]
+      },
+      "preview": {
+        "format": "json-object",
+        "producer": "normalize",
+        "requiredFields": [
+          "task",
+          "operations",
+          "explicitDefaults",
+          "preservedValues",
+          "prerequisites",
+          "warnings",
+          "designSha256"
+        ]
+      },
+      "reconciliationReport": {
+        "format": "json-object",
+        "producer": "reconcile",
+        "requiredFields": [
+          "status",
+          "task",
+          "candidateSha256",
+          "exportSha256",
+          "requirementMatrix",
+          "mismatchCount"
+        ]
+      },
+      "requirements": {
+        "format": "json-array",
+        "producer": "normalize",
+        "requiredFields": [
+          "id",
+          "requirement"
+        ]
+      },
+      "sourceManifest": {
+        "format": "json-object",
+        "producer": "manifest",
+        "requiredFields": [
+          "environment",
+          "baseUrl",
+          "taskName",
+          "taskCode",
+          "status",
+          "templateOnly",
+          "release",
+          "schemaFingerprint",
+          "members",
+          "headers",
+          "populatedMembers",
+          "unrelatedPopulatedMembers"
+        ]
+      },
+      "validationReport": {
+        "format": "json-object",
+        "producer": "validate",
+        "requiredFields": [
+          "status",
+          "task",
+          "candidateSha256",
+          "designSha256",
+          "requirementIds",
+          "errors",
+          "warnings",
+          "unresolvedWarnings"
+        ]
+      }
+    },
+    "commands": {
+      "build": {
+        "command": "build",
+        "outputs": [
+          "candidateZip",
+          "candidateHandoff"
+        ],
+        "requiredArguments": [
+          "template",
+          "baseline",
+          "blueprint",
+          "requirements",
+          "output"
+        ]
+      },
+      "determinism": {
+        "command": "determinism",
+        "outputs": [
+          "determinismReport"
+        ],
+        "requiredArguments": [
+          "template",
+          "baseline",
+          "blueprint",
+          "requirements"
+        ]
+      },
+      "manifest": {
+        "command": "manifest",
+        "outputs": [
+          "sourceManifest"
+        ],
+        "requiredArguments": [
+          "package",
+          "environment",
+          "base-url",
+          "template-only"
+        ]
+      },
+      "normalize": {
+        "command": "normalize",
+        "outputs": [
+          "blueprint",
+          "preview",
+          "requirements"
+        ],
+        "requiredArguments": [
+          "baseline",
+          "request",
+          "design",
+          "blueprint-output",
+          "preview-output",
+          "requirements-output"
+        ]
+      },
+      "reconcile": {
+        "command": "reconcile",
+        "outputs": [
+          "reconciliationReport"
+        ],
+        "requiredArguments": [
+          "baseline",
+          "candidate",
+          "blueprint",
+          "requirements",
+          "export"
+        ]
+      },
+      "rollback": {
+        "command": "rollback",
+        "outputs": [
+          "rollbackBlueprint",
+          "rollbackRequirements",
+          "candidateZip",
+          "candidateHandoff"
+        ],
+        "requiredArguments": [
+          "template",
+          "before",
+          "current",
+          "forward-blueprint",
+          "blueprint-output",
+          "requirements-output",
+          "output"
+        ]
+      },
+      "validate": {
+        "command": "validate",
+        "outputs": [
+          "validationReport"
+        ],
+        "requiredArguments": [
+          "template",
+          "baseline",
+          "blueprint",
+          "requirements",
+          "package"
+        ]
+      }
+    },
+    "governance": {
+      "fusionMutationAllowed": false,
+      "importApprovalOwner": "core.data-loader",
+      "offlineOnly": true
+    },
+    "implementationKind": "generated-generic",
+    "name": "fscr-fsm-task-runtime",
+    "version": "1.0"
+  },
+  "reconciliationPolicy": {
+    "baselineRows": "fail-on-change-or-removal",
+    "concurrentUnrelatedRows": "allow",
+    "duplicateRequestedRows": "fail",
+    "requestedRows": "exact"
+  },
+  "schemaVersion": "fscr-fsm-task-adapter-v2",
+  "semanticModel": {
+    "coverage": {
+      "conditionalBlockerCount": 0,
+      "entityCount": 1,
+      "fieldCount": 8,
+      "relationshipCount": 0,
+      "supportedOperations": [
+        "create",
+        "update"
+      ]
+    },
+    "extension": {
+      "evidence": [
+        "No task-specific semantic extension is registered; deterministic behavior is generated from the descriptor and compiled rule plan."
+      ],
+      "runtime": "",
+      "status": "not_applicable",
+      "validatorCommand": ""
+    },
+    "fieldContract": "package.entities",
+    "mode": "generated-contract",
+    "relationships": [],
+    "rulePlan": "ora-resource/ora_rule_registry.json"
+  },
+  "task": {
+    "code": "AP_MANAGE_INTEREST_RATES",
+    "csvSupported": true,
+    "functionalArea": "Payables",
+    "importMode": "FSM",
+    "name": "Manage Interest Rates",
+    "offering": "Financials"
+  }
+}

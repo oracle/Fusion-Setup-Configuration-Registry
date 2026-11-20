@@ -82,7 +82,9 @@ applicability:
     - "Current Oracle Fusion Cloud release"
 side_effects:
   - "When execution_direction=ora_rest_execution is explicitly selected, performs Time Slots PUT operations only after read-only preflight, a describe-backed immutable preview, and explicit approval."
-required_privileges: []
+required_privileges:
+  - "Environment-approved Field Service Time Slots collection and item read access for preview and verification"
+  - "Environment-approved Field Service Time Slots create/update permission for the exact approved PUT operation"
 ---
 
 # Time Slots Setup Task Guidance
@@ -155,7 +157,13 @@ Warehouse Visits has no mapped writable field and is rejected.
 
 For an executable direct operation:
 
-1. Complete environment preflight and list/read the current Time Slots state.
+1. Validate the workbook and construct candidate payloads locally before any
+   Fusion request. Confirm environment identity and Time Slots read access,
+   then list/read the current state. For execution, require environment-owner
+   evidence that the selected principal has Time Slots create/update permission;
+   successful GET access alone does not establish write permission. Stop if
+   authorization is missing or uncertain. No role or privilege-code name is
+   assumed by this contract.
 2. Resolve a 404 only as a create candidate; treat a 200 as an update, enable,
    or disable candidate. Stop on any other read result.
 3. Produce an immutable preview containing environment identity, method, path,
@@ -216,3 +224,13 @@ Do not route CSV export work to `shared.setup-export.task-level-export` or CSV i
 ## Implementation Notes
 
 Use the parent functional-area skill `cx.field-service.scheduling-and-dispatch` for functional-area sequencing and scope decisions. Track token usage for any generated project artifact or skill-run record using the manifest policy.
+
+## Caller-Only Exact Preview
+
+Use the task runner with `--mode preview --include-exact-preview` to return
+`exactPreview` (including the exact requests and checksum) to the active caller
+for approval. The option is rejected in execute mode before workflow calls.
+Default output and durable evidence remain redacted. Keep captured caller output
+in private OS-temporary storage; never copy request bodies or current-state
+baselines into project evidence. Review the exact target, methods, paths, headers
+and bodies before granting checksum-bound execution approval.

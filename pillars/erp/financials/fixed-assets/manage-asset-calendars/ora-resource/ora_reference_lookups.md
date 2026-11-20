@@ -10,6 +10,7 @@
 
 | Resolver | Runs When | Request | Match Rule | Values to Fill | If No Match or Many Matches |
 |---|---|---|---|---|---|
+| resolve_calendar_dff_segments | Calendar create/update validation, before an exact-match result, or when explicit reuse supplies DFF criteria | One same-environment DFF definition export through core.fusion-api.apps-common.descriptive-flexfields, supplied header values, and complete exact-calendar target evidence when needed | Execute Calendar DFF Resolution; scope definitions to the confirmed application, DFF, and context | Per-calendar required-field map, validated values, conversions, and comparison evidence | Missing input, invalid values, ambiguous mappings, incomplete evidence, or unsupported validation blocks the applicable operation |
 | resolve_existing_asset_calendar_by_name | An explicit reuse request names one calendar | BOSS `assetCalendarsView` and `assetCalendarPeriodsView` through `core.fusion-api.rest-api-client` | Page both views completely. Match the exact Calendar Name and retain its linked Fiscal Year and all period rows. | Exact calendar identity, linked Fiscal Year, and complete period rows. | No exact name, duplicate name, incomplete paging, or incomplete period rows blocks reuse. Do not request a Fiscal Year or offer create/update. |
 | resolve_existing_asset_calendar | Before create and immediately before import | BOSS `assetCalendarsView` and `assetCalendarPeriodsView` through `core.fusion-api.rest-api-client`, or the validated same-target data export under Complete Lookup Source Selection | Compare complete parent and period sets. Match exact Calendar Name, Fiscal Year Name, and requested periods. Use the governed export fallback when BOSS returns 403 or the first page hasMore=true. | Existing definition and differences, or validated empty Calendar setup | Complete BOSS no-data or a validated zero-row data export permits new-calendar preparation. One exact match permits verified reuse. One complete different definition requires the customer to choose update or create new. Multiple matches or unresolved source completeness block. |
 | resolve_qualifying_fiscal_years_for_calendar | Fiscal Year Name is omitted after the Input Preview | `assetFiscalYearDatesView` through `core.fusion-api.rest-api-client` | Page all rows. Group rows by exact `fiscalYearName`; retain only names with complete, contiguous date rows that can satisfy the supplied calendar cycle, Start Fiscal Year, and period count. | Every qualifying exact Fiscal Year Name and its complete coverage. | No qualifying name requires Fiscal Year creation or extension details through `FA_MANAGE_FISCAL_YEAR`. Incomplete paging, unavailable data, or ambiguous coverage blocks; do not select a name. |
@@ -19,6 +20,61 @@
 | resolve_ledger_periods | Ledger-derived setup | Standard Fusion REST `ledgersLOV` and `accountingPeriodsLOV` through `core.fusion-api.rest-api-client`; an owning General Ledger export only when the REST contract is unavailable, incomplete, or ambiguous | One exact ledger; retain only exact period-set and period-type matches. | Ledger, calendar, regular and adjustment period rows | No exact match, multiple matches, or incomplete paging blocks. |
 | resolve_equivalent_fiscal_years_for_ledger | Immediately after a ledger-derived lookup | `assetFiscalYearDatesView` through `core.fusion-api.rest-api-client` | Compare complete existing Fixed Assets fiscal-year date rows with each complete regular GL fiscal-year date range. | Equivalent Fixed Assets fiscal-year name(s), date rows, and unmatched ledger fiscal years. | Unavailable, partial, or ambiguous results are unresolved; do not select or create a fiscal year. |
 | resolve_equivalent_asset_calendars_for_ledger | After equivalent fiscal-year lookup | BOSS `assetCalendarsView` and `assetCalendarPeriodsView` through `core.fusion-api.rest-api-client` | Compare each existing calendar linked to an equivalent fiscal year with the complete regular GL period rows. | Equivalent Fixed Assets calendar name(s), linked fiscal year, periods, and unmatched ledger fiscal years. | Unavailable, partial, or ambiguous results are unresolved; do not select or create a calendar. |
+
+## Calendar DFF Resolution
+
+Obtain one completed same-environment
+FA_MANAGE_FIXED_ASSETS_DESCRIPTIVE_FLEXFILEDS setup-data export per immutable
+batch through core.fusion-api.apps-common.descriptive-flexfields.
+Use Financials / Fixed Assets; resolve task sequence and export eligibility
+through the authoritative catalog and shared export workflow.
+Retain ProcessId, ZIP reference, outcome, environment, and batch identity.
+
+Reuse that definition export for all calendars in the unchanged batch.
+Export again when batch membership or environment changes, or a new batch
+starts. Never obtain a separate definition export for each calendar.
+
+1. Confirm ApplicationId=140 and DescriptiveFlexfieldCode=FA_CALENDAR_TYPES
+   from current metadata. Stop on an identity mismatch.
+2. Read enabled global definitions from
+   ORA_FND_APP_DESCRIPTIVE_FLEXFIELD_GLOBAL_SEGMENT.csv, scoped to that
+   application and DFF.
+3. Resolve each supplied context from
+   ORA_FND_APP_DESCRIPTIVE_FLEXFIELD_CONTEXT.csv in the same export.
+   Require one exact enabled ContextCode, otherwise one exact enabled Name.
+4. Read enabled context-sensitive definitions from
+   ORA_FND_APP_DESCRIPTIVE_FLEXFIELD_SEGMENT.csv for that exact application,
+   DFF, and resolved context. Blank context never waives global requirements.
+5. Use RequiredFlag to identify mandatory values, including hidden segments.
+   Map required and optional supplied values by unique current ColumnName,
+   SegmentCode, or Prompt. Reject unknown, disabled, out-of-context, or
+   conflicting assignments. Report affected Calendar Names and prompts.
+6. Delegate only read-only value-set verification through Manage Fixed Assets
+   Flexfield Value Sets. Never create, enable, or modify sets or values.
+   With no ValueSetCode, validate the supported column contract.
+   Format Only requires applicable type/format/length/precision/scale/range
+   checks, not enumerated membership. Independent requires exact eligible
+   membership; Dependent also requires the exact eligible parent/value pair.
+   Table membership is unsupported by the current delegated workflow:
+   report it as unverified and stop. Incomplete coverage or visibility,
+   unsupported types, and invalid values remain blockers.
+7. Retain supplied values and documented canonical conversions separately;
+   show conversions in the reviewed proposal. Resolve import headers from
+   the current Calendar package contract, never from assumed column names.
+
+For updates, preserve unchanged values only from complete exact-calendar
+target evidence identifying the same segment and context. Do not transfer
+values between contexts merely because physical columns match. Clearing
+or remapping requires an explicit change and supported import semantics.
+
+Before an exact-match/no-op result, compare the applicable proposed DFF
+state with complete target evidence. Incomplete comparison cannot establish
+a match. Structural calendar equivalence remains a separate comparison;
+report supplied DFF differences before a reuse decision.
+
+Exact-name reuse without supplied DFF criteria retains its existing read-only
+lookup path and does not demand create inputs. When DFF criteria are supplied,
+validate and compare them; a mismatch never authorizes an update.
 
 ## Complete Lookup Source Selection
 
@@ -281,8 +337,8 @@ prior row's result, or failed lookup evidence for another calendar.
 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|
-| CAL.LOOKUP_EXISTING_REUSE | decision | 2 | reference_lookup | match->CAL.DONE_REUSE;absent_or_incomplete->CAL.HANDLE_LOOKUP | CAL.CLASSIFY_REQUEST | stop | An explicit reuse request names one Calendar |
+| CAL.LOOKUP_EXISTING_REUSE | decision | 2 | reference_lookup | match->CAL.DONE_REUSE;absent_or_incomplete->CAL.HANDLE_LOOKUP | CAL.CLASSIFY_REQUEST | stop | An explicit reuse request names one Calendar. If DFF criteria are supplied, execute resolve_calendar_dff_segments and require matching target values before verified reuse. Do not require missing create inputs or infer an update. |
 | CAL.DISCOVER_FISCAL_YEARS | decision | 8 | reference_lookup | candidates_found->CAL.CONFIRM_FISCAL_YEAR;no_qualifying_candidate->CAL.HANDLE_INPUT;unresolved->CAL.HANDLE_LOOKUP | CAL.ROUTE_FISCAL_YEAR | stop | Fiscal Year Name is missing after the Input Preview |
 | CAL.VALIDATE_FISCAL_YEAR | decision | 10 | reference_lookup | valid->CAL.VALIDATE_INPUT;start_year_unavailable->CAL.HANDLE_DEPENDENCY;invalid_or_unresolved->CAL.HANDLE_DEPENDENCY | CAL.ROUTE_FISCAL_YEAR | stop | Use resolve_fiscal_year_for_calendar and resolve_calendar_date_basis_from_fiscal_year to validate the supplied or customer-selected exact fiscal year and Start Fiscal Year. If the start row is unavailable, stop and request an exact available row or fiscal-year extension; never substitute a nearest year. |
-| CAL.LOOKUP_EXISTING | decision | 30 | reference_lookup | absent->CAL.APPLY_DEFAULTS;match->CAL.DONE_EXISTS;different->CAL.DECIDE_UPDATE_OR_NEW;unresolved->CAL.HANDLE_LOOKUP | CAL.RESOLVE_DEPENDENCIES | stop | Dependencies are ready |
+| CAL.LOOKUP_EXISTING | decision | 30 | reference_lookup | absent->CAL.APPLY_DEFAULTS;match->CAL.DONE_EXISTS;different->CAL.DECIDE_UPDATE_OR_NEW;unresolved->CAL.HANDLE_LOOKUP | CAL.RESOLVE_DEPENDENCIES | stop | Fiscal-year and import-contract dependencies are ready. Resolve complete existing-calendar state, then execute resolve_calendar_dff_segments for the resulting create/update proposal before preview or package preparation. A match requires complete applicable DFF comparison evidence. Missing or invalid DFF input and unverified evidence follow the unresolved stop path. |
 | CAL.DECIDE_UPDATE_OR_NEW | decision | 35 | evaluate_result | update_selected->CAL.APPLY_DEFAULTS;create_new_selected->CAL.NEW_INPUT_REQUIRED;unresolved->CAL.HANDLE_INPUT | CAL.LOOKUP_EXISTING | stop | Complete existing-state evidence differs from the proposal; evaluate the customer update-or-create-new choice. Update continues; create-new returns for exact new Calendar Name collection and fresh validation; an unanswered choice is missing input, not a lookup failure. |

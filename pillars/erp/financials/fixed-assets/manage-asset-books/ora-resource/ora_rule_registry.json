@@ -23,7 +23,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 156
+            "line": 268
           },
           "readiness": {
             "status": "ready",
@@ -47,11 +47,11 @@
             "FA_BOOK.INPUT_RECOVERED"
           ],
           "on_failure": "stop",
-          "applies_when": "Before a create or update decision.",
+          "applies_when": "Before a create or update decision. Before identical or update_selected, execute resolve_asset_book_dff_segments and require complete applicable DFF validation and comparison evidence. Partial comparison cannot support either outcome.",
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 91
+            "line": 205
           },
           "readiness": {
             "status": "ready",
@@ -72,11 +72,11 @@
             "FA_BOOK.EXISTENCE_CHECKED"
           ],
           "on_failure": "stop",
-          "applies_when": "A verified create candidate or one exact existing book with a fully compared, explicitly selected update requires current target calendar-period, assignment, ledger, and account evidence. Preserve unchanged update state and apply all remaining design, ZIP-creation, final-artifact, and submission gates.",
+          "applies_when": "Resolve current calendar-period, assignment, ledger, and account evidence for a verified create or explicitly selected update. Execute resolve_asset_book_dff_segments before readiness, reusing the same batch definition export. Preserve validated unchanged update state and retain all design, ZIP-creation, final-artifact, and submission gates.",
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
-            "line": 92
+            "line": 206
           },
           "readiness": {
             "status": "ready",
@@ -101,7 +101,7 @@
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 41
+            "line": 59
           },
           "readiness": {
             "status": "ready",
@@ -126,7 +126,7 @@
           "source": {
             "file": "ora_defaulting_rules.md",
             "anchor": "task-nodes",
-            "line": 214
+            "line": 212
           },
           "readiness": {
             "status": "ready",
@@ -151,7 +151,7 @@
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 134
+            "line": 169
           },
           "readiness": {
             "status": "ready",
@@ -176,7 +176,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 19
+            "line": 39
           },
           "readiness": {
             "status": "ready",
@@ -201,7 +201,7 @@
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 135
+            "line": 170
           },
           "readiness": {
             "status": "ready",
@@ -226,7 +226,7 @@
           "source": {
             "file": "ora_design_enforcement.md",
             "anchor": "task-nodes",
-            "line": 136
+            "line": 171
           },
           "readiness": {
             "status": "ready",
@@ -240,18 +240,18 @@
           "action_type": "execution_gate",
           "execution_route": "local",
           "transitions": {
-            "approved": "FA_BOOK.HANDED_OFF_TO_PARENT",
-            "approval_missing": "FA_BOOK.RETURN_ISSUES"
+            "ready": "FA_BOOK.VALIDATED",
+            "incomplete": "FA_BOOK.RETURN_ISSUES"
           },
           "prerequisites": [
             "FA_BOOK.FINAL_ZIP_VALIDATED"
           ],
           "on_failure": "stop",
-          "applies_when": "The Final ZIP Preview identifies one validated immutable package for live import.",
+          "applies_when": "Require applicable read-only task validation and immutable-artifact checks for the exact target and requested scope. Return ready without requiring upload approval or a submission receipt: core.data-loader obtains submission approval after task validation. This node does not submit, poll, or report acceptance. Missing, stale, or mismatched validation/artifact evidence returns incomplete.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 20
+            "line": 40
           },
           "readiness": {
             "status": "ready",
@@ -259,7 +259,7 @@
           }
         },
         {
-          "id": "FA_BOOK.HANDED_OFF_TO_PARENT",
+          "id": "FA_BOOK.VALIDATED",
           "node_type": "terminal",
           "sequence": 110,
           "action_type": "terminal",
@@ -268,12 +268,12 @@
           "prerequisites": [
             "FA_BOOK.IMPORT_GATE"
           ],
-          "on_failure": "continue",
-          "applies_when": "Asset Books import is accepted \u2014 pending parent verification.",
+          "on_failure": "stop",
+          "applies_when": "Return validated_for_import for the current validation scope; no upload approval, submission, acceptance, or Fusion completion is implied. The parent/Core workflow may report accepted only after its accepted-initiation response supplies a request ID correlated to the exact target and reviewed immutable archive/hash. Parent verification remains required.",
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 21
+            "line": 41
           },
           "readiness": {
             "status": "ready",
@@ -295,7 +295,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 22
+            "line": 42
           },
           "readiness": {
             "status": "ready",
@@ -317,7 +317,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 23
+            "line": 43
           },
           "readiness": {
             "status": "ready",
@@ -337,7 +337,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 24
+            "line": 44
           },
           "readiness": {
             "status": "ready",

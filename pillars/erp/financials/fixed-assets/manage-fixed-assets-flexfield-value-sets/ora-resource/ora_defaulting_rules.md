@@ -96,7 +96,8 @@ state the other supported choices only as optional changes.
 
 For every Text-subtype definition, including Format Only, when the current
 same-task export contains `UppercaseOnlyFlag` and `ZeroFillFlag`, show and
-serialize the resolved flags as `Yes / No` by default. Do not label either
+describe the resolved flags as Yes or No in previews. Serialize them only
+as uppercase `Y` or `N`, respectively. Do not label either
 supported field Not applicable or serialize it blank. A client may override
 either default with an explicit supported value.
 
@@ -126,7 +127,7 @@ created while any required input remains unresolved.
 | Description is blank for a new definition | Derive a human-readable sentence-case Description by replacing separators with spaces, retaining recognized uppercase acronym tokens such as `FA`, and lowercasing ordinary words after the first word. For example, `FA_SERIAL_REFERENCE_1002` becomes `FA serial reference 1002`. A client-supplied Description always replaces this default. |
 | Character value rows are supplied and MaximumLength is blank | Use default 20 and apply the value-length capacity rule in ora_input_validation.md to original and canonical values for that exact new set. Never derive a longer definition, truncate, or abbreviate a value. |
 | Character definition has no value rows and MaximumLength is blank | Propose MaximumLength 20. |
-| Text-subtype export fields are present | Resolve and serialize Uppercase Only and Zero Fill for every validation type, including Format Only. Default to Yes / No only when the client leaves them blank; a client-supplied supported value overrides the default. |
+| Text-subtype export fields are present | Resolve Uppercase Only and Zero Fill for every validation type, including Format Only. Default Uppercase Only to `Y` and Zero Fill to `N` only when the client leaves them blank; translate client-supplied supported values case-insensitively to uppercase `Y`/`N` before serialization. Show Yes/No in previews. |
 | A client supplies a business value | Preserve the original input. A customer-supplied MaximumLength replaces the default and is the sole value-row length limit for that definition. When Value Subtype is Text and Uppercase Only defaults to or is selected as Yes, apply the conversion rules in ora_reference_lookups.md. In the Design Preview, recommend the default in plain language and ask whether the customer wants to keep or change it; do not show a conversion-only list. Other defaults fill only blank fields unless the client explicitly approves a correction. |
 | A selected combination changes | Re-evaluate the Definition matrix. Do not carry subtype, length, parent, range, precision, or flag values from the previous selection unless the new combination explicitly supports them. |
 | Security is not selected | Keep DataSecurityObjectName blank; do not retain a security object from a prior selection. |

@@ -73,7 +73,7 @@
           "source": {
             "file": "ora_dependency_readiness.md",
             "anchor": "task-nodes",
-            "line": 30
+            "line": 34
           },
           "readiness": {
             "status": "ready",
@@ -123,7 +123,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 37
+            "line": 38
           },
           "readiness": {
             "status": "ready",
@@ -143,7 +143,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 38
+            "line": 39
           },
           "readiness": {
             "status": "ready",
@@ -163,7 +163,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 39
+            "line": 40
           },
           "readiness": {
             "status": "ready",
@@ -185,7 +185,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 40
+            "line": 41
           },
           "readiness": {
             "status": "ready",
@@ -205,7 +205,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 41
+            "line": 42
           },
           "readiness": {
             "status": "ready",

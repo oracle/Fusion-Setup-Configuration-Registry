@@ -2,14 +2,14 @@
 
 ## Source Boundary
 
-This guidance is derived from Oracle's [How You Manage Work Areas](https://docs.oracle.com/en/cloud/saas/supply-chain-and-manufacturing/26c/faumf/how-you-manage-work-areas.html). It defines business scope only; core.data-loader owns FSM file validation and execution.
+This guidance is derived from Oracle's [How You Manage Work Areas](https://docs.oracle.com/en/cloud/saas/supply-chain-and-manufacturing/26c/faumf/how-you-manage-work-areas.html). It defines business scope only; core.data-loader owns source validation and execution for the selected import mode.
 
 ## Enforcement Order
 
 | Sequence | Step | What Must Happen |
 |---|---|---|
 | 1 | Existing plant validation | Confirm that the selected manufacturing plant exists in Fusion before creating a work area. |
-| 2 | Centralized FSM boundary | Submit only the immutable validated FSM source through core.data-loader after approval. |
+| 2 | Centralized Data Loader boundary | Submit only the immutable source validated for the selected import mode through core.data-loader after approval. |
 
 ## Design Rules
 
@@ -23,4 +23,4 @@ This guidance is derived from Oracle's [How You Manage Work Areas](https://docs.
 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|
-| WA.DESIGN | step | 3 | design_enforcement | ok->WA.DONE;failure->WA.FAILED | WA.DEPENDENCIES | stop | Work-area design and FSM import review |
+| WA.DESIGN | step | 4 | design_enforcement | ok->WA.DONE;failure->WA.FAILED | WA.DEPENDENCIES | stop | Work-area design and selected-mode import review |

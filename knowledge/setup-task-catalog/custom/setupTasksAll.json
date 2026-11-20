@@ -1,6 +1,6 @@
 {
-  "count": 104,
-  "totalResults": 104,
+  "count": 109,
+  "totalResults": 109,
   "customTaskRequiredFields": [
     "TaskCode",
     "TaskName",
@@ -544,18 +544,6 @@
       "OfferingName": "Order Management",
       "FunctionalAreaCode": "ORA_FOM_PRICING",
       "FunctionalAreaName": "Pricing"
-    },
-    {
-      "TaskCode": "CUSTOM_CREATE_CONTRACT",
-      "TaskName": "Create Contract",
-      "AvailableFlag": "Y",
-      "ExportImportSupportedFlag": "N",
-      "CSVExportImportSupportedFlag": "N",
-      "Pillar": "CX",
-      "OfferingCode": "OKC_CONTRACTS",
-      "OfferingName": "Enterprise Contracts",
-      "FunctionalAreaCode": "ORA_OKC_ENT_CONTRACTS_BASE",
-      "FunctionalAreaName": "Enterprise Contracts Base"
     },
     {
       "TaskCode": "CUSTOM_MANAGE_SALES_FUNCTIONAL_AREA_CATALOG",
@@ -1311,6 +1299,78 @@
       "OfferingName": "Manufacturing and Supply Chain Materials Management",
       "FunctionalAreaCode": "ORA_WIS_COMMON_MFG_WORK_SETUP",
       "FunctionalAreaName": "Manufacturing Master Data"
+    },
+    {
+      "TaskCode": "CUSTOM_MANAGE_CONTRACT_VALIDATIONS",
+      "TaskName": "Manage Contract Validations",
+      "AvailableFlag": "Y",
+      "ExportImportSupportedFlag": "N",
+      "CSVExportImportSupportedFlag": "N",
+      "Pillar": "CX",
+      "OfferingCode": "OKC_CONTRACTS",
+      "OfferingName": "Enterprise Contracts",
+      "FunctionalAreaCode": "ORA_OKC_ENT_CONTRACTS_BASE",
+      "FunctionalAreaName": "Enterprise Contracts Base"
+    },
+    {
+      "TaskCode": "CUSTOM_MANAGE_CONTRACT_COLLABORATION",
+      "TaskName": "Manage Contract Collaboration",
+      "AvailableFlag": "Y",
+      "ExportImportSupportedFlag": "N",
+      "CSVExportImportSupportedFlag": "N",
+      "Pillar": "CX",
+      "OfferingCode": "OKC_CONTRACTS",
+      "OfferingName": "Enterprise Contracts",
+      "FunctionalAreaCode": "ORA_OKC_ENT_CONTRACTS_BASE",
+      "FunctionalAreaName": "Enterprise Contracts Base"
+    },
+    {
+      "TaskCode": "CUSTOM_MANAGE_CONTRACT_WORD_ADD_IN",
+      "TaskName": "Manage Contract Word Add-in",
+      "AvailableFlag": "Y",
+      "ExportImportSupportedFlag": "N",
+      "CSVExportImportSupportedFlag": "N",
+      "Pillar": "CX",
+      "OfferingCode": "OKC_CONTRACTS",
+      "OfferingName": "Enterprise Contracts",
+      "FunctionalAreaCode": "ORA_OKC_ENT_CONTRACTS_BASE",
+      "FunctionalAreaName": "Enterprise Contracts Base"
+    },
+    {
+      "TaskCode": "CUSTOM_MANAGE_ASSET_SUPPLIER_WARRANTY_COVERAGES",
+      "TaskName": "Manage Asset Supplier Warranty Coverages",
+      "AvailableFlag": "Y",
+      "ExportImportSupportedFlag": "N",
+      "CSVExportImportSupportedFlag": "N",
+      "Pillar": "SCM",
+      "OfferingCode": "ORA_MANUFACTURING_AND_SUPPLY_C",
+      "OfferingName": "Manufacturing and Supply Chain Materials Management",
+      "FunctionalAreaCode": "ORA_MNT_MGMT",
+      "FunctionalAreaName": "Maintenance Management"
+    },
+    {
+      "TaskCode": "CUSTOM_MANAGE_METER_TEMPLATE_APPLICABILITY",
+      "TaskName": "Manage Meter Template Applicability",
+      "AvailableFlag": "Y",
+      "ExportImportSupportedFlag": "N",
+      "CSVExportImportSupportedFlag": "N",
+      "Pillar": "SCM",
+      "OfferingCode": "ORA_MANUFACTURING_AND_SUPPLY_C",
+      "OfferingName": "Manufacturing and Supply Chain Materials Management",
+      "FunctionalAreaCode": "ORA_MNT_MGMT",
+      "FunctionalAreaName": "Maintenance Management"
+    },
+    {
+      "TaskCode": "CUSTOM_IMPORT_MAINTENANCE_WORK_DEFINITIONS",
+      "TaskName": "Import Maintenance Work Definitions",
+      "AvailableFlag": "Y",
+      "ExportImportSupportedFlag": "N",
+      "CSVExportImportSupportedFlag": "N",
+      "Pillar": "SCM",
+      "OfferingCode": "ORA_MANUFACTURING_AND_SUPPLY_C",
+      "OfferingName": "Manufacturing and Supply Chain Materials Management",
+      "FunctionalAreaCode": "ORA_MNT_MGMT",
+      "FunctionalAreaName": "Maintenance Management"
     }
   ]
 }

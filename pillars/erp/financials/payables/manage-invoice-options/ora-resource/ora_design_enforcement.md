@@ -45,9 +45,9 @@ and approval checks in the rule fully enforced; no reference lookup is required.
 | resolve_payment_currency | PaymentCurrencyCode is populated | Exact supplied currency code | ora_reference_lookups.md |
 | resolve_business_unit_primary_ledger | A new row is created from BuName | Exact BU, returned PrimaryLedgerId, and matching returned ledger Name | ora_reference_lookups.md |
 
-Interest account changes require `validate_account_segments_read_only` before
+Existing-account changes require `validate_account_segments_read_only` before
 the execution gate. Use the task-owned `scripts/interest_account_validation.py` with
-the unchanged core OAuth/HTTP client. `DynamicInsertion=Yes` is never part of this task.
+the unchanged core OAuth/HTTP client. The ordinary validation request always uses `DynamicInsertion=No`. For confirmed missing combinations only, the separate `interest_account_creation.py` route can send `Yes` after the exact creation preview and user approval. A failed account check never creates implicitly.
 Unrelated updates do not require repeating account validation.
 
 ## Task Nodes
@@ -71,3 +71,32 @@ clears. A generated create ZIP may carry its resolved ledger and base currency;
 validate those CSV cells against its exact saved build report. Do not treat
 them as new user-supplied ledger choices. Keep original request IDs only after
 the saved task, ZIP, baseline, row identity, and requested values match.
+
+
+## Approved missing-account FSM deferral
+
+A valid existing-CCID receipt remains the ordinary gate. The approved missing-account
+creation alternative uses a current `create_missing_interest_account_during_fsm` / `deferred_to_fsm` receipt
+from the exact approved SOAP creation rejection `GL_ASM_ACCOUNT_DYN_INSERT`,
+with fresh complete absence and enabled COA configuration proof, bound to the
+operation, BU, ledger, segments, baseline and selected origin. It never claims
+a positive CCID. The adapter checks this receipt and requires its creation
+effect in preview warnings before candidate preparation. Other account business
+errors block by default; an explicit user waiver may retain the exact rejected
+account unchanged through the override workflow below. That waiver does not make
+the account valid or qualify it for automatic FSM creation fallback. Service or
+context failures and uncertain execution must be resolved before continuing.
+Follow [batch review](../references/interest-account-batch-flow.md); excluded
+records must be explicitly selected out, never silently dropped. Data Loader
+still owns exact import validation and approval.
+
+## Explicit user account-validation waiver
+
+Account business errors block by default. After the error is explained, an
+explicit user decision to submit the exact account unchanged may retain the row
+through the bound `submit_interest_account_with_user_override` / `overridden`
+receipt. See [the override workflow](../references/account-validation-overrides.md).
+Preserve the error and reason; do not claim validation passed or invent a CCID.
+Mark affected Task Hook rule results `overridden`, keep all unrelated checks,
+and obtain the normal exact Data Loader import approval. FSM may accept or
+reject the account; post-import account usability must be checked separately.

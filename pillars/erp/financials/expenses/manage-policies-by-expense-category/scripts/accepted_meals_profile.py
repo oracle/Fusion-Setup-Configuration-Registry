@@ -8,6 +8,7 @@ from decimal import Decimal, InvalidOperation
 import json
 import hashlib
 from pathlib import Path
+from environment_identity import same_environment
 
 P = 'ORA_EXM_MEALS_POLICY'
 R = P + '_LINE'
@@ -32,7 +33,7 @@ def validate_context(contract, context, provenance, validation_date, receipt_pat
     if not isinstance(release, str) or not release.strip():
         raise ValueError('Meals profile requires baseline ProcessRelease provenance')
     if (not provenance or not context.get('ProcessEnv')
-            or context['ProcessEnv'] != provenance.get('environment')):
+            or not same_environment(context['ProcessEnv'], provenance.get('environment'))):
         raise ValueError('Meals profile requires verified baseline environment provenance')
     from currency_receipt import origin
     origin(provenance.get('origin'))
@@ -48,13 +49,9 @@ def validate_context(contract, context, provenance, validation_date, receipt_pat
     if observed.tzinfo is None or observed.astimezone(timezone.utc).date() != today or observed > now:
         raise ValueError('Meals profile baseline observation is stale or in the future; refresh through the approved export route')
     observation = profile['observation_target']
-    # Public evidence deliberately omits private historical target identity.
-    # Missing identity never grants historical/live qualification to any target.
-    observed_target = (bool(observation.get('environment'))
-        and bool(observation.get('origin'))
-        and context['ProcessEnv'] == observation['environment']
+    observed_target = (same_environment(context['ProcessEnv'], observation['environment'])
         and context['ProcessRelease'] == observation['release']
-        and origin(provenance['origin']) == origin(observation['origin']))
+        and hashlib.sha256(origin(provenance['origin']).encode('utf-8')).hexdigest() == observation['origin_sha256'])
     return {'historically_observed_target': observed_target,
             'requires_live_qualification': not observed_target,
             'release': context['ProcessRelease']}

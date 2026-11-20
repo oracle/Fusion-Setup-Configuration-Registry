@@ -8,6 +8,8 @@ algorithm. All responses follow Disclosure Rules, and continuation follows
 
 | Situation | What Should Happen |
 |---|---|
+| Required Convention Info is missing or invalid | Identify the convention and business prompt. For create/update, recover supplied input before asking for unresolved values. For an immutable ZIP, report the failing field and use the existing artifact-correction flow without modifying the archive. |
+| DFF definition, context, membership, mapping, or preservation evidence is incomplete | Report the affected business check as unverified and stop. Do not infer optionality, create value-set values, substitute a context, or blank existing values. |
 | Missing or proven invalid business input | Use Correction Question Contract in ora_input_validation.md. |
 | Create-name conflict | State that the Name already exists and ask only for a different Name. Mention update only if explicitly requested; do not ask a generic create-versus-update question. |
 | Configured connection settings are missing, unreadable, malformed, or incomplete | Explain the observed settings problem and required correction. Do not fall back to another target. |
@@ -77,7 +79,7 @@ For preview field labels, use
 | PRC.HANDLE_GENERATION | step | 60 | error_handler | handled->PRC.ISSUES | PRC.GENERATE_DATES | stop | Basis matching or date calculation failed; use Error Situations. |
 | PRC.HANDLE_DESIGN | step | 65 | error_handler | handled->PRC.ISSUES | PRC.ENFORCE_DESIGN | stop | Date-integrity checks failed; use the generation-failure Error Situations. |
 | PRC.HANDLE_PACKAGE | step | 70 | error_handler | handled->PRC.ISSUES | PRC.RESOLVE_PACKAGE | stop | Package readiness, evidence, or target-state decision is unresolved; use Error Situations. |
-| PRC.IMPORT_GATE | decision | 75 | execution_gate | approved->PRC.HANDED_OFF_TO_PARENT;approval_missing->PRC.HANDLE_APPROVAL | PRC.RESOLVE_PACKAGE | stop | The Final ZIP Preview identifies one validated immutable package for live import. |
-| PRC.HANDLE_APPROVAL | step | 76 | error_handler | handled->PRC.ISSUES | PRC.IMPORT_GATE | stop | Import approval is missing. |
+| PRC.IMPORT_GATE | decision | 75 | execution_gate | ready->PRC.VALIDATED;incomplete->PRC.HANDLE_READINESS | PRC.RESOLVE_PACKAGE | stop | Require applicable read-only task validation and immutable-artifact checks for the exact target and requested scope. Return ready without requiring upload approval or a submission receipt: core.data-loader obtains submission approval after task validation. This node does not submit, poll, or report acceptance. Missing, stale, or mismatched validation/artifact evidence returns incomplete. |
+| PRC.HANDLE_READINESS | step | 76 | error_handler | handled->PRC.ISSUES | PRC.IMPORT_GATE | stop | Required task validation or immutable-artifact evidence is missing, stale, or mismatched. Return the issue for correction; do not request submission approval, submit, or claim acceptance during task validation. |
 | PRC.ISSUES | terminal | 80 | terminal | none | none | continue | An input, lookup, generation, or package-readiness issue remains |
-| PRC.HANDED_OFF_TO_PARENT | terminal | 170 | terminal | none | PRC.IMPORT_GATE | continue | Prorate Conventions import is accepted — pending parent verification. |
+| PRC.VALIDATED | terminal | 170 | terminal | none | PRC.IMPORT_GATE | stop | Return validated_for_import for the current validation scope; no upload approval, submission, acceptance, or Fusion completion is implied. The parent/Core workflow may report accepted only after its accepted-initiation response supplies a request ID correlated to the exact target and reviewed immutable archive/hash. Parent verification remains required. |

@@ -34,6 +34,7 @@ uses_core:
   - "core.project-mgmt.project-state-manager"
   - "core.diagnostics.role-access-check"
   - "core.data-loader"
+  - "core.fusion-api.rest-api-client"
 persists_project_state: true
 token_usage_tracking:
   enabled: true
@@ -131,3 +132,32 @@ Use this functional-area skill after Service scope is confirmed and the project 
 ## Implementation Notes
 
 Use the generated setup-task metadata files for task-level planning and sequencing. Track token usage for any generated project artifact or skill-run record using the manifest policy.
+
+
+## Task Rule Handoff
+
+Read the task-scoped validation, dependency, lookup, default, design and error
+resources in `ora-resource/` and use the compiled registry for the selected task.
+Perform GET lookups only when the active workflow selects its read step, using
+`core.fusion-api.rest-api-client` after identity and privilege checks.
+Relationship and Usage child-item reads return their own results without a
+mutation approval gate. Filter-attribute reads resolve the parent first.
+
+Product Group Usage has separate GET and catalog-supported FSM import branches.
+Return validated FSM intent to the active Run Book and `core.data-loader`;
+`shared.setup-export.task-level-export` and
+`shared.validation.setup-data-validator` supply export and validation through
+that workflow. Core owns live schema, immutable artifact, exact preview,
+approval, execution and verification. Task-rule success authorizes no write.
+
+Manage Product Groups has no selected FSM import mode because both catalog
+import flags are N. For an explicit create, use the Product Groups-specific
+[command](scripts/product_group_rest.py) and its
+[operation contract](ora-resource/ora_rest_documentation.md). It implements the
+three preview/verify/create commands for this exact Service task only, delegates
+all HTTP/authentication to the existing core REST client, and reuses core
+Run Book/context guards. Evidence outputs are restricted to the selected Product Groups directory. Core Task Hook is not claimed to
+provide those REST commands. Preserve domain validation, reviewed privileges,
+immutable preview, exact immediate approval, one attempt and fresh verification.
+No other mutation or unsupported CSV/FSM import is enabled. Read the operation
+contract and ora_error_handling.md before preview or execution.

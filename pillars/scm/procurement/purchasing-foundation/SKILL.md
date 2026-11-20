@@ -10,7 +10,7 @@ functional_area_code: "ORA_PO_PURCHASING_FOUNDATION"
 type: "planning"
 execution_mode: "assisted"
 owner_team: "SCM procurement pillar team"
-version: "0.1.0"
+version: "0.1.1"
 inputs:
   - "implementation_objective"
   - "project_context"
@@ -76,8 +76,14 @@ workspace_outputs:
     default_location: "project/{project_id}/artifacts/shared/token-usage/current/token-usage-log.md"
     versioning_policy: "append-only"
 required_setup_tasks:
-  - "PO_MANAGE_PURCHASING_DESCRIPTIVE_FLEXFIELDS"
   - "PO_MANAGE_PURCHASING_VALUE_SETS"
+  - "PO_MANAGE_PURCHASING_DESCRIPTIVE_FLEXFIELDS"
+  - "PO_MANAGE_HAZARD_CLASSES"
+  - "PO_MANAGE_UN_NUMBERS"
+  - "PO_MANAGE_APPROVED_SUPPLIER_LIST_STATUSES"
+  - "ORA_PO_MANAGE_BUYER_ASSIGNMENT_RULES"
+  - "ORA_PO_MANAGE_ASSIGNMENT_RULE_SETS_LOOKUP"
+  - "PO_MANAGE_CHANGE_ORDER_TEMPLATES"
 applicability:
   industries:
     - "All"
@@ -107,8 +113,14 @@ Use this functional-area skill after Procurement scope is confirmed and the proj
 
 ## Setup Tasks
 
-1. [Manage Purchasing Descriptive Flexfields](manage-purchasing-descriptive-flexfields/SKILL.md) (`PO_MANAGE_PURCHASING_DESCRIPTIVE_FLEXFIELDS`)
-2. [Manage Purchasing Value Sets](manage-purchasing-value-sets/SKILL.md) (`PO_MANAGE_PURCHASING_VALUE_SETS`)
+1. [Manage Purchasing Value Sets](manage-purchasing-value-sets/SKILL.md) (`PO_MANAGE_PURCHASING_VALUE_SETS`)
+2. [Manage Purchasing Descriptive Flexfields](manage-purchasing-descriptive-flexfields/SKILL.md) (`PO_MANAGE_PURCHASING_DESCRIPTIVE_FLEXFIELDS`)
+3. [Manage Hazard Classes](manage-hazard-classes/SKILL.md) (`PO_MANAGE_HAZARD_CLASSES`)
+4. [Manage UN Numbers](manage-un-numbers/SKILL.md) (`PO_MANAGE_UN_NUMBERS`)
+5. [Manage Approved Supplier List Statuses](manage-approved-supplier-list-statuses/SKILL.md) (`PO_MANAGE_APPROVED_SUPPLIER_LIST_STATUSES`)
+6. [Manage Buyer Assignment Rules](manage-buyer-assignment-rules/SKILL.md) (`ORA_PO_MANAGE_BUYER_ASSIGNMENT_RULES`)
+7. [Manage Buyer Assignment Rule Sets Lookup](manage-buyer-assignment-rule-sets-lookup/SKILL.md) (`ORA_PO_MANAGE_ASSIGNMENT_RULE_SETS_LOOKUP`)
+8. [Manage Change Order Templates](manage-change-order-templates/SKILL.md) (`PO_MANAGE_CHANGE_ORDER_TEMPLATES`)
 
 ## Inputs
 
@@ -128,3 +140,19 @@ Use this functional-area skill after Procurement scope is confirmed and the proj
 ## Implementation Notes
 
 Use the generated nested setup-task skills for task-level planning, sequencing, setup-data routing, and validation. Track token usage for any generated project artifact or skill-run record using the manifest policy.
+
+
+## Hazard Class Validation Routing
+
+Route Manage Hazard Classes preparation to the nested task's
+[local validation contract](manage-hazard-classes/SKILL.md#hazard-class-resource-contract).
+It requires both name and code on every row, preserves optional values and field
+omission, and does not require create/update intent or a record-existence lookup.
+Supplied IDs pass through unchanged for Data Loader to evaluate.
+
+Use its single local graph through `READY_FOR_DATALOADER_REVIEW`. Do not add an
+external identity check or select POST/PATCH at the functional-area level.
+Data Loader owns identity and operation handling, metadata/source checks,
+preview, approval, submission, and verification. Automatic operation selection
+remains an approved working assumption, not a verified server capability.
+Local validation readiness does not mean that a load has succeeded.

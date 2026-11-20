@@ -31,13 +31,15 @@ class ActivityTypesAdapter:
     task_code="ORA_FFS_TS_ACTIVITY_TYPES"
     def resolve_route(self,direction: str|None)->dict[str,str]: return resolve_execution_route(ROOT.parent/"ora-resource"/"ora_rest_execution.md",self.task_code,direction)
     def preflight(self,workbook: Path,get: Any,temp: Path)->tuple[dict[str,Any],dict[str,dict[str,Any]]]:
+        # Validate locally before resolving the canonical Customer group remotely.
+        payload=PAYLOADS.build_preview_data(workbook,"customer")
         languages=get("/rest/ofscMetadata/v1/languages",temp/"languages.json")
         if not _active_english_is_available(languages): raise RuntimeError("Target environment does not expose an active English language.")
         group=get("/rest/ofscMetadata/v1/activityTypeGroups/customer",temp/"group.json")
         if not group or group.get("label")!="customer": raise RuntimeError("Canonical Customer Activity Type Group could not be verified.")
-        payload=PAYLOADS.build_preview_data(workbook,group["label"]); baselines={}
-        for request in payload["requests"]:
-            label=request["body"]["label"]; baselines[label]=get(request["path"],temp/f"{label}.json") or {"label":label,"state":"not_found"}
+        baselines={}
+        for sequence,request in enumerate(payload["requests"],1):
+            label=request["body"]["label"]; baselines[label]=get(request["path"],temp/f"baseline-{sequence}.json") or {"label":label,"state":"not_found"}
         return payload,baselines
     def build_preview(self,payload: dict[str,Any],environment: str,baselines: dict[str,dict[str,Any]])->dict[str,Any]: return PREVIEWS.build_execution_preview(payload,"ora_rest_execution",environment,baselines)
     def mismatches(self,expected: dict[str,Any],actual: dict[str,Any])->list[str]:

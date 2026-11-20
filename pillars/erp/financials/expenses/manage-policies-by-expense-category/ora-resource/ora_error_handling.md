@@ -1,5 +1,6 @@
 # Meals error handling
 
+
 Use [ordinary Meals execution](../references/ordinary-meals-execution.md) for
 the supported workbook and governed workflow.
 
@@ -38,6 +39,8 @@ owns status/errors and native reports. Unknown product messages remain unresolve
 |---|---|
 | Partial/failure/metadata drift | No automatic replay, repair, cleanup or rollback |
 | Unqualified alternative | No trial, old waiver or fabricated native envelope |
+| Entertainment dependent-field conflict | Do not clear saved attendee, annual period, rate amounts or enforcement values to make a changed mode pass; explain the conflicting fields |
+| Entertainment import qualification | Do not equate static candidate success, source checks, screenshots or export completion with successful create/update persistence |
 
 ## Task Nodes
 
@@ -71,3 +74,11 @@ reconciliation or failure evidence:
   value, stop disclosure and report a redaction failure to the owning core
   workflow rather than copying the unsafe report or fabricating a replacement
   native result. Do not persist an unredacted diagnostic copy.
+
+Accommodations follows the same task workflow with category-specific parent/rate
+identities and currency evidence. Daily Limit? must remain Yes on every populated
+Accommodations policy row; it is a grey workbook-only indicator, never a CSV
+flag. Each resulting rate requires DailyLimit. Role, location, seasonal rate and
+gender determinants are excluded; reject incompatible retained settings. Use
+[Accommodations evidence](../references/accommodations-profile.json) for the
+local authoring extension and its mandatory live reconciliation boundary.

@@ -30,13 +30,29 @@ defaults and continue without an identity-confirmation question. Preserve a
 confirmed pair even when its values differ; ask again only if the pair changes.
 Normal validation and import approval still apply.
 
+## DFF Input Intake
+
+Keep FA_BOOK_CONTROLS and JGxFABookControls inputs separate, including their
+contexts. Qualify repeated segment prompts by flexfield when needed.
+Do not copy ordinary Book Info values into regional information or apply
+ordinary DFF defaults to regional fields.
+
+Preserve supplied DFF context and segment values from every current input.
+Do not hardcode Book Info as the only possible segment or require users to
+supply internal attribute-column names.
+
+Determine required fields through `resolve_asset_book_dff_segments` using
+the batch's current environment definition. Recover supplied values before
+asking for missing business input. Do not infer DFF values from another
+book, example data, or the absence of an explicit DFF request.
+
 ## Required Groups
 
 | Requirement Group | Accepted Fields | If Missing | How to Resolve | Applies When | Resolver |
 |---|---|---|---|---|---|
 | Book identity | Asset Book Code or Book Name, including the opening request's book identity | Stop before preview or package generation when both are missing, either supplied value is invalid, or differing supplied identities have no recorded user confirmation | Validate each supplied value against `^[A-Z][A-Z0-9 ]{0,29}$`. Apply Identity Confirmation above before defaulting when supplied identities differ. Otherwise, when Asset Book Code is blank and Book Name is valid, default Asset Book Code from Book Name before the existence check without a confirmation question. Use an exact resolved Asset Book Code match only to establish whether a book exists. | Every request | resolve_asset_book_existence |
 | Book class | Corporate or Tax | Stop before preview only when the request explicitly selects Tax without its associated Corporate book | Validate the selected class and associated Corporate book according to ora_defaulting_rules.md and ora_reference_lookups.md | Every request | resolve_fsm_asset_book_contract |
-| Book accounting definition | Ledger, a supplied Depreciation Calendar input, optional Prorate Calendar, optional last depreciation run date, depreciation allocation, and posting choice | Stop before preview when the supplied calendar cannot be resolved, or the current period, preceding period, or another required value is unresolved | Reprocess calendar/fiscal-year labels from all current inputs; then resolve the selected calendar, fiscal year, current period, preceding period, and initial date through resolve_asset_book_calendar_periods. A label adjacent to a book or BSV caption is not a calendar identifier unless the input explicitly labels it as one. If Prorate Calendar is blank, default it to the resolved Depreciation Calendar; preserve a supplied Prorate Calendar. Never use exported CSV data rows. | Every request | resolve_asset_book_calendar_periods |
+| Book accounting definition | Ledger, a supplied Depreciation Calendar input, optional Prorate Calendar, depreciation allocation, and posting choice | Stop before preview when the supplied calendar cannot be resolved, or the current period, preceding period, or another required value is unresolved | Reprocess calendar/fiscal-year labels from all current inputs; then resolve the selected calendar, fiscal year, current period, preceding period, and initial date through resolve_asset_book_calendar_periods. A label adjacent to a book or BSV caption is not a calendar identifier unless the input explicitly labels it as one. If Prorate Calendar is blank, default it to the resolved Depreciation Calendar; preserve a supplied Prorate Calendar. Never use exported CSV data rows. | Every request | resolve_asset_book_calendar_periods |
 | Fiscal Year | Selected Depreciation Calendar and optional supplied Fiscal Year | Stop before preview when the selected calendar has no one resolved fiscal year for the current period, or a supplied Fiscal Year does not belong to that calendar | When Fiscal Year is blank, default it from the selected calendar and current period. When both are supplied, retain the supplied Fiscal Year only if it exactly matches a fiscal-year record for the selected calendar. | Every create or update | resolve_asset_book_calendar_periods |
 | Current Fiscal Year | User-selected current period and resolved Fiscal Year | Stop before preview when the selected current period does not belong to the selected Fiscal Year | Set Current Fiscal Year from the Fiscal Year that contains the user-selected current period. Do not accept a mismatched period and Fiscal Year. | Every create or update | resolve_asset_book_calendar_periods |
 | Capital Gain Threshold | Optional user-provided value | Do not block preview when blank. When provided, stop before preview only if the value is not in the numeric format accepted by the current target contract. | Preserve blank when omitted. Do not derive a value; validate and retain a user-provided value. | Every create or update | resolve_fsm_asset_book_contract |
@@ -84,9 +100,105 @@ Exception: a new book's blank `Book Control ID` is `runtime_resolved` under `ora
 
 ## Field Validation
 
+### Flag Value Normalization
+
+Accept affirmative user input (Yes or Y) and negative user input (No or N)
+case-insensitively. Before field validation, storage, or serialization,
+translate that input to the exact uppercase affirmative or negative value
+listed for its database column below. Never choose a representation at runtime
+or serialize user-facing wording directly. Reject unrecognized input.
+
+The table specifies populated boolean values only. It does not add defaults,
+make optional fields mandatory, authorize changes to read-only or system-managed
+fields, or change existing blank and update-preservation rules. Retain returned
+target values as evidence; do not normalize them to conceal a target mismatch.
+
+| Database table | Database column | Affirmative stored value | Negative stored value |
+|---|---|---|---|
+| FA_BOOK_CONTROLS | LEASE_CURR_RATE_GAIN_LOSS_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | AMORTIZE_FLAG | `YES` | `NO` |
+| FA_BOOK_CONTROLS | FULLY_RESERVED_FLAG | `YES` | `NO` |
+| FA_BOOK_CONTROLS | GL_POSTING_ALLOWED_FLAG | `YES` | `NO` |
+| FA_BOOK_CONTROLS | ALLOW_MASS_CHANGES | `YES` | `NO` |
+| FA_BOOK_CONTROLS | COPY_RETIREMENTS_FLAG | `YES` | `NO` |
+| FA_BOOK_CONTROLS | COPY_ADJUSTMENTS_FLAG | `YES` | `NO` |
+| FA_BOOK_CONTROLS | ALLOW_COST_CEILING | `YES` | `NO` |
+| FA_BOOK_CONTROLS | ALLOW_DEPRN_EXP_CEILING | `YES` | `NO` |
+| FA_BOOK_CONTROLS | ALLOW_MASS_COPY | `YES` | `NO` |
+| FA_BOOK_CONTROLS | ALLOW_PURGE_FLAG | `YES` | `NO` |
+| FA_BOOK_CONTROLS | ALLOW_REVAL_FLAG | `YES` | `NO` |
+| FA_BOOK_CONTROLS | AMORTIZE_REVAL_RESERVE_FLAG | `YES` | `NO` |
+| FA_BOOK_CONTROLS | COPY_SALVAGE_VALUE_FLAG | `YES` | `NO` |
+| FA_BOOK_CONTROLS | DEFAULT_REVAL_FULLY_RSVD_FLAG | `YES` | `NO` |
+| FA_BOOK_CONTROLS | REVAL_DEPRN_RESERVE_FLAG | `YES` | `NO` |
+| FA_BOOK_CONTROLS | IMMEDIATE_COPY_FLAG | `YES` | `NO` |
+| FA_BOOK_CONTROLS | DEPR_FIRST_YEAR_RET_FLAG | `YES` | `NO` |
+| FA_BOOK_CONTROLS | RETIRE_REVAL_RESERVE_FLAG | `YES` | `NO` |
+| FA_BOOK_CONTROLS | COPY_ADDITIONS_FLAG | `YES` | `NO` |
+| FA_BOOK_CONTROLS | USE_PERCENT_SALVAGE_VALUE_FLAG | `YES` | `NO` |
+| FA_BOOK_CONTROLS | MC_SOURCE_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | REVAL_YTD_DEPRN_FLAG | `YES` | `NO` |
+| FA_BOOK_CONTROLS | ALLOW_CIP_ASSETS_FLAG | `YES` | `NO` |
+| FA_BOOK_CONTROLS | ALLOW_GROUP_DEPRN_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | ALLOW_CIP_DEP_GROUP_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | ALLOW_INTERCO_GROUP_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | COPY_GROUP_ASSIGNMENT_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | COPY_GROUP_ADDITION_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | ALLOW_CIP_MEMBER_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | ALLOW_MEMBER_TRACKING_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | ALLOW_BACKDATED_TRANSFERS_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | ALLOW_COST_SIGN_CHANGE_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | ALLOW_BONUS_DEPRN_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | ALLOW_IMPAIRMENT_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | ITC_ALLOWED_FLAG | `YES` | `NO` |
+| FA_BOOK_CONTROLS | SORP_ENABLED_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | ALLOW_DEPRN_ADJUSTMENTS | `YES` | `NO` |
+| FA_BOOK_CONTROLS | COPY_ALL_COST_ADJUSTMENTS_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | DEFAULT_DPIS_TO_INV_DATE_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | USE_NBV_THRESHOLD_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | COPY_AMORT_ADAJ_EXP_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | COPY_GROUP_CHANGE_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | PREVENT_PRIOR_PERIOD_TXNS_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | ALLOW_DEPRN_OVERRIDE_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | ALLOW_FUND_ACCOUNTING_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | ALLOW_COST_BASED_REVAL_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | ALLOW_NBV_BASED_REVAL_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | DEFAULT_PERIOD_END_REVAL_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | ALLOW_UNALLOCATED_LINES_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | SUPPRESS_INV_AUTO_MERGE_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | ALLOW_DIRECT_TAX_ADDITION_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | ALLOW_TAX_DISTRIBUTIONS_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | BOOK_TYPE_MIGRATION_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | COPY_TRANSFERS_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | REQUIRE_LOCATION_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | TRACK_SOURCE_LINES_IN_TAX_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | ALLOW_TRANS_CONVENTION_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | ADVANCED_OPTIONS_ENABLED_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | ALLOW_PHYSICAL_INVENTORY_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | ALLOW_LEASES_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | COPY_LEASE_ASSETS_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | COPY_LEASE_SCHEDULES_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | LEASE_MIGRATION_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | USE_FIRST_DATE_AS_TRX_DATE | `Y` | `N` |
+| FA_BOOK_CONTROLS | ALLOW_UK_GOVERNMENT_REVAL_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | ADDITIONS_APPROVAL_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | ADJUSTMENTS_APPROVAL_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | TRANSFERS_APPROVAL_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | RETIREMENTS_APPROVAL_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | AP_CLEARING_BSV_CHECK_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | AP_CLEARING_CC_CHECK_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | AP_CLEARING_NA_CHECK_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | AP_CLEARING_BSV2_CHECK_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | ALLOW_BOOK_TRANSFER_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | ALLOW_ANNUITY_DEPRN_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | ENABLE_AP_AUTOPOST_FLAG | `Y` | `N` |
+| FA_BOOK_CONTROLS | DEFAULT_CATEGORY_FLAG | `Y` | `N` |
+
+`LEASE_EXPENSE_RUN_FLAG` is a runtime status field, not a boolean. Do not apply boolean normalization to it.
+
 ### Blank-Default Flag Datatype Validation
 
-For the flags explicitly listed as `Blank` in `ora_defaulting_rules.md`, blank remains valid when the request does not set the option. When a value is supplied, validate it against the current schema datatype before ZIP generation. Do not convert a supplied value between the two representations or infer a value for a blank-default flag.
+For the flags explicitly listed as `Blank` in `ora_defaulting_rules.md`, blank remains valid when the request does not set the option. When a value is supplied, apply Flag Value Normalization first, then validate the translated value against the field's permitted CSV values and current schema datatype before ZIP generation. Do not infer a value for a blank-default flag.
 
 | Functional name | Permitted CSV values |
 |---|---|

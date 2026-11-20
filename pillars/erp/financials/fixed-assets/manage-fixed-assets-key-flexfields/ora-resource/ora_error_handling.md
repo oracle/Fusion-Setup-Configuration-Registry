@@ -100,12 +100,12 @@ or technical lookup evidence.
 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|
-| KFF.IMPORT_GATE | decision | 60 | execution_gate | approved->KFF.HANDED_OFF_TO_PARENT;approval_missing->KFF.HANDLE_APPROVAL | KFF.ENFORCE_DESIGN | stop | A validated package is proposed for live import. |
+| KFF.IMPORT_GATE | decision | 60 | execution_gate | ready->KFF.VALIDATED;incomplete->KFF.HANDLE_READINESS | KFF.ENFORCE_DESIGN | stop | Require applicable read-only task validation and immutable-artifact checks for the exact target and requested scope. Return ready without requiring upload approval or a submission receipt: core.data-loader obtains submission approval after task validation. This node does not submit, poll, or report acceptance. Missing, stale, or mismatched validation/artifact evidence returns incomplete. |
 | KFF.HANDLE_INPUT | step | 70 | error_handler | handled->KFF.ISSUES | KFF.VALIDATE_INPUT | stop | Input is invalid. |
 | KFF.HANDLE_DEPENDENCY | step | 80 | error_handler | handled->KFF.ISSUES | KFF.RESOLVE_DEPENDENCIES | stop | Dependency is blocked. |
 | KFF.HANDLE_LOOKUP | step | 90 | error_handler | handled->KFF.ISSUES | KFF.LOOKUP_EXISTING | stop | Lookup fails, identity is ambiguous, or a material difference is unapproved. |
 | KFF.HANDLE_DESIGN | step | 100 | error_handler | handled->KFF.ISSUES | KFF.ENFORCE_DESIGN | stop | Design rule blocks the package. |
-| KFF.HANDLE_APPROVAL | step | 110 | error_handler | handled->KFF.ISSUES | KFF.IMPORT_GATE | stop | Approval is absent or stale. |
-| KFF.HANDED_OFF_TO_PARENT | terminal | 120 | terminal | none | KFF.IMPORT_GATE | continue | Accepted — pending parent verification. The Fixed Assets parent owns status, process-log review, and fresh target read-back. |
+| KFF.HANDLE_READINESS | step | 110 | error_handler | handled->KFF.ISSUES | KFF.IMPORT_GATE | stop | Required task validation or immutable-artifact evidence is missing, stale, or mismatched. Return the issue for correction; do not request submission approval, submit, or claim acceptance during task validation. |
+| KFF.VALIDATED | terminal | 120 | terminal | none | KFF.IMPORT_GATE | stop | Return validated_for_import for the current validation scope; no upload approval, submission, acceptance, or Fusion completion is implied. The parent/Core workflow may report accepted only after its accepted-initiation response supplies a request ID correlated to the exact target and reviewed immutable archive/hash. Parent verification remains required. |
 | KFF.DONE_MATCH | terminal | 125 | terminal | none | KFF.LOOKUP_EXISTING | stop | Existing target state already matches the requested material scope; no package or import is needed. |
 | KFF.ISSUES | terminal | 130 | terminal | none | none | stop | A blocker is handled and disclosed with the safe next action. |

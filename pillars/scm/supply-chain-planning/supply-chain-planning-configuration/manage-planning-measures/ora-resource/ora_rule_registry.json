@@ -14,7 +14,6 @@
           "action_type": "evaluate_result",
           "execution_route": "local",
           "transitions": {
-            "missing_measure_catalog": "CPA.MEASURE_CATALOG_INPUT_FAILURE",
             "create_planning_measure": "CPA.VALIDATE_CREATE_EXPRESSIONS",
             "update_planning_measure": "CPA.LOOKUP_MEASURE_FOR_UPDATE",
             "verify_planning_measure_update": "CPA.LOOKUP_APPROVED_MEASURE_READBACK",
@@ -36,7 +35,7 @@
           },
           "prerequisites": [],
           "on_failure": "stop",
-          "applies_when": "Route explicit existing Source List edits and deletes to edit_measure_source_lists and delete_measure_source_lists before create normalization; never create rows in those branches. Normalize an add/create data lookup or source-list request for an existing measure, including supplied source-list Name and IsDefault with or without an explicit List selection, to standalone_source_list_load. Treat the existing measure name as the parent identity and the source-list Name as the new child value. Select one requested Planning Measure, measure catalog, group, granularity, level, or source-list branch and require its inputs; for combined requests invoke branches separately with resolved identities. Complete each read-only lookup without implicitly running other branches. Before any selected branch, require active project and Run Book context, exact task identity, the workflow-selected environment and client, required inputs and declared operation; apply the Fusion-enforced authorization policy in ora_design_enforcement.md. Preserve existing workflow environment/account, OAuth/session and operation checks. Apply the optional Privilege evidence preflight policy in ora_design_enforcement.md under its recorded task-scoped user exception. Missing grant records, manual review or privilege mappings must not select missing or block source preparation, preview or submission; continue the selected branch with ordinary workflow checks. Do not claim unassessed privileges are verified. Known denied access or an actual authorization failure selects missing to CPA.LOOKUP_FAILURE with authorization_or_privilege and the exact cause; no write or automatic mutation retry. Caller core.runbook owns cross-task coordination. Unsupported CSV export/import stays blocked unless live metadata or source guidance confirms support through the selected workflow. The Data Loader and runbook approval workflows own their execution; another mutating route requires exact-environment/payload approval immediately before execution. Lookup results never authorize a write. Complete supported pagination, distinguish a failed or incomplete lookup from an empty set, resolve exactly one requested identity, never select the first partial result, and stop after the requested branch. Returned item links are evidence and may be used only through the declared resolver; do not switch the initial request to an archived rv revision. Keep reusable outputs free of tenant URLs, audit identities, ETags and sensitive values; persist sanitized durable results, classified diagnostics, skill runs and token usage through the declared project services and manifest paths. A missing workflow, client, payload contract or approval is a blocker, never a reason to substitute another route. Route registered planningMeasures and planningMeasureSourceLists imports through core.data-loader and an approved planningMeasures parent delete through core.data-loader; the REST client supplies only its declared read-only delete preflight evidence. For create_planning_measure, check the supplied Measure Catalog selection locally before choosing the create branch: omitted, blank, or empty selects missing_measure_catalog and stops with input_validation and Creation blocked: a valid Measure Catalog is required; ask no question. A nonblank selection continues to the existing validator and live catalog-resolution rules. A duplicate-origin fresh create may rely on validated copied non-seeded catalog associations. Stop on unsupported or missing inputs; do not infer a generic catalogs route.",
+          "applies_when": "Route explicit existing Source List edits and deletes to edit_measure_source_lists and delete_measure_source_lists before create normalization; never create rows in those branches. Normalize an add/create data lookup or source-list request for an existing measure, including supplied source-list Name and IsDefault with or without an explicit List selection, to standalone_source_list_load. Treat the existing measure name as the parent identity and the source-list Name as the new child value. Select one requested Planning Measure, measure catalog, group, granularity, level, or source-list branch and require its inputs; for combined requests invoke branches separately with resolved identities. Complete each read-only lookup without implicitly running other branches. Before any selected branch, require active project and Run Book context, exact task identity, the workflow-selected environment and client, required inputs and declared operation; apply the Fusion-enforced authorization policy in ora_design_enforcement.md. Preserve existing workflow environment/account, OAuth/session and operation checks. Apply the optional Privilege evidence preflight policy in ora_design_enforcement.md under its recorded task-scoped user exception. Missing grant records, manual review or privilege mappings must not select missing or block source preparation, preview or submission; continue the selected branch with ordinary workflow checks. Do not claim unassessed privileges are verified. Known denied access or an actual authorization failure selects missing to CPA.LOOKUP_FAILURE with authorization_or_privilege and the exact cause; no write or automatic mutation retry. Caller core.runbook owns cross-task coordination. Unsupported CSV export/import stays blocked unless live metadata or source guidance confirms support through the selected workflow. The Data Loader and runbook approval workflows own their execution; another mutating route requires exact-environment/payload approval immediately before execution. Lookup results never authorize a write. Complete supported pagination, distinguish a failed or incomplete lookup from an empty set, resolve exactly one requested identity, never select the first partial result, and stop after the requested branch. Returned item links are evidence and may be used only through the declared resolver; do not switch the initial request to an archived rv revision. Keep reusable outputs free of tenant URLs, audit identities, ETags and sensitive values; persist sanitized durable results, classified diagnostics, skill runs and token usage through the declared project services and manifest paths. A missing workflow, client, payload contract or approval is a blocker, never a reason to substitute another route. Route registered planningMeasures and planningMeasureSourceLists imports through core.data-loader and an approved planningMeasures parent delete through core.data-loader; the REST client supplies only its declared read-only delete preflight evidence. Stop on unsupported or missing inputs; do not infer a generic catalogs route.",
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
@@ -502,7 +501,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 157
+            "line": 145
           },
           "readiness": {
             "status": "ready",
@@ -609,7 +608,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 154
+            "line": 142
           },
           "readiness": {
             "status": "ready",
@@ -659,7 +658,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 155
+            "line": 143
           },
           "readiness": {
             "status": "ready",
@@ -874,7 +873,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 146
+            "line": 134
           },
           "readiness": {
             "status": "ready",
@@ -895,11 +894,11 @@
             "CPA.VALIDATE_CONDITIONAL_FORMATS"
           ],
           "on_failure": "stop",
-          "applies_when": "Validate the parent planning-measure create fields after conditional-format rules. Skip Plan Type meanings or bit numbers with no declared mapping; retain skipped selections in validation evidence and require at least one mapped, live-validated selection. For the remaining selected Plan Type meanings, OR their mapped 1 << (bitNumber - 1) values into one integer RelevantPlanType; retain the per-meaning calculation and reject comma-separated codes. Before SourceType classification, require a nonblank unique Name from a complete measure lookup; resolve every supplied UOM, Currency, and Price List through its live LOV; allow BaseUOMCode only for Number and BaseCurrencyCode only for Currency on a non-seeded, non-read-only measure without both PRD and ORG; omit or null inapplicable unsupplied bases and reject explicitly invalid bases. Reject display UOM/currency items for Percent, Date, or Text; deduplicate codes and numeric PricelistId values; construct only Name, BaseUOMCode, MeasureUOM.items[].UomCode, BaseCurrencyCode, MeasureCurrency.items[].CurrencyCode, and numeric MeasurePriceList.items[].PricelistId for this field group; never send display names, PriceListName, or Source List ListId. Omit optional unsupplied fields and set an inapplicable unsupplied base to null only when the selected adapter supports that shape. Require either one supported Measure Value Type selection, Editable (Editable and Persistent) or Collected and Refreshed, or a nonblank Expression. Block creation when both Measure Value Type and Expression are absent. Allow a server-validated Expression without a Measure Value Type selection, and allow an Expression alongside a valid selection; do not invent or default a Measure Value Type for expression-only creation. Editable maps to Editable=1 without requiring StoreResult; Collected and Refreshed maps to StoreResult=1 without requiring Editable. Reject contradictory explicit selections. Then classify SourceType. Require a matching successful server-validation result for every requested Expression and EditLockExpr, and preserve their exact text in the parent create source; block if the adapter or template omits either field. Determine Editable from the selected Measure Value Type before reading EditRange. For an eligible editable target, use list_measure_edit_ranges and the Standard Defaults rule, then apply the Edit Range contract; preserve the resolved lookup value directly as EditRange and block any adapter or template that drops or transforms it. For a non-editable target omit EditRange without requiring a selection. For duplicate origin, enforce the approved granularity strategy: preserved GranularityId must equal the authoritative source value, have matching resolved levels/context, and be retained by the selected create adapter. The ordinary granularity-clearing/default rule is inapplicable to that strategy. A dropped or changed value blocks the create source. A level-based fallback is permitted only with verified equivalent-dimensionality evidence; no preservation or verified fallback blocks submission. Require Measure-catalog, Measure-group, and Plan-type assignments before preparing the create source or duplicate handoff; omission, blank selections, empty lists, or unresolved values in any required group block creation. Measure-catalog assignment is required: an omitted selection is allowed only when valid copied non-seeded associations satisfy duplication; an explicit blank, empty, or unresolved selection blocks creation. Require at least one resolved catalog before source preparation. If the required Measure Catalog is omitted, blank, empty, or absent after seeded duplicate associations are excluded, stop the current create or duplicate handoff immediately with input_validation and report: Creation blocked: a valid Measure Catalog is required. Do not ask a question, prompt for a catalog selection, or continue source preparation, preview, approval, or submission in that run. Resolve every supplied nonblank catalog name through find_planning_measure_catalog_by_name; missing, ambiguous, or unresolved supplied catalogs still block creation. For duplication, preserve and validate non-seeded source catalog associations when present; if none remain after seeded associations are excluded, require a valid catalog selection. Use find_planning_measure_catalog_by_name, list_planning_measure_groups, and the existing live Plan Type validation for required assignments. If Measure Catalog is missing, report only the required catalog error and stop; otherwise report missing Measure Group and Plan Type together. Never infer or default a catalog, group, or plan-type association.  For duplicate origin, retain the authoritative MeasureCalculationType value and metadata-required type through create source and readback; do not copy source GoalValues or block or report on its omission by Data Loader. Retain RestAction=POST solely as an ADF_REST loader control on every create row, including copied associations; omit it from Fusion REST JSON payloads. Apply the Duplicate payload field contract in this file: require live ADF_REST loader/import support, RestAction in its schema and POST in each create row; block missing/wrong controls or unsupported metadata, without requiring proof of server-internal JSON transformation.",
+          "applies_when": "Validate the parent planning-measure create fields after conditional-format rules. Skip Plan Type meanings or bit numbers with no declared mapping; retain skipped selections in validation evidence and require at least one mapped, live-validated selection. For the remaining selected Plan Type meanings, OR their mapped 1 << (bitNumber - 1) values into one integer RelevantPlanType; retain the per-meaning calculation and reject comma-separated codes. Before SourceType classification, require a nonblank unique Name from a complete measure lookup; resolve every supplied UOM, Currency, and Price List through its live LOV; allow BaseUOMCode only for Number and BaseCurrencyCode only for Currency on a non-seeded, non-read-only measure without both PRD and ORG; omit or null inapplicable unsupplied bases and reject explicitly invalid bases. Reject display UOM/currency items for Percent, Date, or Text; deduplicate codes and numeric PricelistId values; construct only Name, BaseUOMCode, MeasureUOM.items[].UomCode, BaseCurrencyCode, MeasureCurrency.items[].CurrencyCode, and numeric MeasurePriceList.items[].PricelistId for this field group; never send display names, PriceListName, or Source List ListId. Omit optional unsupplied fields and set an inapplicable unsupplied base to null only when the selected adapter supports that shape. Require either one supported Measure Value Type selection, Editable (Editable and Persistent) or Collected and Refreshed, or a nonblank Expression. Block creation when both Measure Value Type and Expression are absent. Allow a server-validated Expression without a Measure Value Type selection, and allow an Expression alongside a valid selection; do not invent or default a Measure Value Type for expression-only creation. Editable maps to Editable=1 without requiring StoreResult; Collected and Refreshed maps to StoreResult=1 without requiring Editable. Reject contradictory explicit selections. Then classify SourceType. Require a matching successful server-validation result for every requested Expression and EditLockExpr, and preserve their exact text in the parent create source; block if the adapter or template omits either field. Determine Editable from the selected Measure Value Type before reading EditRange. For an eligible editable target, use list_measure_edit_ranges and the Standard Defaults rule, then apply the Edit Range contract; preserve the resolved lookup value directly as EditRange and block any adapter or template that drops or transforms it. For a non-editable target omit EditRange without requiring a selection. For duplicate origin, enforce the approved granularity strategy: preserved GranularityId must equal the authoritative source value, have matching resolved levels/context, and be retained by the selected create adapter. The ordinary granularity-clearing/default rule is inapplicable to that strategy. A dropped or changed value blocks the create source. A level-based fallback is permitted only with verified equivalent-dimensionality evidence; no preservation or verified fallback blocks submission. Require Measure-group assignment and Plan-type assignment before preparing the create source or duplicate handoff; omission, blank selections, empty lists, or unresolved values in either required group block creation. Measure-catalog assignment is optional: omitted, blank, or empty catalog selections do not block creation and produce no catalog association rows. Resolve every supplied nonblank catalog name through find_planning_measure_catalog_by_name; missing, ambiguous, or unresolved supplied catalogs still block creation. For duplication, preserve valid non-seeded source catalog associations when present; an empty set after seeded associations are excluded is allowed. Use list_planning_measure_groups and the existing live Plan Type validation for required assignments. Report all missing required groups together; never infer or default a catalog, group, or plan-type association.  For ordinary creation, explicitly set MeasureCalculationType to 5 (FORMULA) when Editable=1 OR StoreResult=1; either selected flag is sufficient. Otherwise set it to 7 only for an expression-based measure with a nonblank, server-validated Expression. Include the selected 5 or 7 in the create source and payload and verify the saved value by readback. For duplication, copy the authoritative source MeasureCalculationType unchanged into the duplicate projection, fresh create handoff, and final create source or payload; do not derive or replace it with 5 or 7. Verify the saved value against the copied source value. Neither flag selected and no valid Expression blocks creation. For duplicate origin, do not copy source GoalValues or block or report on its omission by Data Loader. Retain RestAction=POST solely as an ADF_REST loader control on every create row, including copied associations; omit it from Fusion REST JSON payloads. Apply the Duplicate payload field contract in this file: require live ADF_REST loader/import support, RestAction in its schema and POST in each create row; block missing/wrong controls or unsupported metadata, without requiring proof of server-internal JSON transformation.",
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 147
+            "line": 135
           },
           "readiness": {
             "status": "ready",
@@ -944,7 +943,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 97
+            "line": 96
           },
           "readiness": {
             "status": "ready",
@@ -995,7 +994,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 151
+            "line": 139
           },
           "readiness": {
             "status": "ready",
@@ -1016,11 +1015,11 @@
             "CPA.VALIDATE_CONDITIONAL_FORMATS_FROM_GRANULARITY"
           ],
           "on_failure": "stop",
-          "applies_when": "Validate a parent planning-measure create request after levels are derived from GranularityId. Skip Plan Type meanings or bit numbers with no declared mapping; retain skipped selections in validation evidence and require at least one mapped, live-validated selection. For the remaining selected Plan Type meanings, OR their mapped 1 << (bitNumber - 1) values into one integer RelevantPlanType; retain the per-meaning calculation and reject comma-separated codes. Before SourceType classification, require a nonblank unique Name from a complete measure lookup; resolve every supplied UOM, Currency, and Price List through its live LOV; allow BaseUOMCode only for Number and BaseCurrencyCode only for Currency on a non-seeded, non-read-only measure without both PRD and ORG; omit or null inapplicable unsupplied bases and reject explicitly invalid bases. Reject display UOM/currency items for Percent, Date, or Text; deduplicate codes and numeric PricelistId values; construct only Name, BaseUOMCode, MeasureUOM.items[].UomCode, BaseCurrencyCode, MeasureCurrency.items[].CurrencyCode, and numeric MeasurePriceList.items[].PricelistId for this field group; never send display names, PriceListName, or Source List ListId. Omit optional unsupplied fields and set an inapplicable unsupplied base to null only when the selected adapter supports that shape. Require either one supported Measure Value Type selection, Editable (Editable and Persistent) or Collected and Refreshed, or a nonblank Expression. Block creation when both Measure Value Type and Expression are absent. Allow a server-validated Expression without a Measure Value Type selection, and allow an Expression alongside a valid selection; do not invent or default a Measure Value Type for expression-only creation. Editable maps to Editable=1 without requiring StoreResult; Collected and Refreshed maps to StoreResult=1 without requiring Editable. Reject contradictory explicit selections. Then classify SourceType. Require a matching successful server-validation result for every requested Expression and EditLockExpr, and preserve their exact text in the parent create source; block if the adapter or template omits either field. Determine Editable from the selected Measure Value Type before reading EditRange. For an eligible editable target, use list_measure_edit_ranges and the Standard Defaults rule, then apply the Edit Range contract; preserve the resolved lookup value directly as EditRange and block any adapter or template that drops or transforms it. For a non-editable target omit EditRange without requiring a selection. For duplicate origin, enforce the approved granularity strategy: preserved GranularityId must equal the authoritative source value, have matching resolved levels/context, and be retained by the selected create adapter. The ordinary granularity-clearing/default rule is inapplicable to that strategy. A dropped or changed value blocks the create source. A level-based fallback is permitted only with verified equivalent-dimensionality evidence; no preservation or verified fallback blocks submission. Require Measure-catalog, Measure-group, and Plan-type assignments before preparing the create source or duplicate handoff; omission, blank selections, empty lists, or unresolved values in any required group block creation. Measure-catalog assignment is required: an omitted selection is allowed only when valid copied non-seeded associations satisfy duplication; an explicit blank, empty, or unresolved selection blocks creation. Require at least one resolved catalog before source preparation. If the required Measure Catalog is omitted, blank, empty, or absent after seeded duplicate associations are excluded, stop the current create or duplicate handoff immediately with input_validation and report: Creation blocked: a valid Measure Catalog is required. Do not ask a question, prompt for a catalog selection, or continue source preparation, preview, approval, or submission in that run. Resolve every supplied nonblank catalog name through find_planning_measure_catalog_by_name; missing, ambiguous, or unresolved supplied catalogs still block creation. For duplication, preserve and validate non-seeded source catalog associations when present; if none remain after seeded associations are excluded, require a valid catalog selection. Use find_planning_measure_catalog_by_name, list_planning_measure_groups, and the existing live Plan Type validation for required assignments. If Measure Catalog is missing, report only the required catalog error and stop; otherwise report missing Measure Group and Plan Type together. Never infer or default a catalog, group, or plan-type association. For a create whose level source is an explicitly supplied GranularityId, a successful complete granularityLevels lookup with exactly one matching item is authoritative for its ordered levels, dimensions, and context. Continue using those returned values without revalidating them through planningMeasureLevels or DimensionLevels; a missing dimension or LOV link in those separate lists does not block this branch. If the exact ID is absent, skip creation and report it as not found. A failed, malformed, ambiguous, or incomplete lookup still blocks creation; all other create validation and approval gates remain applicable.  For duplicate origin, retain the authoritative MeasureCalculationType value and metadata-required type through create source and readback; do not copy source GoalValues or block or report on its omission by Data Loader. Retain RestAction=POST solely as an ADF_REST loader control on every create row, including copied associations; omit it from Fusion REST JSON payloads. Apply the Duplicate payload field contract in this file: require live ADF_REST loader/import support, RestAction in its schema and POST in each create row; block missing/wrong controls or unsupported metadata, without requiring proof of server-internal JSON transformation.",
+          "applies_when": "Validate a parent planning-measure create request after levels are derived from GranularityId. Skip Plan Type meanings or bit numbers with no declared mapping; retain skipped selections in validation evidence and require at least one mapped, live-validated selection. For the remaining selected Plan Type meanings, OR their mapped 1 << (bitNumber - 1) values into one integer RelevantPlanType; retain the per-meaning calculation and reject comma-separated codes. Before SourceType classification, require a nonblank unique Name from a complete measure lookup; resolve every supplied UOM, Currency, and Price List through its live LOV; allow BaseUOMCode only for Number and BaseCurrencyCode only for Currency on a non-seeded, non-read-only measure without both PRD and ORG; omit or null inapplicable unsupplied bases and reject explicitly invalid bases. Reject display UOM/currency items for Percent, Date, or Text; deduplicate codes and numeric PricelistId values; construct only Name, BaseUOMCode, MeasureUOM.items[].UomCode, BaseCurrencyCode, MeasureCurrency.items[].CurrencyCode, and numeric MeasurePriceList.items[].PricelistId for this field group; never send display names, PriceListName, or Source List ListId. Omit optional unsupplied fields and set an inapplicable unsupplied base to null only when the selected adapter supports that shape. Require either one supported Measure Value Type selection, Editable (Editable and Persistent) or Collected and Refreshed, or a nonblank Expression. Block creation when both Measure Value Type and Expression are absent. Allow a server-validated Expression without a Measure Value Type selection, and allow an Expression alongside a valid selection; do not invent or default a Measure Value Type for expression-only creation. Editable maps to Editable=1 without requiring StoreResult; Collected and Refreshed maps to StoreResult=1 without requiring Editable. Reject contradictory explicit selections. Then classify SourceType. Require a matching successful server-validation result for every requested Expression and EditLockExpr, and preserve their exact text in the parent create source; block if the adapter or template omits either field. Determine Editable from the selected Measure Value Type before reading EditRange. For an eligible editable target, use list_measure_edit_ranges and the Standard Defaults rule, then apply the Edit Range contract; preserve the resolved lookup value directly as EditRange and block any adapter or template that drops or transforms it. For a non-editable target omit EditRange without requiring a selection. For duplicate origin, enforce the approved granularity strategy: preserved GranularityId must equal the authoritative source value, have matching resolved levels/context, and be retained by the selected create adapter. The ordinary granularity-clearing/default rule is inapplicable to that strategy. A dropped or changed value blocks the create source. A level-based fallback is permitted only with verified equivalent-dimensionality evidence; no preservation or verified fallback blocks submission. Require Measure-group assignment and Plan-type assignment before preparing the create source or duplicate handoff; omission, blank selections, empty lists, or unresolved values in either required group block creation. Measure-catalog assignment is optional: omitted, blank, or empty catalog selections do not block creation and produce no catalog association rows. Resolve every supplied nonblank catalog name through find_planning_measure_catalog_by_name; missing, ambiguous, or unresolved supplied catalogs still block creation. For duplication, preserve valid non-seeded source catalog associations when present; an empty set after seeded associations are excluded is allowed. Use list_planning_measure_groups and the existing live Plan Type validation for required assignments. Report all missing required groups together; never infer or default a catalog, group, or plan-type association. For a create whose level source is an explicitly supplied GranularityId, a successful complete granularityLevels lookup with exactly one matching item is authoritative for its ordered levels, dimensions, and context. Continue using those returned values without revalidating them through planningMeasureLevels or DimensionLevels; a missing dimension or LOV link in those separate lists does not block this branch. If the exact ID is absent, skip creation and report it as not found. A failed, malformed, ambiguous, or incomplete lookup still blocks creation; all other create validation and approval gates remain applicable.  For ordinary creation, explicitly set MeasureCalculationType to 5 (FORMULA) when Editable=1 OR StoreResult=1; either selected flag is sufficient. Otherwise set it to 7 only for an expression-based measure with a nonblank, server-validated Expression. Include the selected 5 or 7 in the create source and payload and verify the saved value by readback. For duplication, copy the authoritative source MeasureCalculationType unchanged into the duplicate projection, fresh create handoff, and final create source or payload; do not derive or replace it with 5 or 7. Verify the saved value against the copied source value. Neither flag selected and no valid Expression blocks creation. For duplicate origin, do not copy source GoalValues or block or report on its omission by Data Loader. Retain RestAction=POST solely as an ADF_REST loader control on every create row, including copied associations; omit it from Fusion REST JSON payloads. Apply the Duplicate payload field contract in this file: require live ADF_REST loader/import support, RestAction in its schema and POST in each create row; block missing/wrong controls or unsupported metadata, without requiring proof of server-internal JSON transformation.",
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 152
+            "line": 140
           },
           "readiness": {
             "status": "ready",
@@ -1072,7 +1071,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 153
+            "line": 141
           },
           "readiness": {
             "status": "ready",
@@ -1092,7 +1091,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 101
+            "line": 100
           },
           "readiness": {
             "status": "ready",
@@ -1112,7 +1111,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 102
+            "line": 101
           },
           "readiness": {
             "status": "ready",
@@ -1139,7 +1138,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 150
+            "line": 138
           },
           "readiness": {
             "status": "ready",
@@ -1164,7 +1163,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 103
+            "line": 102
           },
           "readiness": {
             "status": "ready",
@@ -1189,7 +1188,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 104
+            "line": 103
           },
           "readiness": {
             "status": "ready",
@@ -1211,7 +1210,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 98
+            "line": 97
           },
           "readiness": {
             "status": "ready",
@@ -1231,7 +1230,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 105
+            "line": 104
           },
           "readiness": {
             "status": "ready",
@@ -1253,7 +1252,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 99
+            "line": 98
           },
           "readiness": {
             "status": "ready",
@@ -1273,7 +1272,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 106
+            "line": 105
           },
           "readiness": {
             "status": "ready",
@@ -1298,7 +1297,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 158
+            "line": 146
           },
           "readiness": {
             "status": "ready",
@@ -1318,7 +1317,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 100
+            "line": 99
           },
           "readiness": {
             "status": "ready",
@@ -1346,7 +1345,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 156
+            "line": 144
           },
           "readiness": {
             "status": "ready",
@@ -1397,7 +1396,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 107
+            "line": 106
           },
           "readiness": {
             "status": "ready",
@@ -1417,7 +1416,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 108
+            "line": 107
           },
           "readiness": {
             "status": "ready",
@@ -1437,7 +1436,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 109
+            "line": 108
           },
           "readiness": {
             "status": "ready",
@@ -1457,7 +1456,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 110
+            "line": 109
           },
           "readiness": {
             "status": "ready",
@@ -1482,7 +1481,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 111
+            "line": 110
           },
           "readiness": {
             "status": "ready",
@@ -1504,7 +1503,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 112
+            "line": 111
           },
           "readiness": {
             "status": "ready",
@@ -1524,7 +1523,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 113
+            "line": 112
           },
           "readiness": {
             "status": "ready",
@@ -1549,7 +1548,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 114
+            "line": 113
           },
           "readiness": {
             "status": "ready",
@@ -1571,7 +1570,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 115
+            "line": 114
           },
           "readiness": {
             "status": "ready",
@@ -1591,7 +1590,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 116
+            "line": 115
           },
           "readiness": {
             "status": "ready",
@@ -1611,7 +1610,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 117
+            "line": 116
           },
           "readiness": {
             "status": "ready",
@@ -1636,7 +1635,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 118
+            "line": 117
           },
           "readiness": {
             "status": "ready",
@@ -1658,7 +1657,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 119
+            "line": 118
           },
           "readiness": {
             "status": "ready",
@@ -1678,7 +1677,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 120
+            "line": 119
           },
           "readiness": {
             "status": "ready",
@@ -1700,7 +1699,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 121
+            "line": 120
           },
           "readiness": {
             "status": "ready",
@@ -1725,7 +1724,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 122
+            "line": 121
           },
           "readiness": {
             "status": "ready",
@@ -1747,7 +1746,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 123
+            "line": 122
           },
           "readiness": {
             "status": "ready",
@@ -1767,7 +1766,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 124
+            "line": 123
           },
           "readiness": {
             "status": "ready",
@@ -1782,7 +1781,6 @@
           "execution_route": "fusion-rest",
           "transitions": {
             "found": "CPA.LOOKUP_DUPLICATE_CONTEXT_GRANULARITY",
-            "missing_measure_catalog": "CPA.MEASURE_CATALOG_INPUT_FAILURE",
             "not_found": "CPA.LOOKUP_FAILURE",
             "ambiguous": "CPA.LOOKUP_FAILURE",
             "failure": "CPA.LOOKUP_FAILURE"
@@ -1791,7 +1789,7 @@
             "CPA.SELECT_LOOKUP_SCOPE"
           ],
           "on_failure": "stop",
-          "applies_when": "For duplicate_planning_measure, use find_planning_measure_by_id_or_name across all pages, then read the exact parent and child settings for plan types, groups, catalogs, dimensionality, aggregation, value type, expressions, UOMs, currencies, price lists, conditional formats, and source lists. Require one complete source definition and a verified create mapping for each copied setting, except unmapped plan-type flags, which are skipped and recorded under the Plan-type bit mapping rule; missing child evidence blocks the duplicate preview. The lookup is read-only. Use list_existing_planning_measure_source_lists with the exact source MeasureId and complete every page; retain authoritative parent SourceType and each child MeasureId, ListId, Name, and IsDefault as evidence. Only a successful complete lookup establishes an empty set; failed, malformed, mismatched, or incomplete rows block duplication. Carry all exact Name and IsDefault values into the fresh create handoff without asking the user to re-enter them; source identity is evidence only. Capture the exact source DisaggrMethodOther and its allocation basis fields from the authoritative parent definition before any defaults or dependency synchronization. Distinguish a returned blank/null from a missing field; missing allocation evidence blocks duplication. Carry source allocation evidence with the new-create projection. Capture the parent GranularityId as parent-context evidence. After the complete source read, if an explicit catalog selection is blank or empty, or no valid non-seeded copied catalog remains and no nonblank explicit selection is supplied, select missing_measure_catalog and stop with input_validation and Creation blocked: a valid Measure Catalog is required; ask no question or continue duplicate resolution. Otherwise continue the existing found path and live catalog validation. For a requested Project or Planning Attribute duplicate, continue through resolve_measure_context_granularity before interpreting blank parent ProjectLevelsList or PlanningAttributeLevelsList as missing levels. The parent granularity alone does not establish the requested context dimensionality. For Default context retain the existing parent-granularity preservation contract.",
+          "applies_when": "For duplicate_planning_measure, use find_planning_measure_by_id_or_name across all pages, then read the exact parent and child settings for plan types, groups, catalogs, dimensionality, aggregation, value type, expressions, UOMs, currencies, price lists, conditional formats, and source lists. Require one complete source definition and a verified create mapping for each copied setting, except unmapped plan-type flags, which are skipped and recorded under the Plan-type bit mapping rule; missing child evidence blocks the duplicate preview. The lookup is read-only. Use list_existing_planning_measure_source_lists with the exact source MeasureId and complete every page; retain authoritative parent SourceType and each child MeasureId, ListId, Name, and IsDefault as evidence. Only a successful complete lookup establishes an empty set; failed, malformed, mismatched, or incomplete rows block duplication. Carry all exact Name and IsDefault values into the fresh create handoff without asking the user to re-enter them; source identity is evidence only. Capture the exact source DisaggrMethodOther and its allocation basis fields from the authoritative parent definition before any defaults or dependency synchronization. Distinguish a returned blank/null from a missing field; missing allocation evidence blocks duplication. Carry source allocation evidence with the new-create projection. Capture the parent GranularityId as parent-context evidence. For a requested Project or Planning Attribute duplicate, continue through resolve_measure_context_granularity before interpreting blank parent ProjectLevelsList or PlanningAttributeLevelsList as missing levels. The parent granularity alone does not establish the requested context dimensionality. For Default context retain the existing parent-granularity preservation contract.",
           "source": {
             "file": "ora_reference_lookups.md",
             "anchor": "task-nodes",
@@ -1891,18 +1889,17 @@
           "execution_route": "local",
           "transitions": {
             "pass": "CPA.ENFORCE_DUPLICATE_MEASURE",
-            "missing_measure_catalog": "CPA.MEASURE_CATALOG_INPUT_FAILURE",
             "failed": "CPA.LOOKUP_FAILURE"
           },
           "prerequisites": [
             "CPA.RESOLVE_DUPLICATE_DEFAULT_LEVELS"
           ],
           "on_failure": "stop",
-          "applies_when": "Require one complete source and valid copied settings. Generate the duplicate Name from the authoritative originalName and complete target existingMeasureNames: use exact case-sensitive comparisons, try Copy of <originalName> first, then select the lowest unused positive integer in exact Copy<n> of <originalName> names. Require a nonblank unused Name of at most 250 characters; never reuse the source Name or truncate, and stop for a shorter user-provided name if the candidate is too long. Re-query or revalidate uniqueness immediately before the create POST through the selected workflow; a collision or incomplete evidence blocks submission, and a changed Name requires renewed validation and approval of the revised immutable artifact. For copied RelevantPlanType, retain only flags with a declared meaning-to-bit mapping and a unique live meaning; omit unmapped flags from the new create projection and record them as skipped rather than blocking duplication. Require at least one remaining mapped, live-validated Plan Type. Preserve the source mask as evidence and never modify the source measure. Set MeasureId to null in the duplicate projection, fresh create handoff, and final create payload; never submit the source MeasureId. Clear source IsSeeded, seeded catalog links, SeededExpression, SeededEditLockExpr, and source ListIds. Do not force IsSeeded to 2; omit it unless the live create schema requires an explicit value and the non-seeded code is verified. Validate and force copied Expression and EditLockExpr into the new parent create source. Validate copied UOM/currency codes and Price List names through their live LOVs, enforce base-field and display-association data-type/granularity restrictions, and carry only numeric PricelistId values. The new parent payload uses the unique Name and exact validated Expression and EditLockExpr; map copied UOM and currency associations to MeasureUOM.items[].UomCode and MeasureCurrency.items[].CurrencyCode, and copied Price Lists to numeric MeasurePriceList.items[].PricelistId. Validate the duplicate Source List handoff using the complete captured rows: validate all captured source-list Name and IsDefault values under the existing child rules and verify the selected child create adapter before parent approval. Preserve authoritative SourceType 3 explicitly for a List source through fresh create defaulting and handoff; source rows conflicting with a non-List parent mode block duplication rather than being discarded. Carry every copied child candidate with exact Name and IsDefault and no source identity or audit fields. Fresh source-list rows wait for the returned new MeasureId. A copied expression or archived source payload is not validator evidence: carry both exact texts into a fresh create_planning_measure run and block its submission unless that run validates each through the configured validation service. Copy the exact source Allocation Type into DisaggrMethodOther and retain its applicable allocation basis fields. Validate a nonblank copied code through list_measure_allocation_types without substituting another code. Preserve a returned blank/null only when the verified create contract permits it; otherwise block with the allocation contract issue, never default to EQUAL. Missing source allocation evidence blocks duplication. Carry duplicate origin and the exact source allocation value into the fresh create run so both defaulting paths preserve it. For Default-context duplication, validate the authoritative parent source GranularityId against the exact resolved granularity and selected live create schema and adapter. When accepted, carry that exact field/value with duplicate origin into the fresh create run. Preserve its resolved dimensionality and context as comparison evidence. If preservation is unsupported or unavailable, require a verified equivalent level-based projection before continuing; do not silently clear or default a duplicate's granularity. For Project or Planning Attribute duplication, validate the context-level projection returned by CPA.RESOLVE_DUPLICATE_DEFAULT_LEVELS: requested MeasureContext 2 or 3, the full ordered context-specific level list, and its ordered Default-context subset. Treat this as the explicit context-level projection strategy; do not apply the parent GranularityId preservation requirement to a different context. Keep context-specific GranularityId as resolution evidence and prepare the level-based create handoff only when the selected schema and adapter accept the resolved context lists. Require Measure-catalog, Measure-group, and Plan-type assignments before preparing the create source or duplicate handoff; omission, blank selections, empty lists, or unresolved values in any required group block creation. Measure-catalog assignment is required: an omitted selection is allowed only when valid copied non-seeded associations satisfy duplication; an explicit blank, empty, or unresolved selection blocks creation. Require at least one resolved catalog before source preparation. If the required Measure Catalog is omitted, blank, empty, or absent after seeded duplicate associations are excluded, stop the current create or duplicate handoff immediately with input_validation and report: Creation blocked: a valid Measure Catalog is required. Do not ask a question, prompt for a catalog selection, or continue source preparation, preview, approval, or submission in that run. Resolve every supplied nonblank catalog name through find_planning_measure_catalog_by_name; missing, ambiguous, or unresolved supplied catalogs still block creation. For duplication, preserve and validate non-seeded source catalog associations when present; if none remain after seeded associations are excluded, require a valid catalog selection. Use find_planning_measure_catalog_by_name, list_planning_measure_groups, and the existing live Plan Type validation for required assignments. If Measure Catalog is missing, report only the required catalog error and stop; otherwise report missing Measure Group and Plan Type together. Never infer or default a catalog, group, or plan-type association.  For duplicate origin, retain the authoritative MeasureCalculationType value and metadata-required type through create source and readback; do not copy source GoalValues or block or report on its omission by Data Loader. Retain RestAction=POST solely as an ADF_REST loader control on every create row, including copied associations; omit it from Fusion REST JSON payloads. Apply the Duplicate payload field contract in this file: require live ADF_REST loader/import support, RestAction in its schema and POST in each create row; block missing/wrong controls or unsupported metadata, without requiring proof of server-internal JSON transformation.",
+          "applies_when": "Require one complete source and valid copied settings. Generate the duplicate Name from the authoritative originalName and complete target existingMeasureNames: use exact case-sensitive comparisons, try Copy of <originalName> first, then select the lowest unused positive integer in exact Copy<n> of <originalName> names. Require a nonblank unused Name of at most 250 characters; never reuse the source Name or truncate, and stop for a shorter user-provided name if the candidate is too long. Re-query or revalidate uniqueness immediately before the create POST through the selected workflow; a collision or incomplete evidence blocks submission, and a changed Name requires renewed validation and approval of the revised immutable artifact. For copied RelevantPlanType, retain only flags with a declared meaning-to-bit mapping and a unique live meaning; omit unmapped flags from the new create projection and record them as skipped rather than blocking duplication. Require at least one remaining mapped, live-validated Plan Type. Preserve the source mask as evidence and never modify the source measure. Set MeasureId to null in the duplicate projection, fresh create handoff, and final create payload; never submit the source MeasureId. Clear source IsSeeded, seeded catalog links, SeededExpression, SeededEditLockExpr, and source ListIds. Do not force IsSeeded to 2; omit it unless the live create schema requires an explicit value and the non-seeded code is verified. Validate and force copied Expression and EditLockExpr into the new parent create source. Validate copied UOM/currency codes and Price List names through their live LOVs, enforce base-field and display-association data-type/granularity restrictions, and carry only numeric PricelistId values. The new parent payload uses the unique Name and exact validated Expression and EditLockExpr; map copied UOM and currency associations to MeasureUOM.items[].UomCode and MeasureCurrency.items[].CurrencyCode, and copied Price Lists to numeric MeasurePriceList.items[].PricelistId. Validate the duplicate Source List handoff using the complete captured rows: validate all captured source-list Name and IsDefault values under the existing child rules and verify the selected child create adapter before parent approval. Preserve authoritative SourceType 3 explicitly for a List source through fresh create defaulting and handoff; source rows conflicting with a non-List parent mode block duplication rather than being discarded. Carry every copied child candidate with exact Name and IsDefault and no source identity or audit fields. Fresh source-list rows wait for the returned new MeasureId. A copied expression or archived source payload is not validator evidence: carry both exact texts into a fresh create_planning_measure run and block its submission unless that run validates each through the configured validation service. Copy the exact source Allocation Type into DisaggrMethodOther and retain its applicable allocation basis fields. Validate a nonblank copied code through list_measure_allocation_types without substituting another code. Preserve a returned blank/null only when the verified create contract permits it; otherwise block with the allocation contract issue, never default to EQUAL. Missing source allocation evidence blocks duplication. Carry duplicate origin and the exact source allocation value into the fresh create run so both defaulting paths preserve it. For Default-context duplication, validate the authoritative parent source GranularityId against the exact resolved granularity and selected live create schema and adapter. When accepted, carry that exact field/value with duplicate origin into the fresh create run. Preserve its resolved dimensionality and context as comparison evidence. If preservation is unsupported or unavailable, require a verified equivalent level-based projection before continuing; do not silently clear or default a duplicate's granularity. For Project or Planning Attribute duplication, validate the context-level projection returned by CPA.RESOLVE_DUPLICATE_DEFAULT_LEVELS: requested MeasureContext 2 or 3, the full ordered context-specific level list, and its ordered Default-context subset. Treat this as the explicit context-level projection strategy; do not apply the parent GranularityId preservation requirement to a different context. Keep context-specific GranularityId as resolution evidence and prepare the level-based create handoff only when the selected schema and adapter accept the resolved context lists. Require Measure-group assignment and Plan-type assignment before preparing the create source or duplicate handoff; omission, blank selections, empty lists, or unresolved values in either required group block creation. Measure-catalog assignment is optional: omitted, blank, or empty catalog selections do not block creation and produce no catalog association rows. Resolve every supplied nonblank catalog name through find_planning_measure_catalog_by_name; missing, ambiguous, or unresolved supplied catalogs still block creation. For duplication, preserve valid non-seeded source catalog associations when present; an empty set after seeded associations are excluded is allowed. Use list_planning_measure_groups and the existing live Plan Type validation for required assignments. Report all missing required groups together; never infer or default a catalog, group, or plan-type association.  For ordinary creation, explicitly set MeasureCalculationType to 5 (FORMULA) when Editable=1 OR StoreResult=1; either selected flag is sufficient. Otherwise set it to 7 only for an expression-based measure with a nonblank, server-validated Expression. Include the selected 5 or 7 in the create source and payload and verify the saved value by readback. For duplication, copy the authoritative source MeasureCalculationType unchanged into the duplicate projection, fresh create handoff, and final create source or payload; do not derive or replace it with 5 or 7. Verify the saved value against the copied source value. Neither flag selected and no valid Expression blocks creation. For duplicate origin, do not copy source GoalValues or block or report on its omission by Data Loader. Retain RestAction=POST solely as an ADF_REST loader control on every create row, including copied associations; omit it from Fusion REST JSON payloads. Apply the Duplicate payload field contract in this file: require live ADF_REST loader/import support, RestAction in its schema and POST in each create row; block missing/wrong controls or unsupported metadata, without requiring proof of server-internal JSON transformation.",
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 148
+            "line": 136
           },
           "readiness": {
             "status": "ready",
@@ -1979,7 +1976,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 149
+            "line": 137
           },
           "readiness": {
             "status": "ready",
@@ -2026,7 +2023,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 95
+            "line": 94
           },
           "readiness": {
             "status": "ready",
@@ -2048,7 +2045,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 96
+            "line": 95
           },
           "readiness": {
             "status": "ready",
@@ -2068,7 +2065,7 @@
           "source": {
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
-            "line": 94
+            "line": 93
           },
           "readiness": {
             "status": "ready",
@@ -2145,7 +2142,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 145
+            "line": 133
           },
           "readiness": {
             "status": "ready",
@@ -2259,7 +2256,7 @@
           "source": {
             "file": "ora_input_validation.md",
             "anchor": "task-nodes",
-            "line": 144
+            "line": 132
           },
           "readiness": {
             "status": "ready",
@@ -2446,26 +2443,6 @@
             "file": "ora_error_handling.md",
             "anchor": "task-nodes",
             "line": 92
-          },
-          "readiness": {
-            "status": "ready",
-            "blocking_reasons": []
-          }
-        },
-        {
-          "id": "CPA.MEASURE_CATALOG_INPUT_FAILURE",
-          "node_type": "terminal",
-          "sequence": 1003,
-          "action_type": "terminal",
-          "execution_route": "local",
-          "transitions": {},
-          "prerequisites": [],
-          "on_failure": "stop",
-          "applies_when": "Return input_validation and Creation blocked: a valid Measure Catalog is required. Ask no question or prompt for a selection; stop the current create or duplicate handoff before further work.",
-          "source": {
-            "file": "ora_error_handling.md",
-            "anchor": "task-nodes",
-            "line": 93
           },
           "readiness": {
             "status": "ready",

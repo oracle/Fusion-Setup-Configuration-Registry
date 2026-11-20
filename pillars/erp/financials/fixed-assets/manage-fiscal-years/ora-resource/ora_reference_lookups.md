@@ -11,10 +11,66 @@
 
 | Resolver | Runs When | Request | Match Rule | Values to Fill | If No Match or Many Matches |
 |---|---|---|---|---|---|
+| resolve_fiscal_year_dff_segments | After create-new defaults/annual-row generation, or when verifying supplied reuse criteria | One batch-current DFF definition export through core.fusion-api.apps-common.descriptive-flexfields, supplied per-row values, and exact target evidence for reuse | Execute Fiscal Year DFF Resolution in create or reuse-criteria mode | Per-row required-field maps, validated values, conversions, and evidence references | Missing required input, invalid values, ambiguous mappings, incomplete evidence, or unsupported checks blocks the applicable operation |
 | resolve_existing_fiscal_year | Before create or update | BOSS `assetFiscalYearDatesView` through `core.fusion-api.rest-api-client` | One exact Fiscal Year Name; compare every requested date row. | Existing definition and differences | BOSS data is existing-state evidence; BOSS no data permits create; only a BOSS error requires the FSM export fallback. Multiple matches block. |
 | resolve_ledger_periods | Ledger-derived setup | Standard Fusion REST `/fscmRestApi/resources/11.13.18.05/ledgersLOV` and `/fscmRestApi/resources/11.13.18.05/accountingPeriodsLOV`; when the target supports an equivalent BOSS resource, use it only after its resource contract is verified. | One exact ledger; retain only exact period-set and period-type matches. | Ledger, calendar, regular and adjustment period rows | When neither live route is available, use `resolve_ledger_periods_export_fallback`. |
 | resolve_ledger_periods_export_fallback | Standard Fusion REST and the verified BOSS alternative are unavailable, incomplete, or unauthorized | A current same-target General Ledger setup-data export containing the requested ledger and its accounting-period rows, obtained through `shared.setup-export.task-level-export`. | One exact ledger, period set, and period type; complete regular and adjustment-period coverage. | Ledger, calendar, regular and adjustment period rows. | Missing, incomplete, ambiguous, cross-target, or stale export blocks. |
 | resolve_active_translation_languages | Before creating translations | `GET /api/boss/data/objects/ora/commonAppsInfra/objects/v1/languages/$views/activeLanguage?$limit=500` through `core.fusion-api.rest-api-client` | Page completely and retain every active result. | Every active `languageCode`, `languageTag`, and language description. | Stop if the result is missing, incomplete, or empty. Do not ask the user to select languages. |
+
+## Fiscal Year DFF Resolution
+
+Obtain one completed same-environment
+FA_MANAGE_FIXED_ASSETS_DESCRIPTIVE_FLEXFILEDS setup-data export per immutable
+batch through core.fusion-api.apps-common.descriptive-flexfields.
+Use Financials / Fixed Assets; resolve task sequence and eligibility through
+the authoritative catalog and shared export workflow.
+Retain ProcessId, ZIP reference, outcome, environment, and batch identity.
+
+Reuse that definition export for every annual row in the unchanged batch.
+Do not export per Fiscal Year Name or annual year. Export again for a new
+batch or changed batch/environment. This lifecycle takes precedence over
+the reusable existing-state Export Fallback Selection Protocol.
+
+1. Confirm ApplicationId=140 and DescriptiveFlexfieldCode=FA_FISCAL_YEAR
+   from current metadata, including its mapping to annual date rows.
+   Attribute columns alone do not establish another DFF identity. Require
+   explicit metadata-to-object mapping for any supplied or contract-required
+   header attributes; report an unresolved mapping instead of guessing.
+2. Read enabled global definitions from
+   ORA_FND_APP_DESCRIPTIVE_FLEXFIELD_GLOBAL_SEGMENT.csv, scoped to that
+   exact application and DFF. Retain optional enabled segments too.
+3. Resolve supplied contexts from
+   ORA_FND_APP_DESCRIPTIVE_FLEXFIELD_CONTEXT.csv in the same export.
+   Require one exact enabled ContextCode, otherwise one exact enabled Name.
+4. Read enabled context-sensitive definitions from
+   ORA_FND_APP_DESCRIPTIVE_FLEXFIELD_SEGMENT.csv for that exact application,
+   DFF, and context. Blank context never waives global requirements.
+5. In create mode, require nonblank values for every applicable RequiredFlag=Y
+   segment, including hidden segments, on every proposed annual row.
+   Map supplied values by unique current ColumnName, SegmentCode, or Prompt.
+   Reject unknown, disabled, out-of-context, ambiguous, or conflicting input.
+   Do not silently propagate one annual row's values to other years.
+6. Delegate only read-only value-set verification through Manage Fixed Assets
+   Flexfield Value Sets. Never create, enable, or modify sets or values.
+   With no ValueSetCode, validate the supported column contract.
+   Format Only requires applicable type/format/length/precision/scale/range
+   checks, not enumerated membership. Independent requires exact eligible
+   membership; Dependent also requires the exact eligible parent/value pair.
+   Table membership is unsupported by the current delegated workflow:
+   report it as unverified and stop. Unsupported types, incomplete coverage,
+   unresolved visibility, and invalid values remain blockers.
+7. Retain supplied values and documented canonical conversions separately.
+   Show conversions in previews. Resolve actual import headers from the
+   current task contract, never from assumed database column names.
+
+In reuse-criteria mode, validate and compare only supplied DFF criteria
+against complete exact-name/exact-year target evidence. Do not demand create
+inputs, alter existing values, or turn a mismatch into an update.
+
+The DFF definition export is metadata evidence, distinct from the Fiscal
+Years template/spec package and existing-state exports. Its definition rows
+may establish requirements but never supply proposed fiscal-year values.
+A failed or incomplete export cannot prove that no segments are required.
 
 ## Export Fallback Selection Protocol
 
@@ -180,3 +236,5 @@ lookup evidence for another row.
 |---|---|---|---|---|---|---|---|
 | FY.LOOKUP_EXISTING | decision | 30 | reference_lookup | checked_or_not_applicable->FY.LOOKUP_EQUIVALENT;unresolved->FY.HANDLE_LOOKUP | FY.RESOLVE_DEPENDENCIES | stop | When a Fiscal Year Name was supplied, check its exact existing state after cycle and coverage resolution; otherwise record not applicable. |
 | FY.LOOKUP_EQUIVALENT | decision | 35 | reference_lookup | resolved->FY.DECIDE_EQUIVALENT;blocked->FY.HANDLE_LOOKUP | FY.LOOKUP_EXISTING | stop | Identify equivalent existing Fixed Assets fiscal years after exact-name status is available and before the reuse-or-create decision, preview, or package preparation. |
+| FY.VERIFY_REUSE_DFF | decision | 50 | reference_lookup | no_criteria->FY.DONE_EXISTS;match->FY.DONE_EXISTS;unresolved->FY.HANDLE_LOOKUP | FY.DECIDE_EQUIVALENT | stop | User selected an exact verified fiscal year for reuse. Without supplied DFF criteria, return no_criteria without a DFF export. Otherwise execute resolve_fiscal_year_dff_segments in reuse-criteria mode and require an exact match. |
+| FY.RESOLVE_DFF | decision | 65 | reference_lookup | resolved->FY.ENFORCE_DESIGN;missing_or_invalid_input->FY.HANDLE_INPUT;unverified->FY.HANDLE_LOOKUP | FY.APPLY_DEFAULTS | stop | Create-new decision, selected-name checks, and annual-row generation are complete. Execute resolve_fiscal_year_dff_segments in create mode for every proposed annual row before Design Preview or package preparation. |

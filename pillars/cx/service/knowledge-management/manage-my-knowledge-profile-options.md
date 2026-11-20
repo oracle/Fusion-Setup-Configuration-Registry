@@ -80,13 +80,13 @@ source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 
 ### View My Knowledge Profile Options
 
-View My Knowledge profile options.
+View My Knowledge profile options (CSO_TYPEAHEAD_CATEGORY_LOV_ENABLED, CSO_ENABLE_HCM_KMHOME, CSO_ENABLE_SVC_KMHOME, CSO_RECENTLY_UPDATED_TIME_PERIOD).
 
 1. Read the selected profile option with core.fusion-api.apps-common using the Profile Values REST.
 
 ### Update My Knowledge Profile Options
 
-Update My Knowledge profile options.
+Update My Knowledge profile options (CSO_TYPEAHEAD_CATEGORY_LOV_ENABLED, CSO_ENABLE_HCM_KMHOME, CSO_ENABLE_SVC_KMHOME, CSO_RECENTLY_UPDATED_TIME_PERIOD).
 
 1. Export My Knowledge profile options with shared.setup-export.task-level-export.
 2. Update the selected My Knowledge profile option(s).

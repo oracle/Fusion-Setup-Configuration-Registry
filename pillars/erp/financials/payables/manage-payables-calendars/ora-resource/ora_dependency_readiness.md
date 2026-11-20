@@ -14,7 +14,11 @@
 | Dependency ID | Dependency | Mandatory | Applies When | Status | Value Source | Resolver | Why | User Guidance | Values to Fill |
 |---|---|---|---|---|---|---|---|---|---|
 | parent_calendar_type | AP_OTHER_PERIOD_TYPE parent calendar | Yes | A period row is supplied | Satisfied when exact parent identity is supplied | Exact same-task package metadata and CSV headers | | Child rows carry AP_OTHER_PERIOD_TYPE.CalendarName and AP_OTHER_PERIOD_TYPE.CalendarType as parent keys | Supply a matching parent calendar identity before submitting period rows | AP_OTHER_PERIOD_PERIOD.AP_OTHER_PERIOD_TYPE.CalendarName; AP_OTHER_PERIOD_PERIOD.AP_OTHER_PERIOD_TYPE.CalendarType |
-| field_lifecycle_contract | Field-level create/update semantics | Yes | Any create or update candidate is requested | Ready for the bounded create/update allowlists, including AttributeCategory and Attribute1 through Attribute15 on calendar and period rows | SRC-CODE-CALENDAR-SERVICE, SRC-IMPLEMENTOR-CONFIRMED-DFF-LIFECYCLE | | Preserve values outside the documented allowlists | Block any other update outside the bounded create/update allowlists | Payables |
+| field_lifecycle_contract | Field-level create/update semantics | Yes | Any create or update candidate is requested | Ready for the bounded create/update allowlists, including AttributeCategory and Attribute1 through Attribute15 on calendar and period rows | Task create/update field contract | | Preserve values outside the documented allowlists | Block any other update outside the bounded create/update allowlists | Payables |
+
+From Date (`EffectiveFrom`) is create-only through FSM. Changing or clearing it
+on an existing calendar is unsupported, rather than an unresolved dependency.
+Preserve its existing value during other updates; stop requests to change it.
 
 ## Dependency Classification
 

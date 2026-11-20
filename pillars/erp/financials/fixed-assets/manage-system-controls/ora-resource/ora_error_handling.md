@@ -1,5 +1,17 @@
 ﻿# Manage System Controls: Error Handling
 
+## DFF Failures
+
+On the confirmed create path, identify the Enterprise Name and failing
+business prompt. Recover supplied input before requesting missing values.
+Missing required input or invalid values stops before preview/package work.
+Definition, context, membership, mapping, or visibility gaps remain unverified.
+Never create value-set values, substitute contexts, or use DFF validation to
+update existing System Controls.
+
+After import, incomplete DFF read-back blocks parent-verified completion
+and downstream handoff; it never authorizes a corrective import.
+
 ## Failure Classes
 
 | Failure class | Safe next action |
@@ -37,11 +49,11 @@ After an approved immutable FSM package is accepted, report it as `accepted — 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|
 | SYS.DONE_READ_ONLY | terminal | 36 | terminal | none | SYS.LOOKUP_EXISTING | continue | One exact Enterprise Name row already exists |
-| SYS.IMPORT_GATE | decision | 60 | execution_gate | approved->SYS.DONE_READY;blocked->SYS.HANDLE_APPROVAL | SYS.ENFORCE_DESIGN | stop | A reviewed package is proposed for import |
+| SYS.IMPORT_GATE | decision | 60 | execution_gate | ready->SYS.VALIDATED;incomplete->SYS.HANDLE_READINESS | SYS.ENFORCE_DESIGN | stop | Require applicable read-only task validation and immutable-artifact checks for the exact target and requested scope. Return ready without requiring upload approval or a submission receipt: core.data-loader obtains submission approval after task validation. This node does not submit, poll, or report acceptance. Missing, stale, or mismatched validation/artifact evidence returns incomplete. |
 | SYS.HANDLE_INPUT | step | 70 | error_handler | handled->SYS.ISSUES | SYS.VALIDATE_INPUT | stop | Identity or creation input is invalid |
 | SYS.HANDLE_DEPENDENCY | step | 80 | error_handler | handled->SYS.ISSUES | SYS.RESOLVE_DEPENDENCIES | stop | A prerequisite is unresolved |
 | SYS.HANDLE_LOOKUP | step | 90 | error_handler | handled->SYS.ISSUES | SYS.LOOKUP_EXISTING | stop | Lookup evidence is missing or ambiguous |
 | SYS.HANDLE_DESIGN | step | 100 | error_handler | handled->SYS.ISSUES | SYS.ENFORCE_DESIGN | stop | A design rule blocks the request |
-| SYS.HANDLE_APPROVAL | step | 110 | error_handler | handled->SYS.ISSUES | SYS.IMPORT_GATE | stop | Import approval is missing |
-| SYS.DONE_READY | terminal | 120 | terminal | none | SYS.IMPORT_GATE | continue | Package is ready for approved import |
+| SYS.HANDLE_READINESS | step | 110 | error_handler | handled->SYS.ISSUES | SYS.IMPORT_GATE | stop | Required task validation or immutable-artifact evidence is missing, stale, or mismatched. Return the issue for correction; do not request submission approval, submit, or claim acceptance during task validation. |
+| SYS.VALIDATED | terminal | 120 | terminal | none | SYS.IMPORT_GATE | stop | Return validated_for_import for the current validation scope; no upload approval, submission, acceptance, or Fusion completion is implied. The parent/Core workflow may report accepted only after its accepted-initiation response supplies a request ID correlated to the exact target and reviewed immutable archive/hash. Parent verification remains required. |
 | SYS.ISSUES | terminal | 130 | terminal | none | none | continue | Any validation, lookup, dependency, design, or approval issue |

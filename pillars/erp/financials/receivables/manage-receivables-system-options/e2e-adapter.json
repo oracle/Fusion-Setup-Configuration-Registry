@@ -154,7 +154,7 @@
         "conditionallyBlockedFields": [
           {
             "field": "BUName",
-            "reason": "ora_reference_lookups.md: Documented path is ready; runtime blocks on access denial or non-unique exact match",
+            "reason": "ora_reference_lookups.md: finBusinessUnitsLOV unique active name/ID identity, applicable business function and ledger agreement; fresh same-target RSO export determines create/update existence",
             "resolver": "RESOLVER-BUSINESS-UNIT",
             "status": "blocked"
           },
@@ -172,37 +172,37 @@
           },
           {
             "field": "LocationTaxAccountSegments",
-            "reason": "ora_reference_lookups.md: Blocked until the ledger-derived chart of accounts and supported FSM preview resolve and validate every populated concatenated combination",
+            "reason": "ora_reference_lookups.md: Bind ledger/COA and explicit account-segment provenance before preview; FSM import performs final account resolution and validation",
             "resolver": "MAPPING-ACCOUNT-COMBINATION",
             "status": "blocked"
           },
           {
             "field": "UnallocatedRevenueCCIDSegments",
-            "reason": "ora_reference_lookups.md: Blocked until the ledger-derived chart of accounts and supported FSM preview resolve and validate every populated concatenated combination",
+            "reason": "ora_reference_lookups.md: Bind ledger/COA and explicit account-segment provenance before preview; FSM import performs final account resolution and validation",
             "resolver": "MAPPING-ACCOUNT-COMBINATION",
             "status": "blocked"
           },
           {
             "field": "CodeCombinationIdRoundSegments",
-            "reason": "ora_reference_lookups.md: Blocked until the ledger-derived chart of accounts and supported FSM preview resolve and validate every populated concatenated combination",
+            "reason": "ora_reference_lookups.md: Bind ledger/COA and explicit account-segment provenance before preview; FSM import performs final account resolution and validation",
             "resolver": "MAPPING-ACCOUNT-COMBINATION",
             "status": "blocked"
           },
           {
             "field": "CodeCombinationIdGainSegments",
-            "reason": "ora_reference_lookups.md: Blocked until the ledger-derived chart of accounts and supported FSM preview resolve and validate every populated concatenated combination",
+            "reason": "ora_reference_lookups.md: Bind ledger/COA and explicit account-segment provenance before preview; FSM import performs final account resolution and validation",
             "resolver": "MAPPING-ACCOUNT-COMBINATION",
             "status": "blocked"
           },
           {
             "field": "CodeCombinationIdLossSegments",
-            "reason": "ora_reference_lookups.md: Blocked until the ledger-derived chart of accounts and supported FSM preview resolve and validate every populated concatenated combination",
+            "reason": "ora_reference_lookups.md: Bind ledger/COA and explicit account-segment provenance before preview; FSM import performs final account resolution and validation",
             "resolver": "MAPPING-ACCOUNT-COMBINATION",
             "status": "blocked"
           },
           {
             "field": "TrxHeaderRoundCCIDSegments",
-            "reason": "ora_reference_lookups.md: Blocked until the ledger-derived chart of accounts and supported FSM preview resolve and validate every populated concatenated combination",
+            "reason": "ora_reference_lookups.md: Bind ledger/COA and explicit account-segment provenance before preview; FSM import performs final account resolution and validation",
             "resolver": "MAPPING-ACCOUNT-COMBINATION",
             "status": "blocked"
           },
@@ -280,31 +280,31 @@
           },
           {
             "field": "AdjReceivablesTrxBUName",
-            "reason": "ora_reference_lookups.md: Documented path is ready; runtime blocks on access denial or non-unique exact match",
+            "reason": "ora_reference_lookups.md: finBusinessUnitsLOV unique active name/ID identity, applicable business function and ledger agreement; fresh same-target RSO export determines create/update existence",
             "resolver": "RESOLVER-BUSINESS-UNIT",
             "status": "blocked"
           },
           {
             "field": "WrtoffReceivablesTrxBUName",
-            "reason": "ora_reference_lookups.md: Documented path is ready; runtime blocks on access denial or non-unique exact match",
+            "reason": "ora_reference_lookups.md: finBusinessUnitsLOV unique active name/ID identity, applicable business function and ledger agreement; fresh same-target RSO export determines create/update existence",
             "resolver": "RESOLVER-BUSINESS-UNIT",
             "status": "blocked"
           },
           {
             "field": "FinchrgReceivablesTrxBUName",
-            "reason": "ora_reference_lookups.md: Documented path is ready; runtime blocks on access denial or non-unique exact match",
+            "reason": "ora_reference_lookups.md: finBusinessUnitsLOV unique active name/ID identity, applicable business function and ledger agreement; fresh same-target RSO export determines create/update existence",
             "resolver": "RESOLVER-BUSINESS-UNIT",
             "status": "blocked"
           },
           {
             "field": "PenaltyReceivablesTrxBUName",
-            "reason": "ora_reference_lookups.md: Documented path is ready; runtime blocks on access denial or non-unique exact match",
+            "reason": "ora_reference_lookups.md: finBusinessUnitsLOV unique active name/ID identity, applicable business function and ledger agreement; fresh same-target RSO export determines create/update existence",
             "resolver": "RESOLVER-BUSINESS-UNIT",
             "status": "blocked"
           },
           {
             "field": "RevTransferClearCCIDSegments",
-            "reason": "ora_reference_lookups.md: Blocked until the ledger-derived chart of accounts and supported FSM preview resolve and validate every populated concatenated combination",
+            "reason": "ora_reference_lookups.md: Bind ledger/COA and explicit account-segment provenance before preview; FSM import performs final account resolution and validation",
             "resolver": "MAPPING-ACCOUNT-COMBINATION",
             "status": "blocked"
           },
@@ -322,37 +322,37 @@
           },
           {
             "field": "DefaultCashCcidSegments",
-            "reason": "ora_reference_lookups.md: Blocked until the ledger-derived chart of accounts and supported FSM preview resolve and validate every populated concatenated combination",
+            "reason": "ora_reference_lookups.md: Bind ledger/COA and explicit account-segment provenance before preview; FSM import performs final account resolution and validation",
             "resolver": "MAPPING-ACCOUNT-COMBINATION",
             "status": "blocked"
           },
           {
             "field": "DefaultEarnedDiscountCcidSegments",
-            "reason": "ora_reference_lookups.md: Blocked until the ledger-derived chart of accounts and supported FSM preview resolve and validate every populated concatenated combination",
+            "reason": "ora_reference_lookups.md: Bind ledger/COA and explicit account-segment provenance before preview; FSM import performs final account resolution and validation",
             "resolver": "MAPPING-ACCOUNT-COMBINATION",
             "status": "blocked"
           },
           {
             "field": "DefaultOnAccountCcidSegments",
-            "reason": "ora_reference_lookups.md: Blocked until the ledger-derived chart of accounts and supported FSM preview resolve and validate every populated concatenated combination",
+            "reason": "ora_reference_lookups.md: Bind ledger/COA and explicit account-segment provenance before preview; FSM import performs final account resolution and validation",
             "resolver": "MAPPING-ACCOUNT-COMBINATION",
             "status": "blocked"
           },
           {
             "field": "DefaultUnappliedCcidSegments",
-            "reason": "ora_reference_lookups.md: Blocked until the ledger-derived chart of accounts and supported FSM preview resolve and validate every populated concatenated combination",
+            "reason": "ora_reference_lookups.md: Bind ledger/COA and explicit account-segment provenance before preview; FSM import performs final account resolution and validation",
             "resolver": "MAPPING-ACCOUNT-COMBINATION",
             "status": "blocked"
           },
           {
             "field": "DefaultUnearnedDiscountCcidSegments",
-            "reason": "ora_reference_lookups.md: Blocked until the ledger-derived chart of accounts and supported FSM preview resolve and validate every populated concatenated combination",
+            "reason": "ora_reference_lookups.md: Bind ledger/COA and explicit account-segment provenance before preview; FSM import performs final account resolution and validation",
             "resolver": "MAPPING-ACCOUNT-COMBINATION",
             "status": "blocked"
           },
           {
             "field": "DefaultUnidentifiedCcidSegments",
-            "reason": "ora_reference_lookups.md: Blocked until the ledger-derived chart of accounts and supported FSM preview resolve and validate every populated concatenated combination",
+            "reason": "ora_reference_lookups.md: Bind ledger/COA and explicit account-segment provenance before preview; FSM import performs final account resolution and validation",
             "resolver": "MAPPING-ACCOUNT-COMBINATION",
             "status": "blocked"
           }
@@ -1223,7 +1223,16 @@
           "CodeCombinationIdLossSegments",
           "CodeCombinationIdGainSegments",
           "CodeCombinationIdRoundSegments",
-          "LocationTaxAccountSegments"
+          "LocationTaxAccountSegments",
+          "SalesrepRequiredFlag",
+          "AccountingMethod",
+          "AccrueInterest",
+          "AutoSiteNumbering",
+          "CreateReciprocalFlag",
+          "GenerateCustomerNumber",
+          "PayUnrelatedInvoicesFlag",
+          "PopulateGlSegmentsFlag",
+          "UnearnedDiscount"
         ],
         "types": {
           "AccountingMethod": "string",
@@ -1747,7 +1756,64 @@
             ]
           }
         },
-        "valueContracts": {}
+        "valueContracts": {},
+        "requiredUpdateGroups": [
+          {
+            "fields": [
+              "LedgerName",
+              "AccountingMethod",
+              "AccrueInterest",
+              "AutoSiteNumbering",
+              "GenerateCustomerNumber",
+              "PopulateGlSegmentsFlag",
+              "BUName"
+            ],
+            "sourceIds": [
+              "SRC-CODE-EO"
+            ]
+          },
+          {
+            "baselineNonblankField": "GroupingRuleName",
+            "fields": [
+              "RuleSetName",
+              "CerSplitAmount",
+              "CerDsoDays",
+              "CalcDiscountOnLinesFlag",
+              "SalesrepRequiredFlag",
+              "PostingDaysPerCycle",
+              "TaxInvoicePrint",
+              "ChangePrintedInvoiceFlag",
+              "GroupingRuleName",
+              "UnearnedDiscount",
+              "CreateReciprocalFlag",
+              "AiMaxMemoryInBytes",
+              "PartialDiscountFlag",
+              "AiLogFileMessageLevel",
+              "CodeCombinationIdGainSegments",
+              "CodeCombinationIdLossSegments",
+              "CodeCombinationIdRoundSegments"
+            ],
+            "sourceIds": [
+              "SRC-CODE-EO-IMPL"
+            ]
+          },
+          {
+            "baselineNonblankField": "SiteRequiredFlag",
+            "fields": [
+              "SiteRequiredFlag",
+              "AutoRecInvoicesPerCommit",
+              "CodeCombinationIdGainSegments",
+              "CodeCombinationIdLossSegments",
+              "CodeCombinationIdRoundSegments",
+              "PayUnrelatedInvoicesFlag",
+              "AutoRecReceiptsPerCommit",
+              "DefaultCbDueDate"
+            ],
+            "sourceIds": [
+              "SRC-CODE-EO-IMPL"
+            ]
+          }
+        ]
       }
     ],
     "evidenceRelease": "11.13.26.10.0",

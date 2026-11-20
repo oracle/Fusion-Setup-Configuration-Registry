@@ -8,6 +8,8 @@ situation below.
 
 | Situation | What Should Happen |
 |---|---|
+| Required DFF value is missing or a supplied value is invalid | Report the Calendar Name and segment prompt; recover supplied input first, then request only unresolved business values. Stop before preview or package preparation. |
+| DFF definition, context, membership, mapping, or preservation evidence is incomplete | Report unverified evidence and stop. Never interpret failure as no required segments, create missing value-set values, or clear existing values to pass validation. |
 | Transport/API failure during an authorized read-only lookup | Apply the Transport/environment recovery in [Failure Classes](#failure-classes). |
 | Standard Fusion REST ledger or period lookup is unavailable, incomplete, or ambiguous | Record the sanitized REST result, then request a current same-target export owned by the applicable General Ledger setup task for the ledger-period evidence. Do not probe unverified alternate endpoints; do not use a Fixed Assets export as the ledger-period substitute. |
 | A configuration-equivalent calendar exists under a different name | Report each exact calendar name and the fiscal year, periods-per-year, and period-coverage comparison. Stop before Design Preview or ZIP creation until the user chooses reuse or explicitly requests a duplicate. |
@@ -80,14 +82,14 @@ or fiscal-year extension; resume with the corrected input and fresh validation.
 
 | Rule ID | Node Type | Sequence | Action Type | Transitions | Prerequisites | On Failure | Applies When |
 |---|---|---|---|---|---|---|---|
-| CAL.IMPORT_GATE | decision | 60 | execution_gate | approved_and_accepted->CAL.HANDED_OFF_TO_PARENT;blocked->CAL.HANDLE_APPROVAL | CAL.ENFORCE_DESIGN | stop | Require the parent-governed approvals for the exact immutable package and core.data-loader acceptance before returning accepted; approval alone is not acceptance. |
+| CAL.IMPORT_GATE | decision | 60 | execution_gate | ready->CAL.VALIDATED;incomplete->CAL.HANDLE_READINESS | CAL.ENFORCE_DESIGN | stop | Require applicable read-only task validation and immutable-artifact checks for the exact target and requested scope. Return ready without requiring upload approval or a submission receipt: core.data-loader obtains submission approval after task validation. This node does not submit, poll, or report acceptance. Missing, stale, or mismatched validation/artifact evidence returns incomplete. |
 | CAL.HANDLE_INPUT | step | 70 | error_handler | handled->CAL.ISSUES | none | stop | Required input or customer selection is missing or invalid; return MISSING and list only the unresolved values. |
 | CAL.HANDLE_DEPENDENCY | step | 80 | error_handler | handled->CAL.ISSUES | none | stop | A prerequisite or required decision is unresolved |
 | CAL.HANDLE_LOOKUP | step | 90 | error_handler | handled->CAL.ISSUES | none | stop | Lookup evidence is missing, incomplete, unavailable, or ambiguous; a complete differing definition follows CAL.DECIDE_UPDATE_OR_NEW. |
 | CAL.HANDLE_DESIGN | step | 100 | error_handler | handled->CAL.ISSUES | CAL.ENFORCE_DESIGN | stop | A design rule blocks the request |
-| CAL.HANDLE_APPROVAL | step | 110 | error_handler | handled->CAL.ISSUES | CAL.IMPORT_GATE | stop | Import approval is missing |
+| CAL.HANDLE_READINESS | step | 110 | error_handler | handled->CAL.ISSUES | CAL.IMPORT_GATE | stop | Required task validation or immutable-artifact evidence is missing, stale, or mismatched. Return the issue for correction; do not request submission approval, submit, or claim acceptance during task validation. |
 | CAL.DONE_EXISTS | terminal | 121 | terminal | none | CAL.LOOKUP_EXISTING | continue | Matching calendar already exists |
 | CAL.DONE_REUSE | terminal | 122 | terminal | none | CAL.LOOKUP_EXISTING_REUSE | continue | Exact existing Calendar and complete linked rows are verified for reuse |
 | CAL.NEW_INPUT_REQUIRED | terminal | 123 | terminal | none | CAL.DECIDE_UPDATE_OR_NEW | stop | Return MISSING with the create-new choice retained. Collect the exact new Calendar Name and restart at CAL.CLASSIFY_REQUEST with refreshed evidence and no reused approval; do not prepare a package in this run. |
 | CAL.ISSUES | terminal | 130 | terminal | none | none | continue | Any validation, lookup, dependency, design, or approval issue |
-| CAL.HANDED_OFF_TO_PARENT | terminal | 170 | terminal | none | CAL.IMPORT_GATE | continue | Calendar import is accepted — pending parent verification. |
+| CAL.VALIDATED | terminal | 170 | terminal | none | CAL.IMPORT_GATE | stop | Return validated_for_import for the current validation scope; no upload approval, submission, acceptance, or Fusion completion is implied. The parent/Core workflow may report accepted only after its accepted-initiation response supplies a request ID correlated to the exact target and reviewed immutable archive/hash. Parent verification remains required. |

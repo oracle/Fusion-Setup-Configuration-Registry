@@ -447,17 +447,19 @@ def _run_rest_json(
     command.extend(_fusion_auth_options(properties, token_cache))
     result = runner(command, None)
     if result.returncode:
-        # Current and earlier Fusion releases use different exact bodies for
-        # "no previous publish".  Do not collapse other 404s or failures into
-        # that condition.
+        # Accept both exact no-prior-publish responses only for latest status.
+        # Other HTTP statuses, endpoints and error bodies remain failures.
         error = _fusion_http_error(result.stderr or "")
         if (endpoint == "/crmRestApi/searchResources/latest/entities"
                 and error == (400, {"Error": "Could not find active meta model"})):
             raise AdaptiveInitializationRequired(http_status=400)
-        not_found = bool(error and error[0] == 404 and error[1] in (
-                {"Error": "Cannot parse null string"},
-                {"Error": "No prior publish job was found."},
-            ))
+        not_found = (
+            endpoint == "/crmRestApi/searchResources/latest/publishStatus"
+            and error in (
+                (404, {"Error": "No prior publish job was found."}),
+                (404, {"Error": "Cannot parse null string"}),
+            )
+        )
         http_status = error[0] if error else None
         provider = _safe_fusion_error_context(error[1]) if error else {}
         failure_stage = ("adaptive_entity_readback" if endpoint.endswith("/entities")

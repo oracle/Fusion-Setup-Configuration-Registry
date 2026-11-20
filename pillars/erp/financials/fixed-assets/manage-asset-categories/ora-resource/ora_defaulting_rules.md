@@ -8,6 +8,7 @@
 | Fixed Assets enum references | Validate customer-selected dropdown values. Do not choose a value on the customer's behalf. |
 | Oracle Financials 26C business-object docs | Use `AssetCategoryBook` for account/default-expense fields and `AssetCategoryBookDefault` for depreciation default-rule field meaning. |
 | Approved client design | Required source for every category, book, account, and depreciation business choice. |
+| [Oracle Assets 26D: Default Depreciation Rules](https://docs.oracle.com/en/cloud/saas/financials/26d/faias/overview-of-asset-categories.html) | Set up depreciation rules by category, book, and date placed in service range; a new category-book assignment requires its own default row. |
 | Resolved CAT# structure and component mapping | Fill structure, delimiter, exported KFF segment order, component mapping, and unused package-position blanks only from the System Controls-selected current CAT# metadata. |
 | Existing category or category-book read-back | Preserve values only for an explicitly requested update of that same target row. |
 | Selected book fiscal-year calendar | Default From Date Placed in Service from the first available start date for the selected book's fiscal-year calendar. |
@@ -32,7 +33,7 @@ competing defaults.
 |---|---|---|---|
 | ComponentNDescription | Human-readable sentence-case form of the corresponding `ComponentN` value | The corresponding category component is confirmed absent from its resolved value set and its description is blank | resolve_category_component_values |
 | Category structure | System Controls-selected `CatStructureInstanceCode` and its exact enabled current CAT# export match | Current System Controls and CAT# export metadata | resolve_category_flexfield_structure |
-| Category combination and components | Map customer-supplied category components to KFF segments in exported order; normalize each supplied value to uppercase and blank unused package positions. The CAT# delimiter is internal metadata and is never requested from the customer. | Customer component values plus resolved CAT# structure, component mapping, and delimiter | resolve_category_component_mapping |
+| Category combination and components | Map customer-supplied category components to KFF segments in exported order; use the case-validated values from resolve_category_component_values and blank unused package positions. Do not apply a blanket uppercase default. The CAT# delimiter is internal metadata and is never requested from the customer. | Customer component values plus resolved CAT# structure, component mapping, and delimiter | resolve_category_component_mapping |
 | Summary Category | `N` | `Y`, `N` | resolve_category_header_defaults |
 | Enabled | `Y` | `Y`, `N` | resolve_category_header_defaults |
 | Ownership | `LEASED` when a category component contains the word `lease`; otherwise `OWNED` | `OWNED`, `LEASED` | resolve_category_header_defaults |
@@ -43,13 +44,13 @@ competing defaults.
 | Active To date | Blank/open-ended unless supplied | Target export date pattern when populated | resolve_category_header_defaults |
 | Property Type | `PERSONAL` | `PERSONAL` (Personal), `REAL` (Real) | resolve_category_header_defaults |
 | Property Class | `1245` (1245 Property) | `1245` (1245 Property), `1250` (1250 Property) | resolve_category_header_defaults |
-| In Physical Inventory | Blank unless supplied | Target-supported flag values | resolve_category_header_defaults |
-| Intangible | Blank unless supplied | Target-supported flag values | resolve_category_header_defaults |
-| Category descriptive flexfields | Blank on create; preserve on update | Supplied or preserved context-compatible values | resolve_category_header_defaults |
+| In Physical Inventory | Blank unless supplied | `YES`, `NO`; stored column `FA_CATEGORIES_B.INVENTORIAL` | resolve_category_header_defaults |
+| Intangible | Blank unless supplied | `Y`, `N`; stored column `FA_CATEGORIES_B.INTANGIBLE_ASSET_FLAG` | resolve_category_header_defaults |
+| Category descriptive flexfields | Preserve supplied values; blank omitted create values only when the current definition permits; preserve verified unchanged update values | Current header DFF contract | resolve_category_dff_segments |
 | Asset book | No default unless one exact book is supplied/resolved. When exact lookup fails, retrieve nearest active book candidates for user selection; do not assign one automatically. | Exact asset book or nearest active candidate result | resolve_asset_book_for_category |
 | Book context | Populate only from resolved book or same-book export evidence | Selected book metadata; Book Class values include `CORPORATE`, `TAX` | resolve_asset_book_for_category |
 | Book assignment removal action | Blank or `N` for category-book assignment create/update | Removal value only when customer requests removal | resolve_asset_book_for_category |
-| Category-book flags | Blank/unchecked unless supplied or same-book evidence proves them | Target-supported checkbox values; commonly `Y`, `N`, or blank as exported | resolve_category_book_accounts |
+| Suppress Mass Additions AutoPost (`SUPPRESS_MASSADD_AUTOPOST_FLAG`) | Blank unless supplied; preserve on update when unchanged | `Y`, `N`; stored column `FA_CATEGORY_BOOKS.SUPPRESS_MASSADD_AUTOPOST_FLAG` | resolve_category_book_accounts |
 | Default depreciation expense combination (`DefaultExpenseCcidFlag`) | Blank/unchecked unless supplied | UI Yes → stored `Y`; UI No → stored `N` | resolve_category_book_accounts |
 | Category-book account combinations | When no complete customer selection is supplied, automatically derive every required role through the account resolver. Preserve an explicit complete customer selection under Category-Book Account Preparation in ora_reference_lookups.md without full-combination search or existence verification. | Category/book/role result from the account resolver; no generic fallback | resolve_category_book_accounts |
 | Bonus Depreciation Expense | Use the resolved Depreciation Expense segment vector when no complete Bonus Depreciation Expense selection is supplied. | Resolved Depreciation Expense segment vector | resolve_category_book_accounts |
@@ -61,7 +62,8 @@ competing defaults.
 | Lease Liability, Lease Expense, and Lease Exchange-Rate Gain/Loss | Blank unless the category is lease type; when lease type applies, derive each required role from the selected book ledger. | Lease category type and role-specific ledger-derived complete combination | resolve_category_book_accounts |
 | Transaction and transfer account combinations | Blank unless supplied or required by the selected book | Account resolver result for the transaction or transfer role | resolve_category_book_accounts |
 | Annuity account combinations | Blank unless supplied or annuity context proves required | Account resolver result for annuity interest expense or revenue | resolve_category_book_accounts |
-| Category-book descriptive/global flexfields | Blank on create; preserve on update | Supplied or preserved context-compatible values | resolve_asset_book_for_category |
+| Category-book descriptive flexfields | Preserve supplied values; blank omitted create values only when the current definition permits; preserve verified unchanged update values | Current assignment DFF contract | resolve_category_dff_segments |
+| Category-book regional global flexfields (JG_FA_CATEGORY_BOOKS) | Preserve supplied values; discover applicable required regional segments before permitting blank create values; preserve verified unchanged update values | Current regional definition, applicability, context, and GLOBAL_ATTRIBUTE* import mapping | resolve_category_dff_segments |
 | Default Rules parent identity | Derive from resolved category-book row | Resolved category and book identity | resolve_category_book_defaults |
 | Default Rules: From/To Date Placed in Service | Default Start DPIS from the earliest available start date in the selected book's fiscal-year calendar; End DPIS is optional. Treat the Start DPIS as an internal, system-derived attribute, not a customer input. | Validate the selected fiscal-year calendar; use export only for date format | resolve_category_book_defaults |
 | Default Rules: Depreciate Flag (`DepreciateFlag`, also called DepreciationFlag) | `NO` | `YES`, `NO` | resolve_category_book_defaults |
@@ -76,7 +78,7 @@ competing defaults.
 | Production defaults | Customer must supply or explicitly leave blank | Target setup values and numeric/date-compatible values | resolve_category_book_defaults |
 | Low-value asset defaults | Customer must supply or explicitly leave blank | Target low-value-asset method, rate, convention, life, and set values | resolve_category_book_defaults |
 | Annuity defaults | Customer must supply or explicitly leave blank | Target annuity setup values and numeric values | resolve_category_book_defaults |
-| Default-rule descriptive flexfields | Blank on create; preserve on update | Supplied or preserved context-compatible values | resolve_category_book_defaults |
+| Default-rule descriptive flexfields | Preserve supplied values; blank omitted create values only when the current definition permits; preserve verified unchanged update values | Current date-range-specific DFF contract | resolve_category_dff_segments |
 | Translation | Author only when supplied or preserving update | Resolved language/source language from existing target/session | resolve_existing_asset_category |
 | Audit values | Leave blank on create | System-managed values only | resolve_existing_asset_category |
 
@@ -116,7 +118,7 @@ No, never as selected/cleared or as their stored values alone.
 | A client supplies a business value | Preserve it. A default may fill only a blank field unless the client explicitly approves a correction. |
 | A category value is missing, disabled, ambiguous, expired, or parent-unmapped | Pause category package work and ask whether to create or enable the exact value through Manage Fixed Assets Flexfield Value Sets first. |
 | A required customer value is absent or conflicting | Stop before package generation and ask the customer for the exact value. |
-| A mandatory header/default-rule value remains blank after defaulting | Stop before package generation and identify the exact missing field within the requested scope. Category-header creation or changes require Category Combination, Category Type, Ownership, Capitalized, Enabled, and Summary Category after applicable defaults or preservation. Category-book work requires Asset Book. Creating or changing a default-rule row additionally requires From Date Placed in Service, Depreciate Flag, Use Straight-Line Retirements, Depreciation Method, Prorate Convention, and Retirement Convention. Do not require book or default-rule fields for category-header-only work, or header changes for category-book-only work. |
+| A mandatory header/default-rule value remains blank after defaulting | Stop before package generation and identify the exact missing field within the requested scope. Category-header creation or changes require Category Combination, Category Type, Ownership, Capitalized, Enabled, and Summary Category after applicable defaults or preservation. Category-book work requires Asset Book. A new category-book assignment also requires at least one matching default depreciation date-range row, even for an existing category. New assignments and default-rule creates/changes require From Date Placed in Service, Depreciate Flag, Use Straight-Line Retirements, Depreciation Method, method-dependent life or rates, Prorate Convention, and Retirement Convention. Do not classify these defaults as outside scope merely because the request says assign or supplies only accounts. Existing assignment updates may preserve verified applicable defaults without requesting unchanged values again. Do not require book or default-rule fields for category-header-only work, or header changes for category-book-only work. |
 | A default-rule reference-set check fails | Do not substitute a convention or method. Stop until the supplied value resolves to the required book-level or Common Set reference set. |
 | Selected book fiscal-year calendar has no available start date | Stop before package generation. Resolve the book fiscal-year/calendar setup first. |
 | An account role is absent from the request | Run resolve_category_book_accounts before asking the customer; the absence alone does not block package preparation. |

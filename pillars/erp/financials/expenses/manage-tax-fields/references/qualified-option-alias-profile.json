@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.1",
+  "strategy": "enable-tax-identical-minimal-aliases-v1",
+  "qualified_on": "2026-10-29",
+  "release": "11.13.27.04.0",
+  "schema_sha256": "67b25488fea1d14b92bf58bede6afbd3c5e2d3e08944eebeda2b33ba3569780e",
+  "additional_qualified_schemas": [
+    {
+      "release": "11.13.26.10.0",
+      "schema_sha256": "d214846b0e76c771b9295362c04cbfcce53353d0f32f913e3486f4d8b0952ec0"
+    }
+  ],
+  "qualified_operations": ["create"],
+  "qualified_values": ["Y"],
+  "scope": "named_business_unit",
+  "switch_only": true,
+  "evidence": "option-alias-qualification.md#live-qualified-boundary--2026-10-29",
+  "qualified_update": {
+    "qualified_on": "2026-11-02",
+    "release": "11.13.26.10.0",
+    "schema_sha256": "d214846b0e76c771b9295362c04cbfcce53353d0f32f913e3486f4d8b0952ec0",
+    "scope": "named_business_unit",
+    "option_count": 1,
+    "before_value": "N",
+    "value": "Y",
+    "companion_rule": {
+      "operation": "create",
+      "same_business_unit": true,
+      "count": 1,
+      "values": {
+        "TerritoryCode": "US",
+        "EnableMerchantNameCode": "ENABLED",
+        "EnableMerchantReceiptCode": "ENABLED",
+        "EnableMerchantTaxRegCode": "ENABLED",
+        "EnableMerchantReferenceCode": "REQUIRED",
+        "EnableMerchantTaxpayerCode": "ENABLED",
+        "EnableTaxClassificationCode": "ENABLED",
+        "EnabledFlag": "N"
+      }
+    },
+    "evidence": "option-alias-qualification.md#live-qualified-update-boundary--2026-11-02"
+  },
+  "limitations": [
+    "Only the recorded N-to-Y update with its same-BU US rule create is qualified; other updates and creates with ValueCode N require separate qualification.",
+    "Global scope and other release/schema fingerprints are not qualified.",
+    "Combined imports outside qualified_update require separate qualification. New Y switches with new tax rules may instead use the staged switch-only create then rule-only route; the create-Y profile remains switch-only.",
+    "Each import still requires fresh target evidence, normal core approval and post-import reconciliation."
+  ]
+}

@@ -1,0 +1,232 @@
+{
+  "schema_version": "3.0",
+  "representation": "nested",
+  "tasks": [
+    {
+      "task_code": "EXM_MANAGE_CORPORATE_CARD_PROGRAMS",
+      "task_name": "Manage Corporate Card Programs",
+      "start_node": "CCP.VALIDATE_INPUT",
+      "nodes": [
+        {
+          "id": "CCP.VALIDATE_INPUT",
+          "node_type": "step",
+          "sequence": 10,
+          "action_type": "validate_input",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "CCP.RESOLVE_REFERENCES",
+            "invalid": "CCP.HANDLE_ERROR"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "Validate requested task inputs before a runnable rule plan or package preview.",
+          "source": {
+            "file": "ora_input_validation.md",
+            "anchor": "task-nodes",
+            "line": 55
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CCP.RESOLVE_REFERENCES",
+          "node_type": "step",
+          "sequence": 20,
+          "action_type": "reference_lookup",
+          "execution_route": "fusion-rest",
+          "transitions": {
+            "resolved": "CCP.CHECK_DEPENDENCIES",
+            "blocked": "CCP.HANDLE_ERROR",
+            "failure": "CCP.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "CCP.VALIDATE_INPUT"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Resolve only the qualified read-only contracts required by the requested fields.",
+          "source": {
+            "file": "ora_reference_lookups.md",
+            "anchor": "task-nodes",
+            "line": 105
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CCP.CHECK_DEPENDENCIES",
+          "node_type": "step",
+          "sequence": 30,
+          "action_type": "resolve_dependency",
+          "execution_route": "local",
+          "transitions": {
+            "satisfied": "CCP.CHECK_DEFAULTS",
+            "blocked": "CCP.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "CCP.RESOLVE_REFERENCES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Evaluate task-local dependency evidence after the required resolver contracts succeed.",
+          "source": {
+            "file": "ora_dependency_readiness.md",
+            "anchor": "task-nodes",
+            "line": 56
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CCP.CHECK_DEFAULTS",
+          "node_type": "step",
+          "sequence": 40,
+          "action_type": "apply_default",
+          "execution_route": "local",
+          "transitions": {
+            "qualified": "CCP.ENFORCE_DESIGN",
+            "blocked": "CCP.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "CCP.CHECK_DEPENDENCIES"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Apply only source-qualified field defaults; unresolved conditions prevent planning and payload defaulting.",
+          "source": {
+            "file": "ora_defaulting_rules.md",
+            "anchor": "task-nodes",
+            "line": 56
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CCP.ENFORCE_DESIGN",
+          "node_type": "step",
+          "sequence": 50,
+          "action_type": "design_enforcement",
+          "execution_route": "local",
+          "transitions": {
+            "valid": "CCP.EXECUTION_GATE",
+            "blocked": "CCP.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "CCP.CHECK_DEFAULTS"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Enforce task scope, source authority, field ownership and package readiness before Data Loader handoff.",
+          "source": {
+            "file": "ora_design_enforcement.md",
+            "anchor": "task-nodes",
+            "line": 46
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CCP.EXECUTION_GATE",
+          "node_type": "decision",
+          "sequence": 60,
+          "action_type": "execution_gate",
+          "execution_route": "local",
+          "transitions": {
+            "ready": "CCP.READY",
+            "blocked": "CCP.HANDLE_ERROR"
+          },
+          "prerequisites": [
+            "CCP.ENFORCE_DESIGN"
+          ],
+          "on_failure": "stop",
+          "applies_when": "Require complete task contracts and normal ready plan before returning readiness to Run Book/Data Loader; this node performs no import.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 63
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CCP.HANDLE_ERROR",
+          "node_type": "step",
+          "sequence": 70,
+          "action_type": "error_handler",
+          "execution_route": "local",
+          "transitions": {
+            "reported": "CCP.BLOCKED"
+          },
+          "prerequisites": [],
+          "on_failure": "stop",
+          "applies_when": "A reached validation, lookup, dependency, defaulting, design or readiness gate fails.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 64
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CCP.READY",
+          "node_type": "terminal",
+          "sequence": 80,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CCP.EXECUTION_GATE"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Task rules are ready for the separate governed workflow; no import success is implied.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 65
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        },
+        {
+          "id": "CCP.BLOCKED",
+          "node_type": "terminal",
+          "sequence": 90,
+          "action_type": "terminal",
+          "execution_route": "local",
+          "transitions": {},
+          "prerequisites": [
+            "CCP.HANDLE_ERROR"
+          ],
+          "on_failure": "continue",
+          "applies_when": "Return classified blockers and a safe next action; no write was authorized by this graph.",
+          "source": {
+            "file": "ora_error_handling.md",
+            "anchor": "task-nodes",
+            "line": 66
+          },
+          "readiness": {
+            "status": "ready",
+            "blocking_reasons": []
+          }
+        }
+      ],
+      "readiness": {
+        "status": "ready",
+        "blocking_reasons": []
+      }
+    }
+  ]
+}

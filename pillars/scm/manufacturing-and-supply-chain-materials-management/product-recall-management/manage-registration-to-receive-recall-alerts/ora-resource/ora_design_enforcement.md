@@ -6,7 +6,7 @@ Apply these checks after input validation and before any import preview or REST 
 
 | Sequence | Step | What Must Happen |
 |---|---|---|
-| 1 | Bind the environment | Match the selected project and Fusion pod before using any current-state evidence. |
+| 1 | Bind the environment | Match the selected project, Fusion pod and OAuth profile; pass execution-safety storage, disclosure and operation-routing gates before preparing a credential-bearing artifact. |
 | 2 | Confirm the site profile | Complete find_site_recall_ingest_start_date; require a populated Site-level value in yyyy-MM-dd format. |
 | 3 | Confirm feature opt-in | Complete verify_curated_recall_feature_optin; require EnabledFlag Y before continuing. |
 | 4 | Confirm product setup | Confirm third-party terms acceptance for the selected mail client. |
@@ -23,12 +23,16 @@ Apply these checks after input validation and before any import preview or REST 
 | Any registration request | Blocker | | Project or Fusion pod identity is missing or inconsistent, or third-party terms are not accepted | Resolve the project environment and accept the terms before a registration request | Yes |
 | Any registration request | Blocker | | The mail address is already registered in a different pod, or uniqueness across the relevant pods has not been confirmed | Use one distinct recall email address per pod, including after a production-to-test clone | Yes |
 | registrationForRecallAlerts import | Blocker | | The current registration count is unknown or greater than one; an existing record has no server-returned key; or create or update capability is not confirmed by the target Data Loader metadata | Obtain authorized read-only current-state evidence and target metadata. Update the single existing record or create only when zero records are verified; never add a second record | Yes |
-| Explicit validateCredentials request | Blocker | | The exact REST path, method, request schema, privilege, or side-effect behavior is undocumented or unverified | Confirm the operation from current public Oracle REST documentation or authorized target Describe metadata, then declare it in a task-local REST operation document before execution | Yes |
+| Explicit validateCredentials request | Blocker | | The exact operation contract or a reviewed executable workflow is absent | Keep live validation blocked; obtain the operation contract and review a workflow with its client, privileges, side effects and approval gates. The current Task Hook has no REST execution command | Yes |
+
+## Execution Safety
+
+The import branch also requires [execution safety](../references/execution-safety.md). Do not release import_ready without verified storage, disclosure, path, transport and operation routing. Missing evidence follows blocked to HANDLE-ISSUE. No task-rule waiver authorizes credential exposure or an unselected execution route.
 
 ## Sources
 
 - [Oracle: Enable Oracle Content Curation Service](https://docs.oracle.com/en/cloud/saas/supply-chain-and-manufacturing/26c/faims/enable-oracle-content-curation-service.html) documents feature opt-in, terms acceptance, Validate and Save, and the requirement for a unique mail address per pod.
-- [Internal TSA: Filtering Oracle Curated Recall Notices by Start Date Interval](https://confluence.oraclecorp.com/confluence/display/HCSCM/TSA%3A+Filtering+Oracle+Curated+Recall+Notices+by+Start+Date+Interval+to+Prevent+Ingestion+of+Old+Recalls) identifies the exact profile code and yyyy-MM-dd format.
+- The exact profile code ORA_SCH_RECALL_INGEST_START_DATE is retained from the task-owner input in this resource. Verify the definition and display name in the selected environment; the public setup guide supports the Site-level date requirement but does not publish this internal code.
 - [Oracle 25A feature announcement](https://docs.oracle.com/en/cloud/saas/readiness/scm/25a/inv25a/25A-inventory-wn-f35140.htm) requires enabling the Capture Recall Notices opt-in.
 - The single-record constraint and named REST business objects are task-owner requirements. Their exact REST paths and field contracts must come from public REST documentation or authorized target metadata.
 

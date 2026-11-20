@@ -1,6 +1,7 @@
 # Customers Errors and Execution Gate
 
 
+
 ## Error Situations
 
 | Situation | What Should Happen |
@@ -20,7 +21,7 @@ submission nor marks the business task complete.
 
 | Check | What Must Be Shown |
 |---|---|
-| Central FBDI handoff | Apply ../references/central-handoff.md to actual candidate evidence: registration/core/Run Book binding, actual OAuth principal and read-only preflight, explicit untested/verified/denied execution-access status, and approval covering the selected core bounded rejection recovery, with no task-level retries; failed required checks take blocked. Untested upload access is not a passed privilege check or a preview blocker |
+| Central FBDI handoff | Apply ../references/central-handoff.md to actual candidate evidence: registration/core/Run Book binding, actual OAuth principal and read-only preflight, explicit untested/verified/denied execution-access status, and approval covering the selected core recovery contract, with no task-level retries; failed required checks take blocked. Untested upload access is not a passed privilege check or a preview blocker |
 | Verification plan | Apply ../references/verification-plan.md and ../references/business-outcome-reconciliation.md with the candidate-generated runtime scope; retain all 87 columns including DFFs, verify requested values and relevant effects, disclose unused hidden storage, and review partial persistence; actual after-results are not required before preview |
 | Correlation plan | Confirm the central route retains distinct Data Loader request/dataset/run IDs, interface LOAD_REQUEST_ID, product UPLOAD_REQUEST_ID and BATCH_ID when returned; never manufacture these before submission |
 | Argument contract | Application 222/interface 59; explicit batch name, null document ID, null batch ID, ESSCREATE, and a binding to the actual interface request ID when returned; reverify against runtime registration |

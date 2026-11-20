@@ -1,0 +1,1205 @@
+{
+  "capabilities": {
+    "determinism": {
+      "evidence": [
+        "policy-reference-0001",
+        "policy-reference-0002"
+      ],
+      "status": "ready"
+    },
+    "identity": {
+      "evidence": [
+        "policy-reference-0003",
+        "policy-reference-0004"
+      ],
+      "status": "ready"
+    },
+    "packageBuild": {
+      "evidence": [
+        "policy-reference-0005",
+        "policy-reference-0006",
+        "policy-reference-0007"
+      ],
+      "status": "ready"
+    },
+    "prerequisiteChecks": {
+      "evidence": [
+        "policy-reference-0008",
+        "policy-reference-0009",
+        "policy-reference-0010",
+        "policy-reference-0011"
+      ],
+      "limitations": [],
+      "status": "ready"
+    },
+    "promptNormalization": {
+      "evidence": [
+        "policy-reference-0012",
+        "policy-reference-0013"
+      ],
+      "status": "ready"
+    },
+    "reconciliation": {
+      "evidence": [
+        "policy-reference-0014",
+        "policy-reference-0015"
+      ],
+      "status": "ready"
+    },
+    "rollbackBuild": {
+      "evidence": [
+        "policy-reference-0016"
+      ],
+      "status": "ready"
+    },
+    "semanticValidation": {
+      "evidence": [
+        "policy-reference-0017",
+        "policy-reference-0018",
+        "policy-reference-0019"
+      ],
+      "limitations": [
+        "Create requires at least one child for each new header and exactly one matching baseline/requested header for each new child, using BU and location. The child CSV uses the two parent references and BalancingSegmentValue; it needs no additional non-key field or TaxEntityId.",
+        "Current per-request BU, location and balancing-value checks and governed import approval remain required. Recorded live cases establish the tested variations; they do not qualify every configured flexfield context or validation rule.",
+        "Child updates, physical deletion and retirement remain unsupported."
+      ],
+      "status": "ready"
+    }
+  },
+  "deletionPolicy": {
+    "boundary": "Delete and retirement are unsupported. Do not infer either operation from location dates or status changes.",
+    "childHandling": "Not applicable; delete is unsupported.",
+    "disposition": "unsupported",
+    "exactKeyRequired": true,
+    "executionOwner": "none",
+    "irreversible": true,
+    "mechanism": "No delete or retirement operation is supported by this FSM workflow.",
+    "recovery": "Not applicable; delete is unsupported.",
+    "sourceIds": []
+  },
+  "entrypoints": {
+    "commands": {
+      "build": "build",
+      "determinism": "determinism",
+      "manifest": "manifest",
+      "normalize": "normalize",
+      "reconcile": "reconcile",
+      "rollback": "rollback",
+      "validate": "validate"
+    },
+    "descriptor": "e2e-adapter.json",
+    "runtime": "scripts/fsm_task_adapter.py"
+  },
+  "generation": {
+    "auditInferenceEvidence": [
+      "policy-reference-0020",
+      "policy-reference-0021",
+      "policy-reference-0022",
+      "policy-reference-0023",
+      "policy-reference-0024",
+      "policy-reference-0025",
+      "policy-reference-0026",
+      "policy-reference-0027",
+      "policy-reference-0028",
+      "policy-reference-0029",
+      "policy-reference-0030"
+    ],
+    "blockers": [],
+    "contractReference": "fscr-deliverable-builder/references/fsm-task-adapter-contract-v1.md",
+    "generator": "fscr-deliverable-builder/scripts/generate_fsm_task_adapter.py",
+    "keyInferenceEvidence": [
+      "policy-reference-0031",
+      "policy-reference-0032",
+      "policy-reference-0033",
+      "policy-reference-0034",
+      "policy-reference-0035",
+      "policy-reference-0036"
+    ],
+    "operationEvidence": {
+      "create": [
+        "policy-reference-0037",
+        "policy-reference-0038",
+        "policy-reference-0039"
+      ],
+      "update": [
+        "policy-reference-0037",
+        "policy-reference-0038",
+        "policy-reference-0039"
+      ]
+    },
+    "readiness": "ready",
+    "sourceEvidence": [
+      "policy-reference-0040",
+      "policy-reference-0041",
+      "policy-reference-0042",
+      "policy-reference-0043",
+      "policy-reference-0044",
+      "policy-reference-0045"
+    ]
+  },
+  "normalization": {
+    "designInput": {
+      "defaults": {
+        "preserveOtherValues": true,
+        "preserveUnspecifiedRows": true
+      },
+      "operationRequired": [
+        "id",
+        "action",
+        "entity",
+        "targetKey",
+        "values"
+      ],
+      "optional": [
+        "evidenceUnresolvedUpdateOverrides"
+      ],
+      "required": [
+        "operations"
+      ]
+    },
+    "entityOperationOwnershipPolicy": {
+      "mode": "evidence-backed-complete-matrix",
+      "overrideCannotBypassEntityOwnership": true,
+      "packageMembershipDoesNotEstablishOwnership": true
+    },
+    "evidenceUnresolvedUpdateOverridePolicy": {
+      "authoritativeValidator": "FSM",
+      "automaticRetryAllowed": false,
+      "executionOwner": "runbook-and-core.data-loader",
+      "mode": "governed-application-validation",
+      "operation": "update",
+      "requiresCandidateSpecificApproval": true,
+      "requiresEnvironmentAuthorization": true,
+      "requiresExactFieldBinding": true,
+      "requiresExactOperationBinding": true,
+      "requiresExplicitImplementorApproval": true,
+      "requiresImmutablePreview": true,
+      "requiresPreserveOtherValues": true,
+      "requiresPreserveUnspecifiedRows": true,
+      "singleSubmissionOnly": true
+    },
+    "mode": "agent-assisted-schema-validated",
+    "procedure": [
+      "Preserve the unchanged customer request outside the business blueprint.",
+      "Use the selected task skill and compiled ora_rule_registry.json to resolve task semantics and blockers.",
+      "Write only explicit operations, target keys, requested values, resolved scope, defaults, prerequisites, preservation assertions, and warnings into the normalized design input.",
+      "Apply every known deterministic validation first; when an update field remains explicitly evidence-unresolved, disclose the gap and offer the implementor the exact governed application-validation override without relabeling the field as supported.",
+      "Run the normalize command to validate the design and emit the portable blueprint, complete preview, and stable requirements list."
+    ],
+    "supportedOperations": [
+      "create",
+      "update"
+    ]
+  },
+  "package": {
+    "entities": [
+      {
+        "auditFields": [
+          "LastUpdateDate",
+          "LastUpdatedBy",
+          "LastUpdateLogin",
+          "CreationDate",
+          "CreatedBy"
+        ],
+        "conditionallyBlockedFields": [
+          {
+            "field": "BuName",
+            "reason": "BU Payables REST preflight and Name-plus-EnterpriseId alternate key are confirmed. Supply current matching-context receipts; the shared helper defensive duplicate edge case is delegated to Fusion application validation.",
+            "resolver": "MRE-BU",
+            "status": "partial"
+          },
+          {
+            "field": "InternalLocationCode",
+            "reason": "HCM locationsLov exact code/set lookup and PrimaryKey date finder are established and live sample checks passed. Supply current exact context and same-target receipts; stop on missing or ambiguous results. Do not impose bill-to-only eligibility.",
+            "resolver": "MRE-LOCATION",
+            "status": "partial"
+          },
+          {
+            "field": "EffectiveStartDate",
+            "reason": "HCM locationsLov exact code/set lookup and PrimaryKey date finder are established and live sample checks passed. Supply current exact context and same-target receipts; stop on missing or ambiguous results. Do not impose bill-to-only eligibility.",
+            "resolver": "MRE-LOCATION",
+            "status": "partial"
+          },
+          {
+            "field": "EffectiveEndDate",
+            "reason": "HCM locationsLov exact code/set lookup and PrimaryKey date finder are established and live sample checks passed. Supply current exact context and same-target receipts; stop on missing or ambiguous results. Do not impose bill-to-only eligibility.",
+            "resolver": "MRE-LOCATION",
+            "status": "partial"
+          },
+          {
+            "field": "EnterpriseId",
+            "reason": "BU Payables REST preflight and Name-plus-EnterpriseId alternate key are confirmed. Supply current matching-context receipts; the shared helper defensive duplicate edge case is delegated to Fusion application validation.",
+            "resolver": "MRE-BU",
+            "status": "partial"
+          }
+        ],
+        "createDefaults": {},
+        "createFields": {
+          "BuName": {
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0047"
+            ]
+          },
+          "EffectiveEndDate": {
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0047"
+            ]
+          },
+          "EffectiveStartDate": {
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0047"
+            ]
+          },
+          "EnterpriseId": {
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0047"
+            ]
+          },
+          "EntityName": {
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute1": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute10": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute11": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute12": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute13": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute14": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute15": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute16": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute17": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute18": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute19": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute2": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute20": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute3": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute4": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute5": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute6": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute7": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute8": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute9": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttributeCategory": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "InternalLocationCode": {
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0047"
+            ]
+          },
+          "SetCode": {
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0047"
+            ],
+            "boundary": "Required nonblank header-create context: SetCode is required. Resolve the intended location reference set; no implicit COMMON default. Preserve existing set context on updates."
+          },
+          "TaxIdentificationNum": {
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0047"
+            ]
+          }
+        },
+        "fieldConstraints": {},
+        "headers": [
+          "BuName",
+          "InternalLocationCode",
+          "TaxIdentificationNum",
+          "EntityName",
+          "LastUpdateDate",
+          "LastUpdatedBy",
+          "LastUpdateLogin",
+          "CreationDate",
+          "CreatedBy",
+          "GlobalAttributeCategory",
+          "GlobalAttribute1",
+          "GlobalAttribute2",
+          "GlobalAttribute3",
+          "GlobalAttribute4",
+          "GlobalAttribute5",
+          "GlobalAttribute6",
+          "GlobalAttribute7",
+          "GlobalAttribute8",
+          "GlobalAttribute9",
+          "GlobalAttribute10",
+          "GlobalAttribute11",
+          "GlobalAttribute12",
+          "GlobalAttribute13",
+          "GlobalAttribute14",
+          "GlobalAttribute15",
+          "GlobalAttribute16",
+          "GlobalAttribute17",
+          "GlobalAttribute18",
+          "GlobalAttribute19",
+          "GlobalAttribute20",
+          "SysEffectiveDate",
+          "EffectiveStartDate",
+          "EffectiveEndDate",
+          "SetCode",
+          "EnterpriseId"
+        ],
+        "keyFields": [
+          "EntityName",
+          "BuName",
+          "InternalLocationCode"
+        ],
+        "member": "AP_REPORTING_ENTITY.csv",
+        "name": "AP_REPORTING_ENTITY",
+        "nodePath": "/ReportingEntityHeaderVO/ReportingEntityHeaderVORow",
+        "nodeSequence": "1",
+        "nonPersistedFields": {},
+        "operationOwnership": {
+          "create": {
+            "boundary": "Header aggregate owns create/update; create includes required balancing lines. During header update, child rows are preserved dependencies; no child key replacement or delete is established.",
+            "implementorTarget": true,
+            "reconciliationEntity": "AP_REPORTING_ENTITY",
+            "roles": [
+              "implementor-target",
+              "reconciliation-target"
+            ],
+            "sourceIds": [
+              "policy-reference-0048",
+              "policy-reference-0049",
+              "policy-reference-0046"
+            ]
+          },
+          "update": {
+            "boundary": "Header aggregate owns create/update; create includes required balancing lines. During header update, child rows are preserved dependencies; no child key replacement or delete is established.",
+            "implementorTarget": true,
+            "reconciliationEntity": "AP_REPORTING_ENTITY",
+            "roles": [
+              "implementor-target",
+              "reconciliation-target"
+            ],
+            "sourceIds": [
+              "policy-reference-0048",
+              "policy-reference-0049",
+              "policy-reference-0046"
+            ]
+          }
+        },
+        "requiredFields": [
+          "EntityName",
+          "BuName",
+          "InternalLocationCode",
+          "SetCode",
+          "TaxIdentificationNum",
+          "EnterpriseId"
+        ],
+        "types": {
+          "BuName": "string",
+          "CreatedBy": "string",
+          "CreationDate": "dateTime",
+          "EffectiveEndDate": "date",
+          "EffectiveStartDate": "date",
+          "EnterpriseId": "long",
+          "EntityName": "string",
+          "GlobalAttribute1": "string",
+          "GlobalAttribute10": "string",
+          "GlobalAttribute11": "string",
+          "GlobalAttribute12": "string",
+          "GlobalAttribute13": "string",
+          "GlobalAttribute14": "string",
+          "GlobalAttribute15": "string",
+          "GlobalAttribute16": "string",
+          "GlobalAttribute17": "string",
+          "GlobalAttribute18": "string",
+          "GlobalAttribute19": "string",
+          "GlobalAttribute2": "string",
+          "GlobalAttribute20": "string",
+          "GlobalAttribute3": "string",
+          "GlobalAttribute4": "string",
+          "GlobalAttribute5": "string",
+          "GlobalAttribute6": "string",
+          "GlobalAttribute7": "string",
+          "GlobalAttribute8": "string",
+          "GlobalAttribute9": "string",
+          "GlobalAttributeCategory": "string",
+          "InternalLocationCode": "string",
+          "LastUpdateDate": "dateTime",
+          "LastUpdateLogin": "string",
+          "LastUpdatedBy": "string",
+          "SetCode": "string",
+          "SysEffectiveDate": "date",
+          "TaxIdentificationNum": "string"
+        },
+        "unresolvedUpdateFields": {
+          "SysEffectiveDate": {
+            "boundary": "Transient field. Default/import effects remain unresolved; cannot support retirement or end-dating claims.",
+            "overrideBlockers": [],
+            "overrideEligible": true,
+            "sourceIds": [
+              "policy-reference-0046",
+              "policy-reference-0039"
+            ]
+          }
+        },
+        "updateFields": {
+          "GlobalAttribute1": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute10": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute11": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute12": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute13": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute14": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute15": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute16": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute17": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute18": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute19": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute2": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute20": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute3": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute4": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute5": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute6": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute7": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute8": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttribute9": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "GlobalAttributeCategory": {
+            "boundary": "FSM header import exposes this persisted global flexfield column. Preserve explicitly supplied text and context; Fusion validates configured context, segment values and applicable lengths. No invented local length or context allowlist. Runtime acceptance must be verified by fresh export.",
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0046",
+              "policy-reference-0039",
+              "policy-reference-0047"
+            ]
+          },
+          "TaxIdentificationNum": {
+            "sourceIds": [
+              "policy-reference-0039",
+              "policy-reference-0046",
+              "policy-reference-0037"
+            ]
+          }
+        },
+        "valueContracts": {}
+      },
+      {
+        "auditFields": [
+          "LastUpdateDate",
+          "LastUpdatedBy",
+          "LastUpdateLogin",
+          "CreationDate",
+          "CreatedBy"
+        ],
+        "conditionallyBlockedFields": [
+          {
+            "field": "AP_REPORTING_ENTITY.BuName",
+            "reason": "BU Payables REST preflight and Name-plus-EnterpriseId alternate key are confirmed. Supply current matching-context receipts; the shared helper defensive duplicate edge case is delegated to Fusion application validation.",
+            "resolver": "MRE-BU",
+            "status": "partial"
+          },
+          {
+            "field": "AP_REPORTING_ENTITY.InternalLocationCode",
+            "reason": "HCM locationsLov exact code/set lookup and PrimaryKey date finder are established and live sample checks passed. Supply current exact context and same-target receipts; stop on missing or ambiguous results. Do not impose bill-to-only eligibility.",
+            "resolver": "MRE-LOCATION",
+            "status": "partial"
+          }
+        ],
+        "createDefaults": {},
+        "createFields": {
+          "AP_REPORTING_ENTITY.BuName": {
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0049",
+              "policy-reference-0047"
+            ]
+          },
+          "AP_REPORTING_ENTITY.InternalLocationCode": {
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0049",
+              "policy-reference-0047"
+            ]
+          },
+          "BalancingSegmentValue": {
+            "sourceIds": [
+              "policy-reference-0037",
+              "policy-reference-0049",
+              "policy-reference-0047"
+            ]
+          }
+        },
+        "fieldConstraints": {},
+        "headers": [
+          "AP_REPORTING_ENTITY.BuName",
+          "AP_REPORTING_ENTITY.InternalLocationCode",
+          "BalancingSegmentValue",
+          "LastUpdateDate",
+          "LastUpdatedBy",
+          "LastUpdateLogin",
+          "CreationDate",
+          "CreatedBy"
+        ],
+        "keyFields": [
+          "BalancingSegmentValue",
+          "AP_REPORTING_ENTITY.BuName",
+          "AP_REPORTING_ENTITY.InternalLocationCode"
+        ],
+        "member": "AP_REPORTING_ENTITY_LINE.csv",
+        "name": "AP_REPORTING_ENTITY_LINE",
+        "nodePath": "/ReportingEntityHeaderVO/ReportingEntityHeaderVORow/ReportingEntityLine/ReportingEntityLineVORow",
+        "nodeSequence": "2",
+        "nonPersistedFields": {},
+        "operationOwnership": {
+          "create": {
+            "boundary": "Header aggregate owns create/update; create includes required balancing lines. During header update, child rows are preserved dependencies; no child key replacement or delete is established.",
+            "implementorTarget": true,
+            "reconciliationEntity": "AP_REPORTING_ENTITY_LINE",
+            "roles": [
+              "implementor-target",
+              "reconciliation-target"
+            ],
+            "sourceIds": [
+              "policy-reference-0048",
+              "policy-reference-0049",
+              "policy-reference-0046"
+            ]
+          },
+          "update": {
+            "boundary": "Header aggregate owns create/update; create includes required balancing lines. During header update, child rows are preserved dependencies; no child key replacement or delete is established.",
+            "implementorTarget": false,
+            "reconciliationEntity": "AP_REPORTING_ENTITY_LINE",
+            "roles": [
+              "package-dependency",
+              "reconciliation-target"
+            ],
+            "sourceIds": [
+              "policy-reference-0048",
+              "policy-reference-0049",
+              "policy-reference-0046"
+            ]
+          }
+        },
+        "requiredFields": [
+          "BalancingSegmentValue",
+          "AP_REPORTING_ENTITY.BuName",
+          "AP_REPORTING_ENTITY.InternalLocationCode"
+        ],
+        "types": {
+          "AP_REPORTING_ENTITY.BuName": "",
+          "AP_REPORTING_ENTITY.InternalLocationCode": "",
+          "BalancingSegmentValue": "string",
+          "CreatedBy": "string",
+          "CreationDate": "dateTime",
+          "LastUpdateDate": "dateTime",
+          "LastUpdateLogin": "string",
+          "LastUpdatedBy": "string"
+        },
+        "unresolvedUpdateFields": {},
+        "updateFields": {},
+        "valueContracts": {}
+      }
+    ],
+    "evidenceRelease": "11.13.27.01.0",
+    "metadataMember": "ASM_SETUP_CSV_METADATA.xml",
+    "nodeSequencePolicy": {
+      "mode": "export-local",
+      "sourceEvidence": [
+        "policy-reference-0050",
+        "policy-reference-0051"
+      ],
+      "xmlFileByEntity": {
+        "AP_REPORTING_ENTITY": "AP_REPORTING_ENTITY.xml",
+        "AP_REPORTING_ENTITY_LINE": "AP_REPORTING_ENTITY.xml"
+      }
+    },
+    "objectShortName": "AP_MANAGE_REPORTING_ENTITIES",
+    "schemaFingerprint": "df96ad8ad47fbb6c5fe88deb8b8b762069ffa5a0a7f8513d888fd3c3925d7fc9"
+  },
+  "protocol": {
+    "artifacts": {
+      "blueprint": {
+        "format": "json-object",
+        "producer": "normalize",
+        "requiredFields": [
+          "task",
+          "operations",
+          "resolvedScope",
+          "explicitDefaults",
+          "preservedValues",
+          "prerequisites",
+          "warnings"
+        ]
+      },
+      "candidateHandoff": {
+        "format": "json-object",
+        "producer": "build",
+        "requiredFields": [
+          "status",
+          "task",
+          "candidateSha256",
+          "templateSha256",
+          "baselineSha256",
+          "designSha256",
+          "schemaFingerprint",
+          "memberInventory",
+          "rowCounts",
+          "errors",
+          "warnings",
+          "unresolvedWarnings",
+          "businessSummary"
+        ]
+      },
+      "preview": {
+        "format": "json-object",
+        "producer": "normalize",
+        "requiredFields": [
+          "task",
+          "operations",
+          "explicitDefaults",
+          "preservedValues",
+          "prerequisites",
+          "warnings",
+          "designSha256"
+        ]
+      },
+      "reconciliationReport": {
+        "format": "json-object",
+        "producer": "reconcile",
+        "requiredFields": [
+          "status",
+          "task",
+          "candidateSha256",
+          "exportSha256",
+          "requirementMatrix",
+          "mismatchCount"
+        ]
+      },
+      "requirements": {
+        "format": "json-array",
+        "producer": "normalize",
+        "requiredFields": [
+          "id",
+          "requirement"
+        ]
+      },
+      "sourceManifest": {
+        "format": "json-object",
+        "producer": "manifest",
+        "requiredFields": [
+          "environment",
+          "baseUrl",
+          "taskName",
+          "taskCode",
+          "status",
+          "templateOnly",
+          "release",
+          "schemaFingerprint",
+          "members",
+          "headers",
+          "populatedMembers",
+          "unrelatedPopulatedMembers"
+        ]
+      },
+      "validationReport": {
+        "format": "json-object",
+        "producer": "validate",
+        "requiredFields": [
+          "status",
+          "task",
+          "candidateSha256",
+          "designSha256",
+          "requirementIds",
+          "errors",
+          "warnings",
+          "unresolvedWarnings"
+        ]
+      }
+    },
+    "commands": {
+      "build": {
+        "command": "build",
+        "outputs": [
+          "candidateZip",
+          "candidateHandoff"
+        ],
+        "requiredArguments": [
+          "template",
+          "baseline",
+          "blueprint",
+          "requirements",
+          "output"
+        ]
+      },
+      "determinism": {
+        "command": "determinism",
+        "outputs": [
+          "determinismReport"
+        ],
+        "requiredArguments": [
+          "template",
+          "baseline",
+          "blueprint",
+          "requirements"
+        ]
+      },
+      "manifest": {
+        "command": "manifest",
+        "outputs": [
+          "sourceManifest"
+        ],
+        "requiredArguments": [
+          "package",
+          "environment",
+          "base-url",
+          "template-only"
+        ]
+      },
+      "normalize": {
+        "command": "normalize",
+        "outputs": [
+          "blueprint",
+          "preview",
+          "requirements"
+        ],
+        "requiredArguments": [
+          "baseline",
+          "request",
+          "design",
+          "blueprint-output",
+          "preview-output",
+          "requirements-output"
+        ]
+      },
+      "reconcile": {
+        "command": "reconcile",
+        "outputs": [
+          "reconciliationReport"
+        ],
+        "requiredArguments": [
+          "baseline",
+          "candidate",
+          "blueprint",
+          "requirements",
+          "export"
+        ]
+      },
+      "rollback": {
+        "command": "rollback",
+        "outputs": [
+          "rollbackBlueprint",
+          "rollbackRequirements",
+          "candidateZip",
+          "candidateHandoff"
+        ],
+        "requiredArguments": [
+          "template",
+          "before",
+          "current",
+          "forward-blueprint",
+          "blueprint-output",
+          "requirements-output",
+          "output"
+        ]
+      },
+      "validate": {
+        "command": "validate",
+        "outputs": [
+          "validationReport"
+        ],
+        "requiredArguments": [
+          "template",
+          "baseline",
+          "blueprint",
+          "requirements",
+          "package"
+        ]
+      }
+    },
+    "governance": {
+      "fusionMutationAllowed": false,
+      "importApprovalOwner": "core.data-loader",
+      "offlineOnly": true
+    },
+    "implementationKind": "task-specific",
+    "name": "fscr-fsm-task-runtime",
+    "version": "1.0"
+  },
+  "reconciliationPolicy": {
+    "baselineRows": "fail-on-change-or-removal",
+    "concurrentUnrelatedRows": "allow",
+    "duplicateRequestedRows": "fail",
+    "requestedRows": "exact"
+  },
+  "schemaVersion": "fscr-fsm-task-adapter-v2",
+  "semanticModel": {
+    "coverage": {
+      "conditionalBlockerCount": 8,
+      "entityCount": 2,
+      "fieldCount": 43,
+      "relationshipCount": 0,
+      "supportedOperations": [
+        "create",
+        "update"
+      ]
+    },
+    "extension": {
+      "evidence": [
+        "child CSV input is exactly the two parent references and BalancingSegmentValue.",
+        "Task-specific create-shape validation accepts complete portable child input without an additional values field. No TaxEntityId column is introduced.",
+        "The child CSV shape and local aggregate-create linkage checks are supported and recorded live aggregate-create cases passed reconciliation. Current per-request reference qualification and governed application validation remain required.",
+        "Create validation enforces the existing requiredFields contract for non-key inputs after source-backed default normalization and before candidate output.",
+        "both nodes use AP_REPORTING_ENTITY.xml. Export-local positive sequence values are validated within XML file and hierarchy level; schema, node paths, types, parent linkage and duplicate checks remain enforced.",
+        "SetCode The required-field check rejects omitted/null/empty/whitespace SetCode on create, including EBS, before package output. Tax-only updates preserve existing set context."
+      ],
+      "runtime": "scripts/fsm_task_adapter.py",
+      "status": "ready",
+      "validatorCommand": "validate"
+    },
+    "fieldContract": "package.entities",
+    "mode": "task-specific-extension",
+    "relationships": [],
+    "rulePlan": "ora-resource/ora_rule_registry.json"
+  },
+  "task": {
+    "code": "AP_MANAGE_REPORTING_ENTITIES",
+    "csvSupported": true,
+    "functionalArea": "Payables",
+    "importMode": "FSM",
+    "name": "Manage Reporting Entities",
+    "offering": "Financials"
+  }
+}

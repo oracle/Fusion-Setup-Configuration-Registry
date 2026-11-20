@@ -1,6 +1,6 @@
 {
   "catalogName": "effective-offering-functional-area-task-catalog",
-  "generatedAt": "2026-10-15T05:06:18+00:00",
+  "generatedAt": "2026-11-06T03:13:25+00:00",
   "sourceEnvironment": "2610_ARU",
   "sourceRestBaseUrl": "https://cptcyaeqy.fusionapps.ocs.oc-test.com/",
   "sourceOfferingsCatalog": "knowledge/setup-task-catalog/release/.release-offerings-d22lcmnj.json",
@@ -4301,6 +4301,66 @@
               "MandatoryFlag": false
             },
             {
+              "taskShortName": "ORA_MANAGE_EMAIL_PROFILE_OPTIONS",
+              "taskListItemShortName": "ORA_SVC_DEFINE_EMAIL_CHANNEL_CONFIG_ORA_MANAGE_EMAIL_PROFILE_OPTIONS",
+              "displaySequence": "59",
+              "taskName": "Manage Email Profile Options",
+              "taskDescription": "Specify email profile option values for your implementation.",
+              "csvExportImportSupportedFlag": true,
+              "exportImportSupportedFlag": true,
+              "MandatoryFlag": true
+            },
+            {
+              "taskShortName": "ORA_SVC_MANAGE_INBOUND_EMAIL_PROFILE_OPTS",
+              "taskListItemShortName": "ORA_SVC_DEFINE_EMAIL_CHANNEL_CONFIGORA_SVC_MANAGE_INBOUND_EMAIL_PROFILE_OPTS",
+              "displaySequence": "60",
+              "taskName": "Manage Inbound E-Mail Profile Options",
+              "taskDescription": null,
+              "csvExportImportSupportedFlag": true,
+              "exportImportSupportedFlag": true,
+              "MandatoryFlag": true
+            },
+            {
+              "taskShortName": "ORA_SVC_MANAGE_OUTBOUND_EMAIL_PROFILE_OPTS",
+              "taskListItemShortName": "ORA_SVC_DEFINE_EMAIL_CHANNEL_CONFIGORA_SVC_MANAGE_OUTBOUND_EMAIL_PROFILE_OPTS",
+              "displaySequence": "61",
+              "taskName": "Manage Outbound E-Mail Profile Options",
+              "taskDescription": null,
+              "csvExportImportSupportedFlag": true,
+              "exportImportSupportedFlag": true,
+              "MandatoryFlag": true
+            },
+            {
+              "taskShortName": "ORA_SVC_MANAGE_EMAIL_FILTERS",
+              "taskListItemShortName": "ORA_SVC_DEFINE_EMAIL_CHANNEL_CONFIGORA_SVC_MANAGE_EMAIL_FILTERS",
+              "displaySequence": "63",
+              "taskName": "Manage E-Mail Filters",
+              "taskDescription": "Manage filters to accept or reject inbound e-mails from customers.",
+              "csvExportImportSupportedFlag": true,
+              "exportImportSupportedFlag": true,
+              "MandatoryFlag": false
+            },
+            {
+              "taskShortName": "ORA_SVC_EMAIL_CONFIGURATION_AND_VALIDATION",
+              "taskListItemShortName": "ORA_SVC_DEFINE_EMAIL_CHANNEL_CONFIG_ORA_SVC_EMAIL_CONFIGURATION_AND_VALIDATION",
+              "displaySequence": "64",
+              "taskName": "Manage Email Configuration, Registration, and Validation",
+              "taskDescription": "Manage email configuration by verifying the email profile options that are not predefined email channels. The task also allows user to register, unregister and validate email access points for inbound email. Additional validation can be performed by executing test emails for both Inbound and outbound email flows.",
+              "csvExportImportSupportedFlag": false,
+              "exportImportSupportedFlag": false,
+              "MandatoryFlag": true
+            },
+            {
+              "taskShortName": "ORA_MANAGE_EMAIL_CONFIGURATIONS",
+              "taskListItemShortName": "ORA_SVC_DEFINE_EMAIL_CHANNEL_CONFIG_ORA_MANAGE_EMAIL_CONFIGURATIONS",
+              "displaySequence": "65",
+              "taskName": "Manage Email Integration to Exchange",
+              "taskDescription": "Configure Microsoft Exchange as the email server",
+              "csvExportImportSupportedFlag": false,
+              "exportImportSupportedFlag": false,
+              "MandatoryFlag": false
+            },
+            {
               "taskShortName": "ORA_SVC_MANAGE_OMNI_CHANNEL_PROFILE_OPTS",
               "taskListItemShortName": "100000000221561",
               "displaySequence": "67",
@@ -4421,7 +4481,7 @@
               "MandatoryFlag": true
             }
           ],
-          "taskCount": 17
+          "taskCount": 23
         },
         "ORA_CSO_KNOWLEDGE_MANAGEMENT": {
           "functionalAreaShortName": "ORA_CSO_KNOWLEDGE_MANAGEMENT",
@@ -4435,7 +4495,7 @@
             {
               "taskShortName": "ORA_CSO_LOCALES_MGMT",
               "taskListItemShortName": "ORA_CSO_TL_KM_ORA_CSO_LOCALES_MGMT",
-              "displaySequence": "125",
+              "displaySequence": "124",
               "taskName": "Manage Knowledge Locales",
               "taskDescription": "Allows customer admins to activate and deactivate knowledge locales for authoring knowledge articles.",
               "csvExportImportSupportedFlag": true,
@@ -4443,11 +4503,11 @@
               "MandatoryFlag": false
             },
             {
-              "taskShortName": "ORA_MANAGE_KNOWLEDGE_WORKFLOWS",
-              "taskListItemShortName": "ORA_CSO_TL_KM_ORA_MANAGE_KNOWLEDGE_WORKFLOWS",
-              "displaySequence": "126",
-              "taskName": "Manage Knowledge Workflows",
-              "taskDescription": "Allows customer admins to configure the workflows in knowledge authoring.",
+              "taskShortName": "ORA_CSO_USER_GROUPS_MGMT",
+              "taskListItemShortName": "ORA_CSO_TL_KM_ORA_CSO_USER_GROUPS_MGMT",
+              "displaySequence": "125",
+              "taskName": "Manage Knowledge User Groups",
+              "taskDescription": "Allows customer admins to define User Groups. User Groups are used to secure Knowledge articles.",
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
               "MandatoryFlag": false
@@ -4455,7 +4515,7 @@
             {
               "taskShortName": "ORA_CSO_CONTENT_TYPES_MGMT",
               "taskListItemShortName": "ORA_CSO_TL_KM_ORA_CSO_CONTENT_TYPES_MGMT",
-              "displaySequence": "127",
+              "displaySequence": "126",
               "taskName": "Manage Knowledge Content Types Classic",
               "taskDescription": "Allows customer admins to define Content Types. Content Types define the structure and other properties of knowledge articles.",
               "csvExportImportSupportedFlag": true,
@@ -4463,9 +4523,29 @@
               "MandatoryFlag": false
             },
             {
+              "taskShortName": "ORA_CSO_CONTENT_TYPES_INDEXING_MGMT_REDWOOD",
+              "taskListItemShortName": "ORA_CSO_TL_KM_ORA_CSO_CONTENT_TYPES_INDEXING_MGMT_REDWOOD",
+              "displaySequence": "127",
+              "taskName": "Manage Knowledge Content Types Redwood",
+              "taskDescription": "Allows customer admins to define and edit content types for customers using Redwood Knowledge Management. Customer admins can also select to run a manual index on a content type.",
+              "csvExportImportSupportedFlag": true,
+              "exportImportSupportedFlag": true,
+              "MandatoryFlag": false
+            },
+            {
+              "taskShortName": "ORA_MANAGE_KNOWLEDGE_WORKFLOWS",
+              "taskListItemShortName": "ORA_CSO_TL_KM_ORA_MANAGE_KNOWLEDGE_WORKFLOWS",
+              "displaySequence": "128",
+              "taskName": "Manage Knowledge Workflows",
+              "taskDescription": "Allows customer admins to configure the workflows in knowledge authoring.",
+              "csvExportImportSupportedFlag": true,
+              "exportImportSupportedFlag": true,
+              "MandatoryFlag": false
+            },
+            {
               "taskShortName": "ORA_CSO_FILE_ATTACHMENTS_MGMT",
               "taskListItemShortName": "ORA_CSO_TL_KM_ORA_CSO_FILE_ATTACHMENTS_MGMT",
-              "displaySequence": "128",
+              "displaySequence": "129",
               "taskName": "Manage Knowledge Files and Images",
               "taskDescription": "Allows customer admins to configure properties of files and images referenced in knowledge articles.",
               "csvExportImportSupportedFlag": true,
@@ -4475,7 +4555,7 @@
             {
               "taskShortName": "ORA_CSO_SEARCH_DICT_MGMT",
               "taskListItemShortName": "ORA_CSO_TL_KM_ORA_CSO_SEARCH_DICT_MGMT",
-              "displaySequence": "129",
+              "displaySequence": "130",
               "taskName": "Manage Knowledge Search Dictionary",
               "taskDescription": "Allows customer admins to increase search accuracy by adding the customer's terminology to the search dictionary.",
               "csvExportImportSupportedFlag": true,
@@ -4485,7 +4565,7 @@
             {
               "taskShortName": "ORA_CSO_KNOWLEDGE_SEARCH_PROFILE_MGMT",
               "taskListItemShortName": "ORA_CSO_TL_KM_ORA_CSO_KNOWLEDGE_SEARCH_PROFILE_MGMT",
-              "displaySequence": "130",
+              "displaySequence": "131",
               "taskName": "Manage Knowledge Search Profile Options",
               "taskDescription": "Enable, disable, or configure knowledge search",
               "csvExportImportSupportedFlag": true,
@@ -4495,7 +4575,7 @@
             {
               "taskShortName": "ORA_CSO_KNOWLEDGE_PANEL_PROFILE_MGMT",
               "taskListItemShortName": "ORA_CSO_TL_KM_ORA_CSO_KNOWLEDGE_PANEL_PROFILE_MGMT",
-              "displaySequence": "131",
+              "displaySequence": "132",
               "taskName": "Manage Knowledge Panel Profile Options",
               "taskDescription": "Allows customer administrators to configure the available options that control how knowledge is searched and displayed while using the Service Request Knowledge Panel.",
               "csvExportImportSupportedFlag": true,
@@ -4505,7 +4585,7 @@
             {
               "taskShortName": "ORA_CSO_MY_KNOWLEDGE_PROFILE_MGMT",
               "taskListItemShortName": "ORA_CSO_TL_KM_ORA_CSO_MY_KNOWLEDGE_PROFILE_MGMT",
-              "displaySequence": "132",
+              "displaySequence": "133",
               "taskName": "Manage My Knowledge Profile Options",
               "taskDescription": "Allows customer administrators to enable/ disable the My Knowledge menu user Service and Help Desk menus.",
               "csvExportImportSupportedFlag": true,
@@ -4515,7 +4595,7 @@
             {
               "taskShortName": "ORA_MANAGE_KNOWLEDGE_COMMON_PROFILE_OPTION",
               "taskListItemShortName": "ORA_CSO_TL_KM_ORA_MANAGE_KNOWLEDGE_COMMON_PROFILE_OPTION",
-              "displaySequence": "133",
+              "displaySequence": "134",
               "taskName": "Manage Knowledge Common Profile Options",
               "taskDescription": "Configure available profile options that affect Knowledge Management.",
               "csvExportImportSupportedFlag": true,
@@ -4525,19 +4605,9 @@
             {
               "taskShortName": "ORA_CSO_ARTICLE_STATUS_MGMT",
               "taskListItemShortName": "ORA_CSO_TL_KM_ORA_CSO_ARTICLE_STATUS_MGMT",
-              "displaySequence": "134",
+              "displaySequence": "135",
               "taskName": "Manage Knowledge Article Statuses",
               "taskDescription": "Allows customer admins to define Article Statuses. Article Statuses describes the state of knowledge articles",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "ORA_CSO_USER_GROUPS_MGMT",
-              "taskListItemShortName": "ORA_CSO_TL_KM_ORA_CSO_USER_GROUPS_MGMT",
-              "displaySequence": "135",
-              "taskName": "Manage Knowledge User Groups",
-              "taskDescription": "Allows customer admins to define User Groups. User Groups are used to secure Knowledge articles.",
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
               "MandatoryFlag": false
@@ -4601,16 +4671,6 @@
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
               "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "ORA_CSO_CONTENT_TYPES_INDEXING_MGMT_REDWOOD",
-              "taskListItemShortName": "ORA_CSO_TL_KM_ORA_CSO_CONTENT_TYPES_INDEXING_MGMT_REDWOOD",
-              "displaySequence": "143",
-              "taskName": "Manage Knowledge Content Types Redwood",
-              "taskDescription": "Allows customer admins to define and edit content types for customers using Redwood Knowledge Management. Customer admins can also select to run a manual index on a content type.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
             }
           ],
           "taskCount": 18
@@ -4627,7 +4687,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_CSS_REG_PROFILE_OPTS",
               "taskListItemShortName": "100000000271946",
-              "displaySequence": "144",
+              "displaySequence": "143",
               "taskName": "Manage Digital Customer Service Profile Options",
               "taskDescription": "Configure Digital Customer Service profile options",
               "csvExportImportSupportedFlag": true,
@@ -4637,7 +4697,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_CSS_ACCOUNT_SETUP_OPTS",
               "taskListItemShortName": "100000000271947",
-              "displaySequence": "145",
+              "displaySequence": "144",
               "taskName": "Manage Digital Customer Service Account Setup Profile Options",
               "taskDescription": "Configure account connectivity profile options for Customer Self Service. Required when Customer Self-Service is enabled.",
               "csvExportImportSupportedFlag": true,
@@ -4647,7 +4707,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_USER_AND_JOB_ROLE_SETUP_FOR_SELF_SERVICE_AUTHENTICATION_ANONYMOUS_USERS",
               "taskListItemShortName": "100000000276501",
-              "displaySequence": "146",
+              "displaySequence": "145",
               "taskName": "Manage User and Job Role Setup for Self-Service Authentication for Anonymous Users",
               "taskDescription": "Create a user and job role to enable anonymous users to use the Digital Customer Service application.",
               "csvExportImportSupportedFlag": false,
@@ -4657,7 +4717,7 @@
             {
               "taskShortName": "ORA_MANAGE_PROXY_USER_CONFIGURATION_DATA",
               "taskListItemShortName": "ORA_SVC_DEFINE_DIGITAL_CUSTOMER_SERVICE_CONFIGURATION_ORA_MANAGE_PROXY_USER_CONFIGURATION_DATA",
-              "displaySequence": "147",
+              "displaySequence": "146",
               "taskName": "Manage Proxy User Configuration Data",
               "taskDescription": "Manage all the URL patterns that you need to reach in B2B Service through the proxy user data service.",
               "csvExportImportSupportedFlag": true,
@@ -4667,7 +4727,7 @@
             {
               "taskShortName": "ORA_MANAGE_CLIENT_CREDENTIALS_PROXY_USER_CONFIGURATION_DATA",
               "taskListItemShortName": "ORA_SVC_DEFINE_DIGITAL_CUSTOMER_SERVICE_CONFIGURATION_ORA_MANAGE_CLIENT_CREDENTIALS_PROXY_USER_CONFIGURATION_DATA",
-              "displaySequence": "148",
+              "displaySequence": "147",
               "taskName": "Manage Client Credentials Proxy User Configuration Data",
               "taskDescription": "Add the client ID and client secret that came from your confidential application on IDCS to your B2B Service configuration.",
               "csvExportImportSupportedFlag": false,
@@ -4677,7 +4737,7 @@
             {
               "taskShortName": "ORA_CREATE_DIGITAL_CUSTOMER_SERVICE_DEVELOPERS",
               "taskListItemShortName": "ORA_SVC_DEFINE_DIGITAL_CUSTOMER_SERVICE_CONFIGURATION_ORA_CREATE_DIGITAL_CUSTOMER_SERVICE_DEVELOPERS",
-              "displaySequence": "149",
+              "displaySequence": "148",
               "taskName": "Create Digital Customer Service Developers",
               "taskDescription": "Create developers to work with the Digital Customer Service Reference Implementation.",
               "csvExportImportSupportedFlag": false,
@@ -4687,7 +4747,7 @@
             {
               "taskShortName": "ORA_VIEW_DIGITAL_CUSTOMER_SERVICE_URLS",
               "taskListItemShortName": "ORA_SVC_DEFINE_DIGITAL_CUSTOMER_SERVICE_CONFIGURATION_ORA_VIEW_DIGITAL_CUSTOMER_SERVICE_URLS",
-              "displaySequence": "150",
+              "displaySequence": "149",
               "taskName": "View Digital Customer Service URLs",
               "taskDescription": "Display Oracle Visual Builder URLs for external usage.",
               "csvExportImportSupportedFlag": false,
@@ -4697,7 +4757,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_SELF_SERVICE_RELATIONSHIP_TYPE_STANDARD_LOOKUP",
               "taskListItemShortName": "ORA_SVC_DEFINE_DIGITAL_CUSTOMER_SERVICE_CONFIGURATION_ORA_SVC_MANAGE_SELF_SERVICE_RELATIONSHIP_TYPE_STANDARD_LOOKUP",
-              "displaySequence": "151",
+              "displaySequence": "150",
               "taskName": "Manage Self-Service Relationship Type Standard Lookup",
               "taskDescription": "Review and define lookup values that provide choices for self-service relationship types, such as User and Account Administrator.",
               "csvExportImportSupportedFlag": true,
@@ -4707,7 +4767,7 @@
             {
               "taskShortName": "ORA_CREATE_DIGITAL_CUSTOMER_SERVICE_CUSTOM_ROLE_MAPPING",
               "taskListItemShortName": "ORA_SVC_DEFINE_DIGITAL_CUSTOMER_SERVICE_CONFIGURATION_ORA_CREATE_DIGITAL_CUSTOMER_SERVICE_CUSTOM_ROLE_MAPPING",
-              "displaySequence": "152",
+              "displaySequence": "151",
               "taskName": "Manage Custom Role Mapping for Digital Customer Service",
               "taskDescription": "Create custom mapping between a Self-Service role and an identity provider job role.",
               "csvExportImportSupportedFlag": true,
@@ -4717,7 +4777,7 @@
             {
               "taskShortName": "ORA_VALIDATE_SELF_SERVICE_OPTIMIZATION_SETUP_FOR_DIGITAL_CUSTOMER_SERVICE",
               "taskListItemShortName": "ORA_SVC_DEFINE_DIGITAL_CUSTOMER_SERVICE_CONFIGURATION_ORA_VALIDATE_SELF_SERVICE_OPTIMIZATION_SETUP_FOR_DIGITAL_CUSTOMER_SERVICE",
-              "displaySequence": "153",
+              "displaySequence": "152",
               "taskName": "Validate Self-Service Optimization Setup for Digital Customer Service",
               "taskDescription": "Verify the setup of Self-Service Optimization Setup for Digital Customer Service",
               "csvExportImportSupportedFlag": false,
@@ -4727,7 +4787,7 @@
             {
               "taskShortName": "ORA_CREATE_GROUPS_IN_IDENTITY_CLOUD_SERVICE",
               "taskListItemShortName": "ORA_SVC_DEFINE_DIGITAL_CUSTOMER_SERVICE_CONFIGURATION_ORA_CREATE_GROUPS_IN_IDENTITY_CLOUD_SERVICE",
-              "displaySequence": "154",
+              "displaySequence": "153",
               "taskName": "Create Groups in Identity Cloud Service",
               "taskDescription": "Create groups in Identity Cloud Service from the job roles in Oracle Fusion Applications.",
               "csvExportImportSupportedFlag": false,
@@ -4779,19 +4839,9 @@
               "MandatoryFlag": false
             },
             {
-              "taskShortName": "ORA_SVC_MANAGE_INTEGRATION_MESSAGES",
-              "taskListItemShortName": "100000000219738",
-              "displaySequence": "81",
-              "taskName": "Manage Integration Messages",
-              "taskDescription": "Add and modify seeded messages for product integrations. These messages provide additional information to end users about the status of data synchronization between systems.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
               "taskShortName": "ORA_MANAGE_WORK_ORDER_LINK_TEMPLATES",
               "taskListItemShortName": "ORA_SVC_DEFINE_SERVICE_WORK_ORDER_CONFIGURATION_ORA_MANAGE_WORK_ORDER_LINK_TEMPLATES",
-              "displaySequence": "82",
+              "displaySequence": "81",
               "taskName": "Manage Work Order Link Templates",
               "taskDescription": "View templates linked from Oracle Field Service to Oracle Fusion Service and modify certain fields that only show up in Oracle Fusion Service.",
               "csvExportImportSupportedFlag": false,
@@ -4801,7 +4851,7 @@
             {
               "taskShortName": "ORA_MANAGE_TYPES_OF_WORK_ORDERS",
               "taskListItemShortName": "ORA_SVC_DEFINE_SERVICE_WORK_ORDER_CONFIGURATION_ORA_MANAGE_TYPES_OF_WORK_ORDERS",
-              "displaySequence": "83",
+              "displaySequence": "82",
               "taskName": "Manage Types of Work Orders",
               "taskDescription": "Manage Types of Work Orders",
               "csvExportImportSupportedFlag": true,
@@ -4809,7 +4859,7 @@
               "MandatoryFlag": true
             }
           ],
-          "taskCount": 4
+          "taskCount": 3
         },
         "ORA_SVC_ACTION_PLANS": {
           "functionalAreaShortName": "ORA_SVC_ACTION_PLANS",
@@ -4823,7 +4873,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_ACTION_PLAN_PROFILE_OPTIONS",
               "taskListItemShortName": "ORA_SVC_DEFINE_ACTION_PLAN_CONFIGURATION_ORA_SVC_MANAGE_ACTION_PLAN_PROFILE_OPTIONS",
-              "displaySequence": "84",
+              "displaySequence": "83",
               "taskName": "Manage Action Plan Profile Options",
               "taskDescription": "Set profile options to configure action plans.",
               "csvExportImportSupportedFlag": true,
@@ -4833,7 +4883,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_ACTION_CATEGORIES_FOR_ACTION_PLANS",
               "taskListItemShortName": "ORA_SVC_DEFINE_ACTION_PLAN_CONFIGURATION_ORA_SVC_MANAGE_ACTION_CATEGORIES_FOR_ACTION_PLANS",
-              "displaySequence": "85",
+              "displaySequence": "84",
               "taskName": "Manage Action Categories for Action Plans",
               "taskDescription": "Manage categories for an action to be used in service action plans.",
               "csvExportImportSupportedFlag": true,
@@ -4843,7 +4893,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_TEMPLATE_CATEGORIES_FOR_ACTION_PLANS",
               "taskListItemShortName": "ORA_SVC_DEFINE_ACTION_PLAN_CONFIGURATION_ORA_SVC_MANAGE_TEMPLATE_CATEGORIES_FOR_ACTION_PLANS",
-              "displaySequence": "86",
+              "displaySequence": "85",
               "taskName": "Manage Template Categories for Action Plans",
               "taskDescription": "Manage categories for a template to be used in service action plans.",
               "csvExportImportSupportedFlag": true,
@@ -4853,7 +4903,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_ACTION_PLAN_ACTION_STATUS_MAPPING",
               "taskListItemShortName": "ORA_SVC_DEFINE_ACTION_PLAN_CONFIGURATION_ORA_SVC_MANAGE_ACTION_PLAN_ACTION_STATUS_MAPPING",
-              "displaySequence": "87",
+              "displaySequence": "86",
               "taskName": "Manage Mapping of Action Plan Status Values",
               "taskDescription": "Map status values of related objects such as service requests, tasks, activities to action plan status values.",
               "csvExportImportSupportedFlag": true,
@@ -4863,7 +4913,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_ACTION_PLAN_ACTIONS",
               "taskListItemShortName": "ORA_SVC_DEFINE_ACTION_PLAN_CONFIGURATION_ORA_SVC_MANAGE_ACTION_PLAN_ACTIONS",
-              "displaySequence": "88",
+              "displaySequence": "87",
               "taskName": "Manage Action Plan Actions",
               "taskDescription": "Create actions that will be used in templates and action plans.",
               "csvExportImportSupportedFlag": true,
@@ -4873,7 +4923,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_ACTION_PLAN_TEMPLATES",
               "taskListItemShortName": "ORA_SVC_DEFINE_ACTION_PLAN_CONFIGURATION_ORA_SVC_MANAGE_ACTION_PLAN_TEMPLATES",
-              "displaySequence": "89",
+              "displaySequence": "88",
               "taskName": "Manage Action Plan Templates",
               "taskDescription": "Create templates that will be associated to action plans.",
               "csvExportImportSupportedFlag": true,
@@ -4883,7 +4933,7 @@
             {
               "taskShortName": "ORA_SVC_CONFIGURE_PROCESS_INTEGRATION_FOR_ACTION_PLAN",
               "taskListItemShortName": "ORA_SVC_DEFINE_ACTION_PLAN_CONFIGURATION_ORA_SVC_CONFIGURE_PROCESS_INTEGRATION_FOR_ACTION_PLAN",
-              "displaySequence": "90",
+              "displaySequence": "89",
               "taskName": "Manage Process Integration for Action Plans",
               "taskDescription": "Manage Process Integration for Action Plans.",
               "csvExportImportSupportedFlag": false,
@@ -4893,7 +4943,7 @@
             {
               "taskShortName": "ORA_MANAGE_ACTION_PLAN_PROCESS_METADATA",
               "taskListItemShortName": "ORA_SVC_DEFINE_ACTION_PLAN_CONFIGURATION_ORA_MANAGE_ACTION_PLAN_PROCESS_METADATA",
-              "displaySequence": "91",
+              "displaySequence": "90",
               "taskName": "Manage Action Plan Process Metadata",
               "taskDescription": "Manage Action Plan Process Metadata.",
               "csvExportImportSupportedFlag": true,
@@ -4915,7 +4965,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_CASE_PROFILE_OPTIONS",
               "taskListItemShortName": "ORA_SVC_DEFINE_CASE_CONFIGURATION_ORA_SVC_MANAGE_CASE_PROFILE_OPTIONS",
-              "displaySequence": "92",
+              "displaySequence": "91",
               "taskName": "Manage Case Profile Options",
               "taskDescription": "Manage case profile options.",
               "csvExportImportSupportedFlag": true,
@@ -4925,7 +4975,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_CASE_CONTACT_RELATIONSHIPS",
               "taskListItemShortName": "ORA_SVC_DEFINE_CASE_CONFIGURATION_ORA_SVC_MANAGE_CASE_CONTACT_RELATIONSHIPS",
-              "displaySequence": "93",
+              "displaySequence": "92",
               "taskName": "Manage Case Contact Relationships",
               "taskDescription": "Review and maintain the relationship types for a case.",
               "csvExportImportSupportedFlag": true,
@@ -4935,7 +4985,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_CASE_PRIORITIES",
               "taskListItemShortName": "ORA_SVC_DEFINE_CASE_CONFIGURATION_ORA_SVC_MANAGE_CASE_PRIORITIES",
-              "displaySequence": "94",
+              "displaySequence": "93",
               "taskName": "Manage Case Priorities",
               "taskDescription": "Review and define lookup values that provide choices for a case's priority.",
               "csvExportImportSupportedFlag": true,
@@ -4945,7 +4995,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_CASE_SENSITIVITIES",
               "taskListItemShortName": "ORA_SVC_DEFINE_CASE_CONFIGURATION_ORA_SVC_MANAGE_CASE_SENSITIVITIES",
-              "displaySequence": "95",
+              "displaySequence": "94",
               "taskName": "Manage Case Sensitivities",
               "taskDescription": "Review and maintain the business access level for a case.",
               "csvExportImportSupportedFlag": true,
@@ -4955,7 +5005,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_CASE_SOURCES",
               "taskListItemShortName": "ORA_SVC_DEFINE_CASE_CONFIGURATION_ORA_SVC_MANAGE_CASE_SOURCES",
-              "displaySequence": "96",
+              "displaySequence": "95",
               "taskName": "Manage Case Sources",
               "taskDescription": "Create and maintain sources which describe the source of the case.",
               "csvExportImportSupportedFlag": true,
@@ -4965,7 +5015,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_CASE_STATUSES",
               "taskListItemShortName": "ORA_SVC_DEFINE_CASE_CONFIGURATION_ORA_SVC_MANAGE_CASE_STATUSES",
-              "displaySequence": "97",
+              "displaySequence": "96",
               "taskName": "Manage Case Statuses",
               "taskDescription": "Review and maintain status values for cases and map them to the required status type.",
               "csvExportImportSupportedFlag": true,
@@ -4975,7 +5025,7 @@
             {
               "taskShortName": "ORA_SVC_CASE_MANAGE_CASE_OUTCOMES_AND_RESOLUTIONS_FOR_CRM",
               "taskListItemShortName": "ORA_SVC_DEFINE_CASE_CONFIGURATION_ORA_SVC_CASE_MANAGE_CASE_OUTCOMES_AND_RESOLUTIONS_FOR_CRM",
-              "displaySequence": "98",
+              "displaySequence": "97",
               "taskName": "Manage Case Outcomes and Resolutions for CRM",
               "taskDescription": "Manage Case Outcomes and Resolutions for CRM.",
               "csvExportImportSupportedFlag": true,
@@ -4985,7 +5035,7 @@
             {
               "taskShortName": "ORA_MANAGE_CATEGORIES_FOR_CASES",
               "taskListItemShortName": "ORA_SVC_DEFINE_CASE_CONFIGURATION_ORA_MANAGE_CATEGORIES_FOR_CASES",
-              "displaySequence": "99",
+              "displaySequence": "98",
               "taskName": "Manage Categories for Cases",
               "taskDescription": "Manage Categories for Cases",
               "csvExportImportSupportedFlag": true,
@@ -4995,7 +5045,7 @@
             {
               "taskShortName": "ORA_MANAGE_QUEUES_FOR_CASES",
               "taskListItemShortName": "ORA_SVC_DEFINE_CASE_CONFIGURATION_ORA_MANAGE_QUEUES_FOR_CASES",
-              "displaySequence": "100",
+              "displaySequence": "99",
               "taskName": "Manage Queues for Cases",
               "taskDescription": "Manage Queues for Cases",
               "csvExportImportSupportedFlag": true,
@@ -5005,7 +5055,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_CASE_TYPES",
               "taskListItemShortName": "ORA_SVC_DEFINE_CASE_CONFIGURATION_ORA_SVC_MANAGE_CASE_TYPES",
-              "displaySequence": "101",
+              "displaySequence": "100",
               "taskName": "Manage Case Types",
               "taskDescription": "Manage Case Types.",
               "csvExportImportSupportedFlag": true,
@@ -5027,7 +5077,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_SEARCH_OPTIONS",
               "taskListItemShortName": "ORA_SVC_CONFIGURE_PROD_TOOLSORA_SVC_MANAGE_SEARCH_OPTIONS",
-              "displaySequence": "107",
+              "displaySequence": "106",
               "taskName": "Manage Global Search Profile Options",
               "taskDescription": "Set the parameters required to enable search at the site level.",
               "csvExportImportSupportedFlag": true,
@@ -5037,7 +5087,7 @@
             {
               "taskShortName": "ORA_CONFIGURE_ELASTIC_SEARCHES",
               "taskListItemShortName": "ORA_SVC_CONFIGURE_PROD_TOOLS_ORA_CONFIGURE_ELASTIC_SEARCHES",
-              "displaySequence": "108",
+              "displaySequence": "107",
               "taskName": "Configure Adaptive Search",
               "taskDescription": "Configure the Adaptive Search settings, that control how objects and properties can be managed. You can choose whether an object's fields will have full text search capabilities, or will be searchable at the header level, or will be searchable in parent related objects.",
               "csvExportImportSupportedFlag": false,
@@ -5047,7 +5097,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_STANDARD_TEXT_PROFILE_OPTS",
               "taskListItemShortName": "100000000222049",
-              "displaySequence": "109",
+              "displaySequence": "108",
               "taskName": "Manage Standard Text Profile Options",
               "taskDescription": "Configure settings to enable agents to use standard text in Service Request Messages.",
               "csvExportImportSupportedFlag": true,
@@ -5057,7 +5107,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_KEYBOARD_SHORTCUT_PROFILE_OPTIONS",
               "taskListItemShortName": "100000000222050",
-              "displaySequence": "110",
+              "displaySequence": "109",
               "taskName": "Manage Keyboard Shortcut Profile Options",
               "taskDescription": "Configure settings to enable agents to use keyboard shortcuts.",
               "csvExportImportSupportedFlag": true,
@@ -5067,7 +5117,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_SERVICE_REQUEST_KEYBOARD_SHORTCUTS",
               "taskListItemShortName": "100000000132759",
-              "displaySequence": "111",
+              "displaySequence": "110",
               "taskName": "Manage Service Request Keyboard Shortcuts",
               "taskDescription": "Specify keyboard shortcuts for Service Request actions and buttons.",
               "csvExportImportSupportedFlag": true,
@@ -5077,7 +5127,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_SERVICE_REQUEST_DYNAMIC_LINKS",
               "taskListItemShortName": "100000000250349",
-              "displaySequence": "112",
+              "displaySequence": "111",
               "taskName": "Manage Service Request Dynamic Links",
               "taskDescription": "Define text patterns that are converted to URL links when users enter text matching those patterns. For example, when a user enters text matching the pattern for a service request reference, the text will be automatically converted to a link to that service request.",
               "csvExportImportSupportedFlag": true,
@@ -5087,7 +5137,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_SERVICE_NOTIFICATION_PROFILE_OPTIONS",
               "taskListItemShortName": "ORA_SVC_CONFIGURE_PROD_TOOLS_ORA_SVC_MANAGE_SERVICE_NOTIFICATION_PROFILE_OPTIONS",
-              "displaySequence": "113",
+              "displaySequence": "112",
               "taskName": "Manage Service Notification Profile Options",
               "taskDescription": "This task enables customers to temporarily disable service notifications.",
               "csvExportImportSupportedFlag": true,
@@ -5097,7 +5147,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_PASSIVE_BEACON_CONFIGURATION",
               "taskListItemShortName": "ORA_SVC_CONFIGURE_PROD_TOOLS_ORA_SVC_MANAGE_PASSIVE_BEACON_CONFIGURATION",
-              "displaySequence": "114",
+              "displaySequence": "113",
               "taskName": "Manage Passive Beacon Configuration",
               "taskDescription": "Configure the endpoint URL and credentials for the passive beacon service that checks the availability of shared services.",
               "csvExportImportSupportedFlag": false,
@@ -5107,7 +5157,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_TAGS",
               "taskListItemShortName": "ORA_SVC_CONFIGURE_PROD_TOOLS_ORA_SVC_MANAGE_TAGS",
-              "displaySequence": "115",
+              "displaySequence": "114",
               "taskName": "Manage Tags",
               "taskDescription": "Allows CRM administrators to create/update/delete tags. Tags created through this task can be associated with objects like service request.",
               "csvExportImportSupportedFlag": true,
@@ -5117,7 +5167,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_COLLABORATION_NETWORK_CREDENTIALS",
               "taskListItemShortName": "ORA_SVC_CONFIGURE_PROD_TOOLS_ORA_SVC_MANAGE_COLLABORATION_NETWORK_CREDENTIALS",
-              "displaySequence": "116",
+              "displaySequence": "115",
               "taskName": "Manage Collaboration Network Credentials",
               "taskDescription": "Allows administrators to save the collaboration network credentials. These credentials are used when calling the collaboration network APIs.",
               "csvExportImportSupportedFlag": false,
@@ -5127,7 +5177,7 @@
             {
               "taskShortName": "ORA_MANAGE_MICROSOFT_TEAM_CREDENTIALS",
               "taskListItemShortName": "ORA_SVC_CONFIGURE_PROD_TOOLS_ORA_MANAGE_MICROSOFT_TEAM_CREDENTIALS",
-              "displaySequence": "117",
+              "displaySequence": "116",
               "taskName": "Manage Microsoft Teams Credentials",
               "taskDescription": "Allows administrators to save Microsoft Teams credentials. These credentials are used when calling their APIs.",
               "csvExportImportSupportedFlag": false,
@@ -5137,7 +5187,7 @@
             {
               "taskShortName": "ORA_ZCA_MANAGE_PUID_SEQ",
               "taskListItemShortName": "ORA_SVC_CONFIGURE_PROD_TOOLS_ORA_ZCA_MANAGE_PUID_SEQ",
-              "displaySequence": "119",
+              "displaySequence": "118",
               "taskName": "Manage Public Unique Identifier Sequence Generation",
               "taskDescription": "Configure public unique ID sequence number generation, including setting a prefix, radix, and starting number for each supported business object.",
               "csvExportImportSupportedFlag": true,
@@ -5147,7 +5197,7 @@
             {
               "taskShortName": "ORA_MANAGE_SERVICE_REQUEST_SIMILARITIES",
               "taskListItemShortName": "ORA_SVC_CONFIGURE_PROD_TOOLS_ORA_MANAGE_SERVICE_REQUEST_SIMILARITIES",
-              "displaySequence": "120",
+              "displaySequence": "119",
               "taskName": "Configure AI for Service",
               "taskDescription": "Configure AI for Service",
               "csvExportImportSupportedFlag": false,
@@ -5157,7 +5207,7 @@
             {
               "taskShortName": "ORA_MANAGE_SERVICE_REQUEST_MESSAGE_TYPES_AND_SUBTYPES",
               "taskListItemShortName": "ORA_SVC_CONFIGURE_PROD_TOOLS_ORA_MANAGE_SERVICE_REQUEST_MESSAGE_TYPES_AND_SUBTYPES",
-              "displaySequence": "121",
+              "displaySequence": "120",
               "taskName": "Manage Service Request Message Types and Subtypes",
               "taskDescription": "Manage Service Request Message Types and Subtypes",
               "csvExportImportSupportedFlag": true,
@@ -5167,7 +5217,7 @@
             {
               "taskShortName": "ORA_CONFIGURE_ACTION_BAR_PARAMETERS",
               "taskListItemShortName": "ORA_SVC_CONFIGURE_PROD_TOOLS_ORA_CONFIGURE_ACTION_BAR_PARAMETERS",
-              "displaySequence": "122",
+              "displaySequence": "121",
               "taskName": "Configure Action Bar Parameters",
               "taskDescription": "Configure Action bar parameters including the number of displayed suggestions, hint behavior and hint rotation speed, and the 'display more' option. Settings apply to applications that include the Action Bar.",
               "csvExportImportSupportedFlag": true,
@@ -5177,7 +5227,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_NOTE_TYPES",
               "taskListItemShortName": "ORA_SVC_CONFIGURE_PROD_TOOLS_ORA_SVC_MANAGE_NOTE_TYPES",
-              "displaySequence": "123",
+              "displaySequence": "122",
               "taskName": "Manage Note Types",
               "taskDescription": "Review and define note types, such as approval and reference, to categorize notes entered for business objects. When mapped, note type values are limited to each business object.",
               "csvExportImportSupportedFlag": true,
@@ -5187,7 +5237,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_SERVICE_NOTE_TYPE_MAPPING",
               "taskListItemShortName": "ORA_SVC_CONFIGURE_PROD_TOOLS_ORA_SVC_MANAGE_SERVICE_NOTE_TYPE_MAPPING",
-              "displaySequence": "124",
+              "displaySequence": "123",
               "taskName": "Manage Service Note Type Mapping",
               "taskDescription": "Manage service note type mapping.",
               "csvExportImportSupportedFlag": true,
@@ -5209,7 +5259,7 @@
             {
               "taskShortName": "FUN_MANAGE_BUSINESS_UNIT",
               "taskListItemShortName": "ORA_SVC_DEFINE_BUSINESS_UNITS_FUN_MANAGE_BUSINESS_UNIT",
-              "displaySequence": "155",
+              "displaySequence": "157",
               "taskName": "Manage Business Unit",
               "taskDescription": "Create and maintain information on units of an enterprise to allow for flexible implementation, to provide a consistent entity for controlling and reporting on transactions, and to be an anchor for the sharing of reference data sets across applications.",
               "csvExportImportSupportedFlag": true,
@@ -5219,7 +5269,7 @@
             {
               "taskShortName": "ORA_SVC_PRODUCT_GROUP_USAGE_FOR_BU",
               "taskListItemShortName": "ORA_SVC_DEFINE_BUSINESS_UNITS_ORA_SVC_PRODUCT_GROUP_USAGE_FOR_BU",
-              "displaySequence": "156",
+              "displaySequence": "158",
               "taskName": "Manage Service Product Group Usage for Business Unit",
               "taskDescription": "Specify product group usage for a business unit.",
               "csvExportImportSupportedFlag": true,
@@ -5229,7 +5279,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_SERVICE_CATEGORIES_FOR_BU",
               "taskListItemShortName": "ORA_SVC_DEFINE_BUSINESS_UNITS_ORA_SVC_MANAGE_SERVICE_CATEGORIES_FOR_BU",
-              "displaySequence": "158",
+              "displaySequence": "160",
               "taskName": "Manage Service Categories for Business Unit",
               "taskDescription": "Manage categories for a service business unit.",
               "csvExportImportSupportedFlag": true,
@@ -5239,7 +5289,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_CHANNELS_FOR_BU",
               "taskListItemShortName": "ORA_SVC_DEFINE_BUSINESS_UNITS_ORA_SVC_MANAGE_CHANNELS_FOR_BU",
-              "displaySequence": "160",
+              "displaySequence": "162",
               "taskName": "Manage Communication Channels for Business Unit",
               "taskDescription": "Manage communication channels for a business unit.",
               "csvExportImportSupportedFlag": true,
@@ -5249,7 +5299,7 @@
             {
               "taskShortName": "ORA_SVC_EMAIL_TEMPLATES_FOR_BU",
               "taskListItemShortName": "ORA_SVC_DEFINE_BUSINESS_UNITS_ORA_SVC_EMAIL_TEMPLATES_FOR_BU",
-              "displaySequence": "161",
+              "displaySequence": "163",
               "taskName": "Manage Service Email Templates for Business Unit",
               "taskDescription": "Specify email templates for a service business unit.",
               "csvExportImportSupportedFlag": true,
@@ -5259,7 +5309,7 @@
             {
               "taskShortName": "ORA_SVC_MANAGE_SVC_MILESTONE_CONFIG_FOR_BU",
               "taskListItemShortName": "ORA_SVC_DEFINE_BUSINESS_UNITS_ORA_SVC_MANAGE_SVC_MILESTONE_CONFIG_FOR_BU",
-              "displaySequence": "163",
+              "displaySequence": "165",
               "taskName": "Manage Service Milestone Configuration for Business Unit",
               "taskDescription": "Specify milestone configuration for a business unit.",
               "csvExportImportSupportedFlag": true,
@@ -5269,7 +5319,7 @@
             {
               "taskShortName": "ORA_MANAGE_OUTBOUND_EMAIL_PROFILE_VALUES_FOR_BUSINESS_UNIT",
               "taskListItemShortName": "ORA_SVC_DEFINE_BUSINESS_UNITS_ORA_MANAGE_OUTBOUND_EMAIL_PROFILE_VALUES_FOR_BUSINESS_UNIT",
-              "displaySequence": "164",
+              "displaySequence": "166",
               "taskName": "Manage Outbound Email Profile Values for Business Unit",
               "taskDescription": "Specify outbound email profile option values for a business unit",
               "csvExportImportSupportedFlag": true,
@@ -5281,7 +5331,7 @@
         }
       },
       "functionalAreaCount": 14,
-      "taskCount": 140
+      "taskCount": 145
     },
     "DOO_ORCHESTRATION": {
       "offeringShortName": "DOO_ORCHESTRATION",
@@ -6406,26 +6456,6 @@
               "MandatoryFlag": false
             },
             {
-              "taskShortName": "ORA_FOS_MANAGE_TRADE_QUALIFIER",
-              "taskListItemShortName": "DOO_DEFINE_SALES_ORDER_FULFILLMENT:ORA_FOM_DEFINE_DROP_SHIPORA_FOS_MANAGE_TRADE_QUALIFIER",
-              "displaySequence": "148",
-              "taskName": "Manage Supply Chain Financial Orchestration Qualifiers",
-              "taskDescription": "Create and edit set of business attributes forming a part of supply chain transaction to identify the financial trade agreement",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "ORA_FOS_MANAGE_SYSTEM_OPTIONS",
-              "taskListItemShortName": "DOO_DEFINE_SALES_ORDER_FULFILLMENT:ORA_FOM_DEFINE_DROP_SHIPORA_FOS_MANAGE_SYSTEM_OPTIONS",
-              "displaySequence": "149",
-              "taskName": "Manage Supply Chain Financial Orchestration System Options",
-              "taskDescription": "Manage Financial Orchestration System Options",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": true
-            },
-            {
               "taskShortName": "ORA_FOS_MANAGE_DROP_SHIP_AGREEMENTS",
               "taskListItemShortName": "DOO_DEFINE_SALES_ORDER_FULFILLMENT:ORA_FOM_DEFINE_DROP_SHIPORA_FOS_MANAGE_DROP_SHIP_AGREEMENTS",
               "displaySequence": "150",
@@ -6516,7 +6546,7 @@
               "MandatoryFlag": false
             }
           ],
-          "taskCount": 42
+          "taskCount": 40
         },
         "ORA_FOM_PRICING": {
           "functionalAreaShortName": "ORA_FOM_PRICING",
@@ -7096,7 +7126,7 @@
         }
       },
       "functionalAreaCount": 11,
-      "taskCount": 166
+      "taskCount": 164
     },
     "ORA_STUDENT_MANAGEMENT": {
       "offeringShortName": "ORA_STUDENT_MANAGEMENT",
@@ -15116,16 +15146,6 @@
               "MandatoryFlag": false
             },
             {
-              "taskShortName": "INV_MANAGE_INVENTORY_TRANSACTION_SOURCES_AND_TYPES",
-              "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATIONINV_MANAGE_INVENTORY_TRANSACTION_SOURCES_AND_TYPES",
-              "displaySequence": "183",
-              "taskName": "Manage Inventory Transaction Sources and Types",
-              "taskDescription": "Configure inventory transaction sources to use while performing transactions to classify transactions according to their origin, such as purchase order, sales order, account number, or physical inventory. Configure transaction types using user-defined terminology to represent transaction types.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
               "taskShortName": "ORA_MATERIAL_STATUSES",
               "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATION_ORA_MATERIAL_STATUSES",
               "displaySequence": "184",
@@ -15136,40 +15156,10 @@
               "MandatoryFlag": false
             },
             {
-              "taskShortName": "INV_MANAGE_MATERIAL_STATUSES",
-              "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATIONINV_MANAGE_MATERIAL_STATUSES",
-              "displaySequence": "185",
-              "taskName": "Manage Material Statuses",
-              "taskDescription": "Configure user-defined material statuses to control the transactions that can be performed on the material. Material status can be assigned either at the subinventory, locator, lot, or serial number level.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "INV_MANAGE_SUBINVENTORIES_AND_LOCATORS",
-              "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATIONINV_MANAGE_SUBINVENTORIES_AND_LOCATORS",
-              "displaySequence": "187",
-              "taskName": "Manage Subinventories and Locators",
-              "taskDescription": "Configure and maintain subinventories and locators to identify material storage locations or groupings of items within an inventory organization.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
               "taskShortName": "ORA_UNITS_OF_MEASURE_USAGES",
               "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATION_ORA_UNITS_OF_MEASURE_USAGES",
               "displaySequence": "188",
               "taskName": "Units of Measure Usages",
-              "taskDescription": "Enable units of measure usages when you perform inventory management, receiving, and shipping transactions. Specify the units of measures to stock material within your warehouse. You can configure units of measure usages for an item at the inventory organization level, subinventory level, or at both levels.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "ORA_INV_MANAGE_UNITS_OF_MEASURE_USAGES",
-              "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATION_ORA_INV_MANAGE_UNITS_OF_MEASURE_USAGES",
-              "displaySequence": "189",
-              "taskName": "Manage Units of Measure Usages",
               "taskDescription": "Enable units of measure usages when you perform inventory management, receiving, and shipping transactions. Specify the units of measures to stock material within your warehouse. You can configure units of measure usages for an item at the inventory organization level, subinventory level, or at both levels.",
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
@@ -15186,50 +15176,10 @@
               "MandatoryFlag": false
             },
             {
-              "taskShortName": "INV_MANAGE_ABC_CLASSES",
-              "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATIONINV_MANAGE_ABC_CLASSES",
-              "displaySequence": "191",
-              "taskName": "Manage ABC Classes",
-              "taskDescription": "Configure ABC classes to identify the value groupings to which items will be assigned.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "INV_MANAGE_ABC_CLASSIFICATION_SETS",
-              "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATIONINV_MANAGE_ABC_CLASSIFICATION_SETS",
-              "displaySequence": "192",
-              "taskName": "Manage ABC Classification Sets",
-              "taskDescription": "Configure the valuation and scope of the ABC analysis performed against an inventory based on quantity, value, or history of the item.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "INV_MANAGE_ABC_ASSIGNMENT_GROUPS",
-              "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATIONINV_MANAGE_ABC_ASSIGNMENT_GROUPS",
-              "displaySequence": "193",
-              "taskName": "Manage ABC Assignment Groups",
-              "taskDescription": "Configure ABC assignment groups and associate ABC classes to the respective ABC assignment groups.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
               "taskShortName": "ORA_INTERORGANIZATION_PARAMETERS",
               "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATION_ORA_INTERORGANIZATION_PARAMETERS",
               "displaySequence": "194",
               "taskName": "Interorganization Parameters",
-              "taskDescription": "Configure interorganization parameters to define accounting information and relationships that exist between a shipping organization and a destination organization. Interorganization parameters are used in the creation and processing of interorganization transactions.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "INV_MANAGE_INTERORGANIZATION_PARAMETERS",
-              "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATIONINV_MANAGE_INTERORGANIZATION_PARAMETERS",
-              "displaySequence": "195",
-              "taskName": "Manage Interorganization Parameters",
               "taskDescription": "Configure interorganization parameters to define accounting information and relationships that exist between a shipping organization and a destination organization. Interorganization parameters are used in the creation and processing of interorganization transactions.",
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
@@ -15246,30 +15196,10 @@
               "MandatoryFlag": false
             },
             {
-              "taskShortName": "ORA_INV_MANAGE_INTERSUBINVENTORY_PARAMETERS",
-              "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATIONORA_INV_MANAGE_INTERSUBINVENTORY_PARAMETERS",
-              "displaySequence": "197",
-              "taskName": "Manage Intersubinventory Parameters",
-              "taskDescription": "Configure parameters related to the transfer of material between two subinventories.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
               "taskShortName": "ORA_ACCOUNT_ALIASES",
               "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATION_ORA_ACCOUNT_ALIASES",
               "displaySequence": "198",
               "taskName": "Account Aliases",
-              "taskDescription": "Configure account aliases to provide an easily recognizable name or label for general ledger account numbers. An account alias can be used instead of the account number to refer to an account when processing inventory transactions.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "INV_MANAGE_ACCOUNT_ALIASES",
-              "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATIONINV_MANAGE_ACCOUNT_ALIASES",
-              "displaySequence": "199",
-              "taskName": "Manage Account Aliases",
               "taskDescription": "Configure account aliases to provide an easily recognizable name or label for general ledger account numbers. An account alias can be used instead of the account number to refer to an account when processing inventory transactions.",
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
@@ -15286,31 +15216,11 @@
               "MandatoryFlag": false
             },
             {
-              "taskShortName": "INV_MANAGE_INVENTORY_TRANSACTION_REASONS",
-              "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATIONINV_MANAGE_INVENTORY_TRANSACTION_REASONS",
-              "displaySequence": "201",
-              "taskName": "Manage Inventory Transaction Reasons",
-              "taskDescription": "Configure inventory transaction reasons to classify or explain the reason for an inventory transaction. An inventory transaction reason can be specified when performing miscellaneous transactions.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
               "taskShortName": "ORA_INV_CONFIGURE_ITEM_TRANSACTION_DEFAULTS",
               "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATION_ORA_INV_CONFIGURE_ITEM_TRANSACTION_DEFAULTS",
               "displaySequence": "202",
               "taskName": "Configure Item Transaction Defaults",
               "taskDescription": "Configure item transaction defaults to define default subinventories and locators for items when performing inventory, receiving, and shipping transactions.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "INV_MANAGE_ITEM_TRANSACTION_DEFAULTS",
-              "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATIONINV_MANAGE_ITEM_TRANSACTION_DEFAULTS",
-              "displaySequence": "203",
-              "taskName": "Manage Item Transaction Defaults",
-              "taskDescription": "Configure item transaction defaults to define default subinventories and locators for items for shipping, receiving, and movement request transactions.",
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
               "MandatoryFlag": false
@@ -15326,31 +15236,11 @@
               "MandatoryFlag": false
             },
             {
-              "taskShortName": "INV_MANAGE_LOT_GRADES",
-              "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATIONINV_MANAGE_LOT_GRADES",
-              "displaySequence": "205",
-              "taskName": "Manage Lot Grades",
-              "taskDescription": "Configure lot grades to describe the particular makeup and quality characteristics of items in a lot.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
               "taskShortName": "ORA_LOT_EXPIRATION_ACTIONS",
               "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATION_ORA_LOT_EXPIRATION_ACTIONS",
               "displaySequence": "206",
               "taskName": "Lot Expiration Actions",
               "taskDescription": "Lot Expiration Actions",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "INV_MANAGE_LOT_EXPIRATION_ACTIONS",
-              "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATIONINV_MANAGE_LOT_EXPIRATION_ACTIONS",
-              "displaySequence": "207",
-              "taskName": "Manage Lot Expiration Actions",
-              "taskDescription": "Configure lot expiration actions to indicate the action required on a lot when it expires.",
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
               "MandatoryFlag": false
@@ -15366,30 +15256,10 @@
               "MandatoryFlag": false
             },
             {
-              "taskShortName": "INV_MANAGE_LOT_AND_SERIAL_ATTRIBUTES_MAPPING",
-              "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATIONINV_MANAGE_LOT_AND_SERIAL_ATTRIBUTES_MAPPING",
-              "displaySequence": "209",
-              "taskName": "Manage Lot and Serial Attributes Mapping",
-              "taskDescription": "Assign lot and serial number attribute descriptive flexfield context to an item or item category.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
               "taskShortName": "ORA_PICK_SLIP_GROUPING_RULES",
               "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATION_ORA_PICK_SLIP_GROUPING_RULES",
               "displaySequence": "210",
               "taskName": "Pick Slip Grouping Rules",
-              "taskDescription": "Configure the grouping of picks into pick slips.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "INV_MANAGE_PICK_SLIP_GROUPING_RULES",
-              "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATIONINV_MANAGE_PICK_SLIP_GROUPING_RULES",
-              "displaySequence": "211",
-              "taskName": "Manage Pick Slip Grouping Rules",
               "taskDescription": "Configure the grouping of picks into pick slips.",
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
@@ -15406,30 +15276,10 @@
               "MandatoryFlag": false
             },
             {
-              "taskShortName": "INV_MANAGE_PICKING_RULES",
-              "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATIONINV_MANAGE_PICKING_RULES",
-              "displaySequence": "213",
-              "taskName": "Manage Picking Rules",
-              "taskDescription": "Configure picking rules to enable the selection of material based on defined criteria.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
               "taskShortName": "ORA_PICKING_RULE_ASSIGNMENTS",
               "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATION_ORA_PICKING_RULE_ASSIGNMENTS",
               "displaySequence": "214",
               "taskName": "Picking Rule Assignments",
-              "taskDescription": "Configure the assignment of a picking rule to any combination of criteria and prioritize the rule assignment within the organization.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "INV_MANAGE_PICKING_RULE_ASSIGNMENTS",
-              "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATIONINV_MANAGE_PICKING_RULE_ASSIGNMENTS",
-              "displaySequence": "215",
-              "taskName": "Manage Picking Rule Assignments",
               "taskDescription": "Configure the assignment of a picking rule to any combination of criteria and prioritize the rule assignment within the organization.",
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
@@ -15446,31 +15296,11 @@
               "MandatoryFlag": false
             },
             {
-              "taskShortName": "ORA_INV_MANAGE_INVENTORY_CONSUMPTION_RULES",
-              "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATIONORA_INV_MANAGE_INVENTORY_CONSUMPTION_RULES",
-              "displaySequence": "217",
-              "taskName": "Manage Consumption Rules",
-              "taskDescription": "Manage rules to determine ownership change of consigned inventory.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
               "taskShortName": "ORA_INV_DEFAULT_CLASSIFICATION_GROUP",
               "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATION_ORA_INV_DEFAULT_CLASSIFICATION_GROUP",
               "displaySequence": "218",
               "taskName": "Default Classification Group",
               "taskDescription": "View, search for, create, edit, and delete classifications for the default classification group.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "ORA_MANAGE_MIN_MAX_CLASSIFICATION_GROUPS",
-              "taskListItemShortName": "300100021620814",
-              "displaySequence": "219",
-              "taskName": "Manage Min-Max Planning Classification Groups",
-              "taskDescription": "Create and edit classifications under the default classification group. Define classification criteria for each classification so that items are classified into relevant classifications based on these criteria.",
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
               "MandatoryFlag": false
@@ -15486,31 +15316,11 @@
               "MandatoryFlag": false
             },
             {
-              "taskShortName": "ORA_MANAGE_MIN_MAX_PLANNING_POLICY_PROFILES",
-              "taskListItemShortName": "300100021621805",
-              "displaySequence": "221",
-              "taskName": "Manage Min-Max Planning Policy Profiles",
-              "taskDescription": "Create and edit policy profiles to define how safety stock, minimum quantity, maximum quantity, and EOQ must be calculated for min-max planning.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
               "taskShortName": "ORA_INV_POLICY_PROFILE_ASSIGNMENTS",
               "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATION_ORA_INV_POLICY_PROFILE_ASSIGNMENTS",
               "displaySequence": "222",
               "taskName": "Policy Profile Assignments",
               "taskDescription": "View, search for, create, edit, and delete policy profile assignments for organizations and subinventories.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "ORA_MANAGE_MIN_MAX_PLANNING_POLICY_PROFILE_ASSIGNMENTS",
-              "taskListItemShortName": "300100021621808",
-              "displaySequence": "223",
-              "taskName": "Manage Min-Max Planning Policy Profile Assignments",
-              "taskDescription": "Create and edit assignments of policy profiles to classifications at the organization and subinventory level for min-max planning.",
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
               "MandatoryFlag": false
@@ -15560,16 +15370,6 @@
               "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATION_ORA_INVENTORY_BUSINESS_EVENT_CONFIGURATIONS",
               "displaySequence": "229",
               "taskName": "Inventory Business Event Configurations",
-              "taskDescription": "Configure business events for usage with specific event types.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "ORA_MANAGE_INVENTORY_BUSINESS_EVENT_CONFIGURATIONS",
-              "taskListItemShortName": "ORA_INV_DEFINE_INVENTORY_MANAGEMENT_CONFIGURATION_ORA_MANAGE_INVENTORY_BUSINESS_EVENT_CONFIGURATIONS",
-              "displaySequence": "230",
-              "taskName": "Manage Inventory Business Event Configurations",
               "taskDescription": "Configure business events for usage with specific event types.",
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
@@ -15666,7 +15466,7 @@
               "isCustom": false
             }
           ],
-          "taskCount": 63
+          "taskCount": 40
         },
         "ORA_ADVANCED_INVENTORY_MANAGEMENT": {
           "functionalAreaShortName": "ORA_ADVANCED_INVENTORY_MANAGEMENT",
@@ -15750,16 +15550,6 @@
               "MandatoryFlag": false
             },
             {
-              "taskShortName": "RCV_MANAGE_RECEIVING_PARAMETERS",
-              "taskListItemShortName": "ORA_RCV_DEFINE_RECEIVING_CONFIGURATIONRCV_MANAGE_RECEIVING_PARAMETERS",
-              "displaySequence": "246",
-              "taskName": "Manage Receiving Parameters",
-              "taskDescription": "Configure receiving parameters to specify default receiving options for the organization.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
               "taskShortName": "ORA_RECEIVING_DOCUMENT_OUTPUT_PREFERENCES",
               "taskListItemShortName": "ORA_RCV_DEFINE_RECEIVING_CONFIGURATION_ORA_RECEIVING_DOCUMENT_OUTPUT_PREFERENCES",
               "displaySequence": "247",
@@ -15770,7 +15560,7 @@
               "MandatoryFlag": false
             }
           ],
-          "taskCount": 6
+          "taskCount": 5
         },
         "WSH_ENABLE_SHIPPING": {
           "functionalAreaShortName": "WSH_ENABLE_SHIPPING",
@@ -15862,30 +15652,10 @@
               "MandatoryFlag": false
             },
             {
-              "taskShortName": "WSH_MANAGE_RELEASE_SEQUENCE_RULES",
-              "taskListItemShortName": "ORA_WSH_DEFINE_SHIPPING_CONFIGURATIONWSH_MANAGE_RELEASE_SEQUENCE_RULES",
-              "displaySequence": "256",
-              "taskName": "Manage Release Sequence Rules",
-              "taskDescription": "Configure release sequence rules to specify the sequence for releasing order lines. Release sequence rules are used with pick wave release rules.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
               "taskShortName": "ORA_SHIP_CONFIRM_RULES",
               "taskListItemShortName": "ORA_WSH_DEFINE_SHIPPING_CONFIGURATION_ORA_SHIP_CONFIRM_RULES",
               "displaySequence": "257",
               "taskName": "Ship Confirm Rules",
-              "taskDescription": "Configure ship confirm rules to define frequently used sets of ship confirm options used for confirming shipments.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "WSH_MANAGE_SHIP_CONFIRM_RULES",
-              "taskListItemShortName": "ORA_WSH_DEFINE_SHIPPING_CONFIGURATIONWSH_MANAGE_SHIP_CONFIRM_RULES",
-              "displaySequence": "258",
-              "taskName": "Manage Ship Confirm Rules",
               "taskDescription": "Configure ship confirm rules to define frequently used sets of ship confirm options used for confirming shipments.",
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
@@ -15902,30 +15672,10 @@
               "MandatoryFlag": false
             },
             {
-              "taskShortName": "WSH_MANAGE_SHIPPING_COST_TYPES",
-              "taskListItemShortName": "ORA_WSH_DEFINE_SHIPPING_CONFIGURATIONWSH_MANAGE_SHIPPING_COST_TYPES",
-              "displaySequence": "260",
-              "taskName": "Manage Shipping Cost Types",
-              "taskDescription": "Configure shipping cost types to record and categorize shipping costs.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
               "taskShortName": "ORA_TRANSPORTATION_SCHEDULES",
               "taskListItemShortName": "ORA_WSH_DEFINE_SHIPPING_CONFIGURATION_ORA_TRANSPORTATION_SCHEDULES",
               "displaySequence": "261",
               "taskName": "Transportation Schedules",
-              "taskDescription": "Configure transportation schedules to validate that shipments are scheduled to ship and arrive on a valid business day.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "WSH_MANAGE_TRANSPORTATION_SCHEDULES",
-              "taskListItemShortName": "ORA_WSH_DEFINE_SHIPPING_CONFIGURATIONWSH_MANAGE_TRANSPORTATION_SCHEDULES",
-              "displaySequence": "262",
-              "taskName": "Manage Transportation Schedules",
               "taskDescription": "Configure transportation schedules to validate that shipments are scheduled to ship and arrive on a valid business day.",
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
@@ -15942,30 +15692,10 @@
               "MandatoryFlag": false
             },
             {
-              "taskShortName": "WSH_MANAGE_SHIPPING_EXCEPTIONS",
-              "taskListItemShortName": "ORA_WSH_DEFINE_SHIPPING_CONFIGURATIONWSH_MANAGE_SHIPPING_EXCEPTIONS",
-              "displaySequence": "264",
-              "taskName": "Manage Shipping Exceptions",
-              "taskDescription": "Configure shipping exceptions to record with shipments, lines, and packing units.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
               "taskShortName": "ORA_ITEM_PACKING_UNIT_CONFIGURATIONS",
               "taskListItemShortName": "ORA_WSH_DEFINE_SHIPPING_CONFIGURATION_ORA_ITEM_PACKING_UNIT_CONFIGURATIONS",
               "displaySequence": "265",
               "taskName": "Item Packing Unit Configurations",
-              "taskDescription": "Configure default packing configurations to automatically pack items into packing units.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "WSH_MANAGE_DEFAULT_PACKING_CONFIGURATIONS",
-              "taskListItemShortName": "ORA_WSH_DEFINE_SHIPPING_CONFIGURATIONWSH_MANAGE_DEFAULT_PACKING_CONFIGURATIONS",
-              "displaySequence": "266",
-              "taskName": "Manage Default Packing Configurations",
               "taskDescription": "Configure default packing configurations to automatically pack items into packing units.",
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
@@ -15992,30 +15722,10 @@
               "MandatoryFlag": true
             },
             {
-              "taskShortName": "WSH_MANAGE_SHIPPING_PARAMETERS",
-              "taskListItemShortName": "ORA_WSH_DEFINE_SHIPPING_CONFIGURATIONWSH_MANAGE_SHIPPING_PARAMETERS",
-              "displaySequence": "269",
-              "taskName": "Manage Shipping Parameters",
-              "taskDescription": "Configure shipping parameters to specify default shipping options for the organization.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": true
-            },
-            {
               "taskShortName": "ORA_PICK_WAVE_RELEASE_RULES",
               "taskListItemShortName": "ORA_WSH_DEFINE_SHIPPING_CONFIGURATION_ORA_PICK_WAVE_RELEASE_RULES",
               "displaySequence": "270",
               "taskName": "Pick Wave Release Rules",
-              "taskDescription": "Configure pick wave release rules to specify frequently used demand selection criteria and pick release options.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "WSH_MANAGE_PICK_WAVE_RELEASE_RULES",
-              "taskListItemShortName": "ORA_WSH_DEFINE_SHIPPING_CONFIGURATIONWSH_MANAGE_PICK_WAVE_RELEASE_RULES",
-              "displaySequence": "271",
-              "taskName": "Manage Pick Wave Release Rules",
               "taskDescription": "Configure pick wave release rules to specify frequently used demand selection criteria and pick release options.",
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
@@ -16040,19 +15750,9 @@
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
               "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "ORA_MANAGE_SHIPPING_DOCUMENT_OUTPUT_PREFERENCES",
-              "taskListItemShortName": "300100021620830",
-              "displaySequence": "275",
-              "taskName": "Manage Shipping Document Output Preferences",
-              "taskDescription": "Configure shipping document output preferences.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
             }
           ],
-          "taskCount": 27
+          "taskCount": 18
         },
         "CMR_RECEIPT_ACCOUNTING": {
           "functionalAreaShortName": "CMR_RECEIPT_ACCOUNTING",
@@ -16576,16 +16276,6 @@
               "MandatoryFlag": false
             },
             {
-              "taskShortName": "CST_MANAGE_COST_ORGANIZATIONS",
-              "taskListItemShortName": "CST_DEFINE_COST_ACCOUNTINGCST_MANAGE_COST_ORGANIZATIONS",
-              "displaySequence": "306",
-              "taskName": "Manage Cost Organizations",
-              "taskDescription": "Create and edit cost organizations. Cost accounting setup data policies and user security policies for cost management are established in these organizations.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": true
-            },
-            {
               "taskShortName": "ORA_CST_COST_ORGANIZATIONS",
               "taskListItemShortName": "ORA_CST_DEFINE_COST_ACCOUNTING_ORA_CST_COST_ORGANIZATIONS",
               "displaySequence": "307",
@@ -16606,31 +16296,11 @@
               "MandatoryFlag": true
             },
             {
-              "taskShortName": "CST_MANAGE_COST_BOOKS",
-              "taskListItemShortName": "CST_DEFINE_COST_ACCOUNTINGCST_MANAGE_COST_BOOKS",
-              "displaySequence": "309",
-              "taskName": "Manage Cost Books",
-              "taskDescription": "Create and edit cost books that are used for inventory transaction accounting.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": true
-            },
-            {
               "taskShortName": "ORA_CST_COST_BOOKS",
               "taskListItemShortName": "ORA_CST_DEFINE_COST_ACCOUNTING_ORA_CST_COST_BOOKS",
               "displaySequence": "310",
               "taskName": "Cost Books",
               "taskDescription": "Create and edit cost books that are used for inventory transaction accounting.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": true
-            },
-            {
-              "taskShortName": "CST_MANAGE_COST_ORGANIZATION_RELATIONSHIPS",
-              "taskListItemShortName": "CST_DEFINE_COST_ACCOUNTINGCST_MANAGE_COST_ORGANIZATION_RELATIONSHIPS",
-              "displaySequence": "311",
-              "taskName": "Manage Cost Organization Relationships",
-              "taskDescription": "Associate inventory organizations to cost organizations and assign cost books to cost organizations.",
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
               "MandatoryFlag": true
@@ -16644,16 +16314,6 @@
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
               "MandatoryFlag": true
-            },
-            {
-              "taskShortName": "CST_MANAGE_COST_ANALYSIS_GROUPS",
-              "taskListItemShortName": "CST_DEFINE_COST_ACCOUNTINGCST_MANAGE_COST_ANALYSIS_GROUPS",
-              "displaySequence": "313",
-              "taskName": "Manage Cost Analysis Groups",
-              "taskDescription": "Create and edit cost classifications for analysis.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
             },
             {
               "taskShortName": "ORA_CST_COST_ANALYSIS_GROUPS",
@@ -16751,96 +16411,6 @@
               "displaySequence": "323",
               "taskName": "Overhead Expense Pools",
               "taskDescription": "Create and edit definitions of expense pools for overhead rules that are used in overhead absorption.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "CST_MANAGE_VALUATION_STRUCTURES",
-              "taskListItemShortName": "CST_DEFINE_COST_ACCOUNTING:DEFINE_CST_POLICIESCST_MANAGE_VALUATION_STRUCTURES",
-              "displaySequence": "324",
-              "taskName": "Manage Valuation Structures",
-              "taskDescription": "Create and edit valuation structures to define inventory control attributes that are used to track costs.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": true
-            },
-            {
-              "taskShortName": "CST_MANAGE_COST_ELEMENTS",
-              "taskListItemShortName": "CST_DEFINE_COST_ACCOUNTING:DEFINE_CST_POLICIESCST_MANAGE_COST_ELEMENTS",
-              "displaySequence": "325",
-              "taskName": "Manage Cost Elements",
-              "taskDescription": "Create and edit cost elements that are used for inventory transaction accounting.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": true
-            },
-            {
-              "taskShortName": "CST_MANAGE_COST_COMPONENT_MAPPINGS",
-              "taskListItemShortName": "CST_DEFINE_COST_ACCOUNTING:DEFINE_CST_POLICIESCST_MANAGE_COST_COMPONENT_MAPPINGS",
-              "displaySequence": "326",
-              "taskName": "Manage Cost Component Mappings",
-              "taskDescription": "Create and edit mappings between cost components and cost elements.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": true
-            },
-            {
-              "taskShortName": "CST_MANAGE_COST_PROFILES",
-              "taskListItemShortName": "CST_DEFINE_COST_ACCOUNTING:DEFINE_CST_POLICIESCST_MANAGE_COST_PROFILES",
-              "displaySequence": "327",
-              "taskName": "Manage Cost Profiles",
-              "taskDescription": "Create and edit cost profiles that are used for assigning accounting methods to items.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": true
-            },
-            {
-              "taskShortName": "CST_MANAGE_DEFAULT_COST_PROFILES",
-              "taskListItemShortName": "CST_DEFINE_COST_ACCOUNTING:DEFINE_CST_BOOKS_POLICIESCST_MANAGE_DEFAULT_COST_PROFILES",
-              "displaySequence": "328",
-              "taskName": "Manage Default Cost Profiles",
-              "taskDescription": "Create and edit cost profiles that can be automatically assigned to items at the cost organization, cost book, or item category level.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": true
-            },
-            {
-              "taskShortName": "CST_MANAGE_ITEM_COST_PROFILE",
-              "taskListItemShortName": "CST_DEFINE_COST_ACCOUNTING:DEFINE_CST_BOOKS_POLICIESCST_MANAGE_ITEM_COST_PROFILE",
-              "displaySequence": "329",
-              "taskName": "Manage Item Cost Profiles",
-              "taskDescription": "Assign cost profiles to items at the cost organization and cost book level.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "CST_MANAGE_VALUATION_UNITS",
-              "taskListItemShortName": "CST_DEFINE_COST_ACCOUNTING:DEFINE_CST_BOOKS_POLICIESCST_MANAGE_VALUATION_UNITS",
-              "displaySequence": "330",
-              "taskName": "Manage Valuation Units",
-              "taskDescription": "Create and edit valuation units to define the values of inventory control attributes within valuation structures.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": true
-            },
-            {
-              "taskShortName": "CST_MANAGE_OVERHEAD_EXPENSE_POOLS",
-              "taskListItemShortName": "CST_DEFINE_COST_ACCOUNTING:DEFINE_CST_OVERHEADSCST_MANAGE_OVERHEAD_EXPENSE_POOLS",
-              "displaySequence": "331",
-              "taskName": "Manage Overhead Expense Pools",
-              "taskDescription": "Create and edit definitions of expense pools for overhead rules that are used in overhead absorption.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "CST_MANAGE_OVERHEAD_COST_ELEMENT_GROUPS",
-              "taskListItemShortName": "CST_DEFINE_COST_ACCOUNTING:DEFINE_CST_OVERHEADSCST_MANAGE_OVERHEAD_COST_ELEMENT_GROUPS",
-              "displaySequence": "332",
-              "taskName": "Manage Overhead Cost Element Groups",
-              "taskDescription": "Create and edit cost element groupings for overhead rules that are based on a percentage of cost.",
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
               "MandatoryFlag": false
@@ -17146,7 +16716,7 @@
               "MandatoryFlag": false
             }
           ],
-          "taskCount": 63
+          "taskCount": 50
         },
         "CST_COST_AND_PROFIT_PLANNING": {
           "functionalAreaShortName": "CST_COST_AND_PROFIT_PLANNING",
@@ -17188,16 +16758,6 @@
               "MandatoryFlag": false
             },
             {
-              "taskShortName": "CST_MANAGE_COST_ORGANIZATIONS",
-              "taskListItemShortName": "CST_DEFINE_COST_AND_PROFIT_PLANNINGCST_MANAGE_COST_ORGANIZATIONS",
-              "displaySequence": "367",
-              "taskName": "Manage Cost Organizations",
-              "taskDescription": "Create and edit cost organizations. Cost accounting setup data policies and user security policies for cost management are established in these organizations.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": true
-            },
-            {
               "taskShortName": "ORA_CST_MANAGE_COST_ORG_DATA_ACCESS",
               "taskListItemShortName": "CST_DEFINE_COST_AND_PROFIT_PLANNINGORA_CST_MANAGE_COST_ORG_DATA_ACCESS",
               "displaySequence": "368",
@@ -17206,29 +16766,9 @@
               "csvExportImportSupportedFlag": false,
               "exportImportSupportedFlag": false,
               "MandatoryFlag": true
-            },
-            {
-              "taskShortName": "CST_MANAGE_COST_ANALYSIS_GROUPS",
-              "taskListItemShortName": "CST_DEFINE_COST_AND_PROFIT_PLANNINGCST_MANAGE_COST_ANALYSIS_GROUPS",
-              "displaySequence": "369",
-              "taskName": "Manage Cost Analysis Groups",
-              "taskDescription": "Create and edit cost classifications for analysis.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "CST_MANAGE_OVERHEAD_EXPENSE_POOLS",
-              "taskListItemShortName": "CST_DEFINE_COST_AND_PROFIT_PLANNINGCST_MANAGE_OVERHEAD_EXPENSE_POOLS",
-              "displaySequence": "370",
-              "taskName": "Manage Overhead Expense Pools",
-              "taskDescription": "Create and edit definitions of expense pools for overhead rules that are used in overhead absorption.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": true
             }
           ],
-          "taskCount": 7
+          "taskCount": 4
         },
         "ORA_CML_LANDED_COST_MGMT": {
           "functionalAreaShortName": "ORA_CML_LANDED_COST_MGMT",
@@ -17250,16 +16790,6 @@
               "MandatoryFlag": false
             },
             {
-              "taskShortName": "ORA_CML_SET_UP_CHARGE_NAMES",
-              "taskListItemShortName": "ORA_CML_DEFINE_LANDED_COST_MANAGEMENTORA_CML_SET_UP_CHARGE_NAMES",
-              "displaySequence": "372",
-              "taskName": "Manage Charge Names",
-              "taskDescription": "Define landed cost charges and configure default attributes.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": true
-            },
-            {
               "taskShortName": "ORA_CML_LANDED_COST_CHARGES",
               "taskListItemShortName": "ORA_CML_DEFINE_LANDED_COST_MANAGEMENT_ORA_CML_LANDED_COST_CHARGES",
               "displaySequence": "373",
@@ -17270,31 +16800,11 @@
               "MandatoryFlag": true
             },
             {
-              "taskShortName": "ORA_CML_SET_UP_REFERENCE_TYPES",
-              "taskListItemShortName": "ORA_CML_DEFINE_LANDED_COST_MANAGEMENTORA_CML_SET_UP_REFERENCE_TYPES",
-              "displaySequence": "374",
-              "taskName": "Manage Landed Cost Reference Types",
-              "taskDescription": "Define charge reference types representing unique business documents and other references which drive a trade operation.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
               "taskShortName": "ORA_CML_LANDED_COST_REFERENCE_TYPES",
               "taskListItemShortName": "ORA_CML_DEFINE_LANDED_COST_MANAGEMENT_ORA_CML_LANDED_COST_REFERENCE_TYPES",
               "displaySequence": "375",
               "taskName": "Landed Cost Reference Types",
               "taskDescription": "Define charge reference types representing unique business documents and other references which drive a trade operation.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "ORA_CML_SET_UP_ROUTES",
-              "taskListItemShortName": "ORA_CML_DEFINE_LANDED_COST_MANAGEMENTORA_CML_SET_UP_ROUTES",
-              "displaySequence": "376",
-              "taskName": "Manage Routes",
-              "taskDescription": "Define routes for classifying similar trade operations into a higher level entity.",
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
               "MandatoryFlag": false
@@ -17310,7 +16820,7 @@
               "MandatoryFlag": false
             }
           ],
-          "taskCount": 7
+          "taskCount": 4
         },
         "JMF_INTRASTAT": {
           "functionalAreaShortName": "JMF_INTRASTAT",
@@ -17342,30 +16852,10 @@
               "MandatoryFlag": true
             },
             {
-              "taskShortName": "JMF_MANAGE_INTRASTAT_COUNTRY_CHARACTERISTICS",
-              "taskListItemShortName": "ORA_DEFINE_INTRASTAT_REPORTINGJMF_MANAGE_INTRASTAT_COUNTRY_CHARACTERISTICS",
-              "displaySequence": "380",
-              "taskName": "Manage Intrastat Country Characteristics",
-              "taskDescription": "Configure the intrastat reporting characteristics that apply to a particular country within an economic zone, such as EU.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": true
-            },
-            {
               "taskShortName": "ORA_INTRASTAT_RULES",
               "taskListItemShortName": "ORA_DEFINE_INTRASTAT_REPORTING_ORA_INTRASTAT_RULES",
               "displaySequence": "381",
               "taskName": "Intrastat Rules",
-              "taskDescription": "Configure rules for nature of transaction code, statistical procedure code, fiscal regime code, and freight factor for statistical value and exclusion criteria.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "JMF_MANAGE_INTRASTAT_RULES",
-              "taskListItemShortName": "ORA_DEFINE_INTRASTAT_REPORTINGJMF_MANAGE_INTRASTAT_RULES",
-              "displaySequence": "382",
-              "taskName": "Manage Intrastat Rules",
               "taskDescription": "Configure rules for nature of transaction code, statistical procedure code, fiscal regime code, and freight factor for statistical value and exclusion criteria.",
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
@@ -17380,19 +16870,9 @@
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
               "MandatoryFlag": true
-            },
-            {
-              "taskShortName": "JMF_MANAGE_INTRASTAT_PARAMETERS",
-              "taskListItemShortName": "ORA_DEFINE_INTRASTAT_REPORTINGJMF_MANAGE_INTRASTAT_PARAMETERS",
-              "displaySequence": "384",
-              "taskName": "Manage Intrastat Parameters",
-              "taskDescription": "Enable the intrastat reporting for a particular legal entity or legal reporting unit.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": true
             }
           ],
-          "taskCount": 7
+          "taskCount": 4
         },
         "ORA_WIS_COMMON_MFG_WORK_SETUP": {
           "functionalAreaShortName": "ORA_WIS_COMMON_MFG_WORK_SETUP",
@@ -18100,9 +17580,39 @@
               "csvExportImportSupportedFlag": false,
               "exportImportSupportedFlag": false,
               "MandatoryFlag": false
+            },
+            {
+              "taskShortName": "CUSTOM_MANAGE_ASSET_SUPPLIER_WARRANTY_COVERAGES",
+              "taskListItemShortName": "CUSTOM_MANAGE_ASSET_SUPPLIER_WARRANTY_COVERAGES",
+              "displaySequence": null,
+              "taskName": "Manage Asset Supplier Warranty Coverages",
+              "taskDescription": "",
+              "csvExportImportSupportedFlag": false,
+              "exportImportSupportedFlag": false,
+              "isCustom": true
+            },
+            {
+              "taskShortName": "CUSTOM_MANAGE_METER_TEMPLATE_APPLICABILITY",
+              "taskListItemShortName": "CUSTOM_MANAGE_METER_TEMPLATE_APPLICABILITY",
+              "displaySequence": null,
+              "taskName": "Manage Meter Template Applicability",
+              "taskDescription": "",
+              "csvExportImportSupportedFlag": false,
+              "exportImportSupportedFlag": false,
+              "isCustom": true
+            },
+            {
+              "taskShortName": "CUSTOM_IMPORT_MAINTENANCE_WORK_DEFINITIONS",
+              "taskListItemShortName": "CUSTOM_IMPORT_MAINTENANCE_WORK_DEFINITIONS",
+              "displaySequence": null,
+              "taskName": "Import Maintenance Work Definitions",
+              "taskDescription": "",
+              "csvExportImportSupportedFlag": false,
+              "exportImportSupportedFlag": false,
+              "isCustom": true
             }
           ],
-          "taskCount": 23
+          "taskCount": 26
         },
         "ORA_FOS_SUPPLY_CHAIN_FIN_FLOW": {
           "functionalAreaShortName": "ORA_FOS_SUPPLY_CHAIN_FIN_FLOW",
@@ -18134,16 +17644,6 @@
               "MandatoryFlag": false
             },
             {
-              "taskShortName": "ORA_FOS_DEFINE_TRADE_AND_ACCOUNTING_RULES",
-              "taskListItemShortName": "ORA_FOS_DEFINE_FINANCIAL_ORCHESTRATION_FLOWSORA_FOS_DEFINE_TRADE_AND_ACCOUNTING_RULES",
-              "displaySequence": "417",
-              "taskName": "Manage Supply Chain Financial Orchestration Documentation and Accounting Rules",
-              "taskDescription": "Define the Trade and Accounting Rules for the Financial Orchestration.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
               "taskShortName": "ORA_FOS_DEFINE_TRADE_AND_ACCOUNTING_RULES_NEW",
               "taskListItemShortName": "ORA_FOS_DEFINE_FINANCIAL_ORCHESTRATION_FLOWS_ORA_FOS_DEFINE_TRADE_AND_ACCOUNTING_RULES_NEW",
               "displaySequence": "418",
@@ -18154,31 +17654,11 @@
               "MandatoryFlag": false
             },
             {
-              "taskShortName": "ORA_FOS_DEFINE_TRANSFER_PRICING_RULES",
-              "taskListItemShortName": "ORA_FOS_DEFINE_FINANCIAL_ORCHESTRATION_FLOWSORA_FOS_DEFINE_TRANSFER_PRICING_RULES",
-              "displaySequence": "419",
-              "taskName": "Manage Supply Chain Financial Orchestration Transfer Pricing Rules",
-              "taskDescription": "Manage Financial Orchestration Transfer Pricing Rules.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
               "taskShortName": "ORA_FOS_DEFINE_TRANSFER_PRICING_RULES_NEW",
               "taskListItemShortName": "ORA_FOS_DEFINE_FINANCIAL_ORCHESTRATION_FLOWS_ORA_FOS_DEFINE_TRANSFER_PRICING_RULES_NEW",
               "displaySequence": "420",
               "taskName": "Transfer Pricing Rules",
               "taskDescription": "Manage the transfer pricing rules for Financial Orchestration.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "ORA_FOS_MANAGE_SYSTEM_OPTIONS",
-              "taskListItemShortName": "ORA_FOS_DEFINE_FINANCIAL_ORCHESTRATION_FLOWSORA_FOS_MANAGE_SYSTEM_OPTIONS",
-              "displaySequence": "421",
-              "taskName": "Manage Supply Chain Financial Orchestration System Options",
-              "taskDescription": "Manage Financial Orchestration System Options",
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
               "MandatoryFlag": false
@@ -18224,16 +17704,6 @@
               "MandatoryFlag": false
             },
             {
-              "taskShortName": "ORA_FOS_DEFINE_PROFIT_CENTER_BUSINESS_UNIT_PARTY_RELATIONSHIP",
-              "taskListItemShortName": "ORA_FOS_DEFINE_FINANCIAL_ORCHESTRATION_FLOWSORA_FOS_DEFINE_PROFIT_CENTER_BUSINESS_UNIT_PARTY_RELATIONSHIP",
-              "displaySequence": "426",
-              "taskName": "Manage Profit Center Business Unit Party Relationship",
-              "taskDescription": "Define Profit Center Business Unit Party Relationship.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
               "taskShortName": "ORA_PROFIT_CENTER_PARTY_RELATIONSHIPS_NEW",
               "taskListItemShortName": "ORA_FOS_DEFINE_FINANCIAL_ORCHESTRATION_FLOWS_ORA_PROFIT_CENTER_PARTY_RELATIONSHIPS_NEW",
               "displaySequence": "427",
@@ -18249,16 +17719,6 @@
               "displaySequence": "428",
               "taskName": "Manage Order Lookups",
               "taskDescription": "Review and maintain lookup values, such as Return Reason Code and Activity Type.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "ORA_FOS_MANAGE_TRADE_QUALIFIER",
-              "taskListItemShortName": "ORA_FOS_DEFINE_FINANCIAL_ORCHESTRATION_FLOWSORA_FOS_MANAGE_TRADE_QUALIFIER",
-              "displaySequence": "429",
-              "taskName": "Manage Supply Chain Financial Orchestration Qualifiers",
-              "taskDescription": "Create and edit set of business attributes forming a part of supply chain transaction to identify the financial trade agreement",
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
               "MandatoryFlag": false
@@ -18284,16 +17744,6 @@
               "MandatoryFlag": false
             },
             {
-              "taskShortName": "ORA_FOS_MANAGE_SUPPLY_CHAIN_FINANCIAL_TRADE_AGREEMENTS",
-              "taskListItemShortName": "ORA_FOS_DEFINE_FINANCIAL_ORCHESTRATION_FLOWSORA_FOS_MANAGE_SUPPLY_CHAIN_FINANCIAL_TRADE_AGREEMENTS",
-              "displaySequence": "432",
-              "taskName": "Manage Supply Chain Financial Orchestration Flows",
-              "taskDescription": "Create and maintain Financial Trade Agreement to orchestrate the financial transactions between trade",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
               "taskShortName": "ORA_FOS_MANAGE_SUPPLY_CHAIN_FINANCIAL_TRADE_AGREEMENTS_NEW",
               "taskListItemShortName": "ORA_FOS_DEFINE_FINANCIAL_ORCHESTRATION_FLOWS_ORA_FOS_MANAGE_SUPPLY_CHAIN_FINANCIAL_TRADE_AGREEMENTS_NEW",
               "displaySequence": "433",
@@ -18309,16 +17759,6 @@
               "displaySequence": "434",
               "taskName": "Manage Drop Ship Financial Flows",
               "taskDescription": "Create and maintain Drop Ship Financial Orchestration Flows to orchestrate the financial transactions.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "ORA_FOS_MANAGE_DROP_SHIP_AGREEMENTS_NEW",
-              "taskListItemShortName": "ORA_FOS_DEFINE_FINANCIAL_ORCHESTRATION_FLOWS_ORA_FOS_MANAGE_DROP_SHIP_AGREEMENTS_NEW",
-              "displaySequence": "435",
-              "taskName": "Drop Ship Financial Flows",
-              "taskDescription": "Create and maintain the drop ship flows that orchestrate financial transactions.",
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
               "MandatoryFlag": false
@@ -18424,7 +17864,7 @@
               "MandatoryFlag": false
             }
           ],
-          "taskCount": 31
+          "taskCount": 24
         },
         "ORA_RCL": {
           "functionalAreaShortName": "ORA_RCL",
@@ -18451,76 +17891,6 @@
               "displaySequence": "452",
               "taskName": "Manage Service Logistics Profile Options",
               "taskDescription": "Create and manage Profile Options that are used in Service Logistics",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": true
-            },
-            {
-              "taskShortName": "ORA_RCL_MANAGE_STOCK_LOCATIONS",
-              "taskListItemShortName": "ORA_RCL_TASK_LIST_ORA_RCL_MANAGE_STOCK_LOCATIONS",
-              "displaySequence": "453",
-              "taskName": "Manage Stocking Locations",
-              "taskDescription": "Create and manage Field Service Logistics Stocking Locations",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": true
-            },
-            {
-              "taskShortName": "ORA_RCL_MANAGE_TECH_SETUP",
-              "taskListItemShortName": "ORA_RCL_TASK_LIST_ORA_RCL_MANAGE_TECH_SETUP",
-              "displaySequence": "454",
-              "taskName": "Manage Field Service Technicians",
-              "taskDescription": "Create and manage Field Service Technicians",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": true
-            },
-            {
-              "taskShortName": "ORA_RCL_MANAGE_BILLING_TYPES",
-              "taskListItemShortName": "ORA_RCL_TASK_LIST_ORA_RCL_MANAGE_BILLING_TYPES",
-              "displaySequence": "455",
-              "taskName": "Manage Billing Types",
-              "taskDescription": "Create and manage Billing Types",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": true
-            },
-            {
-              "taskShortName": "ORA_RCL_MANAGE_SERVICE_ACTIVITIES",
-              "taskListItemShortName": "ORA_RCL_TASK_LIST_ORA_RCL_MANAGE_SERVICE_ACTIVITIES",
-              "displaySequence": "456",
-              "taskName": "Manage Service Activities",
-              "taskDescription": "Create and manage Service Activities",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": true
-            },
-            {
-              "taskShortName": "ORA_RCL_MANAGE_RETURN_ROUTING_RULES",
-              "taskListItemShortName": "ORA_RCL_TASK_LIST_ORA_RCL_MANAGE_RETURN_ROUTING_RULES",
-              "displaySequence": "457",
-              "taskName": "Manage Return Routing Rules",
-              "taskDescription": "Create and manage Return Routing Rules.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": true
-            },
-            {
-              "taskShortName": "ORA_RCL_RESOURCE_ITEM_MAPPING",
-              "taskListItemShortName": "ORA_RCL_TASK_LIST_ORA_RCL_RESOURCE_ITEM_MAPPING",
-              "displaySequence": "458",
-              "taskName": "Manage Resource to Item Mapping",
-              "taskDescription": "Manage Resource to Item Mapping.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": true
-            },
-            {
-              "taskShortName": "ORA_RCL_AUTO_PROCESSING_RULE",
-              "taskListItemShortName": "ORA_RCL_TASK_LIST_ORA_RCL_AUTO_PROCESSING_RULE",
-              "displaySequence": "459",
-              "taskName": "Manage Auto Processing Rules for Charges",
-              "taskDescription": "Manage Auto Processing Rules.",
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
               "MandatoryFlag": true
@@ -18606,7 +17976,7 @@
               "MandatoryFlag": false
             }
           ],
-          "taskCount": 17
+          "taskCount": 10
         },
         "ORA_ENQ_PRODUCT_RECALL_MANAGEMENT": {
           "functionalAreaShortName": "ORA_ENQ_PRODUCT_RECALL_MANAGEMENT",
@@ -19136,7 +18506,7 @@
         }
       },
       "functionalAreaCount": 31,
-      "taskCount": 650
+      "taskCount": 584
     },
     "PJF_PROJ_MNG": {
       "offeringShortName": "PJF_PROJ_MNG",
@@ -20858,16 +20228,6 @@
               "MandatoryFlag": false
             },
             {
-              "taskShortName": "INV_MANAGE_INVENTORY_TRANSACTION_SOURCES_AND_TYPES",
-              "taskListItemShortName": "ORA_PJC_DEFINE_PROJECT_COSTING_INTEGRATIONS:DEFINE_INVENTORY_INTEGRATIONINV_MANAGE_INVENTORY_TRANSACTION_SOURCES_AND_TYPES",
-              "displaySequence": "166",
-              "taskName": "Manage Inventory Transaction Sources and Types",
-              "taskDescription": "Configure inventory transaction sources to use while performing transactions to classify transactions according to their origin, such as purchase order, sales order, account number, or physical inventory. Configure transaction types using user-defined terminology to represent transaction types.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": true
-            },
-            {
               "taskShortName": "PJC_UPDATE_INVENTORY_ACCOUNT_RULES",
               "taskListItemShortName": "ORA_PJC_DEFINE_PROJECT_COSTING_INTEGRATIONS:DEFINE_INVENTORY_INTEGRATIONPJC_UPDATE_INVENTORY_ACCOUNT_RULES",
               "displaySequence": "167",
@@ -20888,7 +20248,7 @@
               "MandatoryFlag": false
             }
           ],
-          "taskCount": 33
+          "taskCount": 32
         },
         "PJC_CAPITAL_PROJECTS": {
           "functionalAreaShortName": "PJC_CAPITAL_PROJECTS",
@@ -22328,7 +21688,7 @@
         }
       },
       "functionalAreaCount": 20,
-      "taskCount": 292
+      "taskCount": 291
     },
     "ORA_FMK_MARKETING": {
       "offeringShortName": "ORA_FMK_MARKETING",
@@ -25279,16 +24639,6 @@
               "MandatoryFlag": false
             },
             {
-              "taskShortName": "INV_MANAGE_INVENTORY_TRANSACTION_SOURCES_AND_TYPES",
-              "taskListItemShortName": "ORA_PJC_DEFINE_PROJECT_COSTING_INTEGRATIONS:DEFINE_INVENTORY_INTEGRATIONINV_MANAGE_INVENTORY_TRANSACTION_SOURCES_AND_TYPES",
-              "displaySequence": "167",
-              "taskName": "Manage Inventory Transaction Sources and Types",
-              "taskDescription": "Configure inventory transaction sources to use while performing transactions to classify transactions according to their origin, such as purchase order, sales order, account number, or physical inventory. Configure transaction types using user-defined terminology to represent transaction types.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": true
-            },
-            {
               "taskShortName": "PJC_UPDATE_INVENTORY_ACCOUNT_RULES",
               "taskListItemShortName": "ORA_PJC_DEFINE_PROJECT_COSTING_INTEGRATIONS:DEFINE_INVENTORY_INTEGRATIONPJC_UPDATE_INVENTORY_ACCOUNT_RULES",
               "displaySequence": "168",
@@ -25309,7 +24659,7 @@
               "MandatoryFlag": false
             }
           ],
-          "taskCount": 33
+          "taskCount": 32
         },
         "PJC_CAPITAL_PROJECTS": {
           "functionalAreaShortName": "PJC_CAPITAL_PROJECTS",
@@ -26749,7 +26099,7 @@
         }
       },
       "functionalAreaCount": 21,
-      "taskCount": 319
+      "taskCount": 318
     },
     "MKT_MARKETING": {
       "offeringShortName": "MKT_MARKETING",
@@ -46722,9 +46072,19 @@
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
               "MandatoryFlag": false
+            },
+            {
+              "taskShortName": "ORA_PO_MANAGE_SPECIAL_HANDLING_TYPES",
+              "taskListItemShortName": "ORA_PO_MANAGE_SPECIAL_HANDLING_TYPES",
+              "displaySequence": null,
+              "taskName": "Manage Special Handling Types",
+              "taskDescription": "",
+              "csvExportImportSupportedFlag": true,
+              "exportImportSupportedFlag": true,
+              "isCustom": false
             }
           ],
-          "taskCount": 11
+          "taskCount": 12
         },
         "ORA_PO_PRC_TRX_ACC_RULES_FA": {
           "functionalAreaShortName": "ORA_PO_PRC_TRX_ACC_RULES_FA",
@@ -47050,19 +46410,9 @@
               "csvExportImportSupportedFlag": true,
               "exportImportSupportedFlag": true,
               "MandatoryFlag": false
-            },
-            {
-              "taskShortName": "RCV_MANAGE_RECEIVING_PARAMETERS",
-              "taskListItemShortName": "ORA_RCV_DEFINE_RECEIVING_FOR_PROCUREMENTRCV_MANAGE_RECEIVING_PARAMETERS",
-              "displaySequence": "283",
-              "taskName": "Manage Receiving Parameters",
-              "taskDescription": "Configure receiving parameters to specify default receiving options for the organization.",
-              "csvExportImportSupportedFlag": true,
-              "exportImportSupportedFlag": true,
-              "MandatoryFlag": true
             }
           ],
-          "taskCount": 4
+          "taskCount": 3
         },
         "CMR_RECEIPT_ACCOUNTING": {
           "functionalAreaShortName": "CMR_RECEIPT_ACCOUNTING",
@@ -51828,17 +51178,37 @@
               "MandatoryFlag": false
             },
             {
-              "taskShortName": "CUSTOM_CREATE_CONTRACT",
-              "taskListItemShortName": "CUSTOM_CREATE_CONTRACT",
+              "taskShortName": "CUSTOM_MANAGE_CONTRACT_VALIDATIONS",
+              "taskListItemShortName": "CUSTOM_MANAGE_CONTRACT_VALIDATIONS",
               "displaySequence": null,
-              "taskName": "Create Contract",
+              "taskName": "Manage Contract Validations",
+              "taskDescription": "",
+              "csvExportImportSupportedFlag": false,
+              "exportImportSupportedFlag": false,
+              "isCustom": true
+            },
+            {
+              "taskShortName": "CUSTOM_MANAGE_CONTRACT_COLLABORATION",
+              "taskListItemShortName": "CUSTOM_MANAGE_CONTRACT_COLLABORATION",
+              "displaySequence": null,
+              "taskName": "Manage Contract Collaboration",
+              "taskDescription": "",
+              "csvExportImportSupportedFlag": false,
+              "exportImportSupportedFlag": false,
+              "isCustom": true
+            },
+            {
+              "taskShortName": "CUSTOM_MANAGE_CONTRACT_WORD_ADD_IN",
+              "taskListItemShortName": "CUSTOM_MANAGE_CONTRACT_WORD_ADD_IN",
+              "displaySequence": null,
+              "taskName": "Manage Contract Word Add-in",
               "taskDescription": "",
               "csvExportImportSupportedFlag": false,
               "exportImportSupportedFlag": false,
               "isCustom": true
             }
           ],
-          "taskCount": 25
+          "taskCount": 27
         },
         "OKC_PROC_CONTRACTS_ENABLED": {
           "functionalAreaShortName": "OKC_PROC_CONTRACTS_ENABLED",
@@ -52770,7 +52140,7 @@
         }
       },
       "functionalAreaCount": 12,
-      "taskCount": 171
+      "taskCount": 173
     },
     "ZCH_CDM": {
       "offeringShortName": "ZCH_CDM",
@@ -84596,7 +83966,7 @@
   "counts": {
     "offerings": 54,
     "functionalAreas": 609,
-    "tasks": 7284,
+    "tasks": 7221,
     "errors": 0
   }
 }

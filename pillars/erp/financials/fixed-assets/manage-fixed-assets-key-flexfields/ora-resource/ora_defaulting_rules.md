@@ -125,7 +125,7 @@ proposals, not claims about Oracle-delivered defaults.
 | SegmentLabelCode | Yes | Documented seeded Major Category mapping; no generic default for other labels | New Category structure with an explicitly selected Major Category segment | No | ora_reference_lookups.md; preserve explicit choices | resolve_segment_label |
 | Structure Instance Description | No | Blank | Blank | No | Approved design |  |
 | Structure Instance EnabledFlag | No | Y | Blank | No | Approved design or this task proposal; export only to preserve updates |  |
-| DynamicCombinationCreationAllowed | No | Y (Yes) | Omitted on a new structure instance | No | This task default or explicit approved override; preserve existing values on updates |  |
+| DynamicCombinationCreationAllowed | No | `Y` (Yes) | Omitted on a new structure instance | No; translate supplied affirmative input to `Y` and negative input to `N`, case-insensitively. Store only `Y` or `N`. | This task default or explicit approved override; preserve existing values on updates |  |
 | ShorthandAliasEnabledFlag | No | N | Blank | No | Approved design or this task proposal; export only to preserve updates |  |
 | Structure Instance StructureCode | No | Resolved StructureCode | Blank | No | Resolved existing or approved same-package parent design |  |
 | Instance SegmentCode | No | Parent structure SegmentCode | Blank | No | Resolved existing or approved same-package parent design |  |

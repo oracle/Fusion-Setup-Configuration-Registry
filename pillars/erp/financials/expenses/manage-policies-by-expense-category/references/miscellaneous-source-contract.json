@@ -1,0 +1,159 @@
+{
+  "schema_version": "1.0",
+  "category": "Miscellaneous",
+  "status": "source_qualified_create_preparation_live_pending_existing_updates_scoped",
+  "source_root": "fusionapps/fin/components/payables/exm/policy/",
+  "sources": [
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseMiscService/applicationModule/ExpenseMiscServiceAM.xml",
+      "sha256": "3d97d64d3adca7fe9c3ead4d22f783cbfc1db113d4643d1cab3144c3e278ec60",
+      "reviewed": "Own ExpenseMiscServiceAM view ownership; part of primary AMImpl->AM->VO->EO chain"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseMiscService/view/MiscVO.xml",
+      "sha256": "7eb88fd0291e6904ccf0cb4d4c5f6807207dfbb4b27dcaa1e7fe64a7d01c417f",
+      "reviewed": "Own parent EO mapping, PolicyName alternate key and parent-line link; primary import VO"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseMiscService/applicationModule/ExpenseMiscServiceAMImpl.java",
+      "sha256": "d08388ac53c3e3d9fa25ea1ee3bad47f0e92336e6b9cf266b8a3f078cd390eb7",
+      "reviewed": "importData142\u2013145,162\u2013269,275\u2013290: own parent/child AltKey resolution, role/geography mapping, readXML and root commit; joined to pinned primary compiled CSV/XML/ADF evidence for this bounded create profile"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseMiscService/view/MiscLineVO.xml",
+      "sha256": "12e9de649dbbe2580e1593ff3128c428ff92ecf122638e2f0eaa06382d26fc98",
+      "reviewed": "304\u2013308 own entity key delegation; parent/role/geography package proxies"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/MiscPolicyEO.xml",
+      "sha256": "ae6c359b90506acf6e77639304b6069204a24625ba488e06b1484d051f834bd2",
+      "reviewed": "150\u2013190 eligibility Integer9 and flags;311\u2013350 reset fields;554\u2013575/635\u2013656 nonnegative tolerance and unconditional strict ordering"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/MiscPolicyEOImpl.java",
+      "sha256": "275f0e78f562fa74074680437b293bf32e205629090927957d29f4a40f15106f",
+      "reviewed": "41\u201348 defaults only on entity create;50\u201373 literal-Y determinant flags; no default role/location N"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/MiscPolLineEO.xml",
+      "sha256": "6af4a6851fd66736bf0d9e1c324d0f7e82370f4e914e455f44c467ef63ad4c62",
+      "reviewed": "110\u2013128 BigDecimal reimbursement percentage without min/max validator;931\u2013982 exact nine-part AltKey and eight-part AltKey_NoStart;1091\u20131137 migration uniqueness rules"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/MiscPolLineEOImpl.java",
+      "sha256": "9a8222ec4025ab74282874a261b77bf734d86c55a8f635f7b4fdb6e5031b96aa",
+      "reviewed": "282\u2013288 service currency does not inherit parent;311\u2013313 null start ignored;860\u2013881 service migration predicate including all ordinary rows;956\u2013966 direct percentage write"
+    },
+    {
+      "path": "misc/model/src/oracle/apps/financials/expenses/policy/misc/uiModel/view/MiscPolicyVO.xml",
+      "sha256": "d4e80d10b4955b8cfd49bea35f86a103c6602d33973be7d5ea27778f4bf9d16d",
+      "reviewed": "76\u201382 GL monetary CurrencyPVO;168\u2013185 enabled EXM_RATE_TYPE;270\u2013275 FND MONTH; own lookup accessors/bindings"
+    },
+    {
+      "path": "misc/model/src/oracle/apps/financials/expenses/policy/misc/uiModel/view/MiscPolicyVORowImpl.java",
+      "sha256": "6ac21919c0722671b36cd67f1f09b401266ae0f1ad0247bde06f9c7fb94831b7",
+      "reviewed": "888\u2013924 LIMIT/PERCENT/BOTH literal getters; flags use literal Y rather than null-to-N serialization"
+    },
+    {
+      "path": "misc/model/src/oracle/apps/financials/expenses/policy/misc/uiModel/applicationModule/FinExmPolicyMiscAMImpl.java",
+      "sha256": "6d0fa39a31adf843975c244212d60d0e952cea2ec224fdf8186790873266fea6",
+      "reviewed": "288\u2013305 no-determinant single-rate create leaves TypeOfRateCode unset;642\u2013687 ADFDi MISC/CATCH_ALL initialization;806\u2013837/1113\u20131147 exact ordinary vs catch-all missing-rate expressions;1223\u20131255 inclusive overlaps"
+    },
+    {
+      "path": "misc/ui/src/oracle/apps/financials/expenses/policy/misc/ui/bean/FinExmPolicyMiscMainBean.java",
+      "sha256": "50b1045524ba309b07a2bcbb0a4ab4dfc614a381cbf13f72dc2ab77bb2e91eb4",
+      "reviewed": "350\u2013359 eligibility component clear;408\u2013469 mode/enforcement listeners;839\u2013883 currency/limit/violation checks;964\u2013991 yearly reset and February28"
+    },
+    {
+      "path": "misc/ui/public_html/oracle/apps/financials/expenses/policy/misc/ui/page/FinExmPolicyMiscMain.jsff",
+      "sha256": "a1734f03072f7546eb2f0b0f8a79ba13badcb366249d087a17dfcf1bdf793aa0",
+      "reviewed": "137\u2013165 required minimum days>=1;258\u2013274 yearly reset conditional requiredness;453\u2013524 enforcement dependencies;603\u2013616 percentage required in single-rate UI but no explicit100 cap;633\u2013708 monetary>=0"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseMiscService/view/link/MiscVOToMiscLineVO.xml",
+      "sha256": "4cab86475c4575da83a8a2f304857bb9ae63f3b83ced49c035deab45d75eeeff",
+      "reviewed": "No-determinant create association/view-link and null-first raw service getters; no client numeric key, geographic or role sentinel"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/association/MiscPolicyEOToMiscPolLineEO.xml",
+      "sha256": "d038fc1ee557807ddf8c990cc67df5d743e241fbc02a3fb85943c7e43e26c159",
+      "reviewed": "No-determinant create association/view-link and null-first raw service getters; no client numeric key, geographic or role sentinel"
+    },
+    {
+      "path": "shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseMiscService/view/MiscLineVORowImpl.java",
+      "sha256": "06a266bfc9baaffd4c62f31bbe8b78b2b749ab04f7d1af3cab0e9d8091f19116",
+      "reviewed": "No-determinant create association/view-link and null-first raw service getters; no client numeric key, geographic or role sentinel"
+    }
+  ],
+  "identity": {
+    "physical": [
+      "MiscPolicyId",
+      "CurrencyCode",
+      "EndDate",
+      "GeographyId",
+      "RoleId",
+      "StartDate",
+      "TypeOfRateCode",
+      "ZoneCode",
+      "GenderCode"
+    ],
+    "package": [
+      "ORA_EXM_MISCELLANEOUS_POLICY.PolicyName",
+      "CurrencyCode",
+      "EndDate",
+      "GeoLocName",
+      "RoleName",
+      "StartDate",
+      "TypeOfRateCode",
+      "ZoneCode",
+      "GenderCode"
+    ],
+    "alternate_without_start": "Drops only StartDate, retaining EndDate and GenderCode; saved migration predicate applies to all service rows"
+  },
+  "rules": {
+    "mode": "LIMIT/PERCENT/BOTH are own source literal codes. Local no-determinant profile follows UI mode/currency/enforcement applicability and AM rate-completeness expressions.",
+    "rate_completeness": "Ordinary: each enabled amount OR percentage; in PERCENT/BOTH at least percentage OR one amount. Catch-all: every enabled amount AND percentage in PERCENT/BOTH. Do not invent BOTH AND on ordinary rows.",
+    "percentage": "Finite nonnegative local input policy; no source-proven 100-percent maximum, minimum server acceptance or general shared field-write guarantee. >100 locally admissible only through exact governed uncertainty acceptance, not server-qualified.",
+    "tolerances": ">=0; warning strictly less than error whenever both nonnull, even when switches false; VIOLATION warning/prevent conditional requiredness.",
+    "eligibility": "Enabled minimum days requires integer1..999999999; parent-days changes only when enabled. Blank and N are false and preserved, not normalized.",
+    "reset": "Yearly requires MONTH01..12 plus valid day, February<=28; monthly/lifetime do not require reset. Retained valid dormant reset/eligibility/tolerance values are not implicitly cleared.",
+    "determinants": "Role/location/gender must be false, including source-observed blank. Every line determinant remains blank; existing keys, status, currency and dates immutable.",
+    "legacy_dormant_values": "Validate numeric/calendar/type invariants on retained values; prohibit newly changing inapplicable fields. Do not invent clears from omitted workbook cells.",
+    "creation": "Source-qualified no-determinant ordinary parent/rate local preparation for LIMIT/PERCENT/BOTH, joining pinned generic serialization to own import graph. Explicit managed DRAFT/N values; SINGLE only monetary modes, PERCENT explicit-null currency mode; no invented child TypeOfRateCode or inherited child currency. Native create pending.",
+    "reference": "Target-bound lookup receipts remain required independently. FND MONTH local codes/calendar do not establish shared import write acceptance. Monetary parent currency requires operation-bound currency evidence."
+  },
+  "remaining_unresolved": [
+    "Target native create acceptance, fresh-export persisted-state verification and exact deployed-build parity remain pending.",
+    "Existing-row combinations outside exact reviewed live cases retain their exact field-uncertainty/native approval route.",
+    "Determinants, key/status/currency updates, physical deletion and retry remain outside this admission."
+  ],
+  "series": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64",
+  "label": "261028.0600.S",
+  "create_field_contract": {
+    "sourceIds": [
+      "MISCELLANEOUS-SOURCE-CONTRACT",
+      "SHARED-FSM-MISC-CREATE-SERIALIZATION"
+    ],
+    "requiredness": "Skill explicit-input policy is separate from Oracle physical requiredness; applicable bool controls are explicit on create; DaysBasedItemParentFlag is explicit only when eligibility is enabled and remains deliberately null otherwise. Active numeric fields follow own resulting-state validator.",
+    "managed": {
+      "parent": {
+        "Status": "DRAFT",
+        "EnabledRoleFlag": "N",
+        "EnabledLocationFlag": "N",
+        "EnabledGenderFlag": "N"
+      },
+      "line": {
+        "Status": "DRAFT",
+        "CurrencyCode": "",
+        "GeoLocName": "",
+        "RoleName": "",
+        "TypeOfRateCode": "",
+        "ZoneCode": "",
+        "GenderCode": ""
+      }
+    },
+    "currency": "LIMIT/BOTH explicit SINGLE and user currency; PERCENT empty parent mode/currency; raw line currency empty in all three service branches.",
+    "ordinary_identity": "All hidden nullable coordinates deliberately empty; own UI leaves TypeOfRateCode unset. Do not generate MISC/CATCH_ALL merely because ADFDi has those branches.",
+    "blank_semantics": "All included empty scalar cells are explicit null, not preservation/default requests; non-updateable audit inputs skipped by reviewed reader."
+  }
+}

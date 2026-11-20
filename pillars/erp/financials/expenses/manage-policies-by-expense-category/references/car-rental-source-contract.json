@@ -1,0 +1,645 @@
+{
+  "profile_id": "car-rental-single-currency-source-v1",
+  "status": "source_qualified_single_currency_create_preparation_existing_updates_scoped_live_create_pending",
+  "source_revision": {
+    "series": "FUSIONAPPS_PT.V2MIBFPHDEV_LINUX.X64",
+    "label": "261028.0600.S"
+  },
+  "sources": [
+    {
+      "path": "fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseCarRentalService/applicationModule/ExpenseCarRentalServiceAM.xml",
+      "sha256": "2a12f3415a9d4f9c118b0195d58c5558880d83d30b89a45f3f3b13ea27fb8abf"
+    },
+    {
+      "path": "fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseCarRentalService/applicationModule/ExpenseCarRentalServiceAMImpl.java",
+      "sha256": "ed33b6c0ed7024c65affc7e0830a6e4196b8fe211cc31b301263133a4aa2bc40"
+    },
+    {
+      "path": "fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseCarRentalService/view/CarRentalVO.xml",
+      "sha256": "6a87fc078700e2b4cb1795ed7cd4d3844513ad0f2b99c46db2315d4ebd34b6ca"
+    },
+    {
+      "path": "fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseCarRentalService/view/CarRentalLineVO.xml",
+      "sha256": "24f89df6ff1abb1cf72ce2a2f9fa64f386199c143726357536c30f55d8fb796e"
+    },
+    {
+      "path": "fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/CarRentalPolicyEO.xml",
+      "sha256": "eba94d793aed411f080b029bfa450175e0f42dcf3729d333fd55886b5b67389a"
+    },
+    {
+      "path": "fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/CarRentalPolicyEOImpl.java",
+      "sha256": "6b7fe153d558bf856ce2d0b103663a29adc1e1f2ec197eb36a673d91c15d5c6b"
+    },
+    {
+      "path": "fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/CarRentalPolLineEO.xml",
+      "sha256": "98cfa8ddbb75985d21bf4fd9fb73313d5f041a48aff81d89fbb75a06ad3e0f2c"
+    },
+    {
+      "path": "fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/CarRentalPolLineEOImpl.java",
+      "sha256": "7ff1e8434ed9503396b315cf89cac8f88c1b85819a1841c7e9d3b3efb12c9c88"
+    },
+    {
+      "path": "fusionapps/fin/components/payables/exm/policy/carRental/ui/public_html/oracle/apps/financials/expenses/policy/carRental/ui/page/FinExmPolicyCarRentalMain.jsff",
+      "sha256": "2d6e943d8c389c163e351d9d588cd48024a84d27350a69ecbf50d4b91b985cb0"
+    },
+    {
+      "path": "fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseCarRentalService/view/CarRentalLineVORowImpl.java",
+      "sha256": "a9ec9faab5aabfcc778e39a9115c64edfc26f66771aa5930f853e46421b86ff4"
+    },
+    {
+      "path": "fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/expenseCarRentalService/view/link/CarRentalVOToCarRentalLineVO.xml",
+      "sha256": "4cdf7195ce3f72963cb594547de5947e8d981ea75aff98c886c9c9d99d520ce1"
+    },
+    {
+      "path": "fusionapps/fin/components/payables/exm/policy/shared/model/src/oracle/apps/financials/expenses/policy/shared/model/entity/association/CarRentalPolicyEOToCarRentalPolLineEO.xml",
+      "sha256": "a2d55397480f8620d7c9cd5dad58232b1b12a3b76084cfb4bbb3867aea5b3a9d"
+    }
+  ],
+  "user_scope": [
+    "Daily Limit is always enabled; workbook-only fixed grey Yes",
+    "No Rate Determinants; initial single-currency workbook"
+  ],
+  "reviewed_facts": [
+    "PolicyName is required, precision60; Description precision240",
+    "Warning and error tolerance must be nonnegative and warning strictly below error whenever both are nonnull",
+    "Parent AltKey is PolicyName; line AltKey includes owning policy,currency,end date,geography,role,start date,type and zone",
+    "Import service resolves both AltKeys, calls MigratorHelper.readXML and commits only at root",
+    "Migration getter is derived from root service definition; it does not read the transient default",
+    "Child currency inheritance is suppressed in migration mode",
+    "Pinned shared CSV/XML and ADF implementation is located and hash-bound. Empty included scalars serialize explicit null; absent XML children are distinct.",
+    "CarRentalPolicyEOImpl.create SINGLE/VIOLATION defaults are not used: consumer-owned SINGLE and explicit user enforcement choice are serialized after creation.",
+    "Audit VO fields are non-updateable; status and disabled determinant values are explicit consumer-managed create scope, not inferred platform defaults."
+  ],
+  "local_profile_boundaries": [
+    "No key renames, date/currency/status transitions or determinant conversion",
+    "Blank update cells preserve retained fields; this does not establish shared XML null handling",
+    "DRAFT/VALID policies and rates only; preserve status on update; selected resulting schedules must have compatible identities and nonoverlapping periods",
+    "DailyLimit presence and finite nonnegative amount are local input/UI-profile checks; not claimed as a demonstrated EO validator"
+  ],
+  "field_declarations": [
+    {
+      "entity": "ORA_EXM_CARRENTAL_POLICY",
+      "field": "PolicyName",
+      "sheet": "Car Rental",
+      "lookup": null,
+      "source_declarations": [
+        {
+          "service": "expenseCarRentalService",
+          "view": "CarRental",
+          "attribute": "PolicyName",
+          "viewDeclaration": {
+            "Name": "PolicyName",
+            "IsNotNull": "true",
+            "PrecisionRule": "true",
+            "EntityAttrName": "PolicyName",
+            "EntityUsage": "CarRentalPolicyEO",
+            "AliasName": "POLICY_NAME"
+          },
+          "entityDeclaration": {
+            "Name": "PolicyName",
+            "IsNotNull": "true",
+            "Precision": "60",
+            "ColumnName": "POLICY_NAME",
+            "SQLType": "VARCHAR",
+            "Type": "java.lang.String",
+            "ColumnType": "VARCHAR2",
+            "TableName": "EXM_CARRENTAL_POLICIES"
+          },
+          "sourceIds": [
+            "SRC-ADE-9A96DC525D45",
+            "SRC-ADE-95B986590785"
+          ],
+          "boundary": "Definition mapping only; custom accessor/default and business-rule review remains field-specific."
+        }
+      ],
+      "create": "source_qualified_local_preparation",
+      "update": "unresolved",
+      "next_review": "Live create acceptance and resulting persisted state remain pending; update field admission stays separately scoped.",
+      "create_evidence": [
+        "CAR-RENTAL-SOURCE-CONTRACT",
+        "SHARED-FSM-CREATE-SERIALIZATION"
+      ]
+    },
+    {
+      "entity": "ORA_EXM_CARRENTAL_POLICY",
+      "field": "Description",
+      "sheet": "Car Rental",
+      "lookup": null,
+      "source_declarations": [
+        {
+          "service": "expenseCarRentalService",
+          "view": "CarRental",
+          "attribute": "Description",
+          "viewDeclaration": {
+            "Name": "Description",
+            "PrecisionRule": "true",
+            "EntityAttrName": "Description",
+            "EntityUsage": "CarRentalPolicyEO",
+            "AliasName": "DESCRIPTION"
+          },
+          "entityDeclaration": {
+            "Name": "Description",
+            "Precision": "240",
+            "ColumnName": "DESCRIPTION",
+            "SQLType": "VARCHAR",
+            "Type": "java.lang.String",
+            "ColumnType": "VARCHAR2",
+            "TableName": "EXM_CARRENTAL_POLICIES"
+          },
+          "sourceIds": [
+            "SRC-ADE-9A96DC525D45",
+            "SRC-ADE-95B986590785"
+          ],
+          "boundary": "Definition mapping only; custom accessor/default and business-rule review remains field-specific."
+        }
+      ],
+      "create": "source_qualified_local_preparation",
+      "update": "unresolved",
+      "next_review": "Live create acceptance and resulting persisted state remain pending; update field admission stays separately scoped.",
+      "create_evidence": [
+        "CAR-RENTAL-SOURCE-CONTRACT",
+        "SHARED-FSM-CREATE-SERIALIZATION"
+      ]
+    },
+    {
+      "entity": "ORA_EXM_CARRENTAL_POLICY",
+      "field": "CurrencyCode",
+      "sheet": "Car Rental",
+      "lookup": "enabled_active_currency",
+      "source_declarations": [
+        {
+          "service": "expenseCarRentalService",
+          "view": "CarRental",
+          "attribute": "CurrencyCode",
+          "viewDeclaration": {
+            "Name": "CurrencyCode",
+            "PrecisionRule": "true",
+            "EntityAttrName": "CurrencyCode",
+            "EntityUsage": "CarRentalPolicyEO",
+            "AliasName": "CURRENCY_CODE"
+          },
+          "entityDeclaration": {
+            "Name": "CurrencyCode",
+            "Precision": "15",
+            "ColumnName": "CURRENCY_CODE",
+            "SQLType": "VARCHAR",
+            "Type": "java.lang.String",
+            "ColumnType": "VARCHAR2",
+            "TableName": "EXM_CARRENTAL_POLICIES"
+          },
+          "sourceIds": [
+            "SRC-ADE-9A96DC525D45",
+            "SRC-ADE-95B986590785"
+          ],
+          "boundary": "Definition mapping only; custom accessor/default and business-rule review remains field-specific."
+        }
+      ],
+      "create": "source_qualified_local_preparation",
+      "update": "unresolved",
+      "next_review": "Live create acceptance and resulting persisted state remain pending; update field admission stays separately scoped.",
+      "create_evidence": [
+        "CAR-RENTAL-SOURCE-CONTRACT",
+        "SHARED-FSM-CREATE-SERIALIZATION"
+      ]
+    },
+    {
+      "entity": "ORA_EXM_CARRENTAL_POLICY",
+      "field": "PolicyEnforcementCode",
+      "sheet": "Car Rental",
+      "lookup": "EXM_POLICY_ENFORCEMENT",
+      "source_declarations": [
+        {
+          "service": "expenseCarRentalService",
+          "view": "CarRental",
+          "attribute": "PolicyEnforcementCode",
+          "viewDeclaration": {
+            "Name": "PolicyEnforcementCode",
+            "PrecisionRule": "true",
+            "EntityAttrName": "PolicyEnforcementCode",
+            "EntityUsage": "CarRentalPolicyEO",
+            "AliasName": "POLICY_ENFORCEMENT_CODE"
+          },
+          "entityDeclaration": {
+            "Name": "PolicyEnforcementCode",
+            "Precision": "30",
+            "ColumnName": "POLICY_ENFORCEMENT_CODE",
+            "SQLType": "VARCHAR",
+            "Type": "java.lang.String",
+            "ColumnType": "VARCHAR2",
+            "TableName": "EXM_CARRENTAL_POLICIES"
+          },
+          "sourceIds": [
+            "SRC-ADE-9A96DC525D45",
+            "SRC-ADE-95B986590785"
+          ],
+          "boundary": "Definition mapping only; custom accessor/default and business-rule review remains field-specific."
+        }
+      ],
+      "create": "source_qualified_local_preparation",
+      "update": "unresolved",
+      "next_review": "Live create acceptance and resulting persisted state remain pending; update field admission stays separately scoped.",
+      "create_evidence": [
+        "CAR-RENTAL-SOURCE-CONTRACT",
+        "SHARED-FSM-CREATE-SERIALIZATION"
+      ]
+    },
+    {
+      "entity": "ORA_EXM_CARRENTAL_POLICY",
+      "field": "PolicyViolationFlag",
+      "sheet": "Car Rental",
+      "lookup": "EXM_YES_NO",
+      "source_declarations": [
+        {
+          "service": "expenseCarRentalService",
+          "view": "CarRental",
+          "attribute": "PolicyViolationFlag",
+          "viewDeclaration": {
+            "Name": "PolicyViolationFlag",
+            "PrecisionRule": "true",
+            "EntityAttrName": "PolicyViolationFlag",
+            "EntityUsage": "CarRentalPolicyEO",
+            "AliasName": "POLICY_VIOLATION_FLAG"
+          },
+          "entityDeclaration": {
+            "Name": "PolicyViolationFlag",
+            "Precision": "1",
+            "ColumnName": "POLICY_VIOLATION_FLAG",
+            "SQLType": "VARCHAR",
+            "Type": "java.lang.String",
+            "ColumnType": "VARCHAR2",
+            "TableName": "EXM_CARRENTAL_POLICIES"
+          },
+          "sourceIds": [
+            "SRC-ADE-9A96DC525D45",
+            "SRC-ADE-95B986590785"
+          ],
+          "boundary": "Definition mapping only; custom accessor/default and business-rule review remains field-specific."
+        }
+      ],
+      "create": "source_qualified_local_preparation",
+      "update": "unresolved",
+      "next_review": "Live create acceptance and resulting persisted state remain pending; update field admission stays separately scoped.",
+      "create_evidence": [
+        "CAR-RENTAL-SOURCE-CONTRACT",
+        "SHARED-FSM-CREATE-SERIALIZATION"
+      ]
+    },
+    {
+      "entity": "ORA_EXM_CARRENTAL_POLICY",
+      "field": "WarningTolerance",
+      "sheet": "Car Rental",
+      "lookup": null,
+      "source_declarations": [
+        {
+          "service": "expenseCarRentalService",
+          "view": "CarRental",
+          "attribute": "WarningTolerance",
+          "viewDeclaration": {
+            "Name": "WarningTolerance",
+            "PrecisionRule": "true",
+            "EntityAttrName": "WarningTolerance",
+            "EntityUsage": "CarRentalPolicyEO",
+            "AliasName": "WARNING_TOLERANCE"
+          },
+          "entityDeclaration": {
+            "Name": "WarningTolerance",
+            "ColumnName": "WARNING_TOLERANCE",
+            "SQLType": "NUMERIC",
+            "Type": "java.math.BigDecimal",
+            "ColumnType": "NUMBER",
+            "TableName": "EXM_CARRENTAL_POLICIES"
+          },
+          "sourceIds": [
+            "SRC-ADE-9A96DC525D45",
+            "SRC-ADE-95B986590785"
+          ],
+          "boundary": "Definition mapping only; custom accessor/default and business-rule review remains field-specific."
+        }
+      ],
+      "create": "source_qualified_local_preparation",
+      "update": "unresolved",
+      "next_review": "Live create acceptance and resulting persisted state remain pending; update field admission stays separately scoped.",
+      "create_evidence": [
+        "CAR-RENTAL-SOURCE-CONTRACT",
+        "SHARED-FSM-CREATE-SERIALIZATION"
+      ]
+    },
+    {
+      "entity": "ORA_EXM_CARRENTAL_POLICY",
+      "field": "DispWarningToUserFlag",
+      "sheet": "Car Rental",
+      "lookup": "EXM_YES_NO",
+      "source_declarations": [
+        {
+          "service": "expenseCarRentalService",
+          "view": "CarRental",
+          "attribute": "DispWarningToUserFlag",
+          "viewDeclaration": {
+            "Name": "DispWarningToUserFlag",
+            "PrecisionRule": "true",
+            "EntityAttrName": "DispWarningToUserFlag",
+            "EntityUsage": "CarRentalPolicyEO",
+            "AliasName": "DISP_WARNING_TO_USER_FLAG"
+          },
+          "entityDeclaration": {
+            "Name": "DispWarningToUserFlag",
+            "Precision": "1",
+            "ColumnName": "DISP_WARNING_TO_USER_FLAG",
+            "SQLType": "VARCHAR",
+            "Type": "java.lang.String",
+            "ColumnType": "VARCHAR2",
+            "TableName": "EXM_CARRENTAL_POLICIES"
+          },
+          "sourceIds": [
+            "SRC-ADE-9A96DC525D45",
+            "SRC-ADE-95B986590785"
+          ],
+          "boundary": "Definition mapping only; custom accessor/default and business-rule review remains field-specific."
+        }
+      ],
+      "create": "source_qualified_local_preparation",
+      "update": "unresolved",
+      "next_review": "Live create acceptance and resulting persisted state remain pending; update field admission stays separately scoped.",
+      "create_evidence": [
+        "CAR-RENTAL-SOURCE-CONTRACT",
+        "SHARED-FSM-CREATE-SERIALIZATION"
+      ]
+    },
+    {
+      "entity": "ORA_EXM_CARRENTAL_POLICY",
+      "field": "PreventSubmissionFlag",
+      "sheet": "Car Rental",
+      "lookup": "EXM_YES_NO",
+      "source_declarations": [
+        {
+          "service": "expenseCarRentalService",
+          "view": "CarRental",
+          "attribute": "PreventSubmissionFlag",
+          "viewDeclaration": {
+            "Name": "PreventSubmissionFlag",
+            "PrecisionRule": "true",
+            "EntityAttrName": "PreventSubmissionFlag",
+            "EntityUsage": "CarRentalPolicyEO",
+            "AliasName": "PREVENT_SUBMISSION_FLAG"
+          },
+          "entityDeclaration": {
+            "Name": "PreventSubmissionFlag",
+            "Precision": "1",
+            "ColumnName": "PREVENT_SUBMISSION_FLAG",
+            "SQLType": "VARCHAR",
+            "Type": "java.lang.String",
+            "ColumnType": "VARCHAR2",
+            "TableName": "EXM_CARRENTAL_POLICIES"
+          },
+          "sourceIds": [
+            "SRC-ADE-9A96DC525D45",
+            "SRC-ADE-95B986590785"
+          ],
+          "boundary": "Definition mapping only; custom accessor/default and business-rule review remains field-specific."
+        }
+      ],
+      "create": "source_qualified_local_preparation",
+      "update": "unresolved",
+      "next_review": "Live create acceptance and resulting persisted state remain pending; update field admission stays separately scoped.",
+      "create_evidence": [
+        "CAR-RENTAL-SOURCE-CONTRACT",
+        "SHARED-FSM-CREATE-SERIALIZATION"
+      ]
+    },
+    {
+      "entity": "ORA_EXM_CARRENTAL_POLICY",
+      "field": "ErrorTolerance",
+      "sheet": "Car Rental",
+      "lookup": null,
+      "source_declarations": [
+        {
+          "service": "expenseCarRentalService",
+          "view": "CarRental",
+          "attribute": "ErrorTolerance",
+          "viewDeclaration": {
+            "Name": "ErrorTolerance",
+            "PrecisionRule": "true",
+            "EntityAttrName": "ErrorTolerance",
+            "EntityUsage": "CarRentalPolicyEO",
+            "AliasName": "ERROR_TOLERANCE"
+          },
+          "entityDeclaration": {
+            "Name": "ErrorTolerance",
+            "ColumnName": "ERROR_TOLERANCE",
+            "SQLType": "NUMERIC",
+            "Type": "java.math.BigDecimal",
+            "ColumnType": "NUMBER",
+            "TableName": "EXM_CARRENTAL_POLICIES"
+          },
+          "sourceIds": [
+            "SRC-ADE-9A96DC525D45",
+            "SRC-ADE-95B986590785"
+          ],
+          "boundary": "Definition mapping only; custom accessor/default and business-rule review remains field-specific."
+        }
+      ],
+      "create": "source_qualified_local_preparation",
+      "update": "unresolved",
+      "next_review": "Live create acceptance and resulting persisted state remain pending; update field admission stays separately scoped.",
+      "create_evidence": [
+        "CAR-RENTAL-SOURCE-CONTRACT",
+        "SHARED-FSM-CREATE-SERIALIZATION"
+      ]
+    },
+    {
+      "entity": "ORA_EXM_CARRENTAL_POLICY_LINE",
+      "field": "ORA_EXM_CARRENTAL_POLICY.PolicyName",
+      "sheet": "Car Rental Rates",
+      "lookup": null,
+      "source_declarations": [],
+      "create": "source_qualified_local_preparation",
+      "update": "unresolved",
+      "next_review": "Live create acceptance and resulting persisted state remain pending; update field admission stays separately scoped.",
+      "create_evidence": [
+        "CAR-RENTAL-SOURCE-CONTRACT",
+        "SHARED-FSM-CREATE-SERIALIZATION"
+      ]
+    },
+    {
+      "entity": "ORA_EXM_CARRENTAL_POLICY_LINE",
+      "field": "StartDate",
+      "sheet": "Car Rental Rates",
+      "lookup": null,
+      "source_declarations": [
+        {
+          "service": "expenseCarRentalService",
+          "view": "CarRentalLine",
+          "attribute": "StartDate",
+          "viewDeclaration": {
+            "Name": "StartDate",
+            "IsNotNull": "true",
+            "PrecisionRule": "true",
+            "EntityAttrName": "StartDate",
+            "EntityUsage": "CarRentalPolLineEO",
+            "AliasName": "START_DATE"
+          },
+          "entityDeclaration": {
+            "Name": "StartDate",
+            "ColumnName": "START_DATE",
+            "SQLType": "TIMESTAMP",
+            "Type": "java.sql.Date",
+            "ColumnType": "DATE",
+            "TableName": "EXM_CARRENTAL_POL_LINES"
+          },
+          "sourceIds": [
+            "SRC-ADE-433A3CECAF38",
+            "SRC-ADE-F921BD2EAE0E"
+          ],
+          "boundary": "Definition mapping only; custom accessor/default and business-rule review remains field-specific."
+        }
+      ],
+      "create": "source_qualified_local_preparation",
+      "update": "unresolved",
+      "next_review": "Live create acceptance and resulting persisted state remain pending; update field admission stays separately scoped.",
+      "create_evidence": [
+        "CAR-RENTAL-SOURCE-CONTRACT",
+        "SHARED-FSM-CREATE-SERIALIZATION"
+      ]
+    },
+    {
+      "entity": "ORA_EXM_CARRENTAL_POLICY_LINE",
+      "field": "EndDate",
+      "sheet": "Car Rental Rates",
+      "lookup": null,
+      "source_declarations": [
+        {
+          "service": "expenseCarRentalService",
+          "view": "CarRentalLine",
+          "attribute": "EndDate",
+          "viewDeclaration": {
+            "Name": "EndDate",
+            "PrecisionRule": "true",
+            "EntityAttrName": "EndDate",
+            "EntityUsage": "CarRentalPolLineEO",
+            "AliasName": "END_DATE"
+          },
+          "entityDeclaration": {
+            "Name": "EndDate",
+            "ColumnName": "END_DATE",
+            "SQLType": "TIMESTAMP",
+            "Type": "java.sql.Date",
+            "ColumnType": "DATE",
+            "TableName": "EXM_CARRENTAL_POL_LINES"
+          },
+          "sourceIds": [
+            "SRC-ADE-433A3CECAF38",
+            "SRC-ADE-F921BD2EAE0E"
+          ],
+          "boundary": "Definition mapping only; custom accessor/default and business-rule review remains field-specific."
+        }
+      ],
+      "create": "source_qualified_local_preparation",
+      "update": "unresolved",
+      "next_review": "Live create acceptance and resulting persisted state remain pending; update field admission stays separately scoped.",
+      "create_evidence": [
+        "CAR-RENTAL-SOURCE-CONTRACT",
+        "SHARED-FSM-CREATE-SERIALIZATION"
+      ]
+    },
+    {
+      "entity": "ORA_EXM_CARRENTAL_POLICY_LINE",
+      "field": "DailyLimit",
+      "sheet": "Car Rental Rates",
+      "lookup": null,
+      "source_declarations": [
+        {
+          "service": "expenseCarRentalService",
+          "view": "CarRentalLine",
+          "attribute": "DailyLimit",
+          "viewDeclaration": {
+            "Name": "DailyLimit",
+            "PrecisionRule": "true",
+            "EntityAttrName": "DailyLimit",
+            "EntityUsage": "CarRentalPolLineEO",
+            "AliasName": "DAILY_LIMIT"
+          },
+          "entityDeclaration": {
+            "Name": "DailyLimit",
+            "ColumnName": "DAILY_LIMIT",
+            "SQLType": "NUMERIC",
+            "Type": "java.math.BigDecimal",
+            "ColumnType": "NUMBER",
+            "TableName": "EXM_CARRENTAL_POL_LINES"
+          },
+          "sourceIds": [
+            "SRC-ADE-433A3CECAF38",
+            "SRC-ADE-F921BD2EAE0E"
+          ],
+          "boundary": "Definition mapping only; custom accessor/default and business-rule review remains field-specific."
+        }
+      ],
+      "create": "source_qualified_local_preparation",
+      "update": "unresolved",
+      "next_review": "Live create acceptance and resulting persisted state remain pending; update field admission stays separately scoped.",
+      "create_evidence": [
+        "CAR-RENTAL-SOURCE-CONTRACT",
+        "SHARED-FSM-CREATE-SERIALIZATION"
+      ]
+    }
+  ],
+  "unresolved": [
+    "Live create acceptance, target build equivalence and fresh-export persisted-state qualification",
+    "Broader existing-field write combinations outside exact reviewed live cases retain evidence-unresolved application-validation decisions"
+  ],
+  "import_approved": false,
+  "runtime_admission_enabled": true,
+  "shared_create_serialization": {
+    "source_id": "SHARED-FSM-CREATE-SERIALIZATION",
+    "path": "references/shared-fsm-create-serialization.json",
+    "sha256": "c9f0cca561d68d9182143737bd653c0b6333baf2ac8087176fa70263711c9d54"
+  },
+  "create_preparation": {
+    "profile": "SINGLE currency; no Rate Determinants; one exact parent with one or more ordinary daily-limit rates",
+    "managed_parent_values": {
+      "Status": "DRAFT",
+      "CurrencyOptionCode": "SINGLE",
+      "EnabledRoleFlag": "N",
+      "EnabledLocationFlag": "N"
+    },
+    "managed_rate_values": {
+      "Status": "DRAFT"
+    },
+    "business_choices": "PolicyName, CurrencyCode, PolicyEnforcementCode and all warning/display/prevention controls explicit; enabled tolerances and daily amount supplied; no inferred business defaults",
+    "empty_parent_fields": [
+      "Description",
+      "PolicyRoleCode",
+      "LocationTypeCode",
+      "ZoneTypeCode",
+      "WarningTolerance",
+      "ErrorTolerance"
+    ],
+    "empty_rate_fields": [
+      "CurrencyCode",
+      "EndDate",
+      "GeoLocName",
+      "RoleName",
+      "TypeOfRateCode",
+      "ZoneCode",
+      "InvalidCode",
+      "RawCity",
+      "RawCountry",
+      "RawCounty",
+      "RawState",
+      "RoleCode"
+    ],
+    "empty_field_boundary": "These nullable fields have no task create defaults when omitted, except inactive tolerances governed by explicit input rules. Currency/enforcement defaults are bypassed with explicit values; role/location disabled. Migration-mode child currency inheritance is suppressed. No nonblank retained values are cleared on update.",
+    "audit_fields": [
+      "CreatedBy",
+      "CreationDate",
+      "LastUpdatedBy",
+      "LastUpdateDate",
+      "LastUpdateLogin"
+    ],
+    "audit_boundary": "Import VO attributes are IsUpdateable=false; owning EO attributes declare history columns. Blank audit inputs remain system-owned and are not caller values.",
+    "keys": "Named AltKey lookup plus single globally-unique primary IDs in both owning EOs; helper generates server IDs on a miss and propagates the parent key through the declared service view link. No client IDs or invented sentinel values.",
+    "association": "ExpenseCarRentalServiceAM.CarRental -> CarRentalLine through CarRentalVOToCarRentalLineVO, both ends CarRentalPolicyId; matching EO association uses the same key.",
+    "serialization": "Present CSV headers participate in explicit-null XML serialization; every remaining blank field is intentionally null, not a request for a Fusion default.",
+    "live_create_qualified": false,
+    "import_approved": false
+  }
+}
